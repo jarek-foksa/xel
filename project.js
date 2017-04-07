@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-let Fs       = require("fs");
-let Fse      = require("fs-extra");
-let Path     = require("path");
-let Babel    = require("babel-core");
-let Csso     = require("csso");
-let Glob     = require("glob")
 let childProcess = require("child_process");
+let Fs           = require("fs");
+let Fse          = require("fs-extra");
+let Path         = require("path");
+let Babel        = require("babel-core");
+let Csso         = require("csso");
+let Glob         = require("glob")
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,9 +38,31 @@ let isEmptyDir = (dirPath) => {
   return paths.length === 0;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// @info
+//   Generates xel.min.html file which contains minified version of all JS and CSS files (except themes).
+let build = () => {
+  let xelHTML = readFile(`${__dirname}/xel.html`);
+  let parts = xelHTML.split("<script").filter($0 => $0.includes("</script>"));
+  parts = parts.map($0 => "<script" + $0.substring(0, $0.lastIndexOf("</script>") + "</script>".length));
+  let paths = parts.map($0 => $0.substring($0.indexOf("src=") + 5, $0.lastIndexOf(`"`)));
+
+  let xelMinJS = "";
+
+  for (let path of paths) {
+    xelMinJS += readFile(__dirname + "/" + path);
+  }
+
+  xelMinJS = vulcanizeScript(xelMinJS);
+  xelMinJS = minifyScript(xelMinJS);
+
+  writeFile(`${__dirname}/xel.min.html`, `<script>${xelMinJS}</script>`);
+};
+
 // @info
 //   Minifiy JS code by removing comments, whitespace and other redundant content.
-let minify = (scriptJS) => {
+let minifyScript = (scriptJS) => {
   let phase1 = Babel.transform(scriptJS, {
     presets: ["es2015"],
     plugins: ["transform-custom-element-classes"]
@@ -58,7 +80,7 @@ let minify = (scriptJS) => {
 
 // @info
 //   Replaces any occourance of <link rel="stylesheet" data-vulcanize> element with corresponding <style> element.
-let vulcanize = (scriptJS) => {
+let vulcanizeScript = (scriptJS) => {
   let result = "";
   let parts = [""];
 
@@ -97,30 +119,25 @@ let vulcanize = (scriptJS) => {
   return result;
 }
 
-// @info
-//   Generates xel.min.html file which contains minified version of all JS and CSS files (except themes).
-let generateXelMinHTMLFile = () => {
-  let xelHTML = readFile(`${__dirname}/xel.html`);
-  let parts = xelHTML.split("<script").filter($0 => $0.includes("</script>"));
-  parts = parts.map($0 => "<script" + $0.substring(0, $0.lastIndexOf("</script>") + "</script>".length));
-  let paths = parts.map($0 => $0.substring($0.indexOf("src=") + 5, $0.lastIndexOf(`"`)));
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  let xelMinJS = "";
+let publishNpmPackage = () => {
+  let command = "npm";
+  let args = ["publish"];
+  let options = {cwd: __dirname, stdio: "inherit"};
+  let npmProcess = childProcess.spawn(command, args, options);
 
-  for (let path of paths) {
-    xelMinJS += readFile(__dirname + "/" + path);
-  }
-
-  xelMinJS = vulcanize(xelMinJS);
-  xelMinJS = minify(xelMinJS);
-
-  writeFile(`${__dirname}/xel.min.html`, `<script>${xelMinJS}</script>`);
+  npmProcess.on("exit", (error) => {
+    if (error) {
+      console.log(error.toString());
+    }
+  });
 };
 
-let publishFirebase = () => {
+let publishFirebaseSite = () => {
   // Generate updated xel.min.html
   {
-    generateXelMinHTMLFile();
+    build();
   }
 
   // Remove old files
@@ -161,25 +178,48 @@ let publishFirebase = () => {
     writeFile(`${__dirname}/dist/firebase/index.html`, indexHTML);
   }
 
-  childProcess.exec(`./node_modules/firebase-tools/bin/firebase deploy`, {cwd: `${__dirname}`}, (error) => {
-    if (error) {
-      console.log("Failed", error);
-    }
+  // Upload files to the Firebase server
+  {
+    let command = "./node_modules/firebase-tools/bin/firebase";
+    let args = ["deploy"];
+    let options = {cwd: __dirname, stdio: "inherit"};
+    let firebaseProcess = childProcess.spawn(command, args, options);
 
-    // Restore firebase.json
-    {
-      let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
-      manifeset.hosting.public = "./";
-      writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
-    }
-
-    // Clean up
-    {
-      removeDir(`${__dirname}/dist/firebase`);
-
-      if (isEmptyDir(`${__dirname}/dist`)) {
-        removeDir(`${__dirname}/dist`);
+    firebaseProcess.on("exit", (error) => {
+      if (error) {
+        console.log(error.toString());
       }
+
+      // Restore firebase.json
+      {
+        let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
+        manifeset.hosting.public = "./";
+        writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
+      }
+
+      // Clean up
+      {
+        removeDir(`${__dirname}/dist/firebase`);
+
+        if (isEmptyDir(`${__dirname}/dist`)) {
+          removeDir(`${__dirname}/dist`);
+        }
+      }
+    });
+  }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+let serve = () => {
+  let command = "./node_modules/firebase-tools/bin/firebase";
+  let args = ["serve"];
+  let options = {cwd: __dirname, stdio: "inherit"};
+  let firebaseProcess = childProcess.spawn(command, args, options);
+
+  firebaseProcess.on("exit", (error) => {
+    if (error) {
+      console.log(error.toString());
     }
   });
 };
@@ -199,18 +239,20 @@ if (arg1 === undefined) {
   console.log(info);
 }
 else if (arg1 === "build") {
-  generateXelMinHTMLFile();
+  build();
 }
 else if (arg1 === "serve") {
+  serve();
 }
 else if (arg1 === "publish") {
   if (arg2 === undefined) {
     console.log("\n" + info);
   }
-  else if (arg2 === "firebase") {
-    publishFirebase();
-  }
   else if (arg2 === "npm") {
+    publishNpmPackage();
+  }
+  else if (arg2 === "firebase") {
+    publishFirebaseSite();
   }
   else {
     console.log("Invalid argument: ", arg2);
