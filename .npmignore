@@ -1,6 +1,3 @@
-# Build
-xel.min.html
-
 # Sublime Text
 xel.sublime-workspace
 
@@ -14,6 +11,3 @@ node_modules/*
 
 # Dot files
 .*
-!.gitignore
-!.npmignore
-!.firebaserc
