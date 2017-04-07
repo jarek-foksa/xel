@@ -1,0 +1,73 @@
+<div class="view">
+  <article>
+    <h2>Dialog</h2>
+
+    <p><strong>&lt;x-dialog&gt;</strong> is a generic modal dialog. While opened it will prevent other widgets from reciving input events.</p>
+
+    <section>
+      <h3>Examples</h3>
+
+      <section>
+        <h4>Basic</h4>
+
+        <xel-demo>
+          <template>
+            <x-dialog></x-dialog>
+
+            <x-button id="button">
+              <x-label>Show</x-label>
+            </x-button>
+
+            <script>
+              let dialog = document.querySelector("x-dialog");
+              let button = document.querySelector("#button");
+              button.addEventListener("click", () => dialog.opened = true);
+            </script>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Confirmation</h4>
+
+        <xel-demo>
+          <template>
+            <x-dialog>
+              <main>
+                <h3>Use Google's location service?</h3>
+                <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
+              </main>
+
+              <footer>
+                <x-button id="agree-button" skin="flat">
+                  <x-label>Disagree</x-label>
+                </x-button>
+
+                <x-button toggled id="disagree-button" skin="flat">
+                  <x-label>Agree</x-label>
+                </x-button>
+              </footer>
+            </x-dialog>
+
+            <x-button id="show-dialog-button">
+              <x-label>Show</x-label>
+            </x-button>
+
+            <script>
+              let dialog = document.querySelector("x-dialog");
+              let showDialogButton = document.querySelector("#show-dialog-button");
+              let agreeButton = document.querySelector("#agree-button");
+              let disagreeButton = document.querySelector("#disagree-button");
+
+              showDialogButton.addEventListener("click", () => dialog.opened = true);
+              agreeButton.addEventListener("click", () => dialog.opened = false);
+              disagreeButton.addEventListener("click", () => dialog.opened = false);
+            </script>
+          </template>
+        </xel-demo>
+      </section>
+    </section>
+  </article>
+</div>

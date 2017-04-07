@@ -1,0 +1,393 @@
+<div class="view">
+  <article>
+    <h2>Select</h2>
+
+    <section>
+      <h3>Examples</h3>
+
+      <section>
+        <h4>Only labels</h4>
+
+        <xel-demo>
+          <template>
+            <x-select>
+              <x-menu>
+                <x-menuitem value="australia">
+                  <x-label>Australia</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="canada" selected="true">
+                  <x-label>Canada</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="ireland" disabled>
+                  <x-label>Ireland</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="new-zealand">
+                  <x-label>New Zealand</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="uk">
+                  <x-label>United Kingdom</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="usa">
+                  <x-label>United States</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Only icons</h4>
+
+        <xel-demo>
+          <template>
+            <x-select>
+              <x-menu>
+                <x-menuitem value="train">
+                  <x-icon name="directions-railway"></x-icon>
+                </x-menuitem>
+
+                <x-menuitem value="bike">
+                  <x-icon name="directions-bike"></x-icon>
+                </x-menuitem>
+
+                <x-menuitem value="plane">
+                  <x-icon name="flight"></x-icon>
+                </x-menuitem>
+
+                <x-menuitem value="car" selected="true">
+                  <x-icon name="directions-car"></x-icon>
+                </x-menuitem>
+
+                <x-menuitem value="boat">
+                  <x-icon name="directions-boat"></x-icon>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Icons and labels</h4>
+
+        <xel-demo>
+          <template>
+            <x-select>
+              <x-menu>
+                <x-menuitem value="train">
+                  <x-icon name="directions-railway"></x-icon>
+                  <x-label>Train</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="bike">
+                  <x-icon name="directions-bike"></x-icon>
+                  <x-label>Bike</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="plane" selected="true">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Plane</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="car">
+                  <x-icon name="directions-car"></x-icon>
+                  <x-label>Car</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="boat">
+                  <x-icon name="directions-boat"></x-icon>
+                  <x-label>Boat</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Swatches and labels</h4>
+
+        <xel-demo>
+          <template>
+            <x-select>
+              <x-menu>
+                <x-menuitem value="red" selected="true">
+                  <x-swatch value="#F44336"></x-swatch>
+                  <x-label>Red</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="blue">
+                  <x-swatch value="#0091EA"></x-swatch>
+                  <x-label>Blue</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="green">
+                  <x-swatch value="#8BC34A"></x-swatch>
+                  <x-label>Green</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="yellow">
+                  <x-swatch value="#FDD835"></x-swatch>
+                  <x-label>Yellow</x-label>
+                </x-menuitem>
+
+                <hr/>
+
+                <x-menuitem value="default">
+                  <x-swatch value="#78909C"></x-swatch>
+                  <x-label>System</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Images and labels</h4>
+
+        <xel-demo>
+          <template>
+            <x-select>
+              <x-menu>
+                <x-menuitem value="red" selected="true">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEXnNzcjbf7EAAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==">
+                  <x-label>Red</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="blue">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEU3gOeDsyFfAAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==">
+                  <x-label>Blue</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="green">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEVdyh9/A7IIAAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==">
+                  <x-label>Green</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>No selected item</h4>
+
+        <xel-demo>
+          <template>
+            <x-select style="width: 125px;">
+              <x-menu>
+                <x-menuitem value="incomprehensible">
+                  <x-icon name="directions-railway"></x-icon>
+                  <x-label>Incomprehensible</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="unimaginable">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Unimaginable</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Only one item</h4>
+
+        <xel-demo>
+          <template>
+            <x-select>
+              <x-menu>
+                <x-menuitem value="plane" selected="true">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Plane</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Disabled</h4>
+
+        <xel-demo>
+          <template>
+            <x-select disabled>
+              <x-menu>
+                <x-menuitem value="train" selected="true">
+                  <x-icon name="directions-railway"></x-icon>
+                  <x-label>Train</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="plane">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Plane</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Disabled item</h4>
+
+        <xel-demo>
+          <template>
+            <x-select>
+              <x-menu>
+                <x-menuitem value="train" selected="true">
+                  <x-icon name="directions-railway"></x-icon>
+                  <x-label>Train</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="plane" disabled>
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Plane</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Wide</h4>
+
+        <xel-demo>
+          <template>
+            <x-select style="width: 100%;">
+              <x-menu>
+                <x-menuitem value="train" selected="true">
+                  <x-icon name="directions-railway"></x-icon>
+                  <x-label>Train</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="plane">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Plane</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Ellipsis</h4>
+
+        <xel-demo>
+          <template>
+            <x-select style="width: 125px;">
+              <x-menu>
+                <x-menuitem value="incomprehensible" selected="true">
+                  <x-icon name="directions-railway"></x-icon>
+                  <x-label>Incomprehensible</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="long">
+                  <x-icon name="directions-car"></x-icon>
+                  <x-label>This is an extremly long label. It is going to be truncated with an ellipsis in case it does not fit on the screen.</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="unimaginable">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Unimaginable</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section data-themes="macos">
+        <h4>Skin "textured"</h4>
+
+        <xel-demo>
+          <template>
+            <x-select skin="textured">
+              <x-menu>
+                <x-menuitem value="train">
+                  <x-icon name="directions-railway"></x-icon>
+                  <x-label>Train</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="bike">
+                  <x-icon name="directions-bike"></x-icon>
+                  <x-label>Bike</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="plane" selected="true">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Plane</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="car">
+                  <x-icon name="directions-car"></x-icon>
+                  <x-label>Car</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="boat">
+                  <x-icon name="directions-boat"></x-icon>
+                  <x-label>Boat</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+
+      <section data-themes="material">
+        <h4>Skin "flat"</h4>
+
+        <xel-demo>
+          <template>
+            <x-select skin="flat">
+              <x-menu>
+                <x-menuitem value="plane" selected="true">
+                  <x-icon name="flight"></x-icon>
+                  <x-label>Plane</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="car">
+                  <x-icon name="directions-car"></x-icon>
+                  <x-label>Car</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+          </template>
+        </xel-demo>
+      </section>
+    </section>
+  </article>
+</div>

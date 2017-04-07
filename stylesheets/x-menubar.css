@@ -1,0 +1,39 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+  overflow: auto;
+  box-sizing: border-box;
+}
+:host([disabled]) {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  pointer-events: none;
+  touch-action: none;
+}
+#overlay[hidden] {
+  display: none;
+}
+
+#overlay path {
+  fill: red;
+  fill-rule: evenodd;
+  opacity: 0;
+  pointer-events: all;
+}

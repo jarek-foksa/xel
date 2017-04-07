@@ -1,0 +1,42 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  display: block;
+  width: 22px;
+  height: 22px;
+  cursor: default;
+  box-sizing: border-box;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#main {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#selected-icon {
+  display: none;
+  position: absolute;
+  left: calc(50% - 8px);
+  top: calc(50% - 8px);
+  width: 16px;
+  height: 16px;
+  color: white;
+}
+:host([showicon]:hover) #selected-icon {
+  display: block;
+  opacity: 0.6;
+}
+:host([showicon][selected]) #selected-icon {
+  display: block;
+  opacity: 1;
+}
+:host([showicon][value="#FFFFFF"]) #selected-icon {
+  fill: gray;
+}

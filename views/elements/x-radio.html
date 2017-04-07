@@ -1,0 +1,94 @@
+<div class="view">
+  <article>
+    <h2>Radio</h2>
+
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <xel-demo>
+        <template>
+          <x-radio></x-radio>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled</h4>
+
+      <xel-demo>
+        <template>
+          <x-radio toggled></x-radio>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Mixed</h4>
+
+      <xel-demo>
+        <template>
+          <x-radio toggled mixed></x-radio>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <xel-demo>
+        <template>
+          <x-radio toggled disabled></x-radio>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label</h4>
+
+      <xel-demo>
+        <template>
+          <x-hbox>
+            <x-radio id="radio" type="spin"></x-radio>
+            <x-label for="radio">Sample label</x-label>
+          </x-hbox>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Group</h4>
+
+      <xel-demo>
+        <template>
+          <x-radiogroup>
+            <x-hbox>
+              <x-radio id="first-radio"></x-radio>
+              <x-label for="first-radio">First option</x-label>
+            </x-hbox>
+            <x-hbox>
+              <x-radio id="second-radio" toggled></x-radio>
+              <x-label for="second-radio">Second option</x-label>
+            </x-hbox>
+            <x-hbox>
+              <x-radio id="third-radio"></x-radio>
+              <x-label for="third-radio">Third option</x-label>
+            </x-hbox>
+          </x-radiogroup>
+        </template>
+      </xel-demo>
+    </section>
+
+  </article>
+</div>

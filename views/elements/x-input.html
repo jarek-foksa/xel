@@ -1,0 +1,219 @@
+<div class="view">
+  <article>
+    <h2>Text input</h2>
+
+    <hr/>
+
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <xel-demo>
+        <template>
+          <x-input></x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Value</h4>
+
+      <xel-demo>
+        <template>
+          <x-input value="Sample text"></x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label</h4>
+
+      <xel-demo>
+        <template>
+          <x-input>
+            <x-icon name="receipt"></x-icon>
+            <x-label>Name</x-label>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Spellcheck</h4>
+
+      <xel-demo>
+        <template>
+          <x-input value="There is a typo heree" spellcheck></x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <xel-demo>
+        <template>
+          <x-input value="Sample value" disabled></x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Required</h4>
+
+      <xel-demo>
+        <template>
+          <x-input required>
+            <x-label>Last name</x-label>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Type "text" (default)</h4>
+
+      <xel-demo>
+        <template>
+          <x-input type="text" value="Sample text"></x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Type "multiline-text"</h4>
+
+      <xel-demo>
+        <template>
+          <x-input type="multiline-text" value="Sample text"></x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Type "email"</h4>
+
+      <xel-demo>
+        <template>
+          <x-input type="email" value="contact@boxy-svg.com">
+            <x-icon name="email"></x-icon>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Type "password"</h4>
+
+      <xel-demo>
+        <template>
+          <x-input type="password" minlength="4" maxlength="12" value="abc123">
+            <x-icon name="lock"></x-icon>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Type "url"</h4>
+
+      <xel-demo>
+        <template>
+          <x-input type="url" value="https://boxy-svg.com">
+            <x-icon name="public"></x-icon>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Search</h4>
+
+      <xel-demo>
+        <template>
+          <x-input>
+            <x-icon name="search"></x-icon>
+            <x-label>Search</x-label>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section data-themes="material">
+      <h4>Skin <em>"flat"</em></h4>
+
+      <xel-demo>
+        <template>
+          <x-input skin="flat" value="John Doe">
+            <x-icon name="person"></x-icon>
+            <x-label>Name</x-label>
+          </x-input>
+
+          <x-input skin="flat" type="email" value="john@doe.com" required>
+            <x-icon name="email"></x-icon>
+            <x-label>E-mail</x-label>
+          </x-input>
+
+          <x-input type="multiline-text" value="Hello" skin="flat">
+            <x-icon name="receipt"></x-icon>
+            <x-label>Message</x-label>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section data-themes="macos">
+      <h4>Skin <em>"textured"</em></h4>
+
+      <xel-demo>
+        <template>
+          <x-input skin="textured">
+            <x-icon name="search"></x-icon>
+            <x-label>Search</x-label>
+          </x-input>
+
+          <x-input skin="textured" value="John Doe">
+            <x-icon name="person"></x-icon>
+            <x-label>Name</x-label>
+          </x-input>
+
+          <x-input skin="textured" type="email" value="john@doe.com" required>
+            <x-icon name="email"></x-icon>
+            <x-label>E-mail</x-label>
+          </x-input>
+
+          <x-input type="multiline-text" value="Hello" skin="textured">
+            <x-label>Message</x-label>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+  </article>
+</div>

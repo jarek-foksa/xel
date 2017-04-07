@@ -1,0 +1,171 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#main {
+  position: relative;
+  display: flex;
+  flex-flow: row;
+  width: 100%;
+  height: 100%;
+}
+
+/**
+ * Navigation
+ */
+
+#sidebar {
+  position: relative;
+  width: 270px;
+  overflow: auto;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+  z-index: 100;
+}
+
+#sidebar h1 {
+  color: #009788;
+  margin: 20px 22px 20px 104px;
+  line-height: 1;
+}
+
+#sidebar #nav {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+#hide-sidebar-button {
+  position: absolute;
+  top: 20px;
+  left: 11px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+}
+
+#show-sidebar-button {
+  position: absolute;
+  top: 20px;
+  left: 11px;
+  z-index: 10;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+}
+
+#nav x-sidenavitem x-sidenavitem {
+  padding-left: 75px;
+}
+
+#nav x-sidenavitem x-sidenavitem x-label {
+  font-weight: 400;
+}
+
+#theme-section {
+  padding: 10px 0px;
+}
+
+#theme-section x-select {
+  width: 100%;
+}
+
+#theme-section #theme-select {
+  margin-bottom: 14px;
+}
+
+/**
+ * Views
+ */
+
+#views {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 20px;
+  min-height: 20px;
+  position: relative;
+  flex: 1;
+}
+
+#views > .view {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+}
+#views > .view:not([selected]) {
+  display: none !important;
+}
+
+#views > .view > article {
+  padding: 0 70px;
+  margin: 0 auto;
+  max-width: 780px;
+  box-sizing: border-box;
+}
+
+#views #about-view {
+  background: #009788;
+  color: white;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 100px;
+  margin: 0;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+#about-view h1 {
+  font-size: 170px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 50px 0;
+  padding: 0;
+  line-height: 1;
+}
+@media screen and (max-width: 880px) {
+  #about-view h1  {
+    font-size: 120px;
+  }
+}
+
+#about-view h2 {
+  font-size: 27px;
+  font-weight: 400;
+  line-height: 1.05;
+  color: rgba(255,255,255, 0.8);
+  margin: 0 0 20px 0;
+  text-transform: none;
+}
+
+#about-view h2 em {
+  color: rgba(255,255,255, 0.95);
+  font-style: normal;
+  font-weight: 700;
+}
+
+#views section {
+  margin-bottom: 35px;
+}
+
+#views section[hidden] + hr {
+  display: none;
+}
+
+#views section h3,
+#views section h4,
+#views section h5 {
+  position: relative;
+}

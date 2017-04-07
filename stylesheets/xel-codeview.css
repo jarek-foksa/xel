@@ -1,0 +1,24 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  background: white;
+  padding: 14px;
+}
+
+#code {
+  display: block;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 18px;
+  outline: none;
+  background: none;
+  padding: 0;
+}

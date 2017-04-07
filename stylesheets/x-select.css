@@ -1,0 +1,73 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  display: block;
+  width: fit-content;
+  height: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  font-size: 15px;
+  cursor: default;
+  user-select: none;
+  --arrow-width: 13px;
+  --arrow-height: 13px;
+  --arrow-min-width: 13px;
+  --arrow-margin: 0 2px 0 11px;
+  --arrow-color: currentColor;
+  --arrow-d: path("M 24.755 41.383 L 50 16.194 L 75.245 41.383 L 83.001 33.628 L 50 0.628 L 16.999 33.628 Z M 16.999 66.372 L 50 99.372 L 83.001 66.372 L 75.245 58.617 L 50 83.807 L 24.755 58.617 Z");
+}
+:host([disabled]) {
+  pointer-events: none;
+  opacity: 0.5;
+}
+:host([hidden]) {
+  display: none;
+}
+
+#button {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+#button {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+#button > x-label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#button > #arrow-container {
+  margin: 0 0 0 auto;
+  z-index: 999;
+}
+
+#button > #arrow-container #arrow {
+  display: flex;
+  width: var(--arrow-width);
+  height: var(--arrow-height);
+  min-width: var(--arrow-min-width);
+  margin: var(--arrow-margin);
+  color: var(--arrow-color);
+  d: var(--arrow-d);
+}
+
+#button > #arrow-container #arrow path {
+  fill: currentColor;
+  d: inherit;
+}

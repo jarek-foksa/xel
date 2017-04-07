@@ -1,0 +1,17 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  display: block;
+}
+
+#code-view {
+  margin-top: 25px;
+}
+:host([compact]) #code-view {
+  max-height: 350px;
+  overflow: scroll;
+}

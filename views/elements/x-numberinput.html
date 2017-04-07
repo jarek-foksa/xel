@@ -1,0 +1,132 @@
+<div class="view">
+  <article>
+    <h2>Number input</h2>
+
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput>
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Prefix</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput value="499" prefix="$" min="0">
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Suffix</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput value="100" suffix=" px">
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Min and max</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput value="0" min="0" max="100">
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Placeholder</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput>
+            <x-label>Width</x-label>
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Step</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput value="0.50" min="0" max="1" step="0.01">
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Required</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput required>
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput value="0" disabled>
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section data-themes="macos">
+      <hr/>
+
+      <h4>Skin "condensed"</h4>
+
+      <xel-demo>
+        <template>
+          <x-numberinput skin="condensed" value="10">
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </xel-demo>
+    </section>
+  </article>
+</div>

@@ -1,0 +1,73 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  display: block;
+  position: relative;
+  max-width: 120px;
+  height: 22px;
+  box-sizing: border-box;
+  cursor: text;
+  --inner-padding: 0;
+  --selection-color: green;
+}
+:host([disabled]) {
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.5;
+  cursor: default;
+}
+:host([hidden]) {
+  display: none;
+}
+
+#main {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: inherit;
+}
+
+#input {
+  width: 100%;
+  height: 100%;
+  padding: var(--inner-padding);
+  box-sizing: border-box;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  padding: var(--inner-padding);
+  box-sizing: border-box;
+  overflow-y: auto;
+  color: inherit;
+  outline: none;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: normal;
+}
+
+/* Invalid value hint */
+:host([invalid])::before {
+  color: #d50000;
+  content: attr(invalid-hint) " ";
+  position: absolute;
+  left: 0;
+  top: 24px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: pre;
+}

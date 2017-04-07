@@ -1,0 +1,17 @@
+# Build
+xel.min.html
+
+# Sublime Text
+xel.sublime-workspace
+
+# Firebase
+firebase-debug.log
+
+# NPM
+node_modules/*
+!node_modules/xel
+.npm-debug.log
+
+# Dot files
+.*
+!.gitignore

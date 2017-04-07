@@ -1,0 +1,315 @@
+<div class="view">
+  <article>
+    <h2>Buttons group</h2>
+
+    <p><strong>&lt;x-buttongroup&gt;</strong> is used to groups several related buttons together.</p>
+    <p>When <strong>"tracking"</strong> attribute is set, it will also automatically toggle buttons on/off when clicked.</p>
+
+    <hr/>
+
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Tracking "-1" (default)</h4>
+      <p>Does not toggle automatically any buttons.</p>
+
+      <xel-demo>
+        <template>
+          <x-buttongroup tracking="-1">
+            <x-button>
+              <x-icon name="mail"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="delete"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttongroup>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Tracking "0"</h4>
+      <p>Toggles the clicked button on/off and other buttons off.</p>
+
+      <xel-demo>
+        <template>
+          <x-buttongroup tracking="0">
+            <x-button toggled>
+              <x-icon name="extension"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="favorite"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="build"></x-icon>
+            </x-button>
+          </x-buttongroup>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Tracking "1"</h4>
+      <p>Toggles the clicked button on and other buttons off.</p>
+
+      <xel-demo>
+        <template>
+          <x-buttongroup tracking="1">
+            <x-button toggled>
+              <x-icon name="format-align-left"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="format-align-center"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="format-align-right"></x-icon>
+            </x-button>
+          </x-buttongroup>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Tracking "2"</h4>
+      <p>Toggles the clicked button on/off.</p>
+
+      <xel-demo>
+        <template>
+          <x-buttongroup tracking="2">
+            <x-button toggled>
+              <x-icon name="format-bold"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="format-underlined"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="format-italic"></x-icon>
+            </x-button>
+          </x-buttongroup>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <!--======================================================================================================-->
+
+    <section id="material-skins" data-themes="material">
+      <section>
+        <h4>Skin <em>"textured"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="1">
+              <x-button skin="textured" toggled>
+                <x-icon name="view-week"></x-icon>
+              </x-button>
+
+              <x-button skin="textured">
+                <x-icon name="view-agenda"></x-icon>
+              </x-button>
+
+              <x-button skin="textured">
+                <x-icon name="view-carousel"></x-icon>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Skin <em>"flat"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="-1">
+              <x-button skin="flat">
+                <x-icon name="mail"></x-icon>
+              </x-button>
+
+              <x-button skin="flat">
+                <x-icon name="delete"></x-icon>
+              </x-button>
+
+              <x-button skin="flat">
+                <x-icon name="settings"></x-icon>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Skin <em>"iconic"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="1">
+              <x-button skin="iconic" toggled>
+                <x-icon name="extension"></x-icon>
+              </x-button>
+
+              <x-button skin="iconic">
+                <x-icon name="favorite"></x-icon>
+              </x-button>
+
+              <x-button skin="iconic">
+                <x-icon name="settings"></x-icon>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+    </section> <!-- #material-skins -->
+
+    <hr/>
+
+    <!--======================================================================================================-->
+
+    <section id="macos-skins" data-themes="macos">
+      <section>
+        <h4>Skin <em>"textured"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="1">
+              <x-button skin="textured" toggled>
+                <x-icon name="view-week"></x-icon>
+              </x-button>
+
+              <x-button skin="textured">
+                <x-icon name="view-agenda"></x-icon>
+              </x-button>
+
+              <x-button skin="textured">
+                <x-icon name="view-carousel"></x-icon>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Skin <em>"textured-condensed"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="1">
+              <x-button skin="textured-condensed" toggled>
+                <x-icon name="view-week"></x-icon>
+              </x-button>
+
+              <x-button skin="textured-condensed">
+                <x-icon name="view-agenda"></x-icon>
+              </x-button>
+
+              <x-button skin="textured-condensed">
+                <x-icon name="view-carousel"></x-icon>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Skin <em>"mini-bordered"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="-1">
+              <x-button skin="mini-bordered">
+                <x-icon name="add"></x-icon>
+              </x-button>
+
+              <x-button skin="mini-bordered">
+                <x-icon name="remove"></x-icon>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Skin <em>"recessed"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="1">
+              <x-button skin="recessed" toggled>
+                <x-label>Inbox</x-label>
+              </x-button>
+
+              <x-button skin="recessed">
+                <x-label>Sent</x-label>
+              </x-button>
+
+              <x-button skin="recessed">
+                <x-label>Drafts</x-label>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Skin <em>"iconic"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-buttongroup tracking="1">
+              <x-button skin="iconic" toggled>
+                <x-vbox>
+                  <x-icon name="extensions-color"></x-icon>
+                  <x-label>Extensions</x-label>
+                </x-vbox>
+              </x-button>
+
+              <x-button skin="iconic">
+                <x-vbox>
+                  <x-icon name="extensions-color"></x-icon>
+                  <x-label>Extensions</x-label>
+                </x-vbox>
+              </x-button>
+
+              <x-button skin="iconic">
+                <x-vbox>
+                  <x-icon name="extensions-color"></x-icon>
+                  <x-label>Extensions</x-label>
+                </x-vbox>
+              </x-button>
+            </x-buttongroup>
+          </template>
+        </xel-demo>
+      </section>
+    </section> <!-- #macos-skins -->
+  </article>
+</div>
