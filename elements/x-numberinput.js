@@ -65,13 +65,6 @@
       this.addEventListener("decrementstart", (event) => this._onStepperDecrementStart(event));
       this.addEventListener("focusin", (event) => this._onFocusIn(event));
       this.addEventListener("focusout", (event) => this._onFocusOut(event));
-
-      // @debug
-      /*
-      this.addEventListener("change", () => console.log("event: change"));
-      this.addEventListener("changestart", () => console.log("event: changestart"));
-      this.addEventListener("changeend", () => console.log("event: changeend"));
-      */
     }
 
     connectedCallback() {
