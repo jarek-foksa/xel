@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-let childProcess = require("child_process");
-let Fs           = require("fs");
-let Fse          = require("fs-extra");
-let Path         = require("path");
-let Babel        = require("babel-core");
-let Csso         = require("csso");
-let Glob         = require("glob")
+let Fs              = require("fs");
+let Fse             = require("fs-extra");
+let Path            = require("path");
+let Babel           = require("babel-core");
+let Csso            = require("csso");
+let Glob            = require("glob")
+let PushStateServer = require("pushstate-server");
+let childProcess    = require("child_process");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -212,15 +213,9 @@ let publishFirebaseSite = () => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 let serve = () => {
-  let command = "./node_modules/firebase-tools/bin/firebase";
-  let args = ["serve"];
-  let options = {cwd: __dirname, stdio: "inherit"};
-  let firebaseProcess = childProcess.spawn(command, args, options);
-
-  firebaseProcess.on("exit", (error) => {
-    if (error) {
-      console.log(error.toString());
-    }
+  PushStateServer.start({
+    port: 8000,
+    directory: "./"
   });
 };
 

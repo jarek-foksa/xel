@@ -3,7 +3,7 @@
 
 **Widget toolkit** for building native-like Electron and Web apps.
 
-Visit https://xel-toolkit.org for demos, documentation and code samples.
+Visit [xel-toolkit.org](https://xel-toolkit.org) for demos, documentation and code samples.
 
 ## Development
 
