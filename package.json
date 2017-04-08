@@ -1,7 +1,7 @@
 {
   "name": "xel",
   "version": "0.0.3",
-  "description": "Widget toolkit for building native-like Electron and Web apps",
+  "description": "Widget toolkit for building native-like Electron and Chrome apps",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jarek-foksa/xel.git"
@@ -12,6 +12,8 @@
     "widget",
     "toolkit",
     "electron",
+    "nwjs",
+    "nw.js",
     "macOS",
     "desktop",
     "ui",

@@ -1,7 +1,7 @@
 
 # Xel
 
-**Widget toolkit** for building native-like Electron and Web apps.
+**Widget toolkit** for building native-like Electron and Chrome apps.
 
 Visit [xel-toolkit.org](https://xel-toolkit.org) for demos, documentation and code samples.
 
@@ -14,4 +14,4 @@ Visit [xel-toolkit.org](https://xel-toolkit.org) for demos, documentation and co
 > ./project.js serve
 ```
 
-Then open http://localhost:5000 in one of the supported browsers (Chrome, Chromium, Opera).
+Then open http://localhost:5000 in your browser.
