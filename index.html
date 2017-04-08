@@ -33,15 +33,15 @@
     </style>
 
     <script>
-      // @todo: this is not reliable since Safari supports both APIs, also check for HTML imports support
-      if (window.ShadowRoot === undefined || window.customElements === undefined) {
-        // Redirect the user to fallback.html page which contains app description and information about
-        // supported browsers
-      }
-      else {
+      // Supported browser
+      if (window.ShadowRoot && window.customElements && HTMLLinkElement.prototype.hasOwnProperty("import")) {
         let theme = sessionStorage.getItem("theme") || "/node_modules/xel/stylesheets/material.theme.css";
         document.querySelector("#theme-link").setAttribute("href", theme);
         window.addEventListener("load", function(event) {window["splashscreen"].remove()});
+      }
+      // Unsupported browser
+      else {
+        window.location.pathname = "/fallback.html";
       }
     </script>
 
