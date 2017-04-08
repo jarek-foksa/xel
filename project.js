@@ -158,6 +158,7 @@ let publishFirebaseSite = () => {
     let paths = [
       `database.rules.json`,
       `index.html`,
+      `fallback.html`,
       `node_modules/prismjs/prism.js`,
       `node_modules/prismjs/themes/prism-coy.css`,
       `node_modules/xel/xel.min.html`,
