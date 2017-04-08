@@ -50,11 +50,29 @@
                   <x-label>FAQ</x-label>
                 </x-button>
               </a>
+            </section>
 
+            <hr/>
+
+            <section>
               <a href="https://github.com/jarek-foksa/xel" target="_blank">
                 <x-button skin="sidenav">
                   <x-icon name="code"></x-icon>
-                  <x-label>Github</x-label>
+                  <x-label>Source Code ⧉</x-label>
+                </x-button>
+              </a>
+
+              <a href="https://github.com/jarek-foksa/xel/issues" target="_blank">
+                <x-button skin="sidenav">
+                  <x-icon name="bug-report"></x-icon>
+                  <x-label>Bugs ⧉</x-label>
+                </x-button>
+              </a>
+
+              <a href="https://github.com/jarek-foksa/xel/commits" target="_blank">
+                <x-button skin="sidenav">
+                  <x-icon name="event"></x-icon>
+                  <x-label>Changelog ⧉</x-label>
                 </x-button>
               </a>
             </section>
