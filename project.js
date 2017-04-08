@@ -214,7 +214,7 @@ let publishFirebaseSite = () => {
 
 let serve = () => {
   PushStateServer.start({
-    port: 8000,
+    port: 5000,
     directory: "./"
   });
 };
