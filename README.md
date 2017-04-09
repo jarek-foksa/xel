@@ -41,7 +41,7 @@ Thanks to advanced theming capabilities, Xel can imitate native widgets.
 
 The themes currently shipped with Xel are:
 - macOS - implements macOS Human Interface Guidelines
-- Material - implement Material Design design guidelines
+- Material - implement Material Design guidelines
 
 **Supported browsers**
 
