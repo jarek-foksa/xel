@@ -9,17 +9,6 @@ Xel is a HTML 5 **widget toolkit** for building native-like **Electron** and **C
 Xel follows the Keep It Simple principle and thus is written using plain JS, HTML and CSS. It does not make use of
 any preprocessors or heavy abstraction layers.
 
-**Supported browsers**
-
-The project makes heavy use of bleeding edge Web Platform features such as Custom Elements v1, Shadow DOM v1, SVG 2 and ES2017 and therefore works only on the following browsers:
-
-* Chrome >= 57
-* Chromium >= 57
-* Opera >= 44
-* Atom Electron >= 1.6
-* NW.js >= 0.21
-* Android WebView >= 57
-
 **Widgets**:
 
 - Buttons
@@ -45,6 +34,25 @@ The project makes heavy use of bleeding edge Web Platform features such as Custo
 
 Visit [xel-toolkit.org](https://xel-toolkit.org) for a complete list of all supported widgets with demos and
 documentation.
+
+**Themes**
+
+Thanks to advanced theming capabilities, Xel can imitate native widgets.
+
+The themes currently shipped with Xel are:
+- macOS - implements macOS Human Interface Guidelines
+- Material - implement Material Design design guidelines
+
+**Supported browsers**
+
+The project makes heavy use of bleeding edge Web Platform features such as Custom Elements v1, Shadow DOM v1, SVG 2 and ES2017 and therefore works only on the following browsers:
+
+* Chrome >= 57
+* Chromium >= 57
+* Opera >= 44
+* Atom Electron >= 1.6
+* NW.js >= 0.21
+* Android WebView >= 57
 
 ## Setup
 
