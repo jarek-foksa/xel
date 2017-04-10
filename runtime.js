@@ -4,7 +4,7 @@
 
 "use strict";
 
-window.Xel = {utils: {}};
+window.Xel = {utils: {}, classes: {}};
 
 //
 // Pointer events polyfills

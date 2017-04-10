@@ -290,7 +290,7 @@
               popoverBounds = this.getBoundingClientRect();
             }
 
-            // If popover overflow left client bound, move it right
+            // If popover overflows left client bound, move it right
 
             if (popoverBounds.left < whitespace) {
               this.style.left = `${whitespace}px`;

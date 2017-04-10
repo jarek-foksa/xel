@@ -51,7 +51,7 @@
       this.setAttribute("role", "button");
       this.setAttribute("aria-disabled", this.disabled);
 
-      if (this.parentElement.localName === "a" && this.parentElement.tabIndex !== -1) {
+      if (this.parentElement && this.parentElement.localName === "a" && this.parentElement.tabIndex !== -1) {
         this.parentElement.tabIndex = -1;
       }
 

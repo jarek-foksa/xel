@@ -1,0 +1,83 @@
+<div class="view">
+  <article>
+    <h2>Color select</h2>
+
+    <h3>Examples</h3>
+
+    <section>
+      <h4>System color picker</h4>
+
+      <xel-demo>
+        <template>
+          <x-colorselect></x-colorselect>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Wheel color picker</h4>
+
+      <xel-demo>
+        <template>
+          <x-colorselect value="#bada55">
+            <x-popover>
+              <x-wheelcolorpicker></x-wheelcolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Rect color picker</h4>
+
+      <xel-demo>
+        <template>
+          <x-colorselect value="pink">
+            <x-popover>
+              <x-rectcolorpicker></x-rectcolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Alpha slider visible</h4>
+
+      <xel-demo>
+        <template>
+          <x-colorselect value="#bada55">
+            <x-popover>
+              <x-wheelcolorpicker alphaslider></x-wheelcolorpicker>
+            </x-popover>
+          </x-colorselect>
+
+          <x-colorselect value="pink" style="margin-top: 10px;">
+            <x-popover>
+              <x-rectcolorpicker alphaslider></x-rectcolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <xel-demo>
+        <template>
+          <x-colorselect disabled></x-colorselect>
+        </template>
+      </xel-demo>
+    </section>
+  </article>
+</div>

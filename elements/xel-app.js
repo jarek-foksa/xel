@@ -256,6 +256,12 @@
                 </x-button>
               </a>
 
+              <a href="/elements/x-colorselect">
+                <x-button skin="sidenav">
+                  <x-label>x-colorselect</x-label>
+                </x-button>
+              </a>
+
               <a href="/elements/x-input">
                 <x-button skin="sidenav">
                   <x-label>x-input</x-label>

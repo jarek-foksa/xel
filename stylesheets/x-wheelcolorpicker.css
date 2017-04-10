@@ -1,0 +1,126 @@
+
+/*
+ * @copyright
+ *   © 2016-2017 Jarosław Foksa
+ */
+
+:host {
+  display: block;
+  width: 100%;
+  user-select: none;
+}
+:host([hidden]) {
+  display: none;
+}
+
+/**
+ * Hue-saturation slider
+ */
+
+#huesat-slider {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: auto;
+  touch-action: pinch-zoom;
+}
+
+#huesat-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+#huesat-marker {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: var(--marker-size);
+  height: var(--marker-size);
+  transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.3);
+  border: 3px solid white;
+  border-radius: 999px;
+  box-shadow: 0 0 3px black;
+  --marker-size: 20px;
+}
+
+/**
+ * Value slider
+ */
+
+#value-slider {
+  width: 100%;
+  height: 28px;
+  margin-top: 10px;
+  padding: 0 calc(var(--marker-width) / 2);
+  box-sizing: border-box;
+  border: 1px solid #cecece;
+  border-radius: 2px;
+  touch-action: pan-y;
+  --marker-width: 18px;
+}
+
+#value-slider-track {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#value-slider-marker {
+  position: absolute;
+  left: 0%;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 3px black;
+  box-sizing: border-box;
+  transform: translateX(calc((var(--marker-width) / 2) * -1));
+  border: 3px solid white;
+  width: var(--marker-width);
+  height: 32px;
+  position: absolute;
+}
+
+/**
+ * Alpha slider
+ */
+
+#alpha-slider {
+  display: none;
+  width: 100%;
+  height: 28px;
+  margin-top: 14px;
+  padding: 0 calc(var(--marker-width) / 2);
+  box-sizing: border-box;
+  border: 1px solid #cecece;
+  border-radius: 2px;
+  touch-action: pan-y;
+  --marker-width: 18px;
+}
+:host([alphaslider]) #alpha-slider {
+  display: block;
+}
+
+#alpha-slider-track {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#alpha-slider-marker {
+  position: absolute;
+  left: 0%;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 3px black;
+  box-sizing: border-box;
+  transform: translateX(calc((var(--marker-width) / 2) * -1));
+  border: 3px solid white;
+  width: var(--marker-width);
+  height: 32px;
+  position: absolute;
+}

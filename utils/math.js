@@ -67,5 +67,12 @@
     return distance;
   };
 
-  Xel.utils.math = {round, normalize, getPrecision, getDistanceBetweenPoints};
+  // @type
+  //   (number) => number
+  let degToRad = (degrees) => {
+    let radians = (PI * degrees) / 180;
+    return radians;
+  };
+
+  Xel.utils.math = {round, normalize, getPrecision, getDistanceBetweenPoints, degToRad};
 }
