@@ -8,7 +8,7 @@
   let {debounce} = Xel.utils.time;
 
   let shadowHTML = `
-    <link rel="stylesheet" href="stylesheets/x-colorselect.css" data-vulcanize>
+    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-colorselect.css" data-vulcanize>
     <input tabindex="-1" id="input" type="color" value="#ffffff">
     <slot></slot>
   `;

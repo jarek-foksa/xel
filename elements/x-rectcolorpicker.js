@@ -10,7 +10,7 @@
   let debug = false;
 
   let shadowHTML = `
-    <link rel="stylesheet" href="stylesheets/x-rectcolorpicker.css" data-vulcanize>
+    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-rectcolorpicker.css" data-vulcanize>
 
     <x-vbox>
       <div id="hue-slider">
@@ -279,7 +279,7 @@
 
     _updateAlphaSliderBackground() {
       let [r, g, b] = hsvToRgb(this._h, this._s, this._v).map($0 => round($0, 0));
-      let backroundA = `url(images/checkboard.png) repeat 0 0`;
+      let backroundA = `url(node_modules/xel/images/checkboard.png) repeat 0 0`;
       let background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))`;
       this["#alpha-slider"].style.background = background + "," + backroundA;
     }
