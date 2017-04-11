@@ -16,7 +16,7 @@
 
     <x-vbox>
       <div id="huesat-slider">
-        <img id="huesat-image" src="/node_modules/xel/images/wheel-spectrum.png"></img>
+        <img id="huesat-image" src="node_modules/xel/images/wheel-spectrum.png"></img>
         <div id="huesat-marker"></div>
       </div>
 

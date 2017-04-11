@@ -11,7 +11,6 @@
   box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.3);
   position: relative;
-  background: url(/node_modules/xel/images/checkboard.png) repeat 0 0;
 }
 :host([hidden]) {
   display: none;

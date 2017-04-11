@@ -9,6 +9,7 @@
 
   let shadowHTML = `
     <link rel="stylesheet" href="node_modules/xel/stylesheets/x-colorselect.css" data-vulcanize>
+    <style>:host { background: url(node_modules/xel/images/checkboard.png) repeat 0 0; }</style>
     <input tabindex="-1" id="input" type="color" value="#ffffff">
     <slot></slot>
   `;
