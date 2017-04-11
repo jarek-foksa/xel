@@ -12,3 +12,6 @@
   box-sizing: border-box;
   width: fit-content;
 }
+:host([hidden]) {
+  display: none;
+}
