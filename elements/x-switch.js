@@ -14,14 +14,14 @@
     <template>
       <link rel="stylesheet" href="node_modules/xel/stylesheets/x-switch.css" data-vulcanize>
 
-      <x-hbox id="main">
+      <x-box id="main">
         <div id="track"></div>
 
         <div id="thumb">
           <div id="focus-ring"></div>
           <div id="ripples"></div>
         </div>
-      </x-hbox>
+      </x-box>
     </template>
   `;
 

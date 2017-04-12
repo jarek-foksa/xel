@@ -1,0 +1,81 @@
+<div class="view">
+  <article>
+    <h2>Box</h2>
+
+    <p><strong>&lt;x-box&gt;</strong> is a generic element simillar to <strong>&lt;div&gt;</strong> or <strong>&lt;span&gt;</strong>, but styled as a flexbox container by default.</p>
+
+    <hr/>
+
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Icons</h4>
+
+      <xel-demo>
+        <template>
+          <x-box>
+            <x-icon name="mail"></x-icon>
+            <x-icon name="delete"></x-icon>
+            <x-icon name="settings"></x-icon>
+          </x-box>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Icons, vertical</h4>
+
+      <xel-demo>
+        <template>
+          <x-box vertical>
+            <x-icon name="mail"></x-icon>
+            <x-icon name="delete"></x-icon>
+            <x-icon name="settings"></x-icon>
+          </x-box>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Buttons</h4>
+
+      <xel-demo>
+        <template>
+          <x-box>
+            <x-button>
+              <x-label>Button</x-label>
+            </x-button>
+
+            <x-button style="margin-left: 5px;">
+              <x-label>Button</x-label>
+            </x-button>
+          </x-box>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Buttons, vertical</h4>
+
+      <xel-demo>
+        <template>
+          <x-box vertical>
+            <x-button>
+              <x-label>Button</x-label>
+            </x-button>
+
+            <x-button style="margin-top: 5px;">
+              <x-label>Button</x-label>
+            </x-button>
+          </x-box>
+        </template>
+      </xel-demo>
+    </section>
+  </article>
+</div>

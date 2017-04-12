@@ -5,9 +5,13 @@
  */
 
 :host {
+  box-sizing: border-box;
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+:host([vertical]) {
   flex-flow: column;
   align-items: flex-start;
   justify-content: center;
-  box-sizing: border-box;
 }

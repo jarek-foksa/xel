@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="${document.querySelector('link[href*=".theme.css"]').getAttribute('href')}">
     <link rel="stylesheet" href="node_modules/xel/stylesheets/x-wheelcolorpicker.css" data-vulcanize>
 
-    <x-vbox>
+    <x-box vertical>
       <div id="huesat-slider">
         <img id="huesat-image" src="node_modules/xel/images/wheel-spectrum.png"></img>
         <div id="huesat-marker"></div>
@@ -31,7 +31,7 @@
           <div id="alpha-slider-marker"></div>
         </div>
       </div>
-    </x-vbox>
+    </x-box>
   `;
 
   // @events

@@ -272,32 +272,30 @@ x-button[expanded][toggled] {
 }
 
 x-button > x-label,
-x-button > x-hbox > x-label,
-x-button > x-vbox > x-label {
+x-button > x-box > x-label {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-x-button > x-hbox {
   max-width: 100%;
 }
-x-button > x-hbox > * {
+
+x-button > x-box {
+  overflow: hidden;
+  align-items: center;
+}
+
+x-button > x-box > * {
   margin: 0 6px 0 0;
 }
-x-button > x-hbox > *:last-child {
+x-button > x-box > *:last-child {
   margin: 0;
 }
 
-x-button > x-vbox {
-  align-items: center;
-  overflow: hidden;
-}
-x-button > x-vbox > * {
+x-button > x-box[vertical] > * {
   margin: 0 0 2px 0;
 }
-x-button > x-vbox > *:last-child {
+x-button > x-box[vertical] > *:last-child {
   margin: 0;
 }
 
@@ -389,18 +387,16 @@ x-button[skin="iconic"][toggled][pressed] {
 }
 
 x-button[skin="iconic"] > x-icon,
-x-button[skin="iconic"] > x-hbox > x-icon,
-x-button[skin="iconic"] > x-vbox > x-icon {
+x-button[skin="iconic"] > x-box > x-icon {
   width: 32px;
   height: 32px;
 }
 x-button[skin="iconic"][pressed] > x-icon,
-x-button[skin="iconic"][pressed] > x-hbox > x-icon,
-x-button[skin="iconic"][pressed] > x-vbox > x-icon {
+x-button[skin="iconic"][pressed] > x-box > x-icon {
   filter: brightness(0.3);
 }
 
-x-button[skin="iconic"] x-vbox > x-icon + x-label {
+x-button[skin="iconic"] > x-box[vertical] > x-icon + x-label {
   margin-top: 3px;
 }
 
@@ -426,18 +422,16 @@ x-button[skin="iconic-condensed"][toggled][pressed] {
 }
 
 x-button[skin="iconic-condensed"] > x-icon,
-x-button[skin="iconic-condensed"] > x-hbox > x-icon,
-x-button[skin="iconic-condensed"] > x-vbox > x-icon {
+x-button[skin="iconic-condensed"] > x-box > x-icon {
   width: 24px;
   height: 24px;
 }
 x-button[skin="iconic-condensed"][pressed] > x-icon,
-x-button[skin="iconic-condensed"][pressed] > x-hbox > x-icon,
-x-button[skin="iconic-condensed"][pressed] > x-vbox > x-icon {
+x-button[skin="iconic-condensed"][pressed] > x-box > x-icon {
   filter: brightness(0.3);
 }
 
-x-button[skin="iconic-condensed"] x-vbox > x-icon + x-label {
+x-button[skin="iconic-condensed"] > x-box > x-icon + x-label {
   margin-top: 2px;
 }
 
@@ -698,8 +692,7 @@ x-tab[selected][pressed] {
 }
 
 x-tab > x-icon,
-x-tab > x-hbox > x-icon,
-x-tab > x-vbox > x-icon {
+x-tab > x-box > x-icon {
   color: inherit;
   width: 15px;
   height: 15px;
@@ -707,8 +700,7 @@ x-tab > x-vbox > x-icon {
 }
 
 x-tab > x-label,
-x-tab > x-hbox > x-label,
-x-tab > x-vbox > x-label {
+x-tab > x-box > x-label {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -717,20 +709,21 @@ x-tab > x-vbox > x-label {
   flex: 1;
 }
 
-x-tab > x-vbox {
+x-tab > x-box[vertical] {
   align-items: center;
 }
-x-tab > x-vbox > * {
-  margin: 0 0 2px 0;
+
+x-tab > x-box > * {
+  margin: 0 6px 0 0;
 }
-x-tab > x-vbox > *:last-child {
+x-tab > x-box > *:last-child {
   margin: 0;
 }
 
-x-tab > x-hbox > * {
-  margin: 0 6px 0 0;
+x-tab > x-box[vertical] > * {
+  margin: 0 0 2px 0;
 }
-x-tab > x-hbox > *:last-child {
+x-tab > x-box[vertical] > *:last-child {
   margin: 0;
 }
 

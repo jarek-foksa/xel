@@ -100,15 +100,9 @@
             <section>
               <h3>Primitives</h3>
 
-              <a href="/elements/x-hbox">
+              <a href="/elements/x-box">
                 <x-button skin="sidenav">
-                  <x-label>x-hbox</x-label>
-                </x-button>
-              </a>
-
-              <a href="/elements/x-vbox">
-                <x-button skin="sidenav">
-                  <x-label>x-vbox</x-label>
+                  <x-label>x-box</x-label>
                 </x-button>
               </a>
 

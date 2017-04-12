@@ -274,32 +274,30 @@ x-button[toggled] {
 }
 
 x-button > x-label,
-x-button > x-hbox > x-label,
-x-button > x-vbox > x-label {
+x-button > x-box > x-label {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-x-button > x-hbox {
   max-width: 100%;
 }
-x-button > x-hbox > * {
+
+x-button > x-box {
+  overflow: hidden;
+  align-items: center;
+}
+
+x-button > x-box > * {
   margin: 0 6px 0 0;
 }
-x-button > x-hbox > *:last-child {
+x-button > x-box > *:last-child {
   margin: 0;
 }
 
-x-button > x-vbox {
-  align-items: center;
-  overflow: hidden;
-}
-x-button > x-vbox > * {
+x-button > x-box[vertical] > * {
   margin: 0 0 4px 0;
 }
-x-button > x-vbox > *:last-child {
+x-button > x-box[vertical] > *:last-child {
   margin: 0;
 }
 
@@ -450,8 +448,7 @@ x-tab:focus {
 }
 
 x-tab > x-icon,
-x-tab > x-hbox > x-icon,
-x-tab > x-vbox > x-icon {
+x-tab > x-box > x-icon {
   color: inherit;
   width: 24px;
   min-width: 24px;
@@ -459,8 +456,7 @@ x-tab > x-vbox > x-icon {
 }
 
 x-tab > x-label,
-x-tab > x-hbox > x-label,
-x-tab > x-vbox > x-label {
+x-tab > x-box > x-label {
   color: inherit;
   box-sizing: border-box;
   overflow: hidden;
@@ -472,21 +468,22 @@ x-tab > x-vbox > x-label {
   line-height: 1;
 }
 
-x-tab > x-vbox {
+x-tab > x-box[vertical] {
   align-items: center;
 }
-x-tab > x-vbox > * {
-  margin: 0 0 6px 0;
-}
-x-tab > x-vbox > *:last-child {
-  margin: 0 0 3px 0;
-}
 
-x-tab > x-hbox > * {
+x-tab > x-box > * {
   margin: 0 8px 0 0;
 }
-x-tab > x-hbox > *:last-child {
-  margin: 0;
+x-tab > x-box > *:last-child {
+  margin: 0 0 0 0;
+}
+
+x-tab > x-box[vertical] > * {
+  margin: 0 0 6px 0;
+}
+x-tab > x-box[vertical] > *:last-child {
+  margin: 0 0 3px 0;
 }
 
 /* Bright skin */
@@ -1135,9 +1132,13 @@ x-slider:active {
   --thumb-transform: scale(1.4);
 }
 
-x-hbox x-icon + x-slider,
-x-hbox x-slider + x-icon {
+x-box x-icon + x-slider,
+x-box x-slider + x-icon {
   margin-left: 10px;
+}
+x-box[vertical] x-icon + x-slider,
+x-box[vertical] x-slider + x-icon {
+  margin-left: 0;
 }
 
 /*****************************************************************************************************************/

@@ -9,7 +9,7 @@
   height: 25px;
   width: 40px;
   box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  border: 1px solid rgb(150, 150, 150);
   position: relative;
 }
 :host([hidden]) {

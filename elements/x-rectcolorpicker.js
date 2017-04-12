@@ -12,7 +12,7 @@
   let shadowHTML = `
     <link rel="stylesheet" href="node_modules/xel/stylesheets/x-rectcolorpicker.css" data-vulcanize>
 
-    <x-vbox>
+    <x-box vertical>
       <div id="hue-slider">
         <div id="hue-slider-track">
           <div id="hue-slider-marker"></div>
@@ -28,7 +28,7 @@
           <div id="alpha-slider-marker"></div>
         </div>
       </div>
-    </x-vbox>
+    </x-box>
   `;
 
   // @events
