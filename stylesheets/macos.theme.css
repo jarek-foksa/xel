@@ -301,14 +301,14 @@ x-button > x-vbox > *:last-child {
   margin: 0;
 }
 
-x-buttongroup > x-button:focus {
+x-buttons > x-button:focus {
   z-index: 1;
 }
-x-buttongroup > x-button:not(:first-child) {
+x-buttons > x-button:not(:first-child) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-x-buttongroup > x-button:not(:last-child) {
+x-buttons > x-button:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: none;
@@ -404,7 +404,7 @@ x-button[skin="iconic"] x-vbox > x-icon + x-label {
   margin-top: 3px;
 }
 
-x-buttongroup > x-button[skin="iconic"] {
+x-buttons > x-button[skin="iconic"] {
   border-radius: 4px 4px 0 0;
 }
 
@@ -441,7 +441,7 @@ x-button[skin="iconic-condensed"] x-vbox > x-icon + x-label {
   margin-top: 2px;
 }
 
-x-buttongroup > x-button[skin="iconic-condensed"] {
+x-buttons > x-button[skin="iconic-condensed"] {
   border-radius: 4px 4px 0 0;
 }
 
@@ -472,10 +472,10 @@ x-button[skin="recessed"][pressed] {
   background: #787878;
 }
 
-x-buttongroup > x-button[skin="recessed"] {
+x-buttons > x-button[skin="recessed"] {
   border-radius: 4px;
 }
-x-buttongroup > x-button + x-button[skin="recessed"] {
+x-buttons > x-button + x-button[skin="recessed"] {
   margin-left: 2px;
 }
 

@@ -148,9 +148,9 @@
                 </x-button>
               </a>
 
-              <a href="/elements/x-buttongroup">
+              <a href="/elements/x-buttons">
                 <x-button skin="sidenav">
-                  <x-label>x-buttongroup</x-label>
+                  <x-label>x-buttons</x-label>
                 </x-button>
               </a>
             </section>

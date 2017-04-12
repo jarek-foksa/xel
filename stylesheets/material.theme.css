@@ -303,19 +303,19 @@ x-button > x-vbox > *:last-child {
   margin: 0;
 }
 
-x-buttongroup[hasboxshadow] {
+x-buttons[hasboxshadow] {
   box-shadow: var(--elevation-2);
 }
 
-x-buttongroup[hasboxshadow] > x-button,
-x-buttongroup[hasboxshadow] > x-button[toggled] {
+x-buttons[hasboxshadow] > x-button,
+x-buttons[hasboxshadow] > x-button[toggled] {
   box-shadow: none;
 }
-x-buttongroup > x-button:not(:first-child) {
+x-buttons > x-button:not(:first-child) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-x-buttongroup > x-button:not(:last-child) {
+x-buttons > x-button:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }

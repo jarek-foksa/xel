@@ -9,14 +9,14 @@
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="node_modules/xel/stylesheets/x-buttongroup.css" data-vulcanize>
+      <link rel="stylesheet" href="node_modules/xel/stylesheets/x-buttons.css" data-vulcanize>
       <slot></slot>
     </template>
   `;
 
   // @events
   //   toggle
-  class XButtonGroupElement extends HTMLElement {
+  class XButtonsElement extends HTMLElement {
     constructor() {
       super();
 
@@ -126,5 +126,5 @@
     }
   }
 
-  customElements.define("x-buttongroup", XButtonGroupElement);
+  customElements.define("x-buttons", XButtonsElement);
 }
