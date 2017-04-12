@@ -127,6 +127,20 @@
     }
 
     // @info
+    //   Whether the this button has "mixed" state.
+    // @type
+    //   boolean
+    // @default
+    //   false
+    // @attribute
+    get mixed() {
+      return this.hasAttribute("mixed");
+    }
+    set mixed(mixed) {
+      mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
+    }
+
+    // @info
     //   Whether this button is disabled.
     // @type
     //   boolean
