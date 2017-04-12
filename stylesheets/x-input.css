@@ -10,9 +10,11 @@
   max-width: 120px;
   height: 22px;
   box-sizing: border-box;
-  cursor: text;
   --inner-padding: 0;
   --selection-color: green;
+}
+:host(:hover) {
+  cursor: text;
 }
 :host([disabled]) {
   pointer-events: none;
@@ -43,6 +45,7 @@
   font-family: inherit;
   font-size: inherit;
   text-overflow: ellipsis;
+  cursor: inherit;
 }
 
 #editor {

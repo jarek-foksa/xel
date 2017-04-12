@@ -7,7 +7,9 @@
 :host {
   display: block;
   line-height: 1.2;
-  cursor: default;
   user-select: none;
   box-sizing: border-box;
+}
+:host(:hover) {
+  cursor: default;
 }

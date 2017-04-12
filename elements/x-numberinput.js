@@ -112,6 +112,7 @@
     }
     set value(value) {
       this["#editor"].textContent = value;
+      this._update();
     }
 
     // @type
@@ -280,6 +281,9 @@
       }
 
       this._updateState();
+
+
+      this._shadowRoot.getSelection().collapse(this["#main"]);
     }
 
     _onEditorInput() {
@@ -332,7 +336,7 @@
           let cachedClientX = null;
           let pointerMoveListener, lostPointerCaptureListener;
 
-          this["#editor"].style.cursor = "col-resize";
+          this.style.cursor = "col-resize";
           this["#editor"].setPointerCapture(pointerDownEvent.pointerId);
 
           this["#editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
@@ -361,7 +365,7 @@
             this["#editor"].removeEventListener("pointermove", pointerMoveListener);
             this["#editor"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
 
-            this["#editor"].style.cursor = null;
+            this.style.cursor = null;
 
             if (this._isDragging === true) {
               this._isDragging = false;

@@ -23,6 +23,9 @@
   --decrement-arrow-height: 11px;
   --decrement-arrow-path-d: path("M 24.381 32.156 L 49.998 58.134 L 76.104 32.264 L 68.759 24.918 L 49.995 43.684 L 31.242 24.932 L 24.381 32.156 Z" );
 }
+:host(:hover) {
+  cursor: default;
+}
 
 #increment-button,
 #decrement-button {

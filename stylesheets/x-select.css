@@ -12,7 +12,6 @@
   box-sizing: border-box;
   outline: none;
   font-size: 15px;
-  cursor: default;
   user-select: none;
   --arrow-width: 13px;
   --arrow-height: 13px;
@@ -27,6 +26,9 @@
 }
 :host([hidden]) {
   display: none;
+}
+:host(:hover) {
+  cursor: default;
 }
 
 #button {

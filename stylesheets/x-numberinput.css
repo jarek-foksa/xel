@@ -10,8 +10,10 @@
   width: 100px;
   height: 22px;
   box-sizing: border-box;
-  cursor: text;
   --inner-padding: 0;
+}
+:host(:hover) {
+  cursor: text;
 }
 :host([disabled]) {
   pointer-events: none;
