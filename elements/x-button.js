@@ -239,17 +239,17 @@
           let size = max(rect.width, rect.height) * 1.5;
           let top  = pointerDownEvent.clientY - rect.y - size/2;
           let left = pointerDownEvent.clientX - rect.x - size/2;
-          let group = this.closest("x-buttons");
+          let buttons = this.closest("x-buttons");
           let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
           let isExpandable = this.querySelector("x-menu, x-popover") !== null;
           let delay = true;
 
           if (isExpandable === false) {
-            if (group) {
-              if (group.tracking === 0 || group.tracking === 2) {
+            if (buttons) {
+              if (buttons.tracking === 0 || buttons.tracking === 2) {
                 delay = false;
               }
-              else if (group.tracking === 1 && this.toggled === false) {
+              else if (buttons.tracking === 1 && this.toggled === false) {
                 delay = false;
               }
             }
@@ -347,14 +347,14 @@
           let size = max(rect.width, rect.height) * 1.5;
           let top  = (rect.y + rect.height/2) - rect.y - size/2;
           let left = (rect.x + rect.width/2) - rect.x - size/2;
-          let group = this.closest("x-buttons");
+          let buttons = this.closest("x-buttons");
           let delay = true;
 
-          if (group) {
-            if (group.tracking === 0 || group.tracking === 2) {
+          if (buttons) {
+            if (buttons.tracking === 0 || buttons.tracking === 2) {
               delay = false;
             }
-            else if (group.tracking === 1 && this.toggled === true) {
+            else if (buttons.tracking === 1 && this.toggled === true) {
               delay = false;
             }
           }
