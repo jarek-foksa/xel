@@ -7,7 +7,7 @@
 "use strict";
 
 {
-  class XRadioGroupElement extends HTMLElement {
+  class XRadiosElement extends HTMLElement {
     constructor() {
       super();
 
@@ -21,7 +21,7 @@
     connectedCallback() {
       this.setAttribute("role", "radiogroup");
 
-      let radios = [...this.querySelectorAll("x-radio")].filter(radio => radio.closest("x-radiogroup") === this);
+      let radios = [...this.querySelectorAll("x-radio")].filter(radio => radio.closest("x-radios") === this);
       let defaultRadio = radios.find($0 => $0.toggled && !$0.disabled) || radios.find($0 => !$0.disabled);
 
       for (let radio of radios) {
@@ -37,7 +37,7 @@
 
       if (clickedRadio && !clickedRadio.toggled && !clickedRadio.disabled && event.button === 0) {
         let radios = [...this.querySelectorAll("x-radio")];
-        let otherRadios = radios.filter(radio => radio.closest("x-radiogroup") === this && radio !== clickedRadio);
+        let otherRadios = radios.filter(radio => radio.closest("x-radios") === this && radio !== clickedRadio);
 
         if (clickedRadio.toggled === false || clickedRadio.mixed === true) {
           clickedRadio.toggled = true;
@@ -59,7 +59,7 @@
 
       if (key === "ArrowDown" || key === "ArrowRight") {
         let radios = [...this.querySelectorAll("x-radio")];
-        let contextRadios = radios.filter($0 => $0.disabled === false && $0.closest("x-radiogroup") === this);
+        let contextRadios = radios.filter($0 => $0.disabled === false && $0.closest("x-radios") === this);
         let focusedRadio = radios.find(radio => radio.matches(":focus"));
 
         if (focusedRadio) {
@@ -78,7 +78,7 @@
 
       else if (key === "ArrowUp" || key === "ArrowLeft") {
         let radios = [...this.querySelectorAll("x-radio")];
-        let contextRadios = radios.filter($0 => $0.disabled === false && $0.closest("x-radiogroup") === this);
+        let contextRadios = radios.filter($0 => $0.disabled === false && $0.closest("x-radios") === this);
         let focusedRadio = radios.find(radio => radio.matches(":focus"));
 
         if (focusedRadio) {
@@ -98,5 +98,5 @@
     }
   }
 
-  customElements.define("x-radiogroup", XRadioGroupElement);
+  customElements.define("x-radios", XRadiosElement);
 }

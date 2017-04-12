@@ -40,7 +40,7 @@
     }
 
     connectedCallback() {
-      if (!this.closest("x-radiogroup")) {
+      if (!this.closest("x-radios")) {
         this.setAttribute("tabindex", this.disabled ? "-1" : "0");
       }
 
@@ -126,7 +126,7 @@
     }
 
     _onClick(event) {
-      if (!this.closest("x-radiogroup")) {
+      if (!this.closest("x-radios")) {
         if (this.toggled && this.mixed) {
           this.mixed = false;
         }
