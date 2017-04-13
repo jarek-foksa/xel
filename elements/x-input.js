@@ -24,6 +24,8 @@
   // @events
   //   input
   //   change
+  //   textinputmodestart
+  //   textinputmodeend
   class XInputElement extends HTMLElement {
     constructor() {
       super();
@@ -287,10 +289,12 @@
 
     _onFocusIn() {
       this.visited = true;
+      this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
     }
 
     _onFocusOut() {
       this._update();
+      this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

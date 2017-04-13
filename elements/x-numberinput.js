@@ -34,6 +34,8 @@
   //   change
   //   changestart
   //   changeend
+  //   textinputmodestart
+  //   textinputmodeend
   class XNumberInputElement extends HTMLElement {
     constructor() {
       super();
@@ -272,6 +274,7 @@
 
     _onFocusIn() {
       document.execCommand("selectAll");
+      this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
       this.visited = true;
     }
 
@@ -281,9 +284,8 @@
       }
 
       this._updateState();
-
-
       this._shadowRoot.getSelection().collapse(this["#main"]);
+      this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
     }
 
     _onEditorInput() {
