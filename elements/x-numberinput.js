@@ -41,7 +41,7 @@
       super();
 
       this._isDragging = false;
-      this._isChanging = false;
+      this._isChangeStart = false;
       this._isArrowKeyDown = false;
       this._isBackspaceKeyDown = false;
       this._isStepperButtonDown = false;
@@ -276,6 +276,7 @@
       document.execCommand("selectAll");
       this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
       this.visited = true;
+      this._lastValue = this.value;
     }
 
     _onFocusOut() {
@@ -284,14 +285,13 @@
       }
 
       this._updateState();
+      this._maybeDispatchChangeEvents();
+
       this._shadowRoot.getSelection().collapse(this["#main"]);
       this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
     }
 
     _onEditorInput() {
-      this._maybeDispatchChangeStartEvent();
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      this._maybeDispatchChangeEndEvent();
       this._update();
     }
 
@@ -448,6 +448,10 @@
       else if (event.code === "Backspace") {
         this._isBackspaceKeyDown = true;
       }
+
+      else if (event.code === "Enter") {
+        this._maybeDispatchChangeEvents();
+      }
     }
 
     _onKeyUp(event) {
@@ -554,17 +558,30 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    _maybeDispatchChangeEvents() {
+      if (this.value !== this._lastValue) {
+        this._lastValue = this.value;
+
+        this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+        document.execCommand("selectAll");
+      }
+    }
+
     _maybeDispatchChangeStartEvent() {
-      if (!this._isChanging) {
-        this._isChanging = true;
+      if (!this._isChangeStart) {
+        this._isChangeStart = true;
         this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
       }
     }
 
     _maybeDispatchChangeEndEvent() {
-      if (this._isChanging && !this._isArrowKeyDown && !this._isBackspaceKeyDown && !this._isStepperButtonDown) {
+      if (this._isChangeStart && !this._isArrowKeyDown && !this._isBackspaceKeyDown && !this._isStepperButtonDown) {
         this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-        this._isChanging = false;
+        this._isChangeStart = false;
+        this._lastValue = this.value;
       }
     }
 

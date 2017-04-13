@@ -1264,10 +1264,10 @@ x-numberinput[skin="condensed"] > x-stepper {
   border-radius: 0;
   margin: 0;
   height: 100%;
-  display: none;
-}
-x-numberinput[skin="condensed"]:hover:not(:active) > x-stepper {
   display: flex;
+}
+x-numberinput[skin="condensed"]:focus > x-stepper {
+  display: none;
 }
 
 /*****************************************************************************************************************/
