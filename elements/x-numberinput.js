@@ -22,7 +22,7 @@
 
       <main id="main">
         <div id="editor-container">
-          <div id="editor" contenteditable="true" ></div>
+          <div id="editor" contenteditable="plaintext-only" spellcheck="false"></div>
         </div>
 
         <slot></slot>
@@ -483,7 +483,7 @@
       let content = event.clipboardData.getData("text/plain").trim();
 
       if (isNumeric(content)) {
-        document.execCommand('insertText', false, content);
+        document.execCommand("insertText", false, content);
       }
     }
 

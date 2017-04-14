@@ -159,6 +159,9 @@ nav hr {
   background: var(--primary-color);
   color: white;
 }
+:host([invalid]) ::selection {
+  background: #d50000;
+}
 
 ::-webkit-scrollbar {
   max-width: 6px;
@@ -894,20 +897,13 @@ x-popover > main {
  */
 
 x-input {
-  background: white;
-  color: var(--text-color);
-  font-size: 13px;
-  border: 1px solid #c1c1c1;
   height: 34px;
   max-width: 160px;
+  color: var(--text-color);
+  border: 1px solid #c1c1c1;
   outline: none;
+  font-size: 13px;
   --inner-padding: 0px 7px;
-}
-x-input[type="multiline-text"] {
-  height: auto;
-  min-height: 120px;
-  max-width: none;
-  --inner-padding: 3px 6px;
 }
 
 /* Invalid value hint */
@@ -919,13 +915,13 @@ x-input[invalid]::before {
 x-input::after {
   content: "";
   display: block;
+  position: absolute;
   width: 0%;
   height: 3px;
   bottom: -1px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--primary-color);
-  position: absolute;
   transition: width 0.2s var(--transition-fn1);
 }
 x-input:focus::after {
@@ -936,33 +932,7 @@ x-input[invalid]::after {
   background: #d50000;
 }
 
-/* Placeholder */
-x-input > x-label {
-  display: none;
-  position: absolute;
-  width: 100%;
-  height: 22px;
-  bottom: 6px;
-  top: 50%;
-  left: 0;
-  padding: 0 7px;
-  transform: translateY(-50%);
-  line-height: 1.8;
-  color: rgba(0, 0, 0, 0.4);
-  font-family: inherit;
-  pointer-events: none;
-}
-x-input[empty] > x-label {
-  display: block;
-  cursor: text;
-}
-x-input[required] > x-label::after {
-  content: "*";
-}
-x-input > x-icon + x-label {
-  left: 32px;
-}
-
+/* Icon */
 x-input > x-icon {
   width: 32px;
   height: 32px;
@@ -972,12 +942,42 @@ x-input > x-icon {
   color: #565656;
   background: rgba(0, 0, 0, 0.08);
   border-right: 1px solid #c1c1c1;
+}
+x-input > x-icon:hover {
   cursor: default;
+}
+
+/* Placeholder */
+x-input > x-label {
+  display: none;
+  position: absolute;
+  top: 50%;
+  max-width: 100%;
+  padding: 0 7px 0 7px;
+  transform: translateY(-50%);
+  color: rgba(0, 0, 0, 0.4);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+x-input[empty] > x-label {
+  display: block;
+}
+x-input > x-icon + x-label {
+  padding: 0 7px 0 39px;
+}
+x-input[required] > x-label::after {
+  content: "*";
 }
 
 /* @skin "flat" */
 
 x-input[skin="flat"] {
+  height: 28px;
   background: none;
   border-left: none;
   border-right: none;
@@ -985,14 +985,10 @@ x-input[skin="flat"] {
   --inner-padding: 0;
 }
 x-input[skin="flat"] + x-input[skin="flat"] {
-  margin-top: 26px;
-}
-x-input[skin="flat"][type="multiline-text"] {
-  min-height: 0;
-  padding: 0;
-  --inner-padding: 9px 0px 5px;
+  margin-top: 28px;
 }
 
+/* Icon */
 x-input[skin="flat"] > x-icon {
   width: 34px;
   height: 34px;
@@ -1009,24 +1005,20 @@ x-input[skin="flat"]:focus > x-icon {
 x-input[skin="flat"][invalid] > x-icon {
   color: #d50000;
 }
-x-input[skin="flat"][type="multiline-text"] > x-icon {
-  align-self: flex-start;
-}
 
+/* Placehodler */
 x-input[skin="flat"] > x-label {
   display: block;
-  top: 6px;
   padding: 0;
-  transform: none;
   transition-property: top, color, font-size;
   transition-duration: 0.2s;
   transition-timing-function: var(--transition-fn1);
 }
 x-input[skin="flat"]:not([empty]) > x-label,
 x-input[skin="flat"]:focus > x-label {
-  top: -12px;
-  font-size: 12px;
+  top: calc(50% - 18px);
   color: var(--primary-color);
+  font-size: 12px;
   pointer-events: all;
 }
 x-input[skin="flat"][invalid]:not([empty]) > x-label,
@@ -1038,6 +1030,99 @@ x-input[skin="flat"]:focus > x-label::after {
 }
 x-input[skin="flat"] > x-icon + x-label {
   left: 0px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Textarea
+ */
+
+x-textarea {
+  min-height: 120px;
+  color: var(--text-color);
+  font-size: 13px;
+  border: 1px solid #c1c1c1;
+  outline: none;
+  --inner-padding: 3px 6px;
+}
+
+/* Focus indicator line */
+x-textarea::after {
+  content: "";
+  display: block;
+  width: 0%;
+  height: 3px;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color);
+  position: absolute;
+  transition: width 0.2s var(--transition-fn1);
+}
+x-textarea:focus::after {
+  width: 100%;
+}
+x-textarea[invalid]::after {
+  width: 100%;
+  background: #d50000;
+}
+
+/* Placeholder */
+x-textarea > x-label {
+  display: none;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: var(--inner-padding);
+  color: rgba(0, 0, 0, 0.4);
+  font-family: inherit;
+  line-height: inherit;
+  pointer-events: none;
+}
+x-textarea[empty] > x-label {
+  display: block;
+  cursor: text;
+}
+x-textarea[required] > x-label::after {
+  content: "*";
+}
+
+/* @skin "flat" */
+
+x-textarea[skin="flat"] {
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  min-height: 0;
+  padding: 0;
+  --inner-padding: 9px 0px 5px;
+}
+
+x-textarea[skin="flat"] > x-label {
+  display: block;
+  top: 6px;
+  padding: 0;
+  transform: none;
+  transition-property: top, color, font-size;
+  transition-duration: 0.2s;
+  transition-timing-function: var(--transition-fn1);
+}
+x-textarea[skin="flat"]:not([empty]) > x-label,
+x-textarea[skin="flat"]:focus > x-label {
+  top: -12px;
+  font-size: 12px;
+  color: var(--primary-color);
+  pointer-events: all;
+}
+x-textarea[skin="flat"][invalid]:not([empty]) > x-label,
+x-textarea[skin="flat"][invalid] > x-label {
+  color: #d50000;
+}
+x-textarea[skin="flat"]:focus > x-label::after {
+  color: #d50000;
 }
 
 /*****************************************************************************************************************/

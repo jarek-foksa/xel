@@ -17,7 +17,6 @@
 }
 :host([disabled]) {
   pointer-events: none;
-  user-select: none;
   opacity: 0.5;
 }
 :host([hidden]) {
@@ -42,21 +41,17 @@
 
 #editor {
   width: 100%;
-  line-height: 10;
+  overflow: auto;
   color: inherit;
   background: none;
   border: none;
   outline: none;
   font-family: inherit;
   font-size: inherit;
+  line-height: 10;
   white-space: nowrap;
-  overflow: auto;
 }
 #editor::-webkit-scrollbar {
-  display: none;
-}
-#editor::-webkit-outer-spin-button,
-#editor::-webkit-inner-spin-button {
   display: none;
 }
 #editor::before {

@@ -268,6 +268,12 @@
                 </x-button>
               </a>
 
+              <a href="/elements/x-textarea">
+                <x-button skin="sidenav">
+                  <x-label>x-textarea</x-label>
+                </x-button>
+              </a>
+
               <a href="/elements/x-slider">
                 <x-button skin="sidenav">
                   <x-label>x-slider</x-label>

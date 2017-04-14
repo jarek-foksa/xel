@@ -7,15 +7,12 @@
 :host {
   display: block;
   position: relative;
-  max-width: 140px;
-  height: 22px;
+  width: 100%;
+  min-height: 100px;
   box-sizing: border-box;
-  color: #000000;
   background: white;
+  color: #000000;
   --inner-padding: 0;
-}
-:host(:focus) {
-  z-index: 10;
 }
 :host(:hover) {
   cursor: text;
@@ -30,14 +27,13 @@
 
 #main {
   display: flex;
-  align-items: center;
-  width: 100%;
+  flex-flow: column;
   height: 100%;
+  min-height: inherit;
 }
 
-#input {
-  width: 100%;
-  height: 100%;
+#editor {
+  flex: 1;
   padding: var(--inner-padding);
   box-sizing: border-box;
   color: inherit;
@@ -46,25 +42,19 @@
   outline: none;
   font-family: inherit;
   font-size: inherit;
-  cursor: inherit;
-}
-
-/* Selection rect */
-:host(:not(:focus)) ::selection {
-  color: inherit;
-  background: transparent;
+  overflow: auto;
 }
 
 /* Invalid value hint */
 :host([invalid])::before {
   position: absolute;
   left: 0;
-  top: 26px;
+  bottom: -20px;
   box-sizing: border-box;
   color: #d50000;
   font-family: inherit;
   font-size: 11px;
   line-height: 1.2;
   white-space: pre;
-  content: attr(invalid-hint);
+  content: attr(invalid-hint) " ";
 }

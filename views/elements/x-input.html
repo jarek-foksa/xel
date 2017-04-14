@@ -84,11 +84,13 @@
     <hr/>
 
     <section>
-      <h4>Type "text" (default)</h4>
+      <h4>Min and max length</h4>
 
       <xel-demo>
         <template>
-          <x-input type="text" value="Sample text"></x-input>
+          <x-input value="user" minlength="3" maxlength="10">
+            <x-label>Login</x-label>
+          </x-input>
         </template>
       </xel-demo>
     </section>
@@ -96,11 +98,11 @@
     <hr/>
 
     <section>
-      <h4>Type "multiline-text"</h4>
+      <h4>Type "text" (default)</h4>
 
       <xel-demo>
         <template>
-          <x-input type="multiline-text" value="Sample text"></x-input>
+          <x-input type="text" value="Sample text"></x-input>
         </template>
       </xel-demo>
     </section>
@@ -150,6 +152,20 @@
     <hr/>
 
     <section>
+      <h4>Type "color"</h4>
+
+      <xel-demo>
+        <template>
+          <x-input type="color" value="#bada55">
+            <x-icon name="invert-colors"></x-icon>
+          </x-input>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
       <h4>Search</h4>
 
       <xel-demo>
@@ -169,6 +185,11 @@
 
       <xel-demo>
         <template>
+          <x-input skin="flat">
+            <x-icon name="search"></x-icon>
+            <x-label>Search</x-label>
+          </x-input>
+
           <x-input skin="flat" value="John Doe">
             <x-icon name="person"></x-icon>
             <x-label>Name</x-label>
@@ -179,9 +200,8 @@
             <x-label>E-mail</x-label>
           </x-input>
 
-          <x-input type="multiline-text" value="Hello" skin="flat">
-            <x-icon name="receipt"></x-icon>
-            <x-label>Message</x-label>
+          <x-input skin="flat" type="password" minlength="4" maxlength="12" value="abc123">
+            <x-icon name="lock"></x-icon>
           </x-input>
         </template>
       </xel-demo>
@@ -209,8 +229,8 @@
             <x-label>E-mail</x-label>
           </x-input>
 
-          <x-input type="multiline-text" value="Hello" skin="textured">
-            <x-label>Message</x-label>
+          <x-input skin="textured" type="password" minlength="4" maxlength="12" value="abc123">
+            <x-icon name="lock"></x-icon>
           </x-input>
         </template>
       </xel-demo>

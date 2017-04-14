@@ -6,17 +6,16 @@
 
 {
   let {html} = Xel.utils.element;
-  let {isValidColorString} = Xel.utils.color;
   let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
   let shadowTemplate = html`
     <template>
       <link rel="stylesheet" href="${theme}">
-      <link rel="stylesheet" href="node_modules/xel/stylesheets/x-input.css" data-vulcanize>
+      <link rel="stylesheet" href="node_modules/xel/stylesheets/x-textarea.css" data-vulcanize>
 
       <main id="main">
         <slot></slot>
-        <input id="input" spellcheck="false"></input>
+        <div id="editor" contenteditable="plaintext-only" spellcheck="false"></div>
       </main>
     </template>
   `;
@@ -26,7 +25,7 @@
   //   change
   //   textinputmodestart
   //   textinputmodeend
-  class XInputElement extends HTMLElement {
+  class XTextareaElement extends HTMLElement {
     constructor() {
       super();
 
@@ -39,10 +38,9 @@
 
       this.addEventListener("focusin", () => this._onFocusIn());
       this.addEventListener("focusout", () => this._onFocusOut());
-      this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
-      this["#input"].addEventListener("change", () => this._onInputChange());
-      this["#input"].addEventListener("input", () => this._onInputInput());
+      this["#editor"].addEventListener("click", (event) => this._onEditorClick(event));
+      this["#editor"].addEventListener("input", () => this._onEditorInput());
     }
 
     connectedCallback() {
@@ -50,14 +48,11 @@
       this.setAttribute("role", "input");
       this.setAttribute("aria-disabled", this.disabled);
 
-      this._update();
+      this._updateEmptyState();
     }
 
     attributeChangedCallback(name) {
-      if (name === "type") {
-        this._onTypeAttributeChange();
-      }
-      else if (name === "value") {
+      if (name === "value") {
         this._onValueAttributeChange();
       }
       else if (name === "spellcheck") {
@@ -68,50 +63,22 @@
       }
     }
 
-    selectAll() {
-      this["#input"].select();
-    }
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     static get observedAttributes() {
-      return ["type", "value", "spellcheck", "disabled"];
-    }
-
-    // @type
-    //   "text" || "email" || "password" || "url" || "color"
-    // @default
-    //   "text"
-    // @attribute
-    get type() {
-      return this.hasAttribute("type") ? this.getAttribute("type") : "text";
-    }
-    set type(type) {
-      this.setAttribute("type", type);
+      return ["value", "spellcheck", "disabled"];
     }
 
     // @type
     //   string
     // @default
     //   ""
-    // @inertAttribute
+    // @attribute
     get value() {
-      return this["#input"].value;
+      return this["#editor"].textContent;
     }
     set value(value) {
-      if (this["#input"].value !== value) {
-        if (this.matches(":focus")) {
-          // https://goo.gl/s1UnHh
-          this["#input"].selectionStart = 0;
-          this["#input"].selectionEnd = this["#input"].value.length;
-          document.execCommand("insertText", false, value);
-        }
-        else {
-          this["#input"].value = value;
-        }
-
-        this._update();
-      }
+      this["#editor"].textContent = value;
     }
 
     // @type
@@ -177,6 +144,15 @@
       visited ? this.setAttribute("visited", "") : this.removeAttribute("visited");
     }
 
+    // @info
+    //   Whether the current value is valid.
+    // @type
+    //   boolean
+    // @readOnly
+    get invalid() {
+      return this.hasAttribute("invalid");
+    }
+
     // @type
     //   boolean
     // @default
@@ -187,15 +163,6 @@
     }
     set disabled(disabled) {
       disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
-    }
-
-    // @info
-    //   Whether the input is in invalid state.
-    // @type
-    //   boolean
-    // @readOnly
-    get invalid() {
-      return this.hasAttribute("invalid");
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -220,32 +187,11 @@
         valid = false;
         hint = "This field is required";
       }
-      else if (this.type === "email" && this["#input"].validity.valid === false) {
-        valid = false;
-        hint = "Invalid e-mail address";
-      }
-      else if (this.type === "url" && this["#input"].validity.valid === false) {
-        valid = false;
-        hint = "Invalid URL";
-      }
-      else if (this.type === "color" && isValidColorString(this["#input"].value) === false) {
-        valid = false;
-        hint = "Invalid color";
-      }
 
       return {valid, hint};
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    _onTypeAttributeChange() {
-      if (this.type === "color") {
-        this["#input"].type = "text";
-      }
-      else {
-        this["#input"].type = this.type;
-      }
-    }
 
     _onValueAttributeChange() {
       this.value = this.hasAttribute("value") ? this.getAttribute("value") : "";
@@ -253,70 +199,62 @@
       if (this.matches(":focus")) {
         document.execCommand("selectAll");
       }
-
-      this._update();
     }
 
     _onSpellcheckAttributeChange() {
-      this["#input"].spellcheck = this.spellcheck;
+      this["#editor"].spellcheck = this.spellcheck;
     }
 
     _onDisabledAttributeChange() {
       this.setAttribute("tabindex", this.disabled ? "-1" : "0");
       this.setAttribute("aria-disabled", this.disabled);
-      this["#input"].disabled = this.disabled;
+      this["#editor"].disabled = this.disabled;
+    }
+
+    _onEditorClick(event) {
+      if (event.detail >= 4) {
+        document.execCommand("selectAll");
+      }
+    }
+
+    _onEditorInput(event) {
+      this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
+      this._updateEmptyState();
+
+      if (this.invalid) {
+        this._updateValidityState();
+      }
     }
 
     _onFocusIn() {
       this.visited = true;
+      this._focusInValue = this.value;
       this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
     }
 
     _onFocusOut() {
       this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-      this._updateInvalidState();
-    }
+      this._shadowRoot.getSelection().collapse(this["#main"]);
 
-    _onKeyDown(event) {
-      if (event.key === "Enter") {
-        document.execCommand("selectAll");
-        this._updateInvalidState();
+      this._updateValidityState();
+
+      if (this.invalid === false && this.value !== this._focusInValue) {
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
-    }
-
-    _onInputInput() {
-      if (this.invalid) {
-        this._updateInvalidState();
-      }
-
-      this._updateEmptyState();
-      this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
-    }
-
-    _onInputChange() {
-      this._updateInvalidState();
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    _update() {
-      this._updateInvalidState();
-      this._updateEmptyState();
-    }
+    _updateValidityState() {
+      let {valid, hint} = this.validate();
 
-    _updateInvalidState() {
-      if (this.visited) {
-        let {valid, hint} = this.validate();
-
-        if (valid) {
-          this.removeAttribute("invalid");
-          this.removeAttribute("invalid-hint");
-        }
-        else {
-          this.setAttribute("invalid", "");
-          this.setAttribute("invalid-hint", hint);
-        }
+      if (valid) {
+        this.removeAttribute("invalid");
+        this.removeAttribute("invalid-hint");
+      }
+      else {
+        this.setAttribute("invalid", "");
+        this.setAttribute("invalid-hint", hint);
       }
     }
 
@@ -330,5 +268,5 @@
     }
   }
 
-  customElements.define("x-input", XInputElement);
+  customElements.define("x-textarea", XTextareaElement);
 }

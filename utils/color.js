@@ -954,6 +954,21 @@
     return true;
   };
 
+  // @info
+  //   Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
+  // @type
+  //   (string) => boolean
+  let isValidColorString = (string) => {
+    try {
+      parseColor(string);
+    }
+    catch (error) {
+      return false;
+    }
+
+    return true;
+  };
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @info
@@ -996,7 +1011,7 @@
 
   Xel.utils.color = {
     rgbToHsl, hslToRgb, rgbToHsv, hsvToRgb, hslToHsv, hsvToHsl,
-    parseColor, serializeColor, formatColorString, isHexColorString,
+    parseColor, serializeColor, formatColorString, isHexColorString, isValidColorString,
     generateWheelSpectrumImage
   };
 }
