@@ -62,6 +62,18 @@
       this.setAttribute("for", value);
     }
 
+    // @type
+    //   boolean
+    // @default
+    //   false
+    // @attribute
+    get disabled() {
+      return this.hasAttribute("disabled");
+    }
+    set disabled(disabled) {
+      disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     _onClick(event) {
