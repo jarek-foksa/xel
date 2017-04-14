@@ -77,7 +77,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     _onClick(event) {
-      if (this.for) {
+      if (this.for && this.disabled === false) {
         let target = this.getRootNode().querySelector("#" + this.for);
 
         if (target) {

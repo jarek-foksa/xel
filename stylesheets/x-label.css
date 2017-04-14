@@ -13,3 +13,6 @@
 :host(:hover) {
   cursor: default;
 }
+:host([disabled]) {
+  opacity: 0.5;
+}
