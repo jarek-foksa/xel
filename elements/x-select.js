@@ -316,7 +316,7 @@
           buttonChild.removeAttribute("style");
           buttonChild.style.marginLeft = getComputedStyle(itemChild).marginLeft;
 
-          if (["x-icon", "x-swatch", "img"].includes(itemChild.localName)) {
+          if (["x-icon", "x-swatch", "img", "svg"].includes(itemChild.localName)) {
             let {width, height} = getComputedStyle(itemChild);
 
             buttonChild.style.width = width;
