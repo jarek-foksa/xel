@@ -6,6 +6,7 @@
 
 {
   let {html} = Xel.utils.element;
+  let {isArray} = Array;
 
   let shadowTemplate = html`
     <template>
@@ -46,11 +47,64 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // @info
+    //  Specifies what should happen when user clicks a button:
+    //  -1 - Do not toggle any buttons
+    //   0 - Toggle the clicked button on/off and other buttons off
+    //   1 - Toggle the clicked button on and other buttons off
+    //   2 - Toggle the clicked button on/off
+    // @type
+    //   number
+    // @default
+    //   -1
+    // @attribute
     get tracking() {
       return this.hasAttribute("tracking") ? parseInt(this.getAttribute("tracking")) : -1;
     }
     set tracking(tracking) {
       this.setAttribute("tracking", tracking);
+    }
+
+    // @info
+    //   Get/set the buttons that should have toggled state.
+    // @type
+    //   string || Array || null
+    get value() {
+      if (this.tracking === 2) {
+        let buttons = this.querySelectorAll(":scope > x-button[toggled]");
+        return buttons.map(button => button.value).filter(value => value != undefined);
+      }
+      else if (this.tracking === 1 || this.tracking === 0) {
+        let button = this.querySelector(":scope > x-button[toggled]");
+        return button && button.value !== undefined ? button.value : null;
+      }
+      else if (this.tracking === -1) {
+        return null;
+      }
+    }
+    set value(value) {
+      if (this.tracking === 2) {
+        let buttons = [...this.querySelectorAll(":scope > x-button")];
+
+        if (isArray(value)) {
+          for (let button of buttons) {
+            button.toggled = (value.includes(button.value));
+          }
+        }
+        else {
+          for (let button of buttons) {
+            button.toggled = button.value === value;
+          }
+        }
+      }
+      else if (this.tracking === 1 || this.tracking === 0) {
+        let buttons = [...this.querySelectorAll(":scope > x-button")];
+        let matchedButton = buttons.find(button => button.value === value);
+
+        for (let button of buttons) {
+          button.toggled = (button === matchedButton);
+        }
+      }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
