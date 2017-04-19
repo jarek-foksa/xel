@@ -6,6 +6,7 @@
 
 {
   let {html} = Xel.utils.element;
+  let {sleep} = Xel.utils.time;
 
   let shadowTemplate = html`
     <template>
@@ -58,301 +59,350 @@
     open(button) {
       return new Promise( async (resolve) => {
         let align = getComputedStyle(this).getPropertyValue("--align").trim();
-        let whitespace = 5;
-        let offset = 2;
+
+        let extraLeft = 0;        // Extra offset needed when popover has fixed-positioned ancestor(s)
+        let extraTop = 0;         // Extra offset needed when popover has fixed-positioned ancestor(s)
+        let windowWhitespace = 5; // Minimal whitespace between popover and window bounds
+        let arrowWhitespace = 2;  // Minimal whitespace between popover and arrow
+
+        this.style.left = "0px";
+        this.style.top = "0px";
+        this.style.width = null;
+        this.style.height = null;
 
         this.setAttribute("opened", "");
-        this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
 
+        // Determine extraLeft and extraTop which represent the extra offset when the popover is inside another
+        // fixed-positioned element.
         {
-          this.style.width = null;
-          this.style.height = null;
-
           let popoverBounds = this.getBoundingClientRect();
+
+          if (popoverBounds.top !== 0 || popoverBounds.left !== 0) {
+            extraLeft = -popoverBounds.left;
+            extraTop = -popoverBounds.top;
+          }
+        }
+
+        // Make the arrow look consistentaly with the popover
+        {
           let {backgroundColor, borderColor, borderWidth} = getComputedStyle(this);
 
           this["#arrow"].setAttribute("data-align", align);
           this["#arrow-path"].style.fill = backgroundColor;
           this["#arrow-path"].style.stroke = borderColor;
           this["#arrow-path"].style.strokeWidth = borderWidth + "px";
-
-          this.style.width = popoverBounds.width + "px";
-          this.style.height = popoverBounds.height + "px";
         }
 
         if (align === "bottom") {
-          // Align the popover along the Y-axis
+          let buttonBounds = button.getBoundingClientRect();
+          let popoverBounds = this.getBoundingClientRect();
+          let arrowBounds = this["#arrow"].getBoundingClientRect();
+          let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
+
+          // Place the popover below the button
           {
-            let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
-            let buttonBounds = button.getBoundingClientRect();
-            let popoverBounds = this.getBoundingClientRect();
-            let arrowBounds = this["#arrow"].getBoundingClientRect();
+            this.style.top = (buttonBounds.bottom + arrowBounds.height + arrowWhitespace + extraTop) + "px";
+            this["#arrow"].style.top = (buttonBounds.bottom + arrowWhitespace + borderWidth + extraTop) + "px";
+            this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            // Place the popover below the button
+          // If popover overflows bottom client bound, reduce its height (respecting min-height)
+          if (popoverBounds.bottom + windowWhitespace > window.innerHeight) {
+            let reducedHeight = window.innerHeight - popoverBounds.top - windowWhitespace;
+            let minHeight = parseFloat(getComputedStyle(this).minHeight);
 
-            {
-              this.style.top = `${buttonBounds.top + buttonBounds.height + arrowBounds.height + offset}px`;
-              this["#arrow"].style.top = `${buttonBounds.bottom + offset + borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
-
+            if (reducedHeight >= minHeight) {
+              this.style.height = reducedHeight + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popover overflows bottom client bound, Place it above the button
+          // If popover still overflows bottom client bound, place it above the button
+          if (popoverBounds.bottom + windowWhitespace > window.innerHeight) {
+            this.style.top = (
+              buttonBounds.top - arrowWhitespace - arrowBounds.height - popoverBounds.height + extraTop
+            ) + "px";
 
-            if (popoverBounds.top + popoverBounds.height + whitespace > window.innerHeight) {
-              this.style.top = `${buttonBounds.top - arrowBounds.height - popoverBounds.height - offset}px`;
-              this["#arrow"].style.top = `${buttonBounds.top - arrowBounds.height - offset - borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
+            this["#arrow"].style.top = (
+              buttonBounds.top - arrowWhitespace - arrowBounds.height - borderWidth + extraTop
+            ) + "px";
 
+            this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
+
+          // If popover overflows top client bound, reduce its height (respecting min-height)
+          if (popoverBounds.top - windowWhitespace < 0) {
+            let reducedHeight = buttonBounds.top - arrowWhitespace - arrowBounds.height - windowWhitespace;
+            let minHeight = parseFloat(getComputedStyle(this).minHeight);
+
+            if (reducedHeight >= minHeight) {
+              this.style.top = (windowWhitespace + extraTop) + "px";
+              this.style.height = reducedHeight + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popoever overflows top client bound, place it back below the button
-
-            if (popoverBounds.top - whitespace < 0) {
-              this.style.top = `${buttonBounds.top + buttonBounds.height + arrowBounds.height + offset}px`;
-              this["#arrow"].style.top = `${buttonBounds.bottom + offset + borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
-
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover overflows bottom client bound, reduce its size
-
-            if (popoverBounds.top + popoverBounds.height + whitespace > window.innerHeight) {
-              this.style.height = (window.innerHeight - popoverBounds.top - whitespace) + "px";
-            }
+          // If popoever still overflows top client bound, place it back below the button
+          if (popoverBounds.top - windowWhitespace < 0) {
+            this.style.top = (buttonBounds.bottom + arrowBounds.height + arrowWhitespace + extraTop) + "px";
+            this["#arrow"].style.top = (buttonBounds.bottom + arrowWhitespace + borderWidth + extraTop) + "px";
+            this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
           }
         }
 
         else if (align === "top") {
-          // Align the popover along the Y-axis
+          let buttonBounds = button.getBoundingClientRect();
+          let popoverBounds = this.getBoundingClientRect();
+          let arrowBounds = this["#arrow"].getBoundingClientRect();
+          let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
+
+          // Place the popover above the button
           {
-            let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
-            let buttonBounds = button.getBoundingClientRect();
-            let popoverBounds = this.getBoundingClientRect();
-            let arrowBounds = this["#arrow"].getBoundingClientRect();
+            this.style.top = (
+              buttonBounds.top - arrowWhitespace - arrowBounds.height - popoverBounds.height + extraTop
+            ) + "px";
 
-            // Place the popover above the button
+            this["#arrow"].style.top = (
+              buttonBounds.top - arrowWhitespace - arrowBounds.height - borderWidth + extraTop
+            ) + "px";
 
-            {
-              this.style.top = `${buttonBounds.top - arrowBounds.height - popoverBounds.height - offset}px`;
-              this["#arrow"].style.top = `${buttonBounds.top - arrowBounds.height - offset - borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
+            this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
 
+          // If popover overflows top client bound, reduce its height (respecting min-height)
+          if (popoverBounds.top - windowWhitespace < 0) {
+            let reducedHeight = buttonBounds.top - arrowWhitespace - arrowBounds.height - windowWhitespace;
+            let minHeight = parseFloat(getComputedStyle(this).minHeight);
+
+            if (reducedHeight >= minHeight) {
+              this.style.top = (windowWhitespace + extraTop) + "px";
+              this.style.height = reducedHeight + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popoever overflows top client bound, place it below the button
+          // If popoever still overflows top client bound, place it below the button
+          if (popoverBounds.top - windowWhitespace < 0) {
+            this.style.top = (buttonBounds.bottom + arrowBounds.height + arrowWhitespace + extraTop) + "px";
+            this["#arrow"].style.top = (buttonBounds.bottom + arrowWhitespace + borderWidth + extraTop) + "px";
+            this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            if (popoverBounds.top - whitespace < 0) {
-              this.style.top = `${buttonBounds.top + buttonBounds.height + arrowBounds.height + offset}px`;
-              this["#arrow"].style.top = `${buttonBounds.bottom + offset + borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
+          // If popover overflows bottom client bound, reduce its height (respecting min-height)
+          if (popoverBounds.bottom + windowWhitespace > window.innerHeight) {
+            let reducedHeight = window.innerHeight - popoverBounds.top - windowWhitespace;
+            let minHeight = parseFloat(getComputedStyle(this).minHeight);
 
+            if (reducedHeight >= minHeight) {
+              this.style.height = reducedHeight + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popover overflows bottom client bound, place it back above the button
+          // If popover still overflows bottom client bound, move it back above the button
+          if (popoverBounds.bottom + windowWhitespace > window.innerHeight) {
+            this.style.top = (
+              buttonBounds.top - arrowWhitespace - arrowBounds.height - popoverBounds.height + extraTop
+            ) + "px";
 
-            if (popoverBounds.top + popoverBounds.height + whitespace > window.innerHeight) {
-              this.style.top = `${buttonBounds.top - arrowBounds.height - popoverBounds.height - offset}px`;
-              this["#arrow"].style.top = `${buttonBounds.top - arrowBounds.height - offset - borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
+            this["#arrow"].style.top = (
+              buttonBounds.top - arrowWhitespace - arrowBounds.height - borderWidth + extraTop
+            ) + "px";
 
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover still overflows top client bound, reduce its size
-
-            if (popoverBounds.top < whitespace) {
-              this.style.top = whitespace + "px";
-              this.style.height = (buttonBounds.top - arrowBounds.height - whitespace - borderWidth - borderWidth) + "px";
-            }
+            this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
+            popoverBounds = this.getBoundingClientRect();
           }
         }
 
         else if (align === "left") {
-          // Align the popover along the X-axis
+          let buttonBounds = button.getBoundingClientRect();
+          let popoverBounds = this.getBoundingClientRect();
+          let arrowBounds = this["#arrow"].getBoundingClientRect();
+          let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
+
+          // Place the popover on the left side of the button
           {
-            let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
-            let buttonBounds = button.getBoundingClientRect();
-            let popoverBounds = this.getBoundingClientRect();
-            let arrowBounds = this["#arrow"].getBoundingClientRect();
+            this.style.left = (
+              buttonBounds.left - arrowWhitespace - arrowBounds.width - popoverBounds.width + extraLeft
+            ) + "px";
 
-            // Place the popover on the left side of the button
+            this["#arrow"].style.left = (
+              buttonBounds.left - arrowBounds.width - arrowWhitespace - borderWidth + extraLeft
+            ) + "px";
 
-            {
-              this.style.left = "0px";
-              popoverBounds = this.getBoundingClientRect();
+            this["#arrow-path"].style.d = `path("M 0 0, L 100 50, L 00 100")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-              this.style.left = `${buttonBounds.left - popoverBounds.width - arrowBounds.width - offset}px`;
-              this["#arrow"].style.left = `${buttonBounds.left - arrowBounds.width - offset - borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 0, L 100 50, L 00 100")`;
+          // If popover overflows left client bound, reduce its width (respecting min-width)
+          if (popoverBounds.left - windowWhitespace < 0) {
+            let reducedWidth = buttonBounds.left - arrowWhitespace - arrowBounds.height - windowWhitespace;
+            let minWidth = parseFloat(getComputedStyle(this).minWidth);
 
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover overflows left client bound, place it on the right side of the button
-
-            if (popoverBounds.left < whitespace) {
-              this.style.left = `${buttonBounds.left + buttonBounds.width + arrowBounds.width + offset}px`;
-              this["#arrow"].style.left = `${buttonBounds.left + buttonBounds.width + offset + borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 100 0, L 0 50, L 100 100")`;
-
+            if (reducedWidth >= minWidth) {
+              this.style.left = (windowWhitespace + extraLeft) + "px";
+              this.style.width = reducedWidth + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popover overflows right client bound, place it on the left side of the button
+          // If popoever still overflows left client bound, place it on the right side of the button
+          if (popoverBounds.left - windowWhitespace < 0) {
+            this.style.left = (buttonBounds.right + arrowBounds.height + arrowWhitespace + extraLeft) + "px";
+            this["#arrow"].style.top = (buttonBounds.right + arrowWhitespace + borderWidth + extraLeft) + "px";
+            this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            if (popoverBounds.right + whitespace > window.innerWidth) {
-              this.style.left = "0px";
-              popoverBounds = this.getBoundingClientRect();
+          // If popover overflows right client bound, reduce its width (respecting min-width)
+          if (popoverBounds.right + windowWhitespace > window.innerWidth) {
+            let reducedWidth = window.innerWidth - popoverBounds.left - windowWhitespace;
+            let minWidth = parseFloat(getComputedStyle(this).minWidth);
 
-              this.style.left = `${buttonBounds.left - popoverBounds.width - arrowBounds.width - offset}px`;
-              this["#arrow"].style.left = `${buttonBounds.left - arrowBounds.width - offset - borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 0, L 100 50, L 00 100")`;
-
+            if (reducedWidth >= minWidth) {
+              this.style.width = reducedWidth + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popover still overflows left client bound, reduce its size
+          // If popover still overflows right client bound, move it back to the left side of the button
+          if (popoverBounds.right + windowWhitespace > window.innerWidth) {
+            this.style.left = (
+              buttonBounds.left - arrowWhitespace - arrowBounds.width - popoverBounds.width + extraLeft
+            ) + "px";
 
-            if (popoverBounds.left < whitespace) {
-              this.style.left = whitespace + "px";
-              this.style.width = `${window.innerWidth - buttonBounds.left - arrowBounds.width - offset - whitespace}px`;
-            }
+            this["#arrow"].style.elft = (
+              buttonBounds.left - arrowWhitespace - arrowBounds.width - borderWidth + extraLeft
+            ) + "px";
+
+            this["#arrow-path"].style.d = `path("M 0 0, L 100 50, L 00 100")`;
+            popoverBounds = this.getBoundingClientRect();
           }
         }
 
         else if (align === "right") {
-          // Align the popover along the X-axis
+          let buttonBounds = button.getBoundingClientRect();
+          let popoverBounds = this.getBoundingClientRect();
+          let arrowBounds = this["#arrow"].getBoundingClientRect();
+          let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
+
+          // Place the popover on the right side of the button
           {
-            let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
-            let buttonBounds = button.getBoundingClientRect();
-            let popoverBounds = this.getBoundingClientRect();
-            let arrowBounds = this["#arrow"].getBoundingClientRect();
+            this.style.left = (buttonBounds.right + arrowBounds.width + arrowWhitespace + extraLeft) + "px";
+            this["#arrow"].style.left = (buttonBounds.right + arrowWhitespace + borderWidth + extraLeft) + "px";
+            this["#arrow-path"].style.d = `path("M 100 0, L 0 50, L 100 100")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            // Place the popover on the right side of the button
+          // If popover overflows right client bound, reduce its width (respecting min-width)
+          if (popoverBounds.right + windowWhitespace > window.innerWidth) {
+            let reducedWidth = window.innerWidth - popoverBounds.left - windowWhitespace;
+            let minWidth = parseFloat(getComputedStyle(this).minWidth);
 
-            {
-              this.style.left = `${buttonBounds.left + buttonBounds.width + arrowBounds.width + offset}px`;
-              this["#arrow"].style.left = `${buttonBounds.left + buttonBounds.width + offset + borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 100 0, L 0 50, L 100 100")`;
-
+            if (reducedWidth >= minWidth) {
+              this.style.width = reducedWidth + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popover overflows right client bound, place it on the left side of the button
+          // If popover still overflows right client bound, place it on the left side of the button
+          if (popoverBounds.right + windowWhitespace > window.innerWidth) {
+            this.style.left = (
+              buttonBounds.left - arrowWhitespace - arrowBounds.width - popoverBounds.width + extraLeft
+            ) + "px";
 
-            if (popoverBounds.right + whitespace > window.innerWidth) {
-              this.style.left = "0px";
-              popoverBounds = this.getBoundingClientRect();
+            this["#arrow"].style.left = (
+              buttonBounds.left - arrowWhitespace - arrowBounds.width - borderWidth + extraLeft
+            ) + "px";
 
-              this.style.left = `${buttonBounds.left - popoverBounds.width - arrowBounds.width - offset}px`;
-              this["#arrow"].style.left = `${buttonBounds.left - arrowBounds.width - offset - borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 0 0, L 100 50, L 00 100")`;
+            this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
+            popoverBounds = this.getBoundingClientRect();
+          }
 
+          // If popover overflows left client bound, reduce its width (respecting min-width)
+          if (popoverBounds.left - windowWhitespace < 0) {
+            let reducedWidth = buttonBounds.left - arrowWhitespace - arrowBounds.width - windowWhitespace;
+            let minWidth = parseFloat(getComputedStyle(this).minWidth);
+
+            if (reducedWidth >= minWidth) {
+              this.style.left = (windowWhitespace + extraLeft) + "px";
+              this.style.width = reducedWidth + "px";
               popoverBounds = this.getBoundingClientRect();
             }
+          }
 
-            // If popover overflows left client bound, place it on the right button side
-
-            if (popoverBounds.left < whitespace) {
-              this.style.left = `${buttonBounds.left + buttonBounds.width + arrowBounds.width + offset}px`;
-              this["#arrow"].style.left = `${buttonBounds.left + buttonBounds.width + offset + borderWidth}px`;
-              this["#arrow-path"].style.d = `path("M 100 0, L 0 50, L 100 100")`;
-
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover still overflows right client bound, reduce its size
-
-            if (popoverBounds.right + whitespace > window.innerWidth) {
-              this.style.width = `${window.innerWidth - buttonBounds.right - arrowBounds.width - offset - whitespace}px`;
-            }
+          // If popoever still overflows left client bound, place it back on the right side of the button
+          if (popoverBounds.left - windowWhitespace < 0) {
+            this.style.left = (buttonBounds.right + arrowBounds.width + arrowWhitespace + extraLeft) + "px";
+            this["#arrow"].style.left = (buttonBounds.right + arrowWhitespace + borderWidth + extraLeft) + "px";
+            this["#arrow-path"].style.d = `path("M 100 0, L 0 50, L 100 100")`;
           }
         }
 
         if (align === "bottom" || align === "top") {
-          // Align the popover along the X-axis
+          let buttonBounds = button.getBoundingClientRect();
+          let popoverBounds = this.getBoundingClientRect();
+          let arrowBounds = this["#arrow"].getBoundingClientRect();
+
+          // Place the popover along the same X-axis as the button
           {
-            let buttonBounds = button.getBoundingClientRect();
-            let popoverBounds = this.getBoundingClientRect();
+            this.style.left = (buttonBounds.left + buttonBounds.width/2 - popoverBounds.width/2 + extraLeft) + "px";
+            this["#arrow"].style.left = (buttonBounds.left + buttonBounds.width/2 + extraLeft) + "px";
 
-            // Place the popover along the same X-axis as the button
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            {
-              this.style.left = `${buttonBounds.left - popoverBounds.width/2 + buttonBounds.width/2}px`;
-              this["#arrow"].style.left = `${buttonBounds.left + buttonBounds.width/2}px`;
+          // If popover overflows left client bound, move it right
+          if (popoverBounds.left - windowWhitespace < 0) {
+            this.style.left = (windowWhitespace + extraLeft) + "px";
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-              popoverBounds = this.getBoundingClientRect();
-            }
+          // If popover overflows right client bound, move it left
+          if (popoverBounds.right + windowWhitespace > window.innerWidth) {
+            this.style.left = (window.innerWidth - windowWhitespace - popoverBounds.width + extraLeft) + "px";
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            // If popover overflows left client bound, move it right
-
-            if (popoverBounds.left < whitespace) {
-              this.style.left = `${whitespace}px`;
-
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover overflows right client bound, move it left
-
-            if (popoverBounds.left + popoverBounds.width + whitespace > window.innerWidth) {
-              this.style.left = `${window.innerWidth - whitespace - popoverBounds.width}px`;
-
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover still overflows left client bound, reduce its with
-
-            if (popoverBounds.left < whitespace) {
-              this.style.left = `${whitespace}px`;
-              this.style.width = `${window.innerWidth - whitespace - whitespace}px`;
-            }
+          // If popover still overflows left client bound, reduce its width
+          if (popoverBounds.left < windowWhitespace) {
+            this.style.left = (windowWhitespace + extraLeft) + "px";
+            this.style.width = (window.innerWidth - windowWhitespace - windowWhitespace) + "px";
           }
         }
 
         else if (align === "left" || align === "right") {
-          // Align the popover along Y-axis
+          let buttonBounds = button.getBoundingClientRect();
+          let popoverBounds = this.getBoundingClientRect();
+
+          // Place the popover along the same Y-axis as the button
           {
-            let buttonBounds = button.getBoundingClientRect();
-            let popoverBounds = this.getBoundingClientRect();
+            this.style.top = (buttonBounds.top + buttonBounds.height/2 - popoverBounds.height/2 + extraTop) + "px";
+            this["#arrow"].style.top = (buttonBounds.top + buttonBounds.height/2 + extraTop) + "px";
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            // Place the popover along the same Y-axis as the button
+          // If popover overflows top client bound, move it down
+          if (popoverBounds.top - windowWhitespace < 0) {
+            this.style.top = (windowWhitespace + extraTop) + "px";
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-            {
-              this.style.top = `${buttonBounds.top + buttonBounds.height/2 - popoverBounds.height/2}px`;
-              this["#arrow"].style.top = `${buttonBounds.top + buttonBounds.height/2 }px`;
+          // If popover overflows bottom client bound, move it up
+          if (popoverBounds.bottom + windowWhitespace > window.innerHeight) {
+            let overflowBottom = popoverBounds.bottom + windowWhitespace - window.innerHeight;
+            this.style.top = (popoverBounds.top - overflowBottom + extraTop) + "px";
+            popoverBounds = this.getBoundingClientRect();
+          }
 
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover overflows top client bound, move it down
-
-            if (popoverBounds.top < whitespace) {
-              this.style.top = `${whitespace}px`;
-
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover overflows bottom client bound, move it up
-
-            if (popoverBounds.top + popoverBounds.height + whitespace > window.innerHeight) {
-              let overflowBottom = (popoverBounds.top + popoverBounds.height + whitespace) - window.innerHeight;
-              this.style.top = `${popoverBounds.top - overflowBottom}px`;
-
-              popoverBounds = this.getBoundingClientRect();
-            }
-
-            // If popover still overflows top client bound, reduce its size
-
-            if (popoverBounds.top < whitespace) {
-              this.style.top = `${whitespace}px`;
-              this.style.height = `${window.innerHeight - whitespace - whitespace}px`;
-            }
+          // If popover still overflows top client bound, reduce its size
+          if (popoverBounds.top < windowWhitespace) {
+            this.style.top = (windowWhitespace + extraTop) + "px";
+            this.style.height = (window.innerHeight - windowWhitespace - windowWhitespace) + "px";
           }
         }
 
@@ -372,6 +422,7 @@
           }
         }
 
+        this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
         resolve();
       });
     }

@@ -13,6 +13,7 @@
   box-sizing: border-box;
   background: white;
   cursor: default;
+  -webkit-app-region: no-drag;
   --scrollbar-background: rgba(0, 0, 0, 0.2);
   --scrollbar-width: 6px;
   --open-transition: 100 transform cubic-bezier(0.4, 0, 0.2, 1);

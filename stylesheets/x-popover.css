@@ -13,6 +13,7 @@
   z-index: 1001;
   box-sizing: border-box;
   background: white;
+  -webkit-app-region: no-drag;
   --orientation: vertical; /* horizontal, vertical */
   --align: bottom;
   --arrow-size: 20px;

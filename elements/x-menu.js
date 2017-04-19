@@ -11,7 +11,7 @@
   let {closest, html} = Xel.utils.element;
   let {abs} = Math;
 
-  let clientPadding = 7;
+  let windowWhitespace = 7;
 
   let shadowTemplate = html`
     <template>
@@ -215,17 +215,17 @@
           let menuRect = this.getBoundingClientRect();
 
           if (delta < 0) {
-            if (menuRect.bottom + abs(delta) <= window.innerHeight - clientPadding) {
+            if (menuRect.bottom + abs(delta) <= window.innerHeight - windowWhitespace) {
               this.style.height = (menuRect.height + abs(delta)) + "px";
             }
             else {
-              this.style.height = (window.innerHeight - menuRect.top - clientPadding) + "px";
+              this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
             }
           }
           else if (delta > 0) {
             let {top, left, height} = getComputedStyle(this);
 
-            if (menuRect.top - abs(delta) >= clientPadding) {
+            if (menuRect.top - abs(delta) >= windowWhitespace) {
               this.style.top = (parseFloat(top) - abs(delta)) + "px";
               this.style.height = (parseFloat(height) + abs(delta)) + "px";
 
@@ -233,8 +233,8 @@
               this._lastScrollTop = 0;
             }
             else {
-              this.style.top = clientPadding + "px";
-              this.style.height = (window.innerHeight - menuRect.top - clientPadding) + "px";
+              this.style.top = windowWhitespace + "px";
+              this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
             }
           }
         }
@@ -312,73 +312,69 @@
         let items = this.querySelectorAll(":scope > x-menuitem");
 
         if (items.length > 0) {
-          this._resetInlineStyles();
-          this.setAttribute("opened", "");
           this._expandWhenScrolled = true;
           this._openedTimestamp = getTimeStamp();
+          this._resetInlineStyles();
+          this.setAttribute("opened", "");
 
           let menuItem = [...items].find((item) => item.contains(overElement)) || items[0];
           let menuBounds = this.getBoundingClientRect();
           let underElementBounds = underElement.getBoundingClientRect();
           let overElementBounds = overElement.getBoundingClientRect();
 
+          let extraLeft = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
+          let extraTop = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
+
           menuItem.focus();
 
-          // Adjust the "top" and "left" values in case the menu is not positioned in the client space
-          // (this could be the case when e.g. it is inside another fixed positioned element such as a drawer).
+          // Determine extraLeft and extraTop which represent the extra offset when the menu is inside another
+          // fixed-positioned element such as a popover.
           {
-            let menuBounds = this.getBoundingClientRect();
-
             if (menuBounds.top !== 0 || menuBounds.left !== 0) {
-              this.style.top = `${-menuBounds.top}px`;
-              this.style.left = `${-menuBounds.left}px`;
+              extraLeft = -menuBounds.left;
+              extraTop = -menuBounds.top;
             }
           }
 
           // Position the menu so that the underElement is directly above the overLabel
           {
-            let menuBounds = this.getBoundingClientRect();
-
-            this.style.left = (underElementBounds.x - (overElementBounds.x - menuBounds.x)) + "px";
-            this.style.top = (underElementBounds.y - (overElementBounds.y - menuBounds.y)) + "px";
+            this.style.left = (underElementBounds.x - (overElementBounds.x - menuBounds.x) + extraLeft) + "px";
+            this.style.top = (underElementBounds.y - (overElementBounds.y - menuBounds.y) + extraTop) + "px";
+            menuBounds = this.getBoundingClientRect();
           }
 
           // Move the menu right if it overflows the left client bound
           {
-            let menuBounds = this.getBoundingClientRect();
-
-            if (menuBounds.left < clientPadding) {
-              this.style.left = `${clientPadding}px`;
+            if (menuBounds.left < windowWhitespace) {
+              this.style.left = (windowWhitespace + extraLeft) + "px";
+              menuBounds = this.getBoundingClientRect();
             }
           }
 
-          // Reduce menu height and move it down if it overflows the top client bound
+          // Reduce the menu height if it overflows the top client bound
           {
-            let menuBounds = this.getBoundingClientRect();
+            let overflowTop = windowWhitespace - menuBounds.top;
 
-            if (menuBounds.top < clientPadding) {
-              let height = (menuBounds.height + menuBounds.top - clientPadding);
-
-              this.style.height = height + "px";
-              this.style.top = `${clientPadding}px`;
+            if (overflowTop > 0) {
+              this.style.height = (menuBounds.bottom - windowWhitespace) + "px";
+              this.style.top = (windowWhitespace + extraTop) + "px";
               this["#main"].scrollTop = 9999;
+              menuBounds = this.getBoundingClientRect();
             }
           }
 
           // Reduce menu height if it overflows the bottom client bound
           // Reduce menu width if it overflows the right client bound
           {
-            let menuBounds = this.getBoundingClientRect();
-
-            if (menuBounds.bottom + clientPadding > window.innerHeight) {
+            if (menuBounds.bottom + windowWhitespace > window.innerHeight) {
               let overflow = menuBounds.bottom - window.innerHeight;
-              let height = menuBounds.height - overflow - clientPadding;
+              let height = menuBounds.height - overflow - windowWhitespace;
               this.style.height = height + "px";
             }
 
-            if (menuBounds.right + clientPadding > window.innerWidth) {
+            if (menuBounds.right + windowWhitespace > window.innerWidth) {
               let overflow = menuBounds.right - window.innerWidth;
-              let width = menuBounds.width - overflow - clientPadding;
+              let width = menuBounds.width - overflow - windowWhitespace;
               this.style.width = `${width}px`;
             }
           }
@@ -434,91 +430,7 @@
           }
 
           let overLabel = item.querySelector("x-label");
-          let menuBounds = this.getBoundingClientRect();
-          let underLabelBounds = underLabel.getBoundingClientRect();
-          let overLabelBounds = overLabel ? overLabel.getBoundingClientRect() : item.getBoundingClientRect();
-
-          item.focus();
-
-          // Adjust the "top" and "left" values in case the menu is not positioned in the client space
-          // (this could be the case when e.g. it is inside another fixed positioned element such as a drawer).
-          {
-            let menuBounds = this.getBoundingClientRect();
-
-            if (menuBounds.top !== 0 || menuBounds.left !== 0) {
-              this.style.top = `${-menuBounds.top}px`;
-              this.style.left = `${-menuBounds.left}px`;
-            }
-          }
-
-          // Position the menu so that the underLabel is directly above the overLabel
-          {
-            let menuBounds = this.getBoundingClientRect();
-
-            this.style.left = (underLabelBounds.x - (overLabelBounds.x - menuBounds.x)) + "px";
-            this.style.top = (underLabelBounds.y - (overLabelBounds.y - menuBounds.y)) + "px";
-          }
-
-          // Move the menu right if it overflows the left client bound
-          {
-            let menuBounds = this.getBoundingClientRect();
-
-            if (menuBounds.left < clientPadding) {
-              this.style.left = `${clientPadding}px`;
-            }
-          }
-
-          // Reduce menu height and move it down if it overflows the top client bound
-          {
-            let menuBounds = this.getBoundingClientRect();
-
-            if (menuBounds.top < clientPadding) {
-              let height = (menuBounds.height + menuBounds.top - clientPadding);
-
-              this.style.height = height + "px";
-              this.style.top = `${clientPadding}px`;
-              this["#main"].scrollTop = 9999;
-            }
-          }
-
-          // Reduce menu height if it overflows the bottom client bound
-          // Reduce menu width if it overflows the right client bound
-          {
-            let menuBounds = this.getBoundingClientRect();
-
-            if (menuBounds.bottom + clientPadding > window.innerHeight) {
-              let overflow = menuBounds.bottom - window.innerHeight;
-              let height = menuBounds.height - overflow - clientPadding;
-              this.style.height = height + "px";
-            }
-
-            if (menuBounds.right + clientPadding > window.innerWidth) {
-              let overflow = menuBounds.right - window.innerWidth;
-              let width = menuBounds.width - overflow - clientPadding;
-              this.style.width = `${width}px`;
-            }
-          }
-
-          // Animate the menu block
-          {
-            let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-            let [property, duration, easing] = this._parseTransistion(transition);
-
-            if (property === "transform") {
-              let blockBounds = this.getBoundingClientRect();
-              let originY = underLabelBounds.y + underLabelBounds.height/2 - blockBounds.top;
-
-              await this.animate(
-                {
-                  transform: ["scaleY(0)", "scaleY(1)"],
-                  transformOrigin: [`0 ${originY}px`, `0 ${originY}px`]
-                },
-                { duration, easing }
-              ).finished;
-            }
-          }
-
-          this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
+          await this.openOverElement(underLabel, overLabel);
         }
 
         resolve();
@@ -530,7 +442,7 @@
     //   Returns a promise that is resolved when the menu finishes animating.
     // @type
     //   (XMenuItem, string) => Promise
-    async openNextToElement(element, direction = "horizontal", offset = 0) {
+    async openNextToElement(element, direction = "horizontal", elementWhitespace = 0) {
       return new Promise(async (resolve) => {
         this._expandWhenScrolled = false;
         this._openedTimestamp = getTimeStamp();
@@ -544,10 +456,22 @@
         }
 
         let elementBounds = element.getBoundingClientRect();
+        let menuBounds = this.getBoundingClientRect();
+        let extraLeft = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
+        let extraTop = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
+
+        // Determine extraLeft and extraTop which represent the extra offset when the menu is inside another
+        // fixed-positioned element such as a popover.
+        {
+          if (menuBounds.top !== 0 || menuBounds.left !== 0) {
+            extraLeft = -menuBounds.left;
+            extraTop = -menuBounds.top;
+          }
+        }
 
         if (direction === "horizontal") {
-          this.style.top = `${elementBounds.top}px`;
-          this.style.left = `${elementBounds.left + elementBounds.width + offset}px`;
+          this.style.top = (elementBounds.top + extraTop) + "px";
+          this.style.left = (elementBounds.left + elementBounds.width + elementWhitespace + extraLeft) + "px";
 
           let side = "right";
 
@@ -556,11 +480,11 @@
             let menuBounds = this.getBoundingClientRect();
 
             if (menuBounds.width > window.innerWidth - 10) {
-              this.style.width = `${window.innerWidth - 10}px`;
+              this.style.width = (window.innerWidth - 10) + "px";
             }
 
             if (menuBounds.height > window.innerHeight - 10) {
-              this.style.height = `${window.innerHeight - 10}px`;
+              this.style.height = (window.innerHeight - 10) + "px";
             }
           }
 
@@ -568,22 +492,22 @@
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.left + menuBounds.width + clientPadding > window.innerWidth) {
+            if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
               // Move menu to the left side of the element if there is enough space to fit it in
-              if (elementBounds.left > menuBounds.width + clientPadding) {
-                this.style.left = `${elementBounds.left - menuBounds.width}px`;
+              if (elementBounds.left > menuBounds.width + windowWhitespace) {
+                this.style.left = (elementBounds.left - menuBounds.width + extraLeft) + "px";
                 side = "left";
               }
               // ... otherwise move menu to the screen edge
               else {
                 // Move menu to the left screen edge
                 if (elementBounds.left > window.innerWidth - (elementBounds.left + elementBounds.width)) {
-                  this.style.left = `${clientPadding}px`;
+                  this.style.left = (windowWhitespace + extraLeft) + "px";
                   side = "left";
                 }
                 // Move menu to the right screen edge
                 else {
-                  this.style.left = `${window.innerWidth - menuBounds.width - clientPadding}px`;
+                  this.style.left = (window.innerWidth - menuBounds.width - windowWhitespace + extraLeft) + "px";
                   side = "right";
                 }
               }
@@ -594,9 +518,9 @@
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.top + menuBounds.height + clientPadding > window.innerHeight) {
-              let bottomOverflow = (menuBounds.top + menuBounds.height + clientPadding) - window.innerHeight;
-              this.style.top = `${menuBounds.top - bottomOverflow}px`;
+            if (menuBounds.top + menuBounds.height + windowWhitespace > window.innerHeight) {
+              let bottomOverflow = (menuBounds.top + menuBounds.height + windowWhitespace) - window.innerHeight;
+              this.style.top = (menuBounds.top - bottomOverflow + extraTop) + "px";
             }
           }
 
@@ -618,8 +542,8 @@
         }
 
         else if (direction === "vertical") {
-          this.style.top = `${elementBounds.top + elementBounds.height + offset}px`;
-          this.style.left = `${elementBounds.left}px`;
+          this.style.top = (elementBounds.top + elementBounds.height + elementWhitespace + extraTop) + "px";
+          this.style.left = (elementBounds.left + extraLeft) + "px";
 
           // Reduce menu size
           {
@@ -627,13 +551,12 @@
 
             // Reduce menu width if it is bigger than screen width
             if (menuBounds.width > window.innerWidth - 10) {
-              this.style.width = `${window.innerWidth - 10}px`;
+              this.style.width = (window.innerWidth - 10) + "px";
             }
 
             // Reduce menu height if it overflows bottom screen edge
-            if (menuBounds.top + menuBounds.height + clientPadding > window.innerHeight) {
-              let height = window.innerHeight - (elementBounds.top + elementBounds.height) - 10;
-              this.style.height = `${height}px`;
+            if (menuBounds.top + menuBounds.height + windowWhitespace > window.innerHeight) {
+              this.style.height = (window.innerHeight - (elementBounds.top + elementBounds.height) - 10) + "px";
             }
           }
 
@@ -641,8 +564,8 @@
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.left + menuBounds.width + clientPadding > window.innerWidth) {
-              this.style.left = `${elementBounds.left + elementBounds.width - menuBounds.width}px`;
+            if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
+              this.style.left = (elementBounds.left + elementBounds.width - menuBounds.width + extraLeft) + "px";
             }
           }
 
@@ -650,8 +573,8 @@
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.left < clientPadding) {
-              this.style.left = `${clientPadding}px`;
+            if (menuBounds.left < windowWhitespace) {
+              this.style.left = (windowWhitespace + extraLeft) + "px";
             }
           }
 
@@ -687,46 +610,48 @@
         this._openedTimestamp = getTimeStamp();
 
         this._resetInlineStyles();
-        this.style.left = `${left}px`;
-        this.style.top = `${top}px`;
         this.setAttribute("opened", "");
         this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
 
         let menuBounds = this.getBoundingClientRect();
+        let extraLeft = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
+        let extraTop = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
 
-        // Adjust the "top" and "left" values in case the menu is not positioned in the client space
-        // (this could be the case when e.g. it is inside another fixed positioned element such as a drawer).
+        // Determine extraLeft and extraTop which represent the extra offset when the menu is inside another
+        // fixed-positioned element such as a popover.
         {
-          if (menuBounds.top !== top || menuBounds.left !== left) {
-            top -= (menuBounds.top - top);
-            left -= (menuBounds.left - left);
-
-            this.style.top = `${top}px`;
-            this.style.left = `${left}px`;
-
-            menuBounds = this.getBoundingClientRect();
+          if (menuBounds.top !== 0 || menuBounds.left !== 0) {
+            extraLeft = -menuBounds.left;
+            extraTop = -menuBounds.top;
           }
         }
 
+        // Position the menu at given point
+        {
+          this.style.left = (left + extraLeft) + "px";
+          this.style.top = (top + extraTop) + "px";
+          menuBounds = this.getBoundingClientRect();
+        }
+
         // If menu overflows right screen border then move it to the opposite side
-        if (menuBounds.left + menuBounds.width > window.innerWidth) {
+        if (menuBounds.right + windowWhitespace > window.innerWidth) {
           left = left - menuBounds.width;
-          this.style.left = `${left}px`;
+          this.style.left = (left + extraLeft) + "px";
           menuBounds = this.getBoundingClientRect();
         }
 
         // If menu overflows bottom screen border then move it up
-        if (menuBounds.top + menuBounds.height + clientPadding > window.innerHeight) {
-          top = top + window.innerHeight - (menuBounds.top + menuBounds.height) - clientPadding;
-          this.style.top = `${top}px`;
+        if (menuBounds.bottom + windowWhitespace > window.innerHeight) {
+          top = top + window.innerHeight - (menuBounds.top + menuBounds.height) - windowWhitespace;
+          this.style.top = (top + extraTop) + "px";
           menuBounds = this.getBoundingClientRect();
 
           // If menu now overflows top screen border then make it stretch to the whole available vertical space
 
-          if (menuBounds.top < 0) {
-            top = top + menuBounds.top + clientPadding;
-            this.style.top = `${top}px`;
-            this.style.height = `${window.innerHeight - 10}px`;
+          if (menuBounds.top < windowWhitespace) {
+            top = windowWhitespace;
+            this.style.top = (top + extraTop) + "px";
+            this.style.height = (window.innerHeight - windowWhitespace - windowWhitespace) + "px";
           }
         }
 

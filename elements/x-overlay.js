@@ -9,8 +9,24 @@
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="node_modules/xel/stylesheets/x-overlay.css" data-vulcanize>
-      <div id="inner"></div>
+      <style>
+        :host {
+          display: block;
+          position: fixed;
+          z-index: 1000;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          touch-action: none;
+          will-change: opacity;
+          cursor: default;
+          background: rgba(0, 0, 0, 0.5);
+        }
+        :host([hidden]) {
+          display: none;
+        }
+      </style>
     </template>
   `;
 
@@ -41,21 +57,30 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    show(animate = true) {
-      this.style.top = null;
-      this.style.left = null;
+    async show(animate = true) {
+      this.style.top = "0px";
+      this.style.left = "0px";
       this.ownerElement.before(this);
       this.hidden = false;
+
+      let bounds = this.getBoundingClientRect();
+      let extraTop = 0;
+      let extraLeft = 0;
+
+      // Determine extraLeft and extraTop which represent the extra offset needed when the overlay is inside another
+      // fixed-positioned element such as a popover
+      {
+        if (bounds.top !== 0 || bounds.left !== 0) {
+          extraTop = -bounds.top;
+          extraLeft = -bounds.left;
+        }
+      }
 
       // Prevent the document body from being scrolled
       {
         if (document.body.scrollHeight > document.body.clientHeight) {
           document.body.style.overflow = "hidden";
         }
-
-        document.body.addEventListener("scroll", this._scrollListener = (event) => {
-          event.preventDefault();
-        });
       }
 
       // Ensure the overlay is stacked directly below the ref element
@@ -64,21 +89,8 @@
         this.style.zIndex = zIndex - 1;
       }
 
-      // Adjust the "top" and "left" values in case the overlay is not positioned in the client space
-      // (this could be the case when e.g. it is inside another fixed positioned element such as a drawer).
-      {
-        let top = parseFloat(getComputedStyle(this).top);
-        let left = parseFloat(getComputedStyle(this).left);
-        let rect = this.getBoundingClientRect();
-
-        if (rect.top !== top || rect.left !== left) {
-          top -= (rect.top - top);
-          left -= (rect.left - left);
-
-          this.style.top = `${top}px`;
-          this.style.left = `${left}px`;
-        }
-      }
+      this.style.top = (extraTop) + "px";
+      this.style.left = (extraLeft) + "px";
 
       // Animate the overlay
       if (animate) {
@@ -97,8 +109,6 @@
     }
 
     hide(animate = true) {
-      document.body.removeEventListener("scroll", this._scrollListener);
-
       if (animate) {
         let overlayAnimation = this.animate(
           {

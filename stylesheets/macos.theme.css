@@ -840,6 +840,10 @@ x-select x-swatch {
   height: 18px;
 }
 
+x-select x-menuitem {
+  min-height: 26px;
+}
+
 /* Textured skin */
 
 x-select[skin="textured"] {
