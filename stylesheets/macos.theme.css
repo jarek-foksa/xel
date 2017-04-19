@@ -1014,7 +1014,7 @@ x-drawer {
 x-switch {
   width: 42px;
   height: 24px;
-  border: 2px solid #b3b3b3;
+  box-shadow: 0 0 0px 2px #b3b3b3;
   border-radius: 999px;
   --focus-ring-width: 3px;
   --focus-ring-opacity: 1;
@@ -1026,7 +1026,7 @@ x-switch {
   --track-color: #b3b3b3;
 }
 x-switch[toggled] {
-  border-color: #3385DB;
+  box-shadow: 0 0 0px 2px #3385DB;
   --track-color: #3B99FB;
 }
 
