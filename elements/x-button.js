@@ -71,6 +71,14 @@
     }
 
     // @info
+    //   Direct ancestor <x-buttons> element.
+    // @type
+    //   XButtonsElement?
+    get ownerButtons() {
+      return this.parentElement && this.parentElement.localName === "x-buttons" ? this.parentElement : null;
+    }
+
+    // @info
     //   Values associated with this button.
     // @type
     //   string
@@ -223,13 +231,16 @@
         return;
       }
 
+      this._expand();
+
       // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
       // to last at least 100ms.
-      if (this._canExpandMenu() === false && this._canExpandPopover() === false) {
+      if (this.isExpandable() === false) {
         let pointerDownTimeStamp = Date.now();
-        this.setAttribute("pressed", "");
+        let isDown = true;
 
-        this.addEventListener("lostpointercapture", async (event) => {
+        window.addEventListener("pointerup", async (event) => {
+          isDown = false;
           let pressedTime = Date.now() - pointerDownTimeStamp;
           let minPressedTime = 100;
 
@@ -239,10 +250,23 @@
 
           this.removeAttribute("pressed");
         }, {once: true});
-      }
 
-      this.setPointerCapture(pointerDownEvent.pointerId);
-      this._expand();
+        if (this.ownerButtons) {
+          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
+            await sleep(10);
+          }
+          else if (this.ownerButtons.tracking === 1 && (this.toggled === false || this.mixed)) {
+            await sleep(10);
+          }
+        }
+        else if (this.togglable) {
+          await sleep(10);
+        }
+
+        if (isDown) {
+          this.setAttribute("pressed", "");
+        }
+      }
 
       // Ripple
       {
@@ -253,17 +277,15 @@
           let size = max(rect.width, rect.height) * 1.5;
           let top  = pointerDownEvent.clientY - rect.y - size/2;
           let left = pointerDownEvent.clientX - rect.x - size/2;
-          let buttons = this.closest("x-buttons");
           let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
-          let isExpandable = this.querySelector("x-menu, x-popover") !== null;
           let delay = true;
 
-          if (isExpandable === false) {
-            if (buttons) {
-              if (buttons.tracking === 0 || buttons.tracking === 2) {
+          if (this.isExpandable === false) {
+            if (this.ownerButtons) {
+              if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
                 delay = false;
               }
-              else if (buttons.tracking === 1 && this.toggled === false) {
+              else if (this.ownerButtons.tracking === 1 && this.toggled === false) {
                 delay = false;
               }
             }
@@ -361,14 +383,13 @@
           let size = max(rect.width, rect.height) * 1.5;
           let top  = (rect.y + rect.height/2) - rect.y - size/2;
           let left = (rect.x + rect.width/2) - rect.x - size/2;
-          let buttons = this.closest("x-buttons");
           let delay = true;
 
-          if (buttons) {
-            if (buttons.tracking === 0 || buttons.tracking === 2) {
+          if (this.ownerButtons) {
+            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
               delay = false;
             }
-            else if (buttons.tracking === 1 && this.toggled === true) {
+            else if (this.ownerButtons.tracking === 1 && this.toggled === true) {
               delay = false;
             }
           }
@@ -565,6 +586,10 @@
 
         resolve();
       });
+    }
+
+    isExpandable() {
+      return this.querySelector(":scope > x-menu x-menuitem, :scope > x-popover") !== null;
     }
 
     _canExpandMenu() {

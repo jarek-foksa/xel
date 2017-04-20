@@ -10,7 +10,7 @@ firebase-debug.log
 # NPM
 node_modules/*
 !node_modules/xel
-.npm-debug.log
+npm-debug.log
 
 # Dot files
 .*

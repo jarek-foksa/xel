@@ -267,6 +267,11 @@ x-button[expanded][toggled] {
   background: linear-gradient(to bottom, #4A96FB, #0767E4);
   border-color: #0C51E6;
 }
+x-button[pressed][mixed]:not([toggled]) {
+  color: var(--text-color);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: #ACACAC;
+}
 
 x-button > x-label,
 x-button > x-box > x-label {

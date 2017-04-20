@@ -6,6 +6,7 @@
 
 {
   let {html} = Xel.utils.element;
+  let {sleep} = Xel.utils.time;
   let {isArray} = Array;
 
   let shadowTemplate = html`
@@ -71,7 +72,7 @@
     //   string || Array || null
     get value() {
       if (this.tracking === 2) {
-        let buttons = this.querySelectorAll(":scope > x-button[toggled]");
+        let buttons = [...this.querySelectorAll(":scope > x-button[toggled]")];
         return buttons.map(button => button.value).filter(value => value != undefined);
       }
       else if (this.tracking === 1 || this.tracking === 0) {
@@ -110,44 +111,53 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     _onClick(event) {
-      let clickedButton = event.target.closest("x-button");
+      if (event.button !== 0) {
+        return;
+      }
 
-      let canToggle = (
-        event.button === 0 &&
-        clickedButton &&
-        clickedButton.disabled === false &&
-        clickedButton.querySelector("x-menu, x-popover") === null
-      );
+      let clickedButton = event.target.closest("x-button");
+      let canToggle = (clickedButton && clickedButton.disabled === false && clickedButton.isExpandable() === false);
 
       if (canToggle) {
         let otherButtons = [...this.children].filter(button => button !== clickedButton);
 
         if (this.tracking === 0) {
-          clickedButton.removeAttribute("pressed");
-          clickedButton.toggled = !clickedButton.toggled;
+          if (clickedButton.mixed) {
+            clickedButton.mixed = false;
+          }
+          else {
+            clickedButton.toggled = !clickedButton.toggled;
+            clickedButton.mixed = false;
+          }
 
           for (let button of otherButtons) {
             button.toggled = false;
+            button.mixed = false;
           }
 
           this.dispatchEvent(new CustomEvent("toggle", {bubbles: true, detail: clickedButton}));
         }
         else if (this.tracking === 1) {
           if (clickedButton.toggled === false || clickedButton.mixed === true) {
-            clickedButton.removeAttribute("pressed");
             clickedButton.toggled = true;
             clickedButton.mixed = false;
 
             for (let button of otherButtons) {
               button.toggled = false;
+              button.mixed = false;
             }
 
             this.dispatchEvent(new CustomEvent("toggle", {bubbles: true, detail: clickedButton}));
           }
         }
         else if (this.tracking === 2) {
-          clickedButton.removeAttribute("pressed");
-          clickedButton.toggled = !clickedButton.toggled;
+          if (clickedButton.mixed) {
+            clickedButton.mixed = false;
+          }
+          else {
+            clickedButton.toggled = !clickedButton.toggled;
+          }
+
           this.dispatchEvent(new CustomEvent("toggle", {bubbles: true, detail: clickedButton}));
         }
       }

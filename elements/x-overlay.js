@@ -57,7 +57,7 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    async show(animate = true) {
+    show(animate = true) {
       this.style.top = "0px";
       this.style.left = "0px";
       this.ownerElement.before(this);
