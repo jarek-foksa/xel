@@ -232,6 +232,7 @@
       }
 
       this._expand();
+      this.setPointerCapture(pointerDownEvent.pointerId);
 
       // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
       // to last at least 100ms.
@@ -239,7 +240,7 @@
         let pointerDownTimeStamp = Date.now();
         let isDown = true;
 
-        window.addEventListener("pointerup", async (event) => {
+        this.addEventListener("lostpointercapture", async (event) => {
           isDown = false;
           let pressedTime = Date.now() - pointerDownTimeStamp;
           let minPressedTime = 100;
@@ -251,21 +252,23 @@
           this.removeAttribute("pressed");
         }, {once: true});
 
-        if (this.ownerButtons) {
-          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
+        (async () => {
+          if (this.ownerButtons) {
+            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
+              await sleep(10);
+            }
+            else if (this.ownerButtons.tracking === 1 && (this.toggled === false || this.mixed)) {
+              await sleep(10);
+            }
+          }
+          else if (this.togglable) {
             await sleep(10);
           }
-          else if (this.ownerButtons.tracking === 1 && (this.toggled === false || this.mixed)) {
-            await sleep(10);
-          }
-        }
-        else if (this.togglable) {
-          await sleep(10);
-        }
 
-        if (isDown) {
-          this.setAttribute("pressed", "");
-        }
+          if (isDown) {
+            this.setAttribute("pressed", "");
+          }
+        })();
       }
 
       // Ripple
@@ -280,7 +283,7 @@
           let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
           let delay = true;
 
-          if (this.isExpandable === false) {
+          if (this.isExpandable() === false) {
             if (this.ownerButtons) {
               if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
                 delay = false;
