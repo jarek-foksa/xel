@@ -240,7 +240,10 @@
         let pointerDownTimeStamp = Date.now();
         let isDown = true;
 
-        this.addEventListener("lostpointercapture", async (event) => {
+        let release = async () => {
+          window.removeEventListener("pointerup", release);
+          this.removeEventListener("lostpointercapture", release);
+
           isDown = false;
           let pressedTime = Date.now() - pointerDownTimeStamp;
           let minPressedTime = 100;
@@ -250,7 +253,10 @@
           }
 
           this.removeAttribute("pressed");
-        }, {once: true});
+        };
+
+        window.addEventListener("pointerup", release);
+        this.addEventListener("lostpointercapture", release);
 
         (async () => {
           if (this.ownerButtons) {
