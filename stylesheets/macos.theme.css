@@ -821,6 +821,9 @@ x-select {
   font-size: 14px;
   --arrow-color: white;
 }
+x-select[disabled] {
+  opacity: 0.4;
+}
 x-select:focus {
   box-shadow: 0 0 0px 3px var(--focus-ring-color);
 }
