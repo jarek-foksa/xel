@@ -238,7 +238,7 @@ x-stepper {
  */
 
 x-button {
-  min-height: 23px;
+  min-height: 24px;
   padding: 2px 14px;
   color: var(--text-color);
   background: #ffffff;
@@ -816,7 +816,7 @@ x-select {
   border-radius: 4px;
   color: #262626;
   padding: 0 0 0 9px;
-  height: 26px;
+  height: 24px;
   position: relative;
   font-size: 14px;
   --arrow-color: white;
