@@ -432,8 +432,8 @@
         this["#open-button"].style.opacity = null;
 
         for (let tab of this.children) {
-          tab.style.transition = null;
-          tab.style.transform = null;
+          tab.style.transition = "none";
+          tab.style.transform = "translate(0px, 0px)";
           tab.style.order = tab[$screenIndex];
         }
       };
