@@ -16,7 +16,7 @@
 
     for (let i = 0; i < strings.length; i += 1) {
       parts.push(strings[i]);
-      if (expressions[i]) parts.push(expressions[i]);
+      if (expressions[i] !== undefined) parts.push(expressions[i]);
     }
 
     let innerHTML = parts.join("");
@@ -40,7 +40,7 @@
 
     for (let i = 0; i < strings.length; i += 1) {
       parts.push(strings[i]);
-      if (expressions[i]) parts.push(expressions[i]);
+      if (expressions[i] !== undefined) parts.push(expressions[i]);
     }
 
     let innerHTML = `<svg id="x-stub" xmlns="http://www.w3.org/2000/svg">${parts.join("")}</svg>`;
