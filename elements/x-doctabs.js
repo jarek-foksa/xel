@@ -82,7 +82,7 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    openTab(tab) {
+    openTab(tab, animate = true) {
       return new Promise( async (resolve, reject) => {
         let tabs = this.querySelectorAll("x-doctab");
 
@@ -99,27 +99,40 @@
               maxOrder = order;
             }
           }
-
-          tab.style.maxWidth = "0px";
-          tab.style.padding = "0px";
           tab.style.order = maxOrder;
 
-          this.append(tab);
+          if (animate === false) {
+            tab.style.transition = "none";
+            tab.style.maxWidth = null;
+            tab.style.padding = null;
 
-          await sleep(30);
-
-          tab.addEventListener("transitionend", (event) => {
+            this.append(tab);
+            tab.focus();
             resolve(tab);
-          }, {once: true});
+          }
+          else if (animate === true) {
+            tab.style.transition = null;
+            tab.style.maxWidth = "0px";
+            tab.style.padding = "0px";
 
-          tab.style.maxWidth = null;
-          tab.style.padding = null;
-          tab.focus();
+            tab.setAttribute("opening", "");
+            this.append(tab);
+            await sleep(30);
+
+            tab.addEventListener("transitionend", (event) => {
+              tab.removeAttribute("opening");
+              resolve(tab);
+            }, {once: true});
+
+            tab.style.maxWidth = null;
+            tab.style.padding = null;
+            tab.focus();
+          }
         }
       });
     }
 
-    closeTab(tab) {
+    closeTab(tab, animate = true) {
       return new Promise( async (resolve) => {
         let tabs = this.getTabsByScreenIndex().filter(tab => tab.hasAttribute("closing") === false);
         let tabWidth = tab.getBoundingClientRect().width;
@@ -136,7 +149,13 @@
           }
         }
 
-        tab.style.transition = null;
+        if (animate) {
+          tab.style.transition = null;
+        }
+        else {
+          tab.style.transition = "none";
+        }
+
         tab.style.maxWidth = "0px";
         tab.style.pointerEvents = "none";
 
@@ -170,7 +189,9 @@
         tab.style.maxWidth = "0px";
         tab.style.padding = "0px";
 
-        await sleep(300);
+        if (animate) {
+          await sleep(150);
+        }
 
         tab.remove();
         this._waitingForTabToClose = false;
@@ -318,7 +339,7 @@
           this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
 
           selectionIndicatorAnimation.finish();
-          this._onTabDragStart(pointerMoveEvent, pointerDownTab);
+          this._onTabDragStart(pointerDownEvent, pointerDownTab);
         }
       });
 

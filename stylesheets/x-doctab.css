@@ -13,7 +13,7 @@
   max-width: 200px;
   flex: 1 0 0;
   transition-property: max-width, padding, order;
-  transition-duration: 0.3s;
+  transition-duration: 0.15s;
   transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
   cursor: default;
   padding: 0 4px 0 16px;
