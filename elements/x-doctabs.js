@@ -176,6 +176,8 @@
         this._waitingForTabToClose = false;
         tab.removeAttribute("closing");
 
+        resolve();
+
         if (!this._waitingForPointerMoveAfterClosingTab) {
           this._waitingForPointerMoveAfterClosingTab = true;
           await this._whenPointerMoved(3);
@@ -187,8 +189,6 @@
             tab.style.order = this._getTabScreenIndex(tab);
           }
         }
-
-        resolve();
       });
     }
 
