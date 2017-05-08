@@ -6,7 +6,6 @@
 !stylesheets/
 !stylesheets/macos.theme.css
 !stylesheets/material.theme.css
-!xel.min.html
 !LICENSE.md
 !README.md
 !package.json
