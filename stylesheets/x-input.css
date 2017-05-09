@@ -12,6 +12,8 @@
   box-sizing: border-box;
   color: #000000;
   background: white;
+  --selection-color: currentColor;
+  --selection-background: #B2D7FD;
   --inner-padding: 0;
 }
 :host(:focus) {
@@ -20,12 +22,21 @@
 :host(:hover) {
   cursor: text;
 }
+:host([invalid]) {
+  --selection-color: white;
+  --selection-background: #d50000;
+}
 :host([disabled]) {
   pointer-events: none;
   opacity: 0.5;
 }
 :host([hidden]) {
   display: none;
+}
+
+::selection {
+  color: var(--selection-color);
+  background: var(--selection-background);
 }
 
 #main {

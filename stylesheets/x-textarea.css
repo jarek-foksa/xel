@@ -12,10 +12,16 @@
   box-sizing: border-box;
   background: white;
   color: #000000;
+  --selection-color: currentColor;
+  --selection-background: #B2D7FD;
   --inner-padding: 0;
 }
 :host(:hover) {
   cursor: text;
+}
+:host([invalid]) {
+  --selection-color: white;
+  --selection-background: #d50000;
 }
 :host([disabled]) {
   pointer-events: none;
@@ -23,6 +29,27 @@
 }
 :host([hidden]) {
   display: none;
+}
+
+::selection {
+  color: var(--selection-color);
+  background: var(--selection-background);
+}
+
+::-webkit-scrollbar {
+  max-width: 6px;
+  max-height: 6px;
+  background: none;
+}
+::-webkit-scrollbar-track {
+  border-radius: 25px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+}
+::-webkit-scrollbar-corner {
+  display: none
 }
 
 #main {

@@ -7,11 +7,9 @@
 {
   let {html} = Xel.utils.element;
   let {isValidColorString} = Xel.utils.color;
-  let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="${theme}">
       <link rel="stylesheet" href="node_modules/xel/stylesheets/x-input.css" data-vulcanize>
 
       <main id="main">

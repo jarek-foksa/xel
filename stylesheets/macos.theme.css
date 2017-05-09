@@ -156,10 +156,6 @@ nav hr {
   color: white;
   background: #d50000;
 }
-:host([invalid]) ::selection {
-  color: white;
-  background: #d50000;
-}
 
 ::-webkit-scrollbar {
   max-width: 6px;
@@ -174,7 +170,7 @@ nav hr {
   border-radius: 25px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,0.6);
 }
 ::-webkit-scrollbar-corner {
   display: none

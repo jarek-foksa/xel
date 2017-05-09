@@ -6,11 +6,9 @@
 
 {
   let {html} = Xel.utils.element;
-  let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="${theme}">
       <link rel="stylesheet" href="node_modules/xel/stylesheets/x-textarea.css" data-vulcanize>
 
       <main id="main">

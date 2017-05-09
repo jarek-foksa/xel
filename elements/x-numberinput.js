@@ -13,11 +13,9 @@
   let {normalize, getPrecision} = Xel.utils.math;
 
   let numericKeys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
-  let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="${theme}">
       <link rel="stylesheet" href="node_modules/xel/stylesheets/x-numberinput.css" data-vulcanize>
 
       <main id="main">

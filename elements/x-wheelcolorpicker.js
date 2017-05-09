@@ -11,7 +11,6 @@
   let debug = false;
 
   let shadowHTML = `
-    <link rel="stylesheet" href="${document.querySelector('link[href*=".theme.css"]').getAttribute('href')}">
     <link rel="stylesheet" href="node_modules/xel/stylesheets/x-wheelcolorpicker.css" data-vulcanize>
 
     <x-box vertical>
