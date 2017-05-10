@@ -81,8 +81,9 @@ code,
 var {
   font-family: "Menlo", "Andale Mono", monospace;
   font-style: normal;
-  background: #F8F8FF;
-  outline: rgba(0, 0, 0, 0.3) dashed 1px;
+  padding: 0 4px;
+  background: #fbfbfb;
+  outline: 1px solid #d0d0d0;
 }
 
 hr {
