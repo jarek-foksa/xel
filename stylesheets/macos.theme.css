@@ -605,14 +605,12 @@ x-button[skin="help"] > x-icon {
 /* @skin "sidenav" */
 
 x-button[skin="sidenav"] {
+  padding: 8px 15px;
   color: #4a4a4a;
   background: none;
   border: none;
   border-radius: 0;
   font-size: 15px;
-  padding: 8px 30px;
-  margin-left: -30px;
-  width: calc(100% + 60px);
   cursor: default;
 }
 x-button[skin="sidenav"][toggled] {

@@ -390,9 +390,7 @@ x-button[skin="iconic"] > x-icon {
 /* @skin "sidenav" */
 
 x-button[skin="sidenav"] {
-  padding: 8px 30px;
-  margin-left: -30px;
-  width: calc(100% + 60px);
+  padding: 8px 15px;
   font-size: 15px;
   cursor: default;
   color: #4a4a4a;
@@ -402,7 +400,6 @@ x-button[skin="sidenav"] {
   overflow: hidden;
 }
 
-x-button[skin="sidenav"][pressed],
 x-button[skin="sidenav"][toggled] {
   color: white;
   background: var(--primary-color);

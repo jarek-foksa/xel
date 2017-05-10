@@ -41,6 +41,13 @@
   width: 100%;
 }
 
+#sidebar #nav x-button {
+  width: calc(100% + 60px);
+  margin-left: -30px;
+  padding: 8px 30px;
+  --ripple-background: white;
+}
+
 #hide-sidebar-button {
   position: absolute;
   top: 20px;
@@ -60,14 +67,6 @@
   width: 32px;
   height: 32px;
   min-height: 32px;
-}
-
-#nav x-sidenavitem x-sidenavitem {
-  padding-left: 75px;
-}
-
-#nav x-sidenavitem x-sidenavitem x-label {
-  font-weight: 400;
 }
 
 #theme-section {

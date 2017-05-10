@@ -287,6 +287,43 @@
 
       <hr/>
 
+      <section>
+        <h4>Skin <em>"sidenav"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-button skin="sidenav">
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="sidenav" toggled togglable>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="sidenav" disabled>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <style>
+              x-button + x-button {
+                margin-top: 10px;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
       <!--======================================================================================================-->
 
       <section id="material-skins" data-themes="material">
