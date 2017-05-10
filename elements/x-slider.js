@@ -313,8 +313,8 @@
       this["#ticks"].innerHTML = "";
 
       for (let label of this.querySelectorAll(":scope > x-label")) {
-        label.style.left = `${label.value}%`;
-        this["#ticks"].insertAdjacentHTML("beforeend", `<div class="tick" style="left: ${label.value}%"></div>`);
+        label.style.left = (((label.value - this.min) / (this.max - this.min)) * 100) + "%";
+        this["#ticks"].insertAdjacentHTML("beforeend", `<div class="tick" style="left: ${label.style.left}"></div>`);
       }
     }
   }
