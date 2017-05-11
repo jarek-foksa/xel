@@ -40,7 +40,7 @@
       this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
       this["#input"].addEventListener("change", () => this._onInputChange());
-      this["#input"].addEventListener("input", () => this._onInputInput());
+      this["#input"].addEventListener("input", (event) => this._onInputInput(event));
     }
 
     connectedCallback() {
@@ -282,11 +282,12 @@
       }
     }
 
-    _onInputInput() {
+    _onInputInput(event) {
       if (this.invalid) {
         this._updateInvalidState();
       }
 
+      event.stopPropagation();
       this._updateEmptyState();
       this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
     }
