@@ -112,6 +112,19 @@
       }
     }
 
+    // @info
+    //   Whether the input value should be validated instantly on each key press rather than when user confirms
+    //   the value by pressing the enter key or moving focus away from the input.
+    // @default
+    //   false
+    // @attribute
+    get instantValidation() {
+      return this.hasAttribute("instantvalidation");
+    }
+    set instantValidation(value) {
+      value === true ? this.setAttribute("instantvalidation", "") : this.removeAttribute("instantvalidation");
+    }
+
     // @type
     //   boolean
     // @default
@@ -283,7 +296,10 @@
     }
 
     _onInputInput(event) {
-      if (this.invalid) {
+      if (this.instantValidation) {
+        this._updateInvalidState();
+      }
+      else if (this.invalid) {
         this._updateInvalidState();
       }
 
