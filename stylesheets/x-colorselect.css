@@ -21,7 +21,7 @@
 }
 
 ::slotted(x-popover) {
-  width: 200px;
+  width: 190px;
   height: auto;
   padding: 12px 12px;
 }
