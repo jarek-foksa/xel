@@ -58,7 +58,13 @@
     //   (XButtonElement, string) => Promise
     open(button) {
       return new Promise( async (resolve) => {
-        let align = getComputedStyle(this).getPropertyValue("--align").trim();
+        let computedStyle = getComputedStyle(this);
+
+        let align = computedStyle.getPropertyValue("--align").trim();
+        let marginTop = parseFloat(computedStyle.marginTop);
+        let marginBottom = parseFloat(computedStyle.marginBottom);
+        let marginLeft = parseFloat(computedStyle.marginLeft);
+        let marginRight = parseFloat(computedStyle.marginRight);
 
         let extraLeft = 0;        // Extra offset needed when popover has fixed-positioned ancestor(s)
         let extraTop = 0;         // Extra offset needed when popover has fixed-positioned ancestor(s)
@@ -382,13 +388,13 @@
           // Place the popover along the same Y-axis as the button
           {
             this.style.top = (buttonBounds.top + buttonBounds.height/2 - popoverBounds.height/2 + extraTop) + "px";
-            this["#arrow"].style.top = (buttonBounds.top + buttonBounds.height/2 + extraTop) + "px";
+            this["#arrow"].style.top = (buttonBounds.top + buttonBounds.height/2 + extraTop + marginTop) + "px";
             popoverBounds = this.getBoundingClientRect();
           }
 
           // If popover overflows top client bound, move it down
           if (popoverBounds.top - windowWhitespace < 0) {
-            this.style.top = (windowWhitespace + extraTop) + "px";
+            this.style.top = (windowWhitespace + extraTop + marginTop) + "px";
             popoverBounds = this.getBoundingClientRect();
           }
 
