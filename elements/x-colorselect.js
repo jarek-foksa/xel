@@ -100,6 +100,12 @@
       if (!this._inputChangeStarted) {
         this._updateInput();
       }
+
+      let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker");
+
+      if (picker && picker.getAttribute("value") !== this.getAttribute("value")) {
+        picker.setAttribute("value", this.getAttribute("value"));
+      }
     }
 
     _onDisabledAttributeChange() {
