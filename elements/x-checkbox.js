@@ -160,7 +160,7 @@
           this.toggled = !this.toggled;
         }
 
-        this.dispatchEvent(new CustomEvent("change"));
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
 
       // Ripple
