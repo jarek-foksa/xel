@@ -12,7 +12,7 @@
   let shadowTemplate = html`
     <template>
       <link rel="stylesheet" href="node_modules/xel/stylesheets/x-icon.css" data-vulcanize>
-      <svg id="svg" preserveAspectRatio="none" viewBox="0 0 100 100" width="24px" height="24px"></svg>
+      <svg id="svg" preserveAspectRatio="none" viewBox="0 0 100 100" width="0px" height="0px"></svg>
     </template>
   `;
 
