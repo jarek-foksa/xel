@@ -742,7 +742,9 @@ x-doctabs {
 }
 
 x-doctab {
-  border-right: 1px solid #9C9C9C;
+  outline: 1px solid #9C9C9C;
+  background: #c1bfc1;
+  border-bottom: none;
   max-width: 220px;
   padding: 0 18px;
   justify-content: center;

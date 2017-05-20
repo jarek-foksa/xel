@@ -364,7 +364,7 @@
         let screenIndex = this._getTabScreenIndex(tab);
         tab[$screenIndex] = screenIndex;
         tab[$initialScreenIndex] = screenIndex;
-        tab[$flexOffset] = tab.getBoundingClientRect().left - tabsBounds.left - 1;
+        tab[$flexOffset] = tab.getBoundingClientRect().left - tabsBounds.left;
 
         if (tab !== draggedTab) {
           tab.style.transition = "transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)";
