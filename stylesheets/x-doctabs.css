@@ -9,7 +9,6 @@
   align-items: center;
   width: 100%;
   position: relative;
-  contain: strict;
   --open-button-width: 24px;
   --open-button-height: 24px;
   --open-button-margin: 0 10px;

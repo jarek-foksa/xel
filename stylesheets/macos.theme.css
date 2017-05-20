@@ -735,7 +735,7 @@ x-doctabs {
   background-repeat: no-repeat;
   background-position: center center;
   height: 25px;
-  border: 1px solid #9C9C9C;
+  outline: 1px solid #9C9C9C;
   --open-button-width: 18px;
   --open-button-height: 18px;
   --open-button-margin: 0 4px;
