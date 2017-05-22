@@ -35,15 +35,13 @@ window.Xel = {utils: {}, classes: {}};
     styleElement.textContent = `body, * { cursor: ${cursor} !important; user-select: none !important; }`;
     document.head.append(styleElement);
 
-    let pointerUpListener, lostPointerCaptureListener;
-
     let finish = () => {
-      this.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointerup", finish, true);
       this.removeEventListener("lostpointercapture", finish);
       styleElement.remove();
     };
 
-    this.addEventListener("pointerup", finish);
+    window.addEventListener("pointerup", finish, true);
     this.addEventListener("lostpointercapture", finish);
   };
 }
