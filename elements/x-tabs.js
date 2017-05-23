@@ -10,7 +10,7 @@
 "use strict";
 
 {
-  let {createElement, html} = Xel.utils.element;
+  let {createElement, html, closest} = Xel.utils.element;
 
   let shadowTemplate = html`
     <template>
@@ -280,8 +280,11 @@
                 tab.tabIndex = (tab.selected ? 0 : -1);
               }
 
-              this.focus();
-              this.blur();
+              let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+              if (ancestorFocusableElement) {
+                ancestorFocusableElement.focus();
+              }
             }
           }, {once: true});
 

@@ -9,7 +9,7 @@
 "use strict";
 
 {
-  let {html} = Xel.utils.element;
+  let {html, closest} = Xel.utils.element;
 
   let shadowTemplate = html`
     <template>
@@ -140,10 +140,16 @@
     }
 
     _onPointerDown(event) {
-      // Don't focus the checkbox with pointer
-      event.preventDefault();
-      this.focus();
-      this.blur();
+      // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
+      if (this.matches(":focus") === false) {
+        event.preventDefault();
+
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
+      }
     }
 
     _onKeyDown(event) {

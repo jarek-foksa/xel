@@ -119,8 +119,6 @@
       // Don't focus the widget with pointer
       if (!event.target.closest("x-menu") && this.matches(":focus") === false) {
         event.preventDefault();
-        this.focus();
-        this.blur();
       }
     }
 
@@ -267,8 +265,11 @@
         this.focus();
       }
       else {
-        this.focus();
-        this.blur();
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
       }
 
       window.removeEventListener("resize", this._resizeListener);

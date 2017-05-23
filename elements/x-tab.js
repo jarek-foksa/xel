@@ -6,7 +6,7 @@
 
 {
   let {max} = Math;
-  let {createElement, html} = Xel.utils.element;
+  let {createElement, html, closest} = Xel.utils.element;
   let {sleep} = Xel.utils.time;
 
   let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
@@ -119,9 +119,13 @@
     async _onPointerDown(pointerDownEvent) {
       // Don't focus the tab with pointer
       if (this.matches(":focus") === false && !event.target.closest("x-menu, x-popup")) {
-        pointerDownEvent.preventDefault();
-        this.focus();
-        this.blur();
+        event.preventDefault();
+
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
       }
 
       if (pointerDownEvent.button !== 0 || this.querySelector("x-menu")) {

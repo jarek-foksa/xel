@@ -5,7 +5,7 @@
 "use strict";
 
 {
-  let {createElement, html} = Xel.utils.element;
+  let {createElement, html, closest} = Xel.utils.element;
   let {sleep} = Xel.utils.time;
   let {max} = Math;
 
@@ -142,11 +142,15 @@
     }
 
     _onPointerDown(pointerDownEvent) {
-      // Don't focus the tab with pointer
-      {
-        pointerDownEvent.preventDefault();
-        this.focus();
-        this.blur();
+      // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
+      if (this.matches(":focus") === false) {
+        event.preventDefault();
+
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
       }
 
       if (pointerDownEvent.button !== 0) {

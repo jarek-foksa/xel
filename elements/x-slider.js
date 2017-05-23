@@ -11,7 +11,7 @@
 "use strict";
 
 {
-  let {html} = Xel.utils.element;
+  let {html, closest} = Xel.utils.element;
   let {normalize, round, getPrecision} = Xel.utils.math;
   let {throttle} = Xel.utils.time;
 
@@ -184,10 +184,16 @@
     }
 
     _onPointerDown(event) {
-      // Don't focus the slider with pointer
-      event.preventDefault();
-      this.focus();
-      this.blur();
+      // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
+      if (this.matches(":focus") === false) {
+        event.preventDefault();
+
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
+      }
     }
 
     _onShadowRootPointerDown(pointerDownEvent) {

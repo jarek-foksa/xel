@@ -5,7 +5,7 @@
 "use strict";
 
 {
-  let {createElement, html} = Xel.utils.element;
+  let {createElement, html, closest} = Xel.utils.element;
   let debug = true;
 
   let shadowTemplate = html`
@@ -162,8 +162,11 @@
         await menu.close();
         this["#overlay"].hide(false);
 
-        this.focus();
-        this.blur();
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
 
         resolve();
       });

@@ -7,7 +7,7 @@
 "use strict";
 
 {
-  let {createElement, html} = Xel.utils.element;
+  let {createElement, html, closest} = Xel.utils.element;
   let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
 
   let shadowTemplate = html`
@@ -113,11 +113,15 @@
     }
 
     _onPointerDown(event) {
-      // Don't focus the switch with pointer
-      {
+      // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
+      if (this.matches(":focus") === false) {
         event.preventDefault();
-        this.focus();
-        this.blur();
+
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
       }
 
       // Ripple

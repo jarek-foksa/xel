@@ -8,7 +8,7 @@
 
 {
   let {max} = Math;
-  let {createElement, html} = Xel.utils.element;
+  let {createElement, html, closest} = Xel.utils.element;
   let {sleep} = Xel.utils.time;
 
   let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
@@ -220,11 +220,15 @@
     }
 
     async _onButtonPointerDown(pointerDownEvent) {
-      // Don't focus the widget with pointer
+      // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
       if (this.matches(":focus") === false) {
-        pointerDownEvent.preventDefault();
-        this.focus();
-        this.blur();
+        event.preventDefault();
+
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
       }
 
       if (pointerDownEvent.button !== 0) {
@@ -586,8 +590,11 @@
             this.focus();
           }
           else {
-            this.focus();
-            this.blur();
+            let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+            if (ancestorFocusableElement) {
+              ancestorFocusableElement.focus();
+            }
           }
 
           popup.removeAttribute("closing");
