@@ -5,7 +5,7 @@
 "use strict";
 
 {
-  let {createElement, html} = Xel.utils.element;
+  let {createElement, html, closest} = Xel.utils.element;
   let {sleep} = Xel.utils.time;
 
   let debug = false;
