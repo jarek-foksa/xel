@@ -224,7 +224,7 @@
       if (this.matches(":focus") === false) {
         event.preventDefault();
 
-        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+        let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
 
         if (ancestorFocusableElement) {
           ancestorFocusableElement.focus();
