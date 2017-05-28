@@ -545,18 +545,54 @@
           this.style.top = (elementBounds.top + elementBounds.height + elementWhitespace + extraTop) + "px";
           this.style.left = (elementBounds.left + extraLeft) + "px";
 
-          // Reduce menu size
+          let side = "bottom";
+
+          // Reduce menu size if it does not fit on screen
           {
             let menuBounds = this.getBoundingClientRect();
 
-            // Reduce menu width if it is bigger than screen width
             if (menuBounds.width > window.innerWidth - 10) {
               this.style.width = (window.innerWidth - 10) + "px";
             }
 
+            if (menuBounds.height > window.innerHeight - 10) {
+              this.style.height = (window.innerHeight - 10) + "px";
+            }
+          }
+
+          if (element.parentElement.localName === "x-menubar") {
+            let menuBounds = this.getBoundingClientRect();
+
             // Reduce menu height if it overflows bottom screen edge
             if (menuBounds.top + menuBounds.height + windowWhitespace > window.innerHeight) {
               this.style.height = (window.innerHeight - (elementBounds.top + elementBounds.height) - 10) + "px";
+            }
+          }
+          else {
+            // Move the menu vertically if it overflows the bottom screen edge
+            {
+              let menuBounds = this.getBoundingClientRect();
+
+              if (menuBounds.top + menuBounds.height + windowWhitespace > window.innerHeight) {
+                // Move menu to the top side of the element if there is enough space to fit it in
+                if (elementBounds.top > menuBounds.height + windowWhitespace) {
+                  this.style.top = (elementBounds.top - menuBounds.height - elementWhitespace + extraTop) + "px";
+                  side = "top";
+                }
+                // ... otherwise move menu to the screen edge
+                else {
+                  // Move menu to the top screen edge
+                  if (elementBounds.top > window.innerHeight - (elementBounds.top + elementBounds.height)) {
+                    this.style.top = (windowWhitespace + extraTop) + "px";
+                    side = "top";
+                  }
+                  // Move menu to the bottom screen edge
+                  else {
+                    this.style.top = (window.innerHeight - menuBounds.height - windowWhitespace + extraTop) + "px";
+                    side = "bottom";
+                  }
+                }
+              }
             }
           }
 
@@ -587,7 +623,7 @@
               await this.animate(
                 {
                   transform: ["scale(1, 0)", "scale(1, 1)"],
-                  transformOrigin: ["0 0", "0 0"]
+                  transformOrigin: [side === "top" ? "0 100%" : "0 0", side === "top" ? "0 100%" : "0 0"]
                 },
                 { duration, easing }
               ).finished;
