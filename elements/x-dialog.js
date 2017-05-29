@@ -134,7 +134,6 @@
       }
       else if (origin === "top") {
         this.style.transform = "perspective(1px) translate(-50%, -0%)";
-        this.style.top = "0%";
       }
 
       this["#overlay"].style.background = backdropColor;
@@ -146,10 +145,10 @@
 
       this.animate(
         {
-          top: [`-${bbox.height}px`, origin === "center" ? "50%" : "0%"],
+          top: [`-${bbox.height}px`, computedStyle.top],
         },
         {
-          duration: 200,
+          duration: 300,
           easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
         }
       );
@@ -171,10 +170,10 @@
 
       let animation = this.animate(
         {
-          top: [origin === "center" ? "50%" : "0%", `-${bbox.height + 20}px`],
+          top: [computedStyle.top, `-${bbox.height + 20}px`],
         },
         {
-          duration: 200,
+          duration: 300,
           easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
         }
       );
