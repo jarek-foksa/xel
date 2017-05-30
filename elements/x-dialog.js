@@ -120,7 +120,7 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    _open() {
+    async _open() {
       this._initiallyFocusedElement = this.getRootNode().querySelector(":focus");
 
       let computedStyle = getComputedStyle(this);
@@ -143,7 +143,7 @@
 
       let bbox = this.getBoundingClientRect();
 
-      this.animate(
+      let animation = this.animate(
         {
           top: [`-${bbox.height}px`, computedStyle.top],
         },
@@ -152,6 +152,8 @@
           easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
         }
       );
+
+      await animation.finished;
 
       let descendants = [...this.querySelectorAll("*")];
       let lastFocusableDescendant = descendants.reverse().find($0 => $0.tabIndex >= 0);
