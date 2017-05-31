@@ -442,8 +442,6 @@
       return new Promise(async (resolve) => {
         if (this.opened) {
           this.removeAttribute("opened");
-          this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
-
           this.setAttribute("animating", "");
           this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
 
