@@ -40,19 +40,20 @@ documentation.
 Thanks to advanced theming capabilities, Xel can imitate native widgets.
 
 The themes currently shipped with Xel are:
+- Material - implements Material Design guidelines
+- Galaxy - dark theme optimized for desktop apps
 - macOS - implements macOS Human Interface Guidelines
-- Material - implement Material Design guidelines
 
 **Supported browsers**
 
 The project makes heavy use of bleeding edge Web Platform features such as Custom Elements v1, Shadow DOM v1, SVG 2 and ES2017 and therefore works only on the following browsers:
 
-* Chrome >= 57
-* Chromium >= 57
-* Opera >= 44
-* Atom Electron >= 1.6
-* NW.js >= 0.21
-* Android WebView >= 57
+* Chrome >= 58
+* Chromium >= 58
+* Opera >= 45
+* Atom Electron >= 1.7
+* NW.js >= 0.23
+* Android WebView >= 58
 
 ## Setup
 
@@ -78,6 +79,12 @@ Add to the `<head>` one of the following:
 
 ```html
 <link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css">
+```
+
+- Galaxy 
+
+```html
+<link rel="stylesheet" href="node_modules/xel/stylesheets/galaxy.theme.css">
 ```
 
 - macOS
