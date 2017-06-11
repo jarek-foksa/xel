@@ -1,0 +1,60 @@
+<div class="view" id="setup-view">
+  <article>
+    <section id="setup-section">
+      <h2>Setup</h2>
+
+      <x-card>
+        <main>
+          <h3><x-icon name="looks-one"></x-icon> Install Xel</h3>
+
+          <p>Run from console:</p>
+          <code style="display: block; white-space: pre-line; overflow: auto;">npm install xel</code>
+        </main>
+      </x-card>
+
+      <x-card>
+        <main>
+          <h3><x-icon name="looks-two"></x-icon> Link Xel</h3>
+
+          <p>Add to the  <code>&lt;head&gt;:</code></p>
+          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="import" href="node_modules/xel/xel.min.html"&gt;</pre>
+        </main>
+      </x-card>
+
+      <x-card>
+        <main>
+          <h3><x-icon name="looks-3"></x-icon> Link Xel theme</h3>
+
+          <p>Add to the <code>&lt;head&gt;</code> one of the following:</p>
+
+          <p><strong>Material theme</strong>:
+          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css"&gt;</pre>
+          </p>
+
+          <p><strong>Galaxy theme</strong>:
+          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/galaxy.theme.css"&gt;</pre>
+          </p>
+
+          <p><strong>macOS theme</strong>:
+          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/macos.theme.css"&gt;</pre></p>
+        </main>
+      </x-card>
+
+      <x-card>
+        <main>
+          <h3><x-icon name="looks-4"></x-icon> Link fonts</h3>
+          <p>Some themes require additional fonts to be linked or embedded. Use <a href="https://fonts.google.com/">Google Fonts</a> service to generate necessary code.</p>
+
+          <p><strong>Material theme</strong>:
+          <p><a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>. For non-latin scripts, also include <a href="https://fonts.google.com/specimen/Noto+Sans">Noto Sans</a>.</p>
+
+          <p><strong>Galaxy theme</strong>:
+          <p><a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>. For non-latin scripts, also include <a href="https://fonts.google.com/specimen/Noto+Sans">Noto Sans</a>.</p>
+
+          <p><strong>MacOS theme</strong>:
+          <p>Relies on fonts provided by the operating system, you don't have to link anything.</p>
+        </main>
+      </x-card>
+    </section>
+  </article>
+</div>

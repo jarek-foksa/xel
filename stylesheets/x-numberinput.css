@@ -10,6 +10,7 @@
   width: 100px;
   height: 24px;
   box-sizing: border-box;
+  color: #000000;
   --selection-color: currentColor;
   --selection-background: #B2D7FD;
   --inner-padding: 0;

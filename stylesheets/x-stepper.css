@@ -15,7 +15,6 @@
   --button-border-left: none;
   --pressed-button-color: white;
   --pressed-button-background: rgba(0, 0, 0, 0.3);
-  --pressed-button-box-shadow: none;
   --increment-arrow-width: 11px;
   --increment-arrow-height: 11px;
   --increment-arrow-path-d: path("M 24.381 69.236 L 49.998 43.258 L 76.104 69.128 L 68.759 76.474 L 49.995 57.708 L 31.242 76.46 L 24.381 69.236 Z" );
@@ -43,7 +42,6 @@
 #decrement-button[data-pressed] {
   color: var(--pressed-button-color);
   background: var(--pressed-button-background);
-  box-shadow: var(--pressed-button-box-shadow);
 }
 :host([disabled="increment"]) #increment-button,
 :host([disabled="decrement"]) #decrement-button,

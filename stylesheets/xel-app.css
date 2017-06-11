@@ -30,9 +30,16 @@
   z-index: 100;
 }
 
+#sidebar #header {
+  padding: 20px 0;
+}
+
+#sidebar #header + hr {
+  margin-top: -1px;
+}
+
 #sidebar h1 {
-  color: #009788;
-  margin: 20px 22px 20px 104px;
+  margin: 0px 22px 0px 104px;
   line-height: 1;
 }
 
@@ -48,9 +55,13 @@
   --ripple-background: white;
 }
 
+#sidebar #nav x-button x-label {
+  font-size: 15px;
+}
+
 #hide-sidebar-button {
   position: absolute;
-  top: 20px;
+  top: 18px;
   left: 11px;
   padding: 0;
   width: 32px;
@@ -71,6 +82,10 @@
 
 #theme-section {
   padding: 10px 0px;
+}
+
+#theme-section #theme-heading {
+  margin-top: 0;
 }
 
 #theme-section x-select {
@@ -113,8 +128,24 @@
   box-sizing: border-box;
 }
 
+#views section {
+  margin-bottom: 35px;
+}
+
+#views section[hidden] + hr,
+#views section[data-last-visible] + hr {
+  display: none;
+}
+
+#views section h3,
+#views section h4,
+#views section h5 {
+  position: relative;
+}
+
+/* "About" view */
+
 #views #about-view {
-  background: #009788;
   color: white;
   width: 100%;
   height: 100vh;
@@ -155,16 +186,21 @@
   font-weight: 700;
 }
 
-#views section {
-  margin-bottom: 35px;
+/* "Setup" view */
+
+#views #setup-view h3 {
+  margin-bottom: 0;
 }
 
-#views section[hidden] + hr {
-  display: none;
+#views #setup-view h3 x-icon {
+  width: 40px;
+  height: auto;
+  display: inline-block;
+  vertical-align: middle;
 }
 
-#views section h3,
-#views section h4,
-#views section h5 {
-  position: relative;
+/* "FAQ" view */
+
+#views #faq-view h4 {
+  margin-top: 0;
 }

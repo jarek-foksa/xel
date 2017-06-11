@@ -29,7 +29,7 @@
 
       <hr/>
 
-      <section>
+      <section data-themes="material">
         <h4>Confirmation</h4>
 
         <xel-demo>
@@ -46,6 +46,48 @@
                 </x-button>
 
                 <x-button toggled id="disagree-button" skin="flat">
+                  <x-label>Agree</x-label>
+                </x-button>
+              </footer>
+            </x-dialog>
+
+            <x-button id="show-dialog-button">
+              <x-label>Show</x-label>
+            </x-button>
+
+            <script>
+              let dialog = document.querySelector("x-dialog");
+              let showDialogButton = document.querySelector("#show-dialog-button");
+              let agreeButton = document.querySelector("#agree-button");
+              let disagreeButton = document.querySelector("#disagree-button");
+
+              showDialogButton.addEventListener("click", () => dialog.opened = true);
+              agreeButton.addEventListener("click", () => dialog.opened = false);
+              disagreeButton.addEventListener("click", () => dialog.opened = false);
+            </script>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section data-themes="macos galaxy">
+        <h4>Confirmation</h4>
+
+        <xel-demo>
+          <template>
+            <x-dialog>
+              <main>
+                <h3>Use Google's location service?</h3>
+                <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
+              </main>
+
+              <footer>
+                <x-button id="agree-button">
+                  <x-label>Disagree</x-label>
+                </x-button>
+
+                <x-button toggled id="disagree-button">
                   <x-label>Agree</x-label>
                 </x-button>
               </footer>

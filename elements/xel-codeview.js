@@ -10,7 +10,7 @@
   let shadowTemplate = html`
     <template>
       <link rel="stylesheet" href="node_modules/xel/stylesheets/xel-codeview.css" data-vulcanize>
-      <link rel="stylesheet" href="node_modules/prismjs/themes/prism-coy.css"/ data-vulcanize>
+      <link id="prism-theme" rel="stylesheet">
       <code id="code" class="language-html"></code>
     </template>
   `;
@@ -27,6 +27,12 @@
       for (let element of this._shadowRoot.querySelectorAll("[id]")) {
         this["#" + element.id] = element;
       }
+    }
+
+    connectedCallback() {
+      let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
+      let prismTheme = theme.endsWith("galaxy.theme.css") ? "tomorrow" : "coy";
+      this["#prism-theme"].setAttribute("href", `node_modules/prismjs/themes/prism-${prismTheme}.css`);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

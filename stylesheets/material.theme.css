@@ -6,175 +6,13 @@
  *   Theme based on Material Design guidelines.
  */
 
-/*****************************************************************************************************************/
-
-/**
- * @info
- *   "Roboto" fonts.
- * @src
- *   https://fonts.googleapis.com/css?family=Roboto:400,400i,500,500i,700,700i
- */
-
-@font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  src: local("Roboto"), local("Roboto-Regular"), url(https://fonts.gstatic.com/s/roboto/v16/Ks_cVxiCiwUWVsFWFA3Bjn-_kf6ByYO6CLYdB4HQE-Y.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  src: local("Roboto"), local("Roboto-Regular"), url(https://fonts.gstatic.com/s/roboto/v16/oMMgfZMQthOryQo9n22dcuvvDin1pK8aKteLpeZ5c0A.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 400;
-  src: local("Roboto Italic"), local("Roboto-Italic"), url(https://fonts.gstatic.com/s/roboto/v16/vSzulfKSK0LLjjfeaxcREhkAz4rYn47Zy2rvigWQf6w.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 400;
-  src: local("Roboto Italic"), local("Roboto-Italic"), url(https://fonts.gstatic.com/s/roboto/v16/vPcynSL0qHq_6dX7lKVByXYhjbSpvc47ee6xR_80Hnw.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 500;
-  src: local("Roboto Medium"), local("Roboto-Medium"), url(https://fonts.gstatic.com/s/roboto/v16/oOeFwZNlrTefzLYmlVV1UIX0hVgzZQUfRDuZrPvH3D8.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 500;
-  src: local("Roboto Medium"), local("Roboto-Medium"), url(https://fonts.gstatic.com/s/roboto/v16/RxZJdnzeo3R5zSexge8UUZBw1xU1rKptJj_0jans920.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 500;
-  src: local("Roboto Medium Italic"), local("Roboto-MediumItalic"), url(https://fonts.gstatic.com/s/roboto/v16/OLffGBTaF0XFOW1gnuHF0aE8kM4xWR1_1bYURRojRGc.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 500;
-  src: local("Roboto Medium Italic"), local("Roboto-MediumItalic"), url(https://fonts.gstatic.com/s/roboto/v16/OLffGBTaF0XFOW1gnuHF0Ygp9Q8gbYrhqGlRav_IXfk.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 700;
-  src: local("Roboto Bold"), local("Roboto-Bold"), url(https://fonts.gstatic.com/s/roboto/v16/97uahxiqZRoncBaCEI3aW4X0hVgzZQUfRDuZrPvH3D8.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 700;
-  src: local("Roboto Bold"), local("Roboto-Bold"), url(https://fonts.gstatic.com/s/roboto/v16/d-6IYplOFocCacKzxwXSOJBw1xU1rKptJj_0jans920.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 700;
-  src: local("Roboto Bold Italic"), local("Roboto-BoldItalic"), url(https://fonts.gstatic.com/s/roboto/v16/t6Nd4cfPRhZP44Q5QAjcC6E8kM4xWR1_1bYURRojRGc.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 700;
-  src: local("Roboto Bold Italic"), local("Roboto-BoldItalic"), url(https://fonts.gstatic.com/s/roboto/v16/t6Nd4cfPRhZP44Q5QAjcC4gp9Q8gbYrhqGlRav_IXfk.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * @info
- *   "Roboto Mono" fonts.
- * @src
- *   https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i
- */
-
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: normal;
-  font-weight: 400;
-  src: local("Roboto Mono"), local("RobotoMono-Regular"), url(https://fonts.gstatic.com/s/robotomono/v4/hMqPNLsu_dywMa4C_DEpY6E8kM4xWR1_1bYURRojRGc.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: normal;
-  font-weight: 400;
-  src: local("Roboto Mono"), local("RobotoMono-Regular"), url(https://fonts.gstatic.com/s/robotomono/v4/hMqPNLsu_dywMa4C_DEpY4gp9Q8gbYrhqGlRav_IXfk.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: italic;
-  font-weight: 400;
-  src: local("Roboto Mono Italic"), local("RobotoMono-Italic"), url(https://fonts.gstatic.com/s/robotomono/v4/mE0EPT_93c7f86_WQexR3FYo3yjVQ1y6DauKPXl5S54.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: italic;
-  font-weight: 400;
-  src: local("Roboto Mono Italic"), local("RobotoMono-Italic"), url(https://fonts.gstatic.com/s/robotomono/v4/mE0EPT_93c7f86_WQexR3AeOulFbQKHxPa89BaxZzA0.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: normal;
-  font-weight: 700;
-  src: local("Roboto Mono Bold"), local("RobotoMono-Bold"), url(https://fonts.gstatic.com/s/robotomono/v4/N4duVc9C58uwPiY8_59Fz4gd9OEPUCN3AdYW0e8tat4.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: normal;
-  font-weight: 700;
-  src: local("Roboto Mono Bold"), local("RobotoMono-Bold"), url(https://fonts.gstatic.com/s/robotomono/v4/N4duVc9C58uwPiY8_59Fz_79_ZuUxCigM2DespTnFaw.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: italic;
-  font-weight: 700;
-  src: local("Roboto Mono Bold Italic"), local("RobotoMono-BoldItalic"), url(https://fonts.gstatic.com/s/robotomono/v4/1OsMuiiO6FCF2x67vzDKAwWM0vnr4QAyZa5IfdpZxjY.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Roboto Mono";
-  font-style: italic;
-  font-weight: 700;
-  src: local("Roboto Mono Bold Italic"), local("RobotoMono-BoldItalic"), url(https://fonts.gstatic.com/s/robotomono/v4/1OsMuiiO6FCF2x67vzDKA8yRwA4nzNmLFN68bwzDkMk.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
-}
-
-/*****************************************************************************************************************/
-
 body {
   width: 100%;
   height: 100%;
   margin: 0;
   background: #eeeeee;
   color: var(--text-color);
-  font-family: "Roboto", "Noto", sans-serif;
+  font-family: "Roboto", "Noto Sans", sans-serif;
   font-size: 15px;
   line-height: 1.6;
   --primary-color: #009788;
@@ -400,7 +238,17 @@ x-stepper {
 /*****************************************************************************************************************/
 
 /**
- * Button (https://material.google.com/components/buttons.html)
+ * Swatch
+ */
+
+x-swatch {
+  border-radius: 2px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Buttons (https://material.google.com/components/buttons.html)
  */
 
 x-button {
@@ -546,9 +394,9 @@ x-button[skin="iconic"] > x-icon {
   color: inherit;
 }
 
-/* @skin "sidenav" */
+/* @skin "nav" */
 
-x-button[skin="sidenav"] {
+x-button[skin="nav"] {
   padding: 8px 15px;
   font-size: 15px;
   cursor: default;
@@ -559,19 +407,19 @@ x-button[skin="sidenav"] {
   overflow: hidden;
 }
 
-x-button[skin="sidenav"][toggled] {
+x-button[skin="nav"][toggled] {
   color: white;
   background: var(--primary-color);
 }
 
-x-button[skin="sidenav"] x-icon {
+x-button[skin="nav"] x-icon {
   width: 24px;
   height: 24px;
   opacity: 0.9;
   margin-right: 12px;
 }
 
-x-button[skin="sidenav"] x-label {
+x-button[skin="nav"] x-label {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -706,7 +554,8 @@ x-doctabs {
   background: var(--primary-color);
   color: white;
   height: 46px;
-  --open-button-path-d: path("M 80 11 L 20 12 C 15 12 12 15 12 20 L 12 80 C 12 85 15 88 20 88 L 80 88 C 85 88 88 85 88 80 L 88 20 C 88 15 85 12 80 12 Z M 71 54 L 54 54 L 54 71 L 46 71 L 46 54 L 29 54 L 29 46 L 46 46 L 46 29 L 54 29 L 54 46 L 71 46 L 71 54 Z");
+  --open-button-path-d: path(
+    "M 80 11 L 20 12 C 15 12 12 15 12 20 L 12 80 C 12 85 15 88 20 88 L 80 88 C 85 88 88 85 88 80 L 88 20 C 88 15 85 12 80 12 Z M 71 54 L 54 54 L 54 71 L 46 71 L 46 54 L 29 54 L 29 46 L 46 46 L 46 29 L 54 29 L 54 46 L 71 46 L 71 54 Z");
 }
 
 x-doctab {
@@ -742,56 +591,6 @@ x-doctab:focus > * {
 }
 x-doctab[disabled] > * {
   opacity: 0.5;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Select (https://material.io/guidelines/components/buttons.html#buttons-dropdown-buttons)
- */
-
-x-select {
-  background: white;
-  color: #646464;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
-  height: 36px;
-  padding: 0 4px 0 10px;
-  --arrow-width: 15px;
-  --arrow-min-width: 15px;
-  --arrow-height: 15px;
-  --arrow-margin: 0 3px 0 15px;
-  --arrow-d: path("M 24.85 63.241 L 51.609 98.098 L 78.367 63.241 Z M 78.367 35.581 L 51.609 0.724 L 24.85 35.581 Z");
-}
-x-select:focus {
-  border-bottom-color: var(--primary-color);
-  box-shadow: 0px 1px 0px var(--primary-color);
-}
-
-/* Flat skin */
-
-x-select[skin="flat"] {
-  background: none;
-  border: none;
-  border-bottom: 2px solid #b3b3b3;
-  padding: 0;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Menubar (https://material.google.com/components/menus.html)
- */
-
-x-menubar {
-  height: 38px;
-  background: white;
-  box-shadow: var(--elevation-1);
-}
-
-x-menubar > x-menuitem {
-  padding: 0 20px;
-  height: 100%;
 }
 
 /*****************************************************************************************************************/
@@ -871,6 +670,23 @@ x-menuitem x-label + x-shortcut {
 /*****************************************************************************************************************/
 
 /**
+ * Menubar (https://material.google.com/components/menus.html)
+ */
+
+x-menubar {
+  height: 38px;
+  background: white;
+  box-shadow: var(--elevation-1);
+}
+
+x-menubar > x-menuitem {
+  padding: 0 20px;
+  height: 100%;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Dialog (https://material.google.com/components/dialogs.html)
  */
 
@@ -923,22 +739,24 @@ x-drawer {
 /*****************************************************************************************************************/
 
 /**
- * Switch (https://material.google.com/components/selection-controls.html#selection-controls-switch)
+ * Popover
  */
 
-x-switch {
-  color: var(--primary-color);
-  transition: filter 0.2s var(--transition-fn1);
-  filter: saturate(0%);
-  --ripple-type: none;
+x-popover {
+  color: var(--text-color);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  box-shadow: var(--elevation-5);
+  font-size: 15px;
+  font-weight: 400;
+  text-transform: none;
+  --open-transition: 100 transform var(--transition-fn1);
 }
-x-switch[toggled] {
-  filter: none;
-}
-@media (pointer:coarse) {
-  x-switch {
-    --ripple-type: unbounded;
-  }
+
+x-popover > main {
+  width: 100%;
+  padding: 20px;
+  overflow: auto;
 }
 
 /*****************************************************************************************************************/
@@ -1026,24 +844,55 @@ x-radio + x-label {
 /*****************************************************************************************************************/
 
 /**
- * Popover
+ * Switch (https://material.google.com/components/selection-controls.html#selection-controls-switch)
  */
 
-x-popover {
-  color: var(--text-color);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 2px;
-  box-shadow: var(--elevation-5);
-  font-size: 15px;
-  font-weight: 400;
-  text-transform: none;
-  --open-transition: 100 transform var(--transition-fn1);
+x-switch {
+  color: var(--primary-color);
+  transition: filter 0.2s var(--transition-fn1);
+  filter: saturate(0%);
+  --ripple-type: none;
+}
+x-switch[toggled] {
+  filter: none;
+}
+@media (pointer:coarse) {
+  x-switch {
+    --ripple-type: unbounded;
+  }
 }
 
-x-popover > main {
-  width: 100%;
-  padding: 20px;
-  overflow: auto;
+/*****************************************************************************************************************/
+
+/**
+ * Select (https://material.io/guidelines/components/buttons.html#buttons-dropdown-buttons)
+ */
+
+x-select {
+  background: white;
+  color: #646464;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  height: 36px;
+  padding: 0 4px 0 10px;
+  --arrow-width: 15px;
+  --arrow-min-width: 15px;
+  --arrow-height: 15px;
+  --arrow-margin: 0 3px 0 15px;
+  --arrow-d: path("M 24.85 63.241 L 51.609 98.098 L 78.367 63.241 Z M 78.367 35.581 L 51.609 0.724 L 24.85 35.581 Z");
+}
+x-select:focus {
+  border-bottom-color: var(--primary-color);
+  box-shadow: 0px 1px 0px var(--primary-color);
+}
+
+/* Flat skin */
+
+x-select[skin="flat"] {
+  background: none;
+  border: none;
+  border-bottom: 2px solid #b3b3b3;
+  padding: 0;
 }
 
 /*****************************************************************************************************************/
@@ -1196,6 +1045,77 @@ x-input[skin="flat"] > x-icon + x-label {
 /*****************************************************************************************************************/
 
 /**
+ * Number input
+ */
+
+x-numberinput {
+  background: white;
+  color: var(--text-color);
+  font-size: 13px;
+  border: 1px solid #c1c1c1;
+  height: 34px;
+  max-width: 160px;
+  outline: none;
+  --inner-padding: 0px 7px;
+  --selection-color: white;
+  --selection-background: var(--primary-color);
+}
+x-numberinput[invalid] {
+  --selection-background: #d50000;
+}
+
+
+/* Focus indicator line */
+x-numberinput::after {
+  content: "";
+  display: block;
+  width: 0%;
+  height: 3px;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color);
+  position: absolute;
+  transition: width 0.2s var(--transition-fn1);
+}
+x-numberinput:focus::after {
+  width: 100%;
+}
+x-numberinput[invalid]::after {
+  width: 100%;
+  background: #d50000;
+}
+
+/* Placeholder */
+x-numberinput > x-label {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 22px;
+  bottom: 6px;
+  top: 50%;
+  left: 0;
+  padding: 0 7px;
+  transform: translateY(-50%);
+  line-height: 1.8;
+  color: rgba(0, 0, 0, 0.4);
+  font-family: inherit;
+  pointer-events: none;
+}
+x-numberinput[empty] > x-label {
+  display: block;
+  cursor: text;
+}
+x-numberinput[required] > x-label::after {
+  content: "*";
+}
+x-numberinput > x-icon + x-label {
+  left: 32px;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Textarea
  */
 
@@ -1291,77 +1211,6 @@ x-textarea[skin="flat"]:focus > x-label::after {
 /*****************************************************************************************************************/
 
 /**
- * Number input
- */
-
-x-numberinput {
-  background: white;
-  color: var(--text-color);
-  font-size: 13px;
-  border: 1px solid #c1c1c1;
-  height: 34px;
-  max-width: 160px;
-  outline: none;
-  --inner-padding: 0px 7px;
-  --selection-color: white;
-  --selection-background: var(--primary-color);
-}
-x-numberinput[invalid] {
-  --selection-background: #d50000;
-}
-
-
-/* Focus indicator line */
-x-numberinput::after {
-  content: "";
-  display: block;
-  width: 0%;
-  height: 3px;
-  bottom: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primary-color);
-  position: absolute;
-  transition: width 0.2s var(--transition-fn1);
-}
-x-numberinput:focus::after {
-  width: 100%;
-}
-x-numberinput[invalid]::after {
-  width: 100%;
-  background: #d50000;
-}
-
-/* Placeholder */
-x-numberinput > x-label {
-  display: none;
-  position: absolute;
-  width: 100%;
-  height: 22px;
-  bottom: 6px;
-  top: 50%;
-  left: 0;
-  padding: 0 7px;
-  transform: translateY(-50%);
-  line-height: 1.8;
-  color: rgba(0, 0, 0, 0.4);
-  font-family: inherit;
-  pointer-events: none;
-}
-x-numberinput[empty] > x-label {
-  display: block;
-  cursor: text;
-}
-x-numberinput[required] > x-label::after {
-  content: "*";
-}
-x-numberinput > x-icon + x-label {
-  left: 32px;
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Slider
  */
 
@@ -1411,9 +1260,25 @@ x-progressbar {
 /*****************************************************************************************************************/
 
 /**
- * Code view
+ * Demo site
  */
 
 xel-codeview {
   box-shadow: var(--elevation-1);
+}
+
+:host(xel-app) #sidebar h1 {
+  color: #009788;
+}
+
+:host(xel-app) #about-view {
+  background: #009788;
+}
+
+:host(xel-app) #setup-view h3 x-icon {
+  color: #009788;
+}
+
+:host(xel-app) #faq-view h4 {
+  color: #009788;
 }

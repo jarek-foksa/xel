@@ -5,9 +5,31 @@
 "use strict";
 
 {
+  let {parseColor} = Xel.utils.color;
   let {html} = Xel.utils.element;
+  let {capitalize} = Xel.utils.string;
   let {sleep} = Xel.utils.time;
   let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
+
+  let colorSchemesByTheme = {
+    material: {},
+    macos: {
+      blue: "hsl(211, 96.7%, 52.9%)",
+      graphite: "hsl(107, 0%, 55%)",
+      iron: "hsl(200, 15%, 50%)",
+      pink: "hsl(344, 65%, 45%)",
+      purple: "hsl(290, 40%, 46%)",
+      green: "hsl(88, 35%, 46%)",
+      yellowgreen: "hsl(61, 28%, 45%)"
+    },
+    galaxy: {
+      blue: "hsl(214, 85%, 58%)",
+      green: "hsl(85, 45%, 40%)",
+      yellowgreen: "hsl(68, 55%, 40%)",
+      pink: "hsl(332, 64%, 50%)",
+      red: "hsl(344, 65%, 45%)"
+    }
+  };
 
   let shadowTemplate = html`
     <template>
@@ -20,32 +42,34 @@
         </x-button>
 
         <sidebar id="sidebar">
-          <h1 id="logo">Xel</h1>
+          <header id="header">
+            <h1 id="logo">Xel</h1>
 
-          <x-button id="hide-sidebar-button" skin="textured">
-            <x-icon name="chevron-left"></x-icon>
-          </x-button>
+            <x-button id="hide-sidebar-button" skin="textured">
+              <x-icon name="chevron-left"></x-icon>
+            </x-button>
+          </header>
 
           <hr/>
 
           <nav id="nav">
             <section>
               <a href="/">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-icon name="info"></x-icon>
                   <x-label>About</x-label>
                 </x-button>
               </a>
 
               <a href="/setup">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-icon name="build"></x-icon>
                   <x-label>Setup</x-label>
                 </x-button>
               </a>
 
               <a href="/faq">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-icon name="question-answer"></x-icon>
                   <x-label>FAQ</x-label>
                 </x-button>
@@ -56,21 +80,21 @@
 
             <section>
               <a href="https://github.com/jarek-foksa/xel" target="_blank">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-icon name="code"></x-icon>
                   <x-label>Source Code ⧉</x-label>
                 </x-button>
               </a>
 
               <a href="https://github.com/jarek-foksa/xel/issues" target="_blank">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-icon name="bug-report"></x-icon>
                   <x-label>Bugs ⧉</x-label>
                 </x-button>
               </a>
 
               <a href="https://github.com/jarek-foksa/xel/commits" target="_blank">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-icon name="event"></x-icon>
                   <x-label>Changelog ⧉</x-label>
                 </x-button>
@@ -80,19 +104,33 @@
             <hr/>
 
             <section id="theme-section">
-              <h3>Theme</h3>
+              <div id="theme-subsection">
+                <h3 id="theme-heading">Theme</h3>
 
-              <x-select id="theme-select">
-                <x-menu>
-                  <x-menuitem value="/node_modules/xel/stylesheets/material.theme.css" selected="true">
-                    <x-label>Material</x-label>
-                  </x-menuitem>
+                <x-select id="theme-select">
+                  <x-menu>
+                    <x-menuitem value="material" selected="true">
+                      <x-label>Material</x-label>
+                    </x-menuitem>
 
-                  <x-menuitem value="/node_modules/xel/stylesheets/macos.theme.css" selected="true">
-                    <x-label>macOS</x-label>
-                  </x-menuitem>
-                </x-menu>
-              </x-select>
+                    <x-menuitem value="galaxy">
+                      <x-label>Galaxy</x-label>
+                    </x-menuitem>
+
+                    <x-menuitem value="macos">
+                      <x-label>macOS</x-label>
+                    </x-menuitem>
+                  </x-menu>
+                </x-select>
+              </div>
+
+              <div id="accent-color-subsection">
+                <h3>Accent color</h3>
+
+                <x-select id="accent-color-select">
+                  <x-menu id="accent-color-menu"></x-menu>
+                </x-select>
+              </div>
             </section>
 
             <hr/>
@@ -101,32 +139,44 @@
               <h3>Primitives</h3>
 
               <a href="/elements/x-box">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-box</x-label>
                 </x-button>
               </a>
 
+              <a href="/elements/x-card">
+                <x-button skin="nav">
+                  <x-label>x-card</x-label>
+                </x-button>
+              </a>
+
               <a href="/elements/x-icon">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-icon</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-label">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-label</x-label>
                 </x-button>
               </a>
 
+              <a href="/elements/x-shortcut">
+                <x-button skin="nav">
+                  <x-label>x-shortcut</x-label>
+                </x-button>
+              </a>
+
               <a href="/elements/x-stepper">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-stepper</x-label>
                 </x-button>
               </a>
 
-              <a href="/elements/x-card">
-                <x-button skin="sidenav">
-                  <x-label>x-card</x-label>
+              <a href="/elements/x-swatch">
+                <x-button skin="nav">
+                  <x-label>x-swatch</x-label>
                 </x-button>
               </a>
             </section>
@@ -137,13 +187,13 @@
               <h3>Buttons</h3>
 
               <a href="/elements/x-button">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-button</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-buttons">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-buttons</x-label>
                 </x-button>
               </a>
@@ -155,13 +205,13 @@
               <h3>Tabs</h3>
 
               <a href="/elements/x-tabs">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-tabs</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-doctabs">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-doctabs</x-label>
                 </x-button>
               </a>
@@ -173,25 +223,25 @@
               <h3>Menus</h3>
 
               <a href="/elements/x-menu">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-menu</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-menuitem">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-menuitem</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-menubar">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-menubar</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-contextmenu">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-contextmenu</x-label>
                 </x-button>
               </a>
@@ -203,19 +253,19 @@
               <h3>Modals</h3>
 
               <a href="/elements/x-dialog">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-dialog</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-drawer">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-drawer</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-popover">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-popover</x-label>
                 </x-button>
               </a>
@@ -227,55 +277,55 @@
               <h3>Forms</h3>
 
               <a href="/elements/x-checkbox">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-checkbox</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-radio">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-radio</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-switch">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-switch</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-select">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-select</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-colorselect">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-colorselect</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-input">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-input</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-numberinput">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-numberinput</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-textarea">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-textarea</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-slider">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-slider</x-label>
                 </x-button>
               </a>
@@ -287,13 +337,13 @@
               <h3>Progress</h3>
 
               <a href="/elements/x-progressbar">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-progressbar</x-label>
                 </x-button>
               </a>
 
               <a href="/elements/x-throbber">
-                <x-button skin="sidenav">
+                <x-button skin="nav">
                   <x-label>x-throbber</x-label>
                 </x-button>
               </a>
@@ -320,33 +370,39 @@
       window.addEventListener("load", () => this._onWindowLoad());
       window.addEventListener("popstate", (event) => this._onPopState(event));
       window.addEventListener("beforeunload", (event) => this._onWindowUnload(event));
-      this["#theme-select"].addEventListener("change", () => this._onThemeSelectChange());
+
+      this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event));
       this["#hide-sidebar-button"].addEventListener("click", (event) => this._onHideNavButtonClick(event));
       this["#show-sidebar-button"].addEventListener("click", (event) => this._onShowNavButtonClick(event));
-      this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event));
+      this["#theme-select"].addEventListener("change", () => this._onThemeSelectChange());
+      this["#accent-color-select"].addEventListener("change", () => this._onAccentColorSelectChange());
     }
 
     connectedCallback() {
-      this._update();
-
       history.scrollRestoration = "manual";
 
       if (history.state === null) {
         history.replaceState(null, null, window.location.href);
       }
 
-      let theme = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
+      this._updateNavButtons();
+      this._updateViews();
+      this._updateThemeSection();
 
-      for (let item of this["#theme-select"].querySelectorAll("x-menuitem")) {
-        item.setAttribute("selected", (item.getAttribute("value") === theme) ? "true" : "false");
-      }
+      this._applyAccentColor();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    _onThemeSelectChange() {
+    async _onThemeSelectChange() {
       sessionStorage.setItem("theme", this["#theme-select"].value);
+      await sleep(800);
       location.reload();
+    }
+
+    _onAccentColorSelectChange() {
+      sessionStorage.setItem("accentColorName", this["#accent-color-select"].value);
+      this._applyAccentColor();
     }
 
     _onWindowLoad() {
@@ -370,7 +426,8 @@
     }
 
     _onPopState(event) {
-      this._update()
+      this._updateNavButtons();
+      this._updateViews();
     }
 
     _onShadowRootClick(event) {
@@ -387,7 +444,9 @@
 
             if (location.pathname !== url.pathname) {
               history.pushState(null, null, anchor.href);
-              this._update();
+
+              this._updateNavButtons();
+              this._updateViews();
             }
           }
         }
@@ -407,98 +466,6 @@
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    _update() {
-      return new Promise( async (resolve) => {
-        // Update selected nav button to match current location
-        {
-          for (let button of this["#nav"].querySelectorAll("x-button")) {
-            let anchor = button.closest("a");
-
-            if (anchor) {
-              let url = new URL(anchor);
-
-              if (url.origin === location.origin && url.pathname === location.pathname) {
-                button.setAttribute("toggled", "");
-              }
-              else {
-                button.removeAttribute("toggled");
-              }
-            }
-          }
-        }
-
-        // Update displayed view to match current location
-        {
-          let selectedView = this["#views"].querySelector(".view[selected]");
-
-          if (!selectedView || selectedView.dataset.pathname !== location.pathname) {
-            let view = this["#views"].querySelector(`[data-pathname="${location.pathname}"]`);
-
-            // If the view does not exist, try to create it
-            if (!view) {
-              let $0 = (location.pathname === "/") ? "/about" : location.pathname;
-              let url = `/node_modules/xel/views` + $0 + `.html`;
-              let result = await fetch(url);
-              let viewHTML = await result.text();
-
-              view = html`${viewHTML}`;
-              view.setAttribute("data-pathname", location.pathname);
-              this["#views"].append(view);
-            }
-
-            if (location.pathname === "/") {
-              document.querySelector("title").textContent = "Xel";
-            }
-            else {
-              document.querySelector("title").textContent = "Xel - " + view.querySelector("h2").textContent;
-            }
-
-            // Toggle view
-            {
-              let view = this["#views"].querySelector(`[data-pathname="${location.pathname}"]`);
-              let otherView = this["#views"].querySelector(`.view[selected]`);
-
-              if (otherView) {
-                if (otherView === view) {
-                  return;
-                }
-                else {
-                  otherView.removeAttribute("selected");
-                }
-              }
-
-              view.setAttribute("selected", "");
-            }
-
-            // Hide theme-specific sections that don't match the current theme
-            {
-              let theme = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
-              let themeName = theme.substring(theme.lastIndexOf("/") + 1, theme.length - 10);
-
-              for (let section of view.querySelectorAll("section")) {
-                if (section.hasAttribute("data-themes")) {
-                  if (section.getAttribute("data-themes").includes(themeName) === false) {
-                    section.hidden = true;
-                  }
-                }
-              }
-            }
-
-            // Remove offscreen views
-            {
-              for (let view of [...this["#views"].children]) {
-                if (view.hasAttribute("animating") === false && view.hasAttribute("selected") === false) {
-                  view.remove();
-                }
-              }
-            }
-          }
-        }
-
-        resolve();
-      });
-    }
 
     _showSidebar() {
       return new Promise(async (resolve) => {
@@ -550,6 +517,187 @@
           this["#sidebar"].hidden = true;
         }
       });
+    }
+
+    _applyAccentColor() {
+      let accentColorName = sessionStorage.getItem("accentColorName");
+
+      if (accentColorName !== null) {
+        let themePath = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
+        let theme = themePath.substring(themePath.lastIndexOf("/") + 1, themePath.length - 10);
+        let accentColor = colorSchemesByTheme[theme][accentColorName];
+
+        if (!accentColor) {
+          let names = Object.keys(colorSchemesByTheme[theme]);
+
+          if (names.length > 0) {
+            accentColor = colorSchemesByTheme[theme][names[0]];
+          }
+        }
+
+        if (accentColor) {
+          let [h, s, l] = parseColor(accentColor, "hsla");
+          document.body.style.setProperty("--accent-color-h", h);
+          document.body.style.setProperty("--accent-color-s", s + "%");
+          document.body.style.setProperty("--accent-color-l", l + "%");
+        }
+      }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // @info
+    //   Update selected nav button to match current location.
+    _updateNavButtons() {
+      for (let button of this["#nav"].querySelectorAll("x-button")) {
+        let anchor = button.closest("a");
+
+        if (anchor) {
+          let url = new URL(anchor);
+
+          if (url.origin === location.origin && url.pathname === location.pathname) {
+            button.setAttribute("toggled", "");
+          }
+          else {
+            button.removeAttribute("toggled");
+          }
+        }
+      }
+    }
+
+    // @info
+    //   Update displayed view to match current location
+    async _updateViews() {
+      let selectedView = this["#views"].querySelector(".view[selected]");
+
+      if (!selectedView || selectedView.dataset.pathname !== location.pathname) {
+        let view = this["#views"].querySelector(`[data-pathname="${location.pathname}"]`);
+
+        // If the view does not exist, try to create it
+        if (!view) {
+          let $0 = (location.pathname === "/") ? "/about" : location.pathname;
+          let url = `/node_modules/xel/docs` + $0 + `.html`;
+          let result = await fetch(url);
+          let viewHTML = await result.text();
+
+          view = html`${viewHTML}`;
+          view.setAttribute("data-pathname", location.pathname);
+          this["#views"].append(view);
+        }
+
+        if (location.pathname === "/") {
+          document.querySelector("title").textContent = "Xel";
+        }
+        else {
+          document.querySelector("title").textContent = "Xel - " + view.querySelector("h2").textContent;
+        }
+
+        // Toggle view
+        {
+          let view = this["#views"].querySelector(`[data-pathname="${location.pathname}"]`);
+          let otherView = this["#views"].querySelector(`.view[selected]`);
+
+          if (otherView) {
+            if (otherView === view) {
+              return;
+            }
+            else {
+              otherView.removeAttribute("selected");
+            }
+          }
+
+          view.setAttribute("selected", "");
+        }
+
+        // Hide theme-specific sections that don't match the current theme
+        {
+          let theme = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
+          let themeName = theme.substring(theme.lastIndexOf("/") + 1, theme.length - 10);
+
+          for (let section of view.querySelectorAll("section")) {
+            if (section.hasAttribute("data-themes")) {
+              if (section.getAttribute("data-themes").includes(themeName) === false) {
+                section.hidden = true;
+              }
+            }
+          }
+
+          let visibleSections = view.querySelectorAll("section:not([hidden])");
+
+          if (visibleSections.length > 0) {
+            let lastVisibleSection = visibleSections[visibleSections.length-1];
+            lastVisibleSection.setAttribute("data-last-visible", "");
+          }
+        }
+
+        // Remove offscreen views
+        {
+          for (let view of [...this["#views"].children]) {
+            if (view.hasAttribute("animating") === false && view.hasAttribute("selected") === false) {
+              view.remove();
+            }
+          }
+        }
+      }
+    }
+
+    _updateThemeSection() {
+      let themePath = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
+      let theme = themePath.substring(themePath.lastIndexOf("/") + 1, themePath.length - 10);
+
+      // Update theme subsection
+      {
+        for (let item of this["#theme-select"].querySelectorAll("x-menuitem")) {
+          item.setAttribute("selected", (item.getAttribute("value") === theme) ? "true" : "false");
+        }
+      }
+
+      // Update accent color subsection
+      {
+        if (theme === "material") {
+          this["#accent-color-subsection"].hidden = true;
+        }
+        else {
+          let accentColorName = sessionStorage.getItem("accentColorName");
+          let supportedAccentColorNames = Object.keys(colorSchemesByTheme[theme]);
+
+          let itemsHTML = "";
+
+          for (let [colorName, colorValue] of Object.entries(colorSchemesByTheme[theme])) {
+            itemsHTML += `
+              <x-menuitem value="${colorName}" selected="true">
+                <x-swatch value="${colorValue}"></x-swatch>
+                <x-label>${capitalize(colorName)}</x-label>
+              </x-menuitem>
+            `;
+          }
+
+          this["#accent-color-menu"].innerHTML = itemsHTML;
+
+          if (accentColorName === null) {
+            if (supportedAccentColorNames.length > 0) {
+              accentColorName = supportedAccentColorNames[0];
+              sessionStorage.setItem("accentColorName", accentColorName);
+            }
+          }
+
+          if (supportedAccentColorNames.includes(accentColorName) === false) {
+            if (supportedAccentColorNames.length > 0) {
+              accentColorName = supportedAccentColorNames[0];
+              sessionStorage.setItem("accentColorName", accentColorName);
+            }
+            else {
+              accentColorName = null;
+            }
+          }
+
+          for (let item of this["#accent-color-select"].querySelectorAll("x-menuitem")) {
+            item.setAttribute("selected", (item.getAttribute("value") === accentColorName) ? "true" : "false");
+          }
+
+          this["#accent-color-subsection"].hidden = false;
+        }
+      }
     }
   }
 

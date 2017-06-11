@@ -8,6 +8,14 @@
   let {isFinite, isNaN, parseFloat} = Number;
 
   // @info
+  //   Convert the first letter in the given string from lowercase to uppercase.
+  // @type
+  //   (string) => void
+  let capitalize = (string) => {
+    return string.charAt(0).toUpperCase() + string.substr(1);
+  };
+
+  // @info
   //   Replace every occurance of string A with string B.
   // @type
   //   (string, string, string) => string
@@ -34,5 +42,5 @@
     return isNaN(number) === false && isFinite(number);
   };
 
-  Xel.utils.string = {replaceAll, isDOMWhitespace, isNumeric};
+  Xel.utils.string = {capitalize, replaceAll, isDOMWhitespace, isNumeric};
 }

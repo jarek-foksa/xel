@@ -50,10 +50,10 @@
     // @type
     //   string
     // @default
-    //   ""
+    //   "white"
     // @attribute
     get value() {
-      return this.hasAttribute("value") ? this.getAttribute("value") : this.label;
+      return this.hasAttribute("value") ? this.getAttribute("value") : "white";
     }
     set value(value) {
       this.setAttribute("value", value);

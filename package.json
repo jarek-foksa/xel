@@ -1,6 +1,6 @@
 {
   "name": "xel",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "Widget toolkit for building native-like Electron and Chrome apps",
   "repository": {
     "type": "git",

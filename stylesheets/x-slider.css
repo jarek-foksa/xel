@@ -20,6 +20,7 @@
   --thumb-color: gray;
   --thumb-border-width: 1px;
   --thumb-border-color: rgba(0, 0, 0, 0.2);
+  --tick-color: rgba(0, 0, 0, 0.4);
   --track-height: 2px;
   --track-color: gray;
   --track-tint-color: black;
@@ -125,7 +126,7 @@
   position: absolute;
   width: 1px;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--tick-color);
 }
 
 /**

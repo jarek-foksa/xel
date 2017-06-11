@@ -18,7 +18,7 @@
   --arrow-min-width: 13px;
   --arrow-margin: 0 2px 0 11px;
   --arrow-color: currentColor;
-  --arrow-d: path("M 24.755 41.383 L 50 16.194 L 75.245 41.383 L 83.001 33.628 L 50 0.628 L 16.999 33.628 Z M 16.999 66.372 L 50 99.372 L 83.001 66.372 L 75.245 58.617 L 50 83.807 L 24.755 58.617 Z");
+  --arrow-d: path("M 24.75 41.33 L 50 16.14 L 75.25 41.33 L 83.01 33.68 L 50 0.63 L 17 33.628 Z M 17 66.372 L 50 99.372 L 83.001 66.372 L 75.245 58.617 L 50 83.807 L 24.755 58.617 Z");
 }
 :host([disabled]) {
   pointer-events: none;
@@ -36,16 +36,9 @@
   flex-flow: row;
   align-items: center;
   justify-content: flex-start;
+  flex: 1;
   width: 100%;
   height: 100%;
-}
-
-#button {
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  justify-content: flex-start;
-  flex: 1;
 }
 
 #button > x-label {

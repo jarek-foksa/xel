@@ -10,6 +10,11 @@
   box-sizing: border-box;
   background: white;
   padding: 14px;
+  --selection-background: #B2D7FD;
+}
+
+::selection {
+  background: var(--selection-background);
 }
 
 #code {

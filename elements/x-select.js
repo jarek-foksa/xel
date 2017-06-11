@@ -6,7 +6,7 @@
 
 {
   let {createElement, html, closest} = Xel.utils.element;
-  let {sleep} = Xel.utils.time;
+  let {sleep, throttle} = Xel.utils.time;
 
   let debug = false;
   let windowPadding = 7;
@@ -35,7 +35,8 @@
       super();
 
       this._wasFocusedBeforeExpanding = false;
-      this._observer = new MutationObserver((args) => this._updateButton());
+      this._observer = new MutationObserver((args) => this._onMutation(args));
+      this._updateButtonTh300 = throttle(this._updateButton, 300, this);
 
       this._shadowRoot = this.attachShadow({mode: "closed"});
       this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
@@ -63,7 +64,7 @@
         this.setAttribute("debug", "");
       }
 
-      sleep(500).then(() => this._updateButton());
+      sleep(500).then(() => this._updateButtonTh300());
     }
 
     disconnectedCallback() {
@@ -113,6 +114,14 @@
     _onDisabledAttributeChange() {
       this.setAttribute("tabindex", this.disabled ? "-1" : "0");
       this.setAttribute("aria-disabled", this.disabled);
+    }
+
+    _onMutation(records) {
+      for (let record of records) {
+        if (record.type === "attributes" && record.target.localName === "x-menuitem" && record.attributeName === "selected") {
+          this._updateButtonTh300();
+        }
+      }
     }
 
     _onPointerDown(event) {
@@ -318,11 +327,12 @@
           buttonChild.style.marginLeft = getComputedStyle(itemChild).marginLeft;
 
           if (["x-icon", "x-swatch", "img", "svg"].includes(itemChild.localName)) {
-            let {width, height} = getComputedStyle(itemChild);
+            let {width, height, border} = getComputedStyle(itemChild);
 
             buttonChild.style.width = width;
             buttonChild.style.height = height;
             buttonChild.style.minWidth = width;
+            buttonChild.style.border = border;
           }
 
           this["#button"].append(buttonChild);
