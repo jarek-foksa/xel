@@ -75,23 +75,31 @@ Add to the `<head>`:
 
 Add to the `<head>` one of the following:
 
-- Material 
+- Material theme
 
 ```html
 <link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css">
 ```
 
-- Galaxy 
+- Galaxy theme
 
 ```html
 <link rel="stylesheet" href="node_modules/xel/stylesheets/galaxy.theme.css">
 ```
 
-- macOS
+- macOS theme
 
 ```html
 <link rel="stylesheet" href="node_modules/xel/stylesheets/macos.theme.css">
 ```
+
+**4. Link fonts**
+
+Some themes require additional fonts to be linked or embedded. Use Google Fonts service to generate necessary code.
+
+- Material theme - [Roboto](https://fonts.google.com/specimen/Roboto) and [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono). For non-latin scripts, also include Noto Sans.
+- Galaxy theme - [Roboto](https://fonts.google.com/specimen/Roboto) and [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono). For non-latin scripts, also include Noto Sans.
+- MacOS theme - Relies on fonts provided by the operating system, you don't have to link anything.
 
 ## Development
 
