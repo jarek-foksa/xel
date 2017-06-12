@@ -6,7 +6,6 @@
 
 {
   let {isFinite} = Number;
-  let {round, pow} = Math;
   let {html} = Xel.utils.element;
   let {isNumeric} = Xel.utils.string;
   let {debounce} = Xel.utils.time;
@@ -106,13 +105,12 @@
     //   number?
     // @default
     //   null
-    // @inertAttribute
+    // @attribute
     get value() {
-      return this["#editor"].textContent.trim() === "" ? null : parseFloat(this["#editor"].textContent);
+      return this.hasAttribute("value") ? parseFloat(this.getAttribute("value")) : null;
     }
     set value(value) {
-      this["#editor"].textContent = value;
-      this._update();
+      this.setAttribute("value", value);
     }
 
     // @type
@@ -245,7 +243,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     _onValueAttributeChange() {
-      this.value = this.hasAttribute("value") ? parseFloat(this.getAttribute("value")) : 0;
+      this._update();
     }
 
     _onMinAttributeChange() {
@@ -274,23 +272,17 @@
       document.execCommand("selectAll");
       this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
       this.visited = true;
-      this._lastValue = this.value;
     }
 
     _onFocusOut() {
-      if (this.value !== null) {
-        this["#editor"].textContent = this.value;
-      }
-
-      this._updateState();
-      this._maybeDispatchChangeEvents();
-
       this._shadowRoot.getSelection().collapse(this["#main"]);
+      this._commitEditorChanges();
       this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
     }
 
     _onEditorInput() {
-      this._update();
+      this._updateState();
+      this._updateStepper();
     }
 
     _onWheel(event) {
@@ -346,6 +338,7 @@
 
             if (this._isDragging === false) {
               this._isDragging = true;
+              this._isChangeStart = true;
               this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
             }
 
@@ -357,8 +350,6 @@
             value = normalize(value, this.min, this.max, getPrecision(this.step));
             this.value = value;
             this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-
-            this._update();
           });
 
           this["#editor"].addEventListener("lostpointercapture",  lostPointerCaptureListener = () => {
@@ -369,6 +360,7 @@
 
             if (this._isDragging === true) {
               this._isDragging = false;
+              this._isChangeStart = false;
               this.dispatchEvent(new CustomEvent("changeend", {detail: this.value !== initialValue, bubbles: true}));
             }
             else {
@@ -410,6 +402,7 @@
         this._decrement(event.detail.shiftKey);
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
         this._maybeDispatchChangeEndEvent();
+
         this._update();
       });
 
@@ -422,24 +415,26 @@
 
     _onKeyDown(event) {
       if (event.code === "ArrowDown") {
-        this._isArrowKeyDown = true;
         event.preventDefault();
 
+        this._isArrowKeyDown = true;
         this._maybeDispatchChangeStartEvent();
         this._decrement(event.shiftKey);
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
         this._maybeDispatchChangeEndEvent();
+
         this._update();
       }
 
       else if (event.code === "ArrowUp") {
-        this._isArrowKeyDown = true;
         event.preventDefault();
 
+        this._isArrowKeyDown = true;
         this._maybeDispatchChangeStartEvent();
         this._increment(event.shiftKey);
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
         this._maybeDispatchChangeEndEvent();
+
         this._update();
       }
 
@@ -448,7 +443,8 @@
       }
 
       else if (event.code === "Enter") {
-        this._maybeDispatchChangeEvents();
+        this._commitEditorChanges();
+        document.execCommand("selectAll");
       }
     }
 
@@ -487,53 +483,6 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    _update() {
-      this._updateState();
-      this._updateStepper();
-    }
-
-    _updateState() {
-      let isValid = this.validate();
-
-      if (isValid) {
-        this.removeAttribute("invalid");
-      }
-      else {
-        this.setAttribute("invalid", "");
-      }
-
-      if (this.value === null) {
-        this.setAttribute("empty", "");
-      }
-      else {
-        this.removeAttribute("empty");
-      }
-    }
-
-    _updateStepper() {
-      let stepper = this.querySelector("x-stepper");
-
-      if (stepper) {
-        let canDecrement = (this.value > this.min);
-        let canIncrement = (this.value < this.max);
-
-        if (canIncrement === true && canDecrement === true) {
-          stepper.removeAttribute("disabled");
-        }
-        else if (canIncrement === false && canDecrement === false) {
-          stepper.setAttribute("disabled", "");
-        }
-        else if (canIncrement === false) {
-          stepper.setAttribute("disabled", "increment");
-        }
-        else if (canDecrement === false) {
-          stepper.setAttribute("disabled", "decrement");
-        }
-      }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     // @info
     //   Override this method to validate the input value manually.
     // @type
@@ -556,18 +505,6 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    _maybeDispatchChangeEvents() {
-      if (this.value !== this._lastValue) {
-        this._lastValue = this.value;
-
-        this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-        this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-
-        document.execCommand("selectAll");
-      }
-    }
-
     _maybeDispatchChangeStartEvent() {
       if (!this._isChangeStart) {
         this._isChangeStart = true;
@@ -577,9 +514,19 @@
 
     _maybeDispatchChangeEndEvent() {
       if (this._isChangeStart && !this._isArrowKeyDown && !this._isBackspaceKeyDown && !this._isStepperButtonDown) {
-        this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
         this._isChangeStart = false;
-        this._lastValue = this.value;
+        this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+      }
+    }
+
+    _commitEditorChanges() {
+      let editorValue = this["#editor"].textContent.trim() === "" ? null : parseFloat(this["#editor"].textContent);
+
+      if (editorValue !== this.value) {
+        this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+        this.value = editorValue;
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       }
     }
 
@@ -631,6 +578,63 @@
       }
 
       this._updateState();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    _update() {
+      this._updateEditorTextContent();
+      this._updateState();
+      this._updateStepper();
+    }
+
+    _updateEditorTextContent() {
+      if (this.hasAttribute("value")) {
+        this["#editor"].textContent = this.getAttribute("value").trim();
+      }
+      else {
+        this["#editor"].textContent = "";
+      }
+    }
+
+    _updateState() {
+      let isValid = this.validate();
+
+      if (isValid) {
+        this.removeAttribute("invalid");
+      }
+      else {
+        this.setAttribute("invalid", "");
+      }
+
+      if (this.value === null) {
+        this.setAttribute("empty", "");
+      }
+      else {
+        this.removeAttribute("empty");
+      }
+    }
+
+    _updateStepper() {
+      let stepper = this.querySelector("x-stepper");
+
+      if (stepper) {
+        let canDecrement = (this.value > this.min);
+        let canIncrement = (this.value < this.max);
+
+        if (canIncrement === true && canDecrement === true) {
+          stepper.removeAttribute("disabled");
+        }
+        else if (canIncrement === false && canDecrement === false) {
+          stepper.setAttribute("disabled", "");
+        }
+        else if (canIncrement === false) {
+          stepper.setAttribute("disabled", "increment");
+        }
+        else if (canDecrement === false) {
+          stepper.setAttribute("disabled", "decrement");
+        }
+      }
     }
   }
 
