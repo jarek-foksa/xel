@@ -110,7 +110,7 @@
       return this.hasAttribute("value") ? parseFloat(this.getAttribute("value")) : null;
     }
     set value(value) {
-      this.setAttribute("value", value);
+      value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
     }
 
     // @type
