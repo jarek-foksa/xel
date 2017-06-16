@@ -32,6 +32,7 @@
   --selection-indicator-color: var(--accent-color);
   --close-button-position: static;
   --close-button-left: 0;
+  --close-button-right: initial;
   --close-button-width: 18px;
   --close-button-height: 18px;
   --close-button-margin: 0 0 0 auto;
@@ -65,6 +66,7 @@
   justify-content: center;
   position: var(--close-button-position);
   left: var(--close-button-left);
+  right: var(--close-button-right);
   width: var(--close-button-width);
   height: var(--close-button-height);
   margin: var(--close-button-margin);

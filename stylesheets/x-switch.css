@@ -20,9 +20,11 @@
   --ripple-opacity: 0.2;
   --thumb-color: currentColor;
   --thumb-size: 20px;
+  --thumb-border-radius: 999px;
   --track-height: 65%;
   --track-color: currentColor;
   --track-opacity: 0.5;
+  --track-border-radius: 999px;
 }
 :host([disabled]) {
   opacity: 0.5;
@@ -47,7 +49,7 @@
   height: var(--track-height);
   background: var(--track-color);
   opacity: var(--track-opacity);
-  border-radius: 999px;
+  border-radius: var(--track-border-radius);
 }
 
 /**
@@ -60,7 +62,7 @@
   width: var(--thumb-size);
   height: var(--thumb-size);
   background: var(--thumb-color);
-  border-radius: 999px;
+  border-radius: var(--thumb-border-radius);
   transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 :host([toggled]) #thumb {

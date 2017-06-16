@@ -8,7 +8,7 @@
           <h3><x-icon name="looks-one"></x-icon> Install Xel</h3>
 
           <p>Run from console:</p>
-          <code style="display: block; white-space: pre-line; overflow: auto;">npm install xel</code>
+          <xel-codeview>npm install xel</xel-codeview>
         </main>
       </x-card>
 
@@ -16,8 +16,8 @@
         <main>
           <h3><x-icon name="looks-two"></x-icon> Link Xel</h3>
 
-          <p>Add to the  <code>&lt;head&gt;:</code></p>
-          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="import" href="node_modules/xel/xel.min.html"&gt;</pre>
+          <p>Add to the  <code>&lt;head&gt;</code>:</p>
+          <xel-codeview>&lt;link rel="import" href="node_modules/xel/xel.min.html"&gt;</xel-codeview>
         </main>
       </x-card>
 
@@ -27,32 +27,34 @@
 
           <p>Add to the <code>&lt;head&gt;</code> one of the following:</p>
 
-          <p><strong>Material theme</strong>:
-          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css"&gt;</pre>
-          </p>
+          <dl>
+            <dt><strong>Galaxy theme:</strong></dt>
+            <dd><xel-codeview>&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/galaxy.theme.css"&gt;</xel-codeview></dd>
 
-          <p><strong>Galaxy theme</strong>:
-          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/galaxy.theme.css"&gt;</pre>
-          </p>
+            <dt><strong>MacOS theme:</strong></dt>
+            <dd><xel-codeview>&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/macos.theme.css"&gt;</xel-codeview></dd>
 
-          <p><strong>macOS theme</strong>:
-          <pre style="display: block; white-space: pre; overflow: auto;">&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/macos.theme.css"&gt;</pre></p>
+            <dt><strong>Material theme:</strong></dt>
+            <dd><xel-codeview>&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css"&gt;</xel-codeview></dd>
+
+            <dt><strong>Vanilla theme:</strong></dt>
+            <dd><xel-codeview>&lt;link rel="stylesheet" href="node_modules/xel/stylesheets/vanilla.theme.css"&gt;</xel-codeview></dd>
+          </dl>
         </main>
       </x-card>
 
       <x-card>
         <main>
           <h3><x-icon name="looks-4"></x-icon> Link fonts</h3>
-          <p>Some themes require additional fonts to be linked or embedded. Use <a href="https://fonts.google.com/">Google Fonts</a> service to generate necessary code.</p>
+          <p>Some themes expect specific fonts to be linked or embedded by your app:</p>
 
-          <p><strong>Material theme</strong>:
-          <p><a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>. For non-latin scripts, also include <a href="https://fonts.google.com/specimen/Noto+Sans">Noto Sans</a>.</p>
+          <dl>
+            <dt><strong>Galaxy, Material and Vanilla themes</strong>:</dt>
+            <dd><a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>. For non-latin scripts, also include <a href="https://fonts.google.com/specimen/Noto+Sans">Noto Sans</a>. Use <a href="https://fonts.google.com/">Google Fonts</a> service to generate necessary code.</dd>
 
-          <p><strong>Galaxy theme</strong>:
-          <p><a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>. For non-latin scripts, also include <a href="https://fonts.google.com/specimen/Noto+Sans">Noto Sans</a>.</p>
-
-          <p><strong>MacOS theme</strong>:
-          <p>Relies on fonts provided by the operating system, you don't have to link anything.</p>
+            <dt><strong>MacOS theme:</strong></dt>
+            <dd>Relies on fonts provided by the operating system, you don't have to link anything.</dd>
+          </dl>
         </main>
       </x-card>
     </section>

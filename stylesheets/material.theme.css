@@ -96,6 +96,7 @@ a {
 }
 p a,
 li a,
+dl a,
 h2 a,
 h3 a,
 h4 a,
@@ -107,6 +108,7 @@ x-label a {
 }
 p a:hover,
 li a:hover
+dl a:hover,
 h2 a:hover,
 h3 a:hover,
 h4 a:hover,
@@ -554,8 +556,7 @@ x-doctabs {
   background: var(--primary-color);
   color: white;
   height: 46px;
-  --open-button-path-d: path(
-    "M 80 11 L 20 12 C 15 12 12 15 12 20 L 12 80 C 12 85 15 88 20 88 L 80 88 C 85 88 88 85 88 80 L 88 20 C 88 15 85 12 80 12 Z M 71 54 L 54 54 L 54 71 L 46 71 L 46 54 L 29 54 L 29 46 L 46 46 L 46 29 L 54 29 L 54 46 L 71 46 L 71 54 Z");
+  --open-button-path-d: path("M 80 11 L 20 12 C 15 12 12 15 12 20 L 12 80 C 12 85 15 88 20 88 L 80 88 C 85 88 88 85 88 80 L 88 20 C 88 15 85 12 80 12 Z M 71 54 L 54 54 L 54 71 L 46 71 L 46 54 L 29 54 L 29 46 L 46 46 L 46 29 L 54 29 L 54 46 L 71 46 L 71 54 Z");
 }
 
 x-doctab {
@@ -1266,9 +1267,16 @@ x-progressbar {
 xel-codeview {
   box-shadow: var(--elevation-1);
 }
+x-card xel-codeview {
+  background: #fbfbfb;
+}
 
 :host(xel-app) #sidebar h1 {
   color: #009788;
+}
+
+:host(xel-app) #sidebar #nav .external-link-icon {
+  color: var(--primary-color);
 }
 
 :host(xel-app) #about-view {

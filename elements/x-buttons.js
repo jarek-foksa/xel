@@ -72,11 +72,11 @@
     //   string || Array || null
     get value() {
       if (this.tracking === 2) {
-        let buttons = [...this.querySelectorAll(":scope > x-button[toggled]")];
+        let buttons = this._getButtons().filter(button => button.toggled);
         return buttons.map(button => button.value).filter(value => value != undefined);
       }
       else if (this.tracking === 1 || this.tracking === 0) {
-        let button = this.querySelector(":scope > x-button[toggled]");
+        let button = this._getButtons().find(button => button.toggled);
         return button && button.value !== undefined ? button.value : null;
       }
       else if (this.tracking === -1) {
@@ -85,7 +85,7 @@
     }
     set value(value) {
       if (this.tracking === 2) {
-        let buttons = [...this.querySelectorAll(":scope > x-button")];
+        let buttons = this._getButtons();
 
         if (isArray(value)) {
           for (let button of buttons) {
@@ -99,7 +99,7 @@
         }
       }
       else if (this.tracking === 1 || this.tracking === 0) {
-        let buttons = [...this.querySelectorAll(":scope > x-button")];
+        let buttons = this._getButtons();
         let matchedButton = buttons.find(button => button.value === value);
 
         for (let button of buttons) {
@@ -119,7 +119,7 @@
       let canToggle = (clickedButton && clickedButton.disabled === false && clickedButton.isExpandable() === false);
 
       if (canToggle) {
-        let otherButtons = [...this.children].filter(button => button !== clickedButton);
+        let otherButtons = this._getButtons().filter(button => button !== clickedButton);
 
         if (this.tracking === 0) {
           if (clickedButton.mixed) {
@@ -187,6 +187,12 @@
           element.parentElement.lastElementChild.focus();
         }
       }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    _getButtons() {
+      return [...this.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
     }
   }
 

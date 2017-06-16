@@ -24,6 +24,9 @@
 
       this._value = "";
 
+      this._observer = new MutationObserver(() => this._update());
+      this._observer.observe(this, {childList: true, attributes: false, characterData: true, subtree: true});
+
       for (let element of this._shadowRoot.querySelectorAll("[id]")) {
         this["#" + element.id] = element;
       }
@@ -32,7 +35,9 @@
     connectedCallback() {
       let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
       let prismTheme = theme.endsWith("galaxy.theme.css") ? "tomorrow" : "coy";
+
       this["#prism-theme"].setAttribute("href", `node_modules/prismjs/themes/prism-${prismTheme}.css`);
+      this._update();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,15 +51,15 @@
     }
     set value(value) {
       this._value = value;
-      this._update();
+      //this._update();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     _update() {
-      this["#code"].append(document.createTextNode(this._value));
+      this["#code"].textContent = this.textContent;
 
-      if (this._value !== "") {
+      if (this["#code"].textContent !== "") {
         Prism.highlightElement(this["#code"], true);
       }
     }

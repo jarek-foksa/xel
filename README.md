@@ -40,9 +40,10 @@ documentation.
 Thanks to advanced theming capabilities, Xel can imitate native widgets.
 
 The themes currently shipped with Xel are:
-- Material - implements Material Design guidelines
-- Galaxy - dark theme optimized for desktop apps
-- macOS - implements macOS Human Interface Guidelines
+- Material - implements Material Design Guidelines
+- MacOS - implements macOS Human Interface Guidelines
+- Galaxy - generic dark theme
+- Vanilla - generic light theme
 
 **Supported browsers**
 
@@ -75,30 +76,35 @@ Add to the `<head>`:
 
 Add to the `<head>` one of the following:
 
-- Material theme
-
-```html
-<link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css">
-```
-
 - Galaxy theme
 
 ```html
 <link rel="stylesheet" href="node_modules/xel/stylesheets/galaxy.theme.css">
 ```
 
-- macOS theme
+- MacOS theme
 
 ```html
 <link rel="stylesheet" href="node_modules/xel/stylesheets/macos.theme.css">
+```
+
+- Material theme
+
+```html
+<link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css">
+```
+
+- Vanilla theme
+
+```html
+<link rel="stylesheet" href="node_modules/xel/stylesheets/vanilla.theme.css">
 ```
 
 **4. Link fonts**
 
 Some themes require additional fonts to be linked or embedded. Use Google Fonts service to generate necessary code.
 
-- Material theme - [Roboto](https://fonts.google.com/specimen/Roboto) and [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono). For non-latin scripts, also include Noto Sans.
-- Galaxy theme - [Roboto](https://fonts.google.com/specimen/Roboto) and [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono). For non-latin scripts, also include Noto Sans.
+- Galaxy, Material and Vanilla themes - [Roboto](https://fonts.google.com/specimen/Roboto) and [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono). For non-latin scripts, also include [Noto Sans](https://fonts.google.com/specimen/Noto+Sans).
 - MacOS theme - Relies on fonts provided by the operating system, you don't have to link anything.
 
 ## Development

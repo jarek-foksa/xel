@@ -12,23 +12,29 @@
   let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
   let colorSchemesByTheme = {
-    material: {},
+    galaxy: {
+      blue: "hsl(215, 95%, 63%)",
+      green: "hsl(85, 48%, 45%)",
+      red: "hsl(345, 55%, 48%)",
+      purple: "hsl(290, 40%, 55%)",
+      orange: "hsl(20, 55%, 52%)",
+      yellowgreen: "hsl(68, 55%, 40%)"
+    },
     macos: {
       blue: "hsl(211, 96.7%, 52.9%)",
-      graphite: "hsl(107, 0%, 55%)",
-      iron: "hsl(200, 15%, 50%)",
-      pink: "hsl(344, 65%, 45%)",
-      purple: "hsl(290, 40%, 46%)",
       green: "hsl(88, 35%, 46%)",
+      red: "hsl(344, 65%, 45%)",
+      purple: "hsl(290, 40%, 46%)",
       yellowgreen: "hsl(61, 28%, 45%)"
     },
-    galaxy: {
-      blue: "hsl(214, 85%, 58%)",
-      green: "hsl(85, 45%, 40%)",
-      yellowgreen: "hsl(68, 55%, 40%)",
-      pink: "hsl(332, 64%, 50%)",
-      red: "hsl(344, 65%, 45%)"
-    }
+    material: {},
+    vanilla: {
+      blue: "hsl(211, 86%, 57%)",
+      green: "hsl(88, 35%, 46%)",
+      red: "hsl(344, 65%, 45%)",
+      purple: "hsl(290, 40%, 46%)",
+      yellowgreen: "hsl(61, 28%, 45%)"
+    },
   };
 
   let shadowTemplate = html`
@@ -82,21 +88,24 @@
               <a href="https://github.com/jarek-foksa/xel" target="_blank">
                 <x-button skin="nav">
                   <x-icon name="code"></x-icon>
-                  <x-label>Source Code ⧉</x-label>
+                  <x-label>Source Code</x-label>
+                  <x-icon class="external-link-icon" name="exit-to-app"></x-icon>
                 </x-button>
               </a>
 
               <a href="https://github.com/jarek-foksa/xel/issues" target="_blank">
                 <x-button skin="nav">
                   <x-icon name="bug-report"></x-icon>
-                  <x-label>Bugs ⧉</x-label>
+                  <x-label>Bugs</x-label>
+                  <x-icon class="external-link-icon" name="exit-to-app"></x-icon>
                 </x-button>
               </a>
 
               <a href="https://github.com/jarek-foksa/xel/commits" target="_blank">
                 <x-button skin="nav">
                   <x-icon name="event"></x-icon>
-                  <x-label>Changelog ⧉</x-label>
+                  <x-label>Changelog</x-label>
+                  <x-icon class="external-link-icon" name="exit-to-app"></x-icon>
                 </x-button>
               </a>
             </section>
@@ -109,16 +118,20 @@
 
                 <x-select id="theme-select">
                   <x-menu>
-                    <x-menuitem value="material" selected="true">
-                      <x-label>Material</x-label>
-                    </x-menuitem>
-
                     <x-menuitem value="galaxy">
                       <x-label>Galaxy</x-label>
                     </x-menuitem>
 
                     <x-menuitem value="macos">
-                      <x-label>macOS</x-label>
+                      <x-label>MacOS</x-label>
+                    </x-menuitem>
+
+                    <x-menuitem value="material" selected="true">
+                      <x-label>Material</x-label>
+                    </x-menuitem>
+
+                    <x-menuitem value="vanilla">
+                      <x-label>Vanilla</x-label>
                     </x-menuitem>
                   </x-menu>
                 </x-select>

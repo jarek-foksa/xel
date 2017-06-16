@@ -75,7 +75,18 @@
     // @type
     //   XButtonsElement?
     get ownerButtons() {
-      return this.parentElement && this.parentElement.localName === "x-buttons" ? this.parentElement : null;
+      if (this.parentElement) {
+        if (this.parentElement.localName === "x-buttons") {
+          return this.parentElement;
+        }
+        else if (this.parentElement.localName === "x-box") {
+          if (this.parentElement.parentElement.localName === "x-buttons") {
+            return this.parentElement.parentElement;
+          }
+        }
+      }
+
+      return null;
     }
 
     // @info

@@ -40,7 +40,7 @@
     }
 
     connectedCallback() {
-      this["#code-view"].value = this._getDemoHTML();
+      this["#code-view"].textContent = this._getDemoHTML();
     }
 
     attributeChangedCallback(name) {

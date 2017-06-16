@@ -164,9 +164,10 @@ let publishFirebaseSite = () => {
       `node_modules/prismjs/themes/prism-tomorrow.css`,
       `node_modules/xel/xel.min.html`,
       `node_modules/xel/images`,
-      `node_modules/xel/stylesheets/material.theme.css`,
       `node_modules/xel/stylesheets/galaxy.theme.css`,
       `node_modules/xel/stylesheets/macos.theme.css`,
+      `node_modules/xel/stylesheets/material.theme.css`,
+      `node_modules/xel/stylesheets/vanilla.theme.css`,
       `node_modules/xel/docs`
     ];
 

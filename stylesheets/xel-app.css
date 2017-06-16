@@ -48,6 +48,12 @@
   width: 100%;
 }
 
+#sidebar #nav .external-link-icon {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+}
+
 #sidebar #nav x-button {
   width: calc(100% + 60px);
   margin-left: -30px;
@@ -197,6 +203,19 @@
   height: auto;
   display: inline-block;
   vertical-align: middle;
+}
+
+#views #setup-view pre {
+  display: block;
+  white-space: pre;
+  overflow: auto;
+}
+
+#views #setup-view dd {
+  margin: 0 0 18px 0;
+}
+#views #setup-view dd:last-of-type {
+  margin: 0;
 }
 
 /* "FAQ" view */

@@ -114,41 +114,45 @@
 
       <xel-demo>
         <template>
-          <x-buttons tracking="1" vertical>
-            <x-button toggled>
-              <x-box>
-                <x-icon name="mail"></x-icon>
-                <x-label>Send</x-label>
-              </x-box>
-            </x-button>
+          <x-buttons tracking="1">
+            <x-box vertical>
+              <x-button toggled>
+                <x-box>
+                  <x-icon name="mail"></x-icon>
+                  <x-label>Send</x-label>
+                </x-box>
+              </x-button>
 
-            <x-button>
-              <x-box>
-                <x-icon name="delete"></x-icon>
-                <x-label>Delete</x-label>
-              </x-box>
-            </x-button>
+              <x-button>
+                <x-box>
+                  <x-icon name="delete"></x-icon>
+                  <x-label>Delete</x-label>
+                </x-box>
+              </x-button>
 
-            <x-button>
-              <x-box>
-                <x-icon name="settings"></x-icon>
-                <x-label>Settings</x-label>
-              </x-box>
-            </x-button>
+              <x-button>
+                <x-box>
+                  <x-icon name="settings"></x-icon>
+                  <x-label>Settings</x-label>
+                </x-box>
+              </x-button>
+            </x-box>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 10px">
-            <x-button toggled>
-              <x-icon name="mail"></x-icon>
-            </x-button>
+          <x-buttons tracking="1" style="margin-top: 10px">
+            <x-box vertical>
+              <x-button toggled>
+                <x-icon name="mail"></x-icon>
+              </x-button>
 
-            <x-button>
-              <x-icon name="delete"></x-icon>
-            </x-button>
+              <x-button>
+                <x-icon name="delete"></x-icon>
+              </x-button>
 
-            <x-button>
-              <x-icon name="settings"></x-icon>
-            </x-button>
+              <x-button>
+                <x-icon name="settings"></x-icon>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>
@@ -156,7 +160,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="macos vanilla">
       <h4>Skin <em>"textured"</em></h4>
 
       <xel-demo>
@@ -175,7 +179,33 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 20px;">
+          <x-buttons tracking="1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="textured" toggled>
+                <x-icon name="view-week"></x-icon>
+              </x-button>
+
+              <x-button skin="textured">
+                <x-icon name="view-agenda"></x-icon>
+              </x-button>
+
+              <x-button skin="textured">
+                <x-icon name="view-carousel"></x-icon>
+              </x-button>
+            </x-box>
+          </x-buttons>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section data-themes="material">
+      <h4>Skin <em>"textured"</em></h4>
+
+      <xel-demo>
+        <template>
+          <x-buttons tracking="1">
             <x-button skin="textured" toggled>
               <x-icon name="view-week"></x-icon>
             </x-button>
@@ -194,7 +224,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="macos vanilla">
       <h4>Skin <em>"plain"</em></h4>
 
       <xel-demo>
@@ -213,18 +243,20 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 20px;">
-            <x-button skin="plain" toggled>
-              <x-icon name="view-week"></x-icon>
-            </x-button>
+          <x-buttons tracking="1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="plain" toggled>
+                <x-icon name="view-week"></x-icon>
+              </x-button>
 
-            <x-button skin="plain">
-              <x-icon name="view-agenda"></x-icon>
-            </x-button>
+              <x-button skin="plain">
+                <x-icon name="view-agenda"></x-icon>
+              </x-button>
 
-            <x-button skin="plain">
-              <x-icon name="view-carousel"></x-icon>
-            </x-button>
+              <x-button skin="plain">
+                <x-icon name="view-carousel"></x-icon>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>
@@ -232,7 +264,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="macos">
       <h4>Skin <em>"iconic"</em></h4>
 
       <xel-demo>
@@ -260,27 +292,29 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 20px;">
-            <x-button skin="iconic" toggled>
-              <x-box vertical>
-                <x-icon name="extensions-color"></x-icon>
-                <x-label>First</x-label>
-              </x-box>
-            </x-button>
+          <x-buttons tracking="1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="iconic" toggled>
+                <x-box vertical>
+                  <x-icon name="extensions-color"></x-icon>
+                  <x-label>First</x-label>
+                </x-box>
+              </x-button>
 
-            <x-button skin="iconic">
-              <x-box vertical>
-                <x-icon name="extensions-color"></x-icon>
-                <x-label>Second</x-label>
-              </x-box>
-            </x-button>
+              <x-button skin="iconic">
+                <x-box vertical>
+                  <x-icon name="extensions-color"></x-icon>
+                  <x-label>Second</x-label>
+                </x-box>
+              </x-button>
 
-            <x-button skin="iconic">
-              <x-box vertical>
-                <x-icon name="extensions-color"></x-icon>
-                <x-label>Third</x-label>
-              </x-box>
-            </x-button>
+              <x-button skin="iconic">
+                <x-box vertical>
+                  <x-icon name="extensions-color"></x-icon>
+                  <x-label>Third</x-label>
+                </x-box>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>
@@ -288,7 +322,29 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="material">
+      <h4>Skin <em>"iconic"</em></h4>
+
+      <xel-demo>
+        <template>
+          <x-buttons tracking="1">
+            <x-button skin="iconic" toggled>
+              <x-icon name="extension"></x-icon>
+            </x-button>
+
+            <x-button skin="iconic">
+              <x-icon name="favorite"></x-icon>
+            </x-button>
+
+            <x-button skin="iconic">
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </xel-demo>
+    </section>
+
+    <section data-themes="galaxy macos vanilla">
       <h4>Skin <em>"flat"</em></h4>
 
       <xel-demo>
@@ -307,8 +363,34 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 20px;">
-            <x-button skin="flat" toggled>
+          <x-buttons tracking="1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="flat" toggled>
+                <x-icon name="mail"></x-icon>
+              </x-button>
+
+              <x-button skin="flat">
+                <x-icon name="delete"></x-icon>
+              </x-button>
+
+              <x-button skin="flat">
+                <x-icon name="settings"></x-icon>
+              </x-button>
+            </x-box>
+          </x-buttons>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section data-themes="material">
+      <h4>Skin <em>"flat"</em></h4>
+
+      <xel-demo>
+        <template>
+          <x-buttons tracking="-1">
+            <x-button skin="flat">
               <x-icon name="mail"></x-icon>
             </x-button>
 
@@ -326,7 +408,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="macos">
       <h4>Skin <em>"mini"</em></h4>
 
       <xel-demo>
@@ -345,18 +427,20 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="-1" vertical style="margin-top: 20px;">
-            <x-button skin="mini">
-              <x-icon name="add"></x-icon>
-            </x-button>
+          <x-buttons tracking="-1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="mini">
+                <x-icon name="add"></x-icon>
+              </x-button>
 
-            <x-button skin="mini">
-              <x-icon name="remove"></x-icon>
-            </x-button>
+              <x-button skin="mini">
+                <x-icon name="remove"></x-icon>
+              </x-button>
 
-            <x-button skin="mini">
-              <x-icon name="refresh"></x-icon>
-            </x-button>
+              <x-button skin="mini">
+                <x-icon name="refresh"></x-icon>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>
@@ -364,7 +448,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="macos">
       <h4>Skin <em>"mini-bordered"</em></h4>
 
       <xel-demo>
@@ -383,18 +467,20 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="-1" vertical style="margin-top: 20px;">
-            <x-button skin="mini-bordered">
-              <x-icon name="add"></x-icon>
-            </x-button>
+          <x-buttons tracking="-1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="mini-bordered">
+                <x-icon name="add"></x-icon>
+              </x-button>
 
-            <x-button skin="mini-bordered">
-              <x-icon name="remove"></x-icon>
-            </x-button>
+              <x-button skin="mini-bordered">
+                <x-icon name="remove"></x-icon>
+              </x-button>
 
-            <x-button skin="mini-bordered">
-              <x-icon name="refresh"></x-icon>
-            </x-button>
+              <x-button skin="mini-bordered">
+                <x-icon name="refresh"></x-icon>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>
@@ -402,7 +488,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="galaxy macos vanilla">
       <h4>Skin <em>"recessed"</em></h4>
 
       <xel-demo>
@@ -421,18 +507,20 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 20px;">
-            <x-button skin="recessed" toggled>
-              <x-label>Inbox</x-label>
-            </x-button>
+          <x-buttons tracking="1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="recessed" toggled>
+                <x-label>Inbox</x-label>
+              </x-button>
 
-            <x-button skin="recessed">
-              <x-label>Sent</x-label>
-            </x-button>
+              <x-button skin="recessed">
+                <x-label>Sent</x-label>
+              </x-button>
 
-            <x-button skin="recessed">
-              <x-label>Drafts</x-label>
-            </x-button>
+              <x-button skin="recessed">
+                <x-label>Drafts</x-label>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>
@@ -440,7 +528,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="galaxy macos vanilla">
       <h4>Skin <em>"nav"</em></h4>
 
       <xel-demo>
@@ -468,27 +556,29 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 20px;">
-            <x-button skin="nav" toggled>
-              <x-box>
-                <x-icon name="build"></x-icon>
-                <x-label>Settings</x-label>
-              </x-box>
-            </x-button>
+          <x-buttons tracking="1" style="margin-top: 20px;">
+            <x-box vertical>
+              <x-button skin="nav" toggled>
+                <x-box>
+                  <x-icon name="build"></x-icon>
+                  <x-label>Settings</x-label>
+                </x-box>
+              </x-button>
 
-            <x-button skin="nav">
-              <x-box>
-                <x-icon name="favorite"></x-icon>
-                <x-label>Bookmarks</x-label>
-              </x-box>
-            </x-button>
+              <x-button skin="nav">
+                <x-box>
+                  <x-icon name="favorite"></x-icon>
+                  <x-label>Bookmarks</x-label>
+                </x-box>
+              </x-button>
 
-            <x-button skin="nav">
-              <x-box>
-                <x-icon name="extension"></x-icon>
-                <x-label>Plugins</x-label>
-              </x-box>
-            </x-button>
+              <x-button skin="nav">
+                <x-box>
+                  <x-icon name="extension"></x-icon>
+                  <x-label>Plugins</x-label>
+                </x-box>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>
@@ -496,7 +586,7 @@
 
     <hr/>
 
-    <section data-themes="macos galaxy">
+    <section data-themes="galaxy macos vanilla">
       <h4>Skin <em>"dock"</em></h4>
 
       <xel-demo>
@@ -515,90 +605,20 @@
             </x-button>
           </x-buttons>
 
-          <x-buttons tracking="1" vertical style="margin-top: 10px;">
-            <x-button skin="dock" toggled>
-              <x-icon name="view-week"></x-icon>
-            </x-button>
+          <x-buttons tracking="1" style="margin-top: 10px;">
+            <x-box vertical>
+              <x-button skin="dock" toggled>
+                <x-icon name="view-week"></x-icon>
+              </x-button>
 
-            <x-button skin="dock">
-              <x-icon name="view-agenda"></x-icon>
-            </x-button>
+              <x-button skin="dock">
+                <x-icon name="view-agenda"></x-icon>
+              </x-button>
 
-            <x-button skin="dock">
-              <x-icon name="view-carousel"></x-icon>
-            </x-button>
-          </x-buttons>
-        </template>
-      </xel-demo>
-    </section>
-
-    <hr/>
-
-    <section data-themes="material">
-      <h4>Skin <em>"textured"</em></h4>
-
-      <xel-demo>
-        <template>
-          <x-buttons tracking="1">
-            <x-button skin="textured" toggled>
-              <x-icon name="view-week"></x-icon>
-            </x-button>
-
-            <x-button skin="textured">
-              <x-icon name="view-agenda"></x-icon>
-            </x-button>
-
-            <x-button skin="textured">
-              <x-icon name="view-carousel"></x-icon>
-            </x-button>
-          </x-buttons>
-        </template>
-      </xel-demo>
-    </section>
-
-    <hr/>
-
-    <section data-themes="material">
-      <h4>Skin <em>"flat"</em></h4>
-
-      <xel-demo>
-        <template>
-          <x-buttons tracking="-1">
-            <x-button skin="flat">
-              <x-icon name="mail"></x-icon>
-            </x-button>
-
-            <x-button skin="flat">
-              <x-icon name="delete"></x-icon>
-            </x-button>
-
-            <x-button skin="flat">
-              <x-icon name="settings"></x-icon>
-            </x-button>
-          </x-buttons>
-        </template>
-      </xel-demo>
-    </section>
-
-    <hr/>
-
-    <section data-themes="material">
-      <h4>Skin <em>"iconic"</em></h4>
-
-      <xel-demo>
-        <template>
-          <x-buttons tracking="1">
-            <x-button skin="iconic" toggled>
-              <x-icon name="extension"></x-icon>
-            </x-button>
-
-            <x-button skin="iconic">
-              <x-icon name="favorite"></x-icon>
-            </x-button>
-
-            <x-button skin="iconic">
-              <x-icon name="settings"></x-icon>
-            </x-button>
+              <x-button skin="dock">
+                <x-icon name="view-carousel"></x-icon>
+              </x-button>
+            </x-box>
           </x-buttons>
         </template>
       </xel-demo>

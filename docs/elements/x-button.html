@@ -283,7 +283,53 @@
 
       <hr/>
 
-      <section data-themes="material">
+      <section data-themes="galaxy macos vanilla">
+        <h4>Skin <em>"condensed"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-button skin="condensed">
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="condensed" togglable toggled>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="condensed" disabled>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="condensed">
+              <x-icon name="settings"></x-icon>
+              <x-menu>
+                <x-menuitem>
+                  <x-label>Menu item</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-button>
+
+            <style>
+              x-button + x-button {
+                margin-top: 10px;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section data-themes="macos material vanilla">
         <h4>Skin <em>"textured"</em></h4>
 
         <xel-demo>
@@ -310,6 +356,144 @@
             </x-button>
 
             <x-button skin="textured">
+              <x-icon name="settings"></x-icon>
+              <x-menu>
+                <x-menuitem>
+                  <x-label>Menu item</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-button>
+
+            <style>
+              x-button + x-button {
+                margin-top: 10px;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section data-themes="macos vanilla">
+        <h4>Skin <em>"textured-condensed"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-button skin="textured-condensed">
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="textured-condensed" togglable toggled>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="textured-condensed" disabled>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="textured-condensed">
+              <x-icon name="settings"></x-icon>
+              <x-menu>
+                <x-menuitem>
+                  <x-label>Menu item</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-button>
+
+            <style>
+              x-button + x-button {
+                margin-top: 10px;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section data-themes="macos vanilla">
+        <h4>Skin <em>"plain"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-button skin="plain">
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="plain" toggled togglable>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="plain" disabled>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="plain">
+              <x-icon name="settings"></x-icon>
+              <x-menu>
+                <x-menuitem>
+                  <x-label>Menu item</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-button>
+
+            <style>
+              x-button + x-button {
+                margin-top: 10px;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section data-themes="macos vanilla">
+        <h4>Skin <em>"plain-condensed"</em></h4>
+
+        <xel-demo>
+          <template>
+            <x-button skin="plain-condensed">
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="plain-condensed" toggled togglable>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="plain-condensed" disabled>
+              <x-box>
+                <x-icon name="camera"></x-icon>
+                <x-label>Button</x-label>
+              </x-box>
+            </x-button>
+
+            <x-button skin="plain-condensed">
               <x-icon name="settings"></x-icon>
               <x-menu>
                 <x-menuitem>
@@ -366,33 +550,24 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
-        <h4>Skin <em>"condensed"</em></h4>
+      <section data-themes="galaxy macos vanilla">
+        <h4>Skin <em>"flat"</em></h4>
 
         <xel-demo>
           <template>
-            <x-button skin="condensed">
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
+            <x-button skin="flat">
+              <x-icon name="camera"></x-icon>
             </x-button>
 
-            <x-button skin="condensed" togglable toggled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
+            <x-button skin="flat" toggled togglable>
+              <x-icon name="camera"></x-icon>
             </x-button>
 
-            <x-button skin="condensed" disabled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
+            <x-button skin="flat" disabled>
+              <x-icon name="camera"></x-icon>
             </x-button>
 
-            <x-button skin="condensed">
+            <x-button skin="flat">
               <x-icon name="settings"></x-icon>
               <x-menu>
                 <x-menuitem>
@@ -412,171 +587,24 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
-        <h4>Skin <em>"textured"</em></h4>
+      <section data-themes="galaxy macos vanilla">
+        <h4>Skin <em>"flat-condensed"</em></h4>
 
         <xel-demo>
           <template>
-            <x-button skin="textured">
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
+            <x-button skin="flat-condensed">
+              <x-icon name="add-circle"></x-icon>
             </x-button>
 
-            <x-button skin="textured" togglable toggled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
+            <x-button skin="flat-condensed" toggled togglable>
+              <x-icon name="add-circle"></x-icon>
             </x-button>
 
-            <x-button skin="textured" disabled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
+            <x-button skin="flat-condensed" disabled>
+              <x-icon name="add-circle"></x-icon>
             </x-button>
 
-            <x-button skin="textured">
-              <x-icon name="settings"></x-icon>
-              <x-menu>
-                <x-menuitem>
-                  <x-label>Menu item</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-button>
-
-            <style>
-              x-button + x-button {
-                margin-top: 10px;
-              }
-            </style>
-          </template>
-        </xel-demo>
-      </section>
-
-      <hr/>
-
-      <section data-themes="macos galaxy">
-        <h4>Skin <em>"textured-condensed"</em></h4>
-
-        <xel-demo>
-          <template>
-            <x-button skin="textured-condensed">
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="textured-condensed" togglable toggled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="textured-condensed" disabled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="textured-condensed">
-              <x-icon name="settings"></x-icon>
-              <x-menu>
-                <x-menuitem>
-                  <x-label>Menu item</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-button>
-
-            <style>
-              x-button + x-button {
-                margin-top: 10px;
-              }
-            </style>
-          </template>
-        </xel-demo>
-      </section>
-
-      <hr/>
-
-      <section data-themes="macos galaxy">
-        <h4>Skin <em>"plain"</em></h4>
-
-        <xel-demo>
-          <template>
-            <x-button skin="plain">
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="plain" toggled togglable>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="plain" disabled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="plain">
-              <x-icon name="settings"></x-icon>
-              <x-menu>
-                <x-menuitem>
-                  <x-label>Menu item</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-button>
-
-            <style>
-              x-button + x-button {
-                margin-top: 10px;
-              }
-            </style>
-          </template>
-        </xel-demo>
-      </section>
-
-      <hr/>
-
-      <section data-themes="macos galaxy">
-        <h4>Skin <em>"plain-condensed"</em></h4>
-
-        <xel-demo>
-          <template>
-            <x-button skin="plain-condensed">
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="plain-condensed" toggled togglable>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="plain-condensed" disabled>
-              <x-box>
-                <x-icon name="camera"></x-icon>
-                <x-label>Button</x-label>
-              </x-box>
-            </x-button>
-
-            <x-button skin="plain-condensed">
+            <x-button skin="flat-condensed">
               <x-icon name="settings"></x-icon>
               <x-menu>
                 <x-menuitem>
@@ -647,7 +675,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="macos">
         <h4>Skin <em>"iconic"</em></h4>
 
         <xel-demo>
@@ -684,7 +712,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="macos">
         <h4>Skin <em>"iconic-condensed"</em></h4>
 
         <xel-demo>
@@ -721,81 +749,8 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
-        <h4>Skin <em>"flat"</em></h4>
 
-        <xel-demo>
-          <template>
-            <x-button skin="flat">
-              <x-icon name="camera"></x-icon>
-            </x-button>
-
-            <x-button skin="flat" toggled togglable>
-              <x-icon name="camera"></x-icon>
-            </x-button>
-
-            <x-button skin="flat" disabled>
-              <x-icon name="camera"></x-icon>
-            </x-button>
-
-            <x-button skin="flat">
-              <x-icon name="settings"></x-icon>
-              <x-menu>
-                <x-menuitem>
-                  <x-label>Menu item</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-button>
-
-            <style>
-              x-button + x-button {
-                margin-top: 10px;
-              }
-            </style>
-          </template>
-        </xel-demo>
-      </section>
-
-      <hr/>
-
-      <section data-themes="macos galaxy">
-        <h4>Skin <em>"flat-condensed"</em></h4>
-
-        <xel-demo>
-          <template>
-            <x-button skin="flat-condensed">
-              <x-icon name="add-circle"></x-icon>
-            </x-button>
-
-            <x-button skin="flat-condensed" toggled togglable>
-              <x-icon name="add-circle"></x-icon>
-            </x-button>
-
-            <x-button skin="flat-condensed" disabled>
-              <x-icon name="add-circle"></x-icon>
-            </x-button>
-
-            <x-button skin="flat-condensed">
-              <x-icon name="settings"></x-icon>
-              <x-menu>
-                <x-menuitem>
-                  <x-label>Menu item</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-button>
-
-            <style>
-              x-button + x-button {
-                margin-top: 10px;
-              }
-            </style>
-          </template>
-        </xel-demo>
-      </section>
-
-      <hr/>
-
-      <section data-themes="macos galaxy">
+      <section data-themes="macos">
         <h4>Skin <em>"mini"</em></h4>
 
         <xel-demo>
@@ -832,7 +787,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="macos">
         <h4>Skin <em>"mini-bordered"</em></h4>
 
         <xel-demo>
@@ -869,7 +824,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="galaxy macos vanilla">
         <h4>Skin <em>"recessed"</em></h4>
 
         <xel-demo>
@@ -897,7 +852,7 @@
 
       <hr/>
 
-      <section>
+      <section data-themes="galaxy macos material vanilla">
         <h4>Skin <em>"nav"</em></h4>
 
         <xel-demo>
@@ -934,7 +889,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="galaxy macos vanilla">
         <h4>Skin <em>"dock"</em></h4>
 
         <xel-demo>
@@ -962,7 +917,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="galaxy macos vanilla">
         <h4>Skin <em>"help"</em></h4>
 
         <xel-demo>
@@ -986,7 +941,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="macos">
         <h4>Skin <em>"disclosure"</em></h4>
 
         <xel-demo>
@@ -1012,7 +967,7 @@
 
       <hr/>
 
-      <section data-themes="macos galaxy">
+      <section data-themes="macos">
         <h4>Skin <em>"disclosure-bordered"</em></h4>
 
         <xel-demo>
