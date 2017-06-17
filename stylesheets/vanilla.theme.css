@@ -618,8 +618,8 @@ x-tab > x-box[vertical] > *:last-child {
 
 x-doctabs {
   height: 25px;
-  background: #BFBEBF;
-  outline: 1px solid #9C9C9C;
+  background: #f0f0f0;
+  outline: 1px solid #bdbdbd;
   --open-button-width: 18px;
   --open-button-height: 18px;
   --open-button-margin: 0 4px;
@@ -630,9 +630,9 @@ x-doctab {
   padding: 0 18px;
   align-items: center;
   justify-content: flex-start;
-  background: #c1bfc1;
+  background: #e2e2e2;
   border-bottom: none;
-  outline: 1px solid #9C9C9C;
+  outline: 1px solid #bdbdbd;
   --ripple-type: none;
   --selection-indicator-height: 0;
   --close-button-position: absolute;
@@ -644,14 +644,14 @@ x-doctab {
   --close-button-opacity: 0.7;
 }
 x-doctab:hover {
-  background: #B6B4B6;
+  background: #d8d7d7;
 }
 x-doctab:focus {
   box-shadow: 0 0 0px 3px hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 15%));
   z-index: 100;
 }
 x-doctab[selected] {
-  background: #d8d7d8;
+  background: #f0f0f0;
 }
 
 x-doctab img,
@@ -669,19 +669,13 @@ x-doctab x-label {
   font-size: 12px;
   font-weight: 400;
   text-align: center;
+  color: rgba(0, 0, 0, 0.95);
 }
 x-doctab[selected] x-label,
 x-doctab:focus x-label {
   font-weight: 600;
 }
 
-x-doctab > * {
-  opacity: 0.75;
-}
-x-doctab[selected] > *,
-x-doctab:focus > * {
-  opacity: 1;
-}
 x-doctab[disabled] > * {
   opacity: 0.5;
 }
