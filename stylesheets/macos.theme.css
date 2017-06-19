@@ -305,7 +305,11 @@ x-buttons > x-button[pressed] + x-button {
 }
 
 x-buttons > x-box[vertical] {
-  flex-flow: column;
+  width: 100%;
+}
+x-buttons > x-box[vertical] > x-button {
+  width: 100%;
+  justify-content: flex-start;
 }
 x-buttons > x-box[vertical] > x-button:not(:first-of-type) {
   border-top-left-radius: 0;
@@ -315,10 +319,6 @@ x-buttons > x-box[vertical] > x-button:not(:last-of-type) {
   border-bottom: none;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-}
-x-buttons > x-box[vertical] > x-button {
-  width: 100%;
-  justify-content: flex-start;
 }
 x-buttons > x-box[vertical] > x-button[toggled] + x-button {
   border-top-color: var(--x-toggled-border-color);
