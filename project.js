@@ -59,6 +59,7 @@ let build = () => {
   xelMinJS = minifyScript(xelMinJS);
 
   writeFile(`${__dirname}/xel.min.html`, `<script>${xelMinJS}</script>`);
+  writeFile(`${__dirname}/xel.min.js`, xelMinJS);
 };
 
 // @info
@@ -226,7 +227,7 @@ let serve = () => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 let info = `Usage:
-./project.js build            - Generate xel.min.html file
+./project.js build            - Generate xel.min.html and xel.min.js files
 ./project.js serve            - Serve Xel demo site on http://localhost:5000
 ./project.js publish firebase - Update Xel demo site hosted by Firebase
 ./project.js publish npm      - Update Xel package hosted by NPM`;
