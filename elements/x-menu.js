@@ -50,8 +50,8 @@
       this.addEventListener("pointerout", (event) => this._onPointerOut(event));
       this.addEventListener("pointermove", (event) => this._onPointerMove(event));
       this.addEventListener("keydown", (event) => this._onKeyDown(event));
-      this.addEventListener("wheel", (event) => this._onWheel(event), {passive: true});
-      this["#main"].addEventListener("scroll", (event) => this._onScroll(event), {passive: true});
+      this.addEventListener("wheel", (event) => this._onWheel(event));
+      this["#main"].addEventListener("scroll", (event) => this._onScroll(event));
     }
 
     connectedCallback() {
