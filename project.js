@@ -124,95 +124,98 @@ let vulcanizeScript = (scriptJS) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 let publishNpmPackage = () => {
-  let command = "npm";
-  let args = ["publish"];
-  let options = {cwd: __dirname, stdio: "inherit"};
-  let npmProcess = childProcess.spawn(command, args, options);
-
-  npmProcess.on("exit", (error) => {
-    if (error) {
-      console.log(error.toString());
-    }
-  });
-};
-
-let publishFirebaseSite = () => {
-  // Generate updated xel.min.html
-  {
-    build();
-  }
-
-  // Remove old files
-  {
-    removeDir(`${__dirname}/dist/firebase`);
-  }
-
-  // Rewrite temporarly firebase.json by changing "public" directory from "./" to "./dist/firebase"
-  {
-    let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
-    manifeset.hosting.public = "./dist/firebase";
-    writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
-  }
-
-  // Copy over files to "dist/firebase/"
-  {
-    let paths = [
-      `database.rules.json`,
-      `index.html`,
-      `fallback.html`,
-      `node_modules/prismjs/prism.js`,
-      `node_modules/prismjs/themes/prism-coy.css`,
-      `node_modules/prismjs/themes/prism-tomorrow.css`,
-      `node_modules/xel/xel.min.html`,
-      `node_modules/xel/images`,
-      `node_modules/xel/stylesheets/galaxy.theme.css`,
-      `node_modules/xel/stylesheets/macos.theme.css`,
-      `node_modules/xel/stylesheets/material.theme.css`,
-      `node_modules/xel/stylesheets/vanilla.theme.css`,
-      `node_modules/xel/docs`
-    ];
-
-    for (let path of paths) {
-      Fse.copySync(`${__dirname}/${path}`, `${__dirname}/dist/firebase/${path}`);
-    }
-  }
-
-  // Rewrite "dist/firebase/"
-  {
-    let indexHTML = readFile(`${__dirname}/dist/firebase/index.html`);
-    indexHTML = indexHTML.replace("xel.html", "xel.min.html");
-    writeFile(`${__dirname}/dist/firebase/index.html`, indexHTML);
-  }
-
-  // Upload files to the Firebase server
-  {
-    let command = "./node_modules/firebase-tools/bin/firebase";
-    let args = ["deploy"];
+  return new Promise((resolve) => {
+    let command = "npm";
+    let args = ["publish"];
     let options = {cwd: __dirname, stdio: "inherit"};
-    let firebaseProcess = childProcess.spawn(command, args, options);
+    let npmProcess = childProcess.spawn(command, args, options);
 
-    firebaseProcess.on("exit", (error) => {
+    npmProcess.on("exit", (error) => {
       if (error) {
         console.log(error.toString());
       }
 
-      // Restore firebase.json
-      {
-        let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
-        manifeset.hosting.public = "./";
-        writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
-      }
-
-      // Clean up
-      {
-        removeDir(`${__dirname}/dist/firebase`);
-
-        if (isEmptyDir(`${__dirname}/dist`)) {
-          removeDir(`${__dirname}/dist`);
-        }
-      }
+      resolve();
     });
-  }
+  });
+};
+
+let publishFirebaseSite = () => {
+  return new Promise((resolve) => {
+    // Remove old files
+    {
+      removeDir(`${__dirname}/dist/firebase`);
+    }
+
+    // Rewrite temporarly firebase.json by changing "public" directory from "./" to "./dist/firebase"
+    {
+      let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
+      manifeset.hosting.public = "./dist/firebase";
+      writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
+    }
+
+    // Copy over files to "dist/firebase/"
+    {
+      let paths = [
+        `database.rules.json`,
+        `index.html`,
+        `fallback.html`,
+        `node_modules/prismjs/prism.js`,
+        `node_modules/prismjs/themes/prism-coy.css`,
+        `node_modules/prismjs/themes/prism-tomorrow.css`,
+        `node_modules/xel/xel.min.html`,
+        `node_modules/xel/images`,
+        `node_modules/xel/stylesheets/galaxy.theme.css`,
+        `node_modules/xel/stylesheets/macos.theme.css`,
+        `node_modules/xel/stylesheets/material.theme.css`,
+        `node_modules/xel/stylesheets/vanilla.theme.css`,
+        `node_modules/xel/docs`
+      ];
+
+      for (let path of paths) {
+        Fse.copySync(`${__dirname}/${path}`, `${__dirname}/dist/firebase/${path}`);
+      }
+    }
+
+    // Rewrite "dist/firebase/"
+    {
+      let indexHTML = readFile(`${__dirname}/dist/firebase/index.html`);
+      indexHTML = indexHTML.replace("xel.html", "xel.min.html");
+      writeFile(`${__dirname}/dist/firebase/index.html`, indexHTML);
+    }
+
+    // Upload files to the Firebase server
+    {
+      let command = "./node_modules/firebase-tools/bin/firebase";
+      let args = ["deploy"];
+      let options = {cwd: __dirname, stdio: "inherit"};
+      let firebaseProcess = childProcess.spawn(command, args, options);
+
+      firebaseProcess.on("exit", (error) => {
+        if (error) {
+          console.log(error.toString());
+        }
+
+        // Restore firebase.json
+        {
+          let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
+          manifeset.hosting.public = "./";
+          writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
+        }
+
+        // Clean up
+        {
+          removeDir(`${__dirname}/dist/firebase`);
+
+          if (isEmptyDir(`${__dirname}/dist`)) {
+            removeDir(`${__dirname}/dist`);
+          }
+        }
+
+        resolve();
+      });
+    }
+  });
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,9 +252,16 @@ else if (arg1 === "publish") {
     console.log("\n" + info);
   }
   else if (arg2 === "npm") {
+    build();
     publishNpmPackage();
   }
   else if (arg2 === "firebase") {
+    build();
+    publishFirebaseSite();
+  }
+  else if (arg2 === "all") {
+    build();
+    publishNpmPackage();
     publishFirebaseSite();
   }
   else {

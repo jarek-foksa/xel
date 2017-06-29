@@ -1116,6 +1116,34 @@ x-numberinput[skin="condensed"]:focus > x-stepper {
 /*****************************************************************************************************************/
 
 /**
+ * Tag input
+ */
+
+x-taginput {
+  background: white;
+  border: 1px solid #BFBFBF;
+  font-size: 12.5px;
+  --selection-background: inherit;
+}
+x-taginput:focus {
+  outline: 3px solid hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 15%));
+  border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 3%));
+  z-index: 10;
+}
+x-taginput[invalid] {
+  border-color: #d50000;
+  outline: 3px solid rgba(255, 0, 0, 0.49);
+}
+
+x-taginput > x-label {
+  align-self: center;
+  margin-left: -8px;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Textarea
  */
 

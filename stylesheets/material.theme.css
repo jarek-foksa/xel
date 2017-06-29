@@ -1065,7 +1065,6 @@ x-numberinput[invalid] {
   --selection-background: #d50000;
 }
 
-
 /* Focus indicator line */
 x-numberinput::after {
   content: "";
@@ -1112,6 +1111,52 @@ x-numberinput[required] > x-label::after {
 }
 x-numberinput > x-icon + x-label {
   left: 32px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Tag input
+ */
+
+x-taginput {
+  background: white;
+  color: var(--text-color);
+  font-size: 13px;
+  border: 1px solid #c1c1c1;
+  outline: none;
+  --selection-color: white;
+  --selection-background: var(--primary-color);
+}
+x-taginput[invalid] {
+  --selection-background: #d50000;
+}
+
+x-taginput > x-label {
+  align-self: center;
+  margin-left: -8px;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* Focus indicator line */
+x-taginput::after {
+  content: "";
+  display: block;
+  width: 0%;
+  height: 3px;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color);
+  position: absolute;
+  transition: width 0.2s var(--transition-fn1);
+}
+x-taginput:focus::after {
+  width: 100%;
+}
+x-taginput[invalid]::after {
+  width: 100%;
+  background: #d50000;
 }
 
 /*****************************************************************************************************************/

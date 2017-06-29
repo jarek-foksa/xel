@@ -1116,6 +1116,38 @@ x-numberinput[empty] > x-label {
 /*****************************************************************************************************************/
 
 /**
+ * Tag input
+ */
+
+x-taginput {
+  background: #e4e4e4;
+  border: 1px solid #e4e4e4;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.7);
+  --tag-background: rgb(82, 82, 82);
+  --tag-border: 1px solid #525252;
+  --tag-color: var(--text-color);
+  --selection-background: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%));
+}
+x-taginput:focus {
+  background: white;
+  outline: 2px solid hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 15%));
+  border-color: hsl(var(--accent-color-h), var(--accent-color-s), var(--accent-color-l));
+}
+x-taginput[invalid] {
+  border-color: #e62c2c;
+  outline: 2px solid rgb(221, 116, 122);
+}
+
+x-taginput > x-label {
+  align-self: center;
+  margin-left: -8px;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Textarea
  */
 

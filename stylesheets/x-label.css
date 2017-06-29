@@ -16,3 +16,6 @@
 :host([disabled]) {
   opacity: 0.5;
 }
+:host([hidden]) {
+  display: none;
+}

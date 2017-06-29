@@ -331,6 +331,12 @@
                 </x-button>
               </a>
 
+              <a href="/elements/x-taginput">
+                <x-button skin="nav">
+                  <x-label>x-taginput</x-label>
+                </x-button>
+              </a>
+
               <a href="/elements/x-textarea">
                 <x-button skin="nav">
                   <x-label>x-textarea</x-label>
