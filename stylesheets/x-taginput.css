@@ -82,6 +82,7 @@
   flex-grow: 1;
   align-items: center;
   justify-content: flex-start;
+  white-space: pre;
   cursor: text;
   user-select: text;
 }
