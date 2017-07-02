@@ -607,7 +607,7 @@ x-button[skin="nav"] x-label {
   text-overflow: ellipsis;
   font-weight: 500;
   font-size: 13px;
-  text-align: left;
+  text-align: start;
 }
 
 /* @skin "dock" */
