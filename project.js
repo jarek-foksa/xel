@@ -233,7 +233,8 @@ let info = `Usage:
 ./project.js build            - Generate xel.min.html and xel.min.js files
 ./project.js serve            - Serve Xel demo site on http://localhost:5000
 ./project.js publish firebase - Update Xel demo site hosted by Firebase
-./project.js publish npm      - Update Xel package hosted by NPM`;
+./project.js publish npm      - Update Xel package hosted by NPM
+./project.js publish all      - Update Xel demo site hosted by Firebase and packaged hosted by NPM.`;
 
 let arg1 = process.argv[2];
 let arg2 = process.argv[3];

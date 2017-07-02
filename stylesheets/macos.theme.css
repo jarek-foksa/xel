@@ -269,6 +269,7 @@ x-button > x-box > x-label {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  text-align: center;
 }
 
 x-button > x-box {
@@ -606,6 +607,7 @@ x-button[skin="nav"] x-label {
   text-overflow: ellipsis;
   font-weight: 500;
   font-size: 13px;
+  text-align: left;
 }
 
 /* @skin "dock" */

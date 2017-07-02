@@ -258,6 +258,7 @@ x-button > x-box > x-label {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
   max-width: 100%;
 }
 
@@ -453,6 +454,7 @@ x-button[skin="nav"] x-label {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-align: start;
   font-size: 15px;
   font-weight: 500;
 }
