@@ -8,6 +8,24 @@
 
 {
   let {html} = Xel.utils.element;
+  let isAppleDevice = navigator.platform.startsWith("Mac") || ["iPhone", "iPad"].includes(navigator.platform);
+
+  // @doc
+  //   https://www.w3.org/TR/uievents-key/#keys-modifier
+  let modKeys = [
+    "Alt",
+    "AltGraph",
+    "CapsLock",
+    "Control",
+    "Fn",
+    "FnLock",
+    "Meta",
+    "NumLock",
+    "ScrollLock",
+    "Shift",
+    "Symbol",
+    "SymbolLock"
+  ];
 
   let shadowTemplate = html`
     <template>
@@ -15,8 +33,6 @@
       <main id="main"></main>
     </template>
   `;
-
-  let isAppleDevice = navigator.platform.startsWith("Mac") || ["iPhone", "iPad"].includes(navigator.platform);
 
   class XShortcutElement extends HTMLElement {
     constructor() {
@@ -31,7 +47,7 @@
     }
 
     attributeChangedCallback(name) {
-      if (name === "key" || name === "ctrl" || name === "alt" || name === "shift" || name === "meta") {
+      if (name === "value") {
         this._update();
       }
     }
@@ -39,54 +55,67 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     static get observedAttributes() {
-      return ["key", "ctrl", "alt", "shift", "meta"];
+      return ["value"];
     }
 
-    get key() {
-      return this.getAttribute("key");
+    // @type
+    //   Array<string>
+    // @default
+    //   []
+    // @attribute
+    get value() {
+      let value = [];
+
+      if (this.hasAttribute("value")) {
+        let parts = this.getAttribute("value").replace("++", "+PLUS").split("+");
+        parts = parts.map($0 => $0.trim().replace("PLUS", "+")).filter($0 => $0 !== "");
+        value = parts;
+      }
+
+      return value;
     }
-    set key(key) {
-      key ? this.setAttribute("key", key) : this.removeAttribute("key");
+    set value(value) {
+      this.setAttribute("value", value.join("+"));
     }
 
-    get ctrl() {
-      return this.hasAttribute("ctrl");
-    }
-    set ctrl(ctrl) {
-      ctrl ? this.setAttribute("ctrl", "") : this.removeAttribute("ctrl");
-    }
-
-    get alt() {
-      return this.hasAttribute("alt");
-    }
-    set alt(alt) {
-      alt ? this.setAttribute("alt", "") : this.removeAttribute("alt");
+    // @type
+    //   Array<string>
+    get modKeys() {
+      return this.value.filter(key => modKeys.includes(key));
     }
 
-    get shift() {
-      return this.hasAttribute("shift");
-    }
-    set shift(shift) {
-      shift ? this.setAttribute("shift", "") : this.removeAttribute("shift");
-    }
-
-    get meta() {
-      return this.hasAttribute("meta");
-    }
-    set meta(meta) {
-      meta ? this.setAttribute("meta", "") : this.removeAttribute("meta");
+    // @type
+    //   String?
+    get normalKey() {
+      let key = this.value.find(key => modKeys.includes(key) === false);
+      return key === undefined ? null : key;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     _update() {
-      let string = "";
+      let displayValue = "";
+
+      let keys = this.value;
+      let modKeys = this.modKeys;
+      let normalKey = this.normalKey;
 
       if (isAppleDevice) {
-        if (this.meta)  string += "^";
-        if (this.alt)   string += "⌥";
-        if (this.shift) string += "⇧";
-        if (this.ctrl)  string += "⌘";
+        if (modKeys.includes("Meta")) {
+          displayValue += "^";
+        }
+        if (modKeys.includes("Alt")) {
+          displayValue += "⌥";
+        }
+        if (modKeys.includes("Shift")) {
+          displayValue += "⇧";
+        }
+        if (modKeys.includes("Control")) {
+          displayValue += "⌘";
+        }
+        if (modKeys.includes("Symbol")) {
+          displayValue += "☺";
+        }
 
         let mappings = {
           "ArrowUp": "↑",
@@ -96,17 +125,28 @@
           "Backspace": "⌦"
         };
 
-        if (this.key !== null) {
-          string += mappings[this.key] || this.key;
+        if (normalKey !== undefined) {
+          displayValue += mappings[normalKey] || normalKey;
         }
       }
       else {
         let parts = [];
 
-        if (this.ctrl)  parts.push("Ctrl");
-        if (this.alt)   parts.push("Alt");
-        if (this.meta)  parts.push("Meta");
-        if (this.shift) parts.push("Shift");
+        if (modKeys.includes("Control")) {
+          displayValue += "Ctrl";
+        }
+        if (modKeys.includes("Alt")) {
+          displayValue += "Alt";
+        }
+        if (modKeys.includes("Meta")) {
+          displayValue += "Meta";
+        }
+        if (modKeys.includes("Shift")) {
+          displayValue += "Shift";
+        }
+        if (modKeys.includes("Symbol")) {
+          displayValue += "Symbol";
+        }
 
         let mappings = {
           "ArrowUp": "Up",
@@ -115,14 +155,14 @@
           "ArrowRight": "Right"
         };
 
-        if (this.key !== null) {
-          parts.push(mappings[this.key] || this.key);
+        if (normalKey !== null) {
+          parts.push(mappings[normalKey] || normalKey);
         }
 
-        string = parts.join("+");
+        displayValue = parts.join("+");
       }
 
-      this["#main"].textContent = string;
+      this["#main"].textContent = displayValue;
     }
   }
 

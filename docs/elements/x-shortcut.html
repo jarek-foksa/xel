@@ -2,7 +2,7 @@
   <article>
     <h2>Shortcut</h2>
 
-    <p><strong>&lt;x-shortcut&gt;</strong> displays given keyboard shortcut using platform-specific notation.</p>
+    <p><strong>&lt;x-shortcut&gt;</strong> displays given keyboard shortcut using platform-specific notation. <strong>&lt;x-shortcut&gt;</strong> value should consist from <a href="https://www.w3.org/TR/uievents-key/">DOM key names</a> separated by "+" sign.</p>
 
     <hr/>
 
@@ -14,7 +14,7 @@
 
         <xel-demo>
           <template>
-            <x-shortcut ctrl key="C"></x-shortcut>
+            <x-shortcut value="Control+C"></x-shortcut>
           </template>
         </xel-demo>
       </section>
@@ -26,7 +26,7 @@
 
         <xel-demo>
           <template>
-            <x-shortcut ctrl alt shift key="P"></x-shortcut>
+            <x-shortcut value="Control+Alt+Shift+P"></x-shortcut>
           </template>
         </xel-demo>
       </section>
