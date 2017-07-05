@@ -133,19 +133,19 @@
         let parts = [];
 
         if (modKeys.includes("Control")) {
-          displayValue += "Ctrl";
+          parts.push("Ctrl");
         }
         if (modKeys.includes("Alt")) {
-          displayValue += "Alt";
+          parts.push("Alt");
         }
         if (modKeys.includes("Meta")) {
-          displayValue += "Meta";
+          parts.push("Meta");
         }
         if (modKeys.includes("Shift")) {
-          displayValue += "Shift";
+          parts.push("Shift");
         }
         if (modKeys.includes("Symbol")) {
-          displayValue += "Symbol";
+          parts.push("Symbol");
         }
 
         let mappings = {
