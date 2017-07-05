@@ -119,7 +119,7 @@
     //   -Infinity
     // @attribute
     get min() {
-      return this.hasAttribute("min") ? parseInt(this.getAttribute("min")) : -Infinity;
+      return this.hasAttribute("min") ? parseFloat(this.getAttribute("min")) : -Infinity;
     }
     set min(min) {
       isFinite(min) ? this.setAttribute("min", min) : this.removeAttribute("min");
@@ -131,7 +131,7 @@
     //   Infinity
     // @attribute
     get max() {
-      return this.hasAttribute("max") ? parseInt(this.getAttribute("max")) : Infinity;
+      return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : Infinity;
     }
     set max(max) {
       isFinite(max) ? this.setAttribute("max", max) : this.removeAttribute("max");
