@@ -64,7 +64,12 @@
     //   "node_modules/xel/images/icons.svg"
     // @attribute
     get iconset() {
-      return this.hasAttribute("iconset") ? this.getAttribute("iconset") : `node_modules/xel/images/icons.svg`;
+      if (this.hasAttribute("iconset") === false || this.getAttribute("iconset").trim() === "") {
+        return "node_modules/xel/images/icons.svg";
+      }
+      else {
+        return this.getAttribute("iconset");
+      }
     }
     set iconset(iconset) {
       this.setAttribute("iconset", iconset);
