@@ -50,7 +50,6 @@
   align-items: flex-start;
   align-content: flex-start;
   cursor: text;
-  overflow-y: scroll;
 }
 
 #items {
