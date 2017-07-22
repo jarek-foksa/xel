@@ -226,25 +226,27 @@ if (!Node.prototype.closest) {
 
   // Make ClientRect behave like DOMRect
 
-  if (ClientRect.prototype.hasOwnProperty("x") === false) {
-    Object.defineProperty(ClientRect.prototype, "x", {
-      get() {
-        return this.left;
-      },
-      set(value) {
-        this.left = value;
-      }
-    });
-  }
-  if (ClientRect.prototype.hasOwnProperty("y") === false) {
-    Object.defineProperty(ClientRect.prototype, "y", {
-      get() {
-        return this.top;
-      },
-      set(value) {
-        this.top = value;
-      }
-    });
+  if (window.ClientRect) {
+    if (window.ClientRect.prototype.hasOwnProperty("x") === false) {
+      Object.defineProperty(window.ClientRect.prototype, "x", {
+        get() {
+          return this.left;
+        },
+        set(value) {
+          this.left = value;
+        }
+      });
+    }
+    if (window.ClientRect.prototype.hasOwnProperty("y") === false) {
+      Object.defineProperty(window.ClientRect.prototype, "y", {
+        get() {
+          return this.top;
+        },
+        set(value) {
+          this.top = value;
+        }
+      });
+    }
   }
 
   // Expose DOMRect
