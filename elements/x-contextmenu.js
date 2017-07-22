@@ -66,14 +66,14 @@
 
     _onBlur() {
       if (debug === false) {
-        this._close();
+        this.close();
       }
     }
 
     _onParentContextMenu(event) {
       if (this.disabled === false) {
         event.preventDefault();
-        this._open(event.clientX, event.clientY);
+        this.open(event.clientX, event.clientY);
       }
     }
 
@@ -81,11 +81,11 @@
       event.preventDefault()
       event.stopImmediatePropagation();
 
-      this._close().then(() => {
+      this.close().then(() => {
         let target = this.parentElement.getRootNode().elementFromPoint(event.clientX, event.clientY);
 
         if (target && this.parentElement.contains(target)) {
-          this._open(event.clientX, event.clientY);
+          this.open(event.clientX, event.clientY);
         }
       });
     }
@@ -93,7 +93,7 @@
     _onOverlayPointerDown(event) {
       if (event.button === 0) {
         event.preventDefault();
-        this._close();
+        this.close();
       }
     }
 
@@ -115,7 +115,7 @@
           this.setAttribute("closing", "");
 
           await item.whenTriggerEnd;
-          await this._close()
+          await this.close()
 
           this.removeAttribute("closing");
         }
@@ -128,7 +128,7 @@
 
         if (menu.opened) {
           event.preventDefault();
-          this._close();
+          this.close();
         }
       }
 
@@ -143,7 +143,7 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    _open(clientX, clientY) {
+    open(clientX, clientY) {
       let menu = this.querySelector("x-menu");
 
       if (menu.opened === false) {
@@ -156,7 +156,7 @@
       }
     }
 
-    _close() {
+    close() {
       return new Promise(async (resolve) => {
         let menu = this.querySelector("x-menu");
         await menu.close();
