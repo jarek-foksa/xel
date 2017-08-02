@@ -22,6 +22,7 @@
           will-change: opacity;
           cursor: default;
           background: rgba(0, 0, 0, 0.5);
+          visibility: hidden;
         }
         :host([hidden]) {
           display: none;
@@ -53,6 +54,7 @@
     }
     set ownerElement(ownerElement) {
       this._ownerElement = ownerElement;
+      this.ownerElement.before(this);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,9 +62,8 @@
     show(animate = true) {
       this.style.top = "0px";
       this.style.left = "0px";
-      this.ownerElement.before(this);
+      this.style.visibility = 'visible'
       this.hidden = false;
-
       let bounds = this.getBoundingClientRect();
       let extraTop = 0;
       let extraLeft = 0;
@@ -122,14 +123,14 @@
 
         overlayAnimation.finished.then(() => {
           document.body.style.overflow = null;
-          this.remove();
+          this.style.visibility = 'hidden'
         });
 
         return overlayAnimation.finished;
       }
       else {
         document.body.style.overflow = null;
-        this.remove();
+        this.style.visibility = 'hidden'
       }
     }
   }

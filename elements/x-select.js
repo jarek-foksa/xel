@@ -190,7 +190,7 @@
 
       this._wasFocusedBeforeExpanding = this.matches(":focus");
 
-      this["#overlay"].style.visibility = 'visible';
+      this["#overlay"].show(false);
 
       window.addEventListener("resize", this._resizeListener = () => {
         this._collapse();
@@ -268,7 +268,7 @@
       let menu = this.querySelector(":scope > x-menu");
       menu.setAttribute("closing", "");
       await whenTriggerEnd;
-      this["#overlay"].style.visibility = 'hidden';
+      this["#overlay"].hide(false);
 
       if (this._wasFocusedBeforeExpanding) {
         this.focus();
