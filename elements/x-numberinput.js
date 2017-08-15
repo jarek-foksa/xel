@@ -8,7 +8,7 @@
   let {isFinite} = Number;
   let {html} = Xel.utils.element;
   let {isNumeric} = Xel.utils.string;
-  let {debounce} = Xel.utils.time;
+  let {debounce, sleep} = Xel.utils.time;
   let {normalize, getPrecision} = Xel.utils.math;
 
   let numericKeys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
@@ -470,13 +470,15 @@
       }
     }
 
-    _onPaste(event) {
+    async _onPaste(event) {
       // Allow only for pasting numeric text
-
       event.preventDefault();
       let content = event.clipboardData.getData("text/plain").trim();
 
       if (isNumeric(content)) {
+        // @bugfix: https://github.com/nwjs/nw.js/issues/3403
+        await sleep(1);
+
         document.execCommand("insertText", false, content);
       }
     }
