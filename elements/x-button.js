@@ -227,7 +227,7 @@
     }
 
     _onOverlayPointerDown(pointerDownEvent) {
-      this._collapse();
+      this.collapse();
     }
 
     async _onButtonPointerDown(pointerDownEvent) {
@@ -246,7 +246,7 @@
         return;
       }
 
-      this._expand();
+      this.expand();
       this.setPointerCapture(pointerDownEvent.pointerId);
 
       // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
@@ -480,7 +480,7 @@
       let menu = this.querySelector(":scope > x-menu");
 
       if (!menu.hasAttribute("closing")) {
-        this._collapse(item.whenTriggerEnd);
+        this.collapse(item.whenTriggerEnd);
       }
     }
 
@@ -492,13 +492,13 @@
         if (menu) {
           if (menu.opened === false) {
             event.preventDefault();
-            this._expand().then(() => menu.focusFirstMenuItem());
+            this.expand().then(() => menu.focusFirstMenuItem());
           }
         }
         else if (popover) {
           if (popover.opened === false) {
             event.preventDefault();
-            this._expand();
+            this.expand();
           }
         }
         else {
@@ -514,13 +514,13 @@
         if (menu) {
           if (menu.opened) {
             event.preventDefault();
-            this._collapse();
+            this.collapse();
           }
         }
         else if (popover) {
           if (popover.opened) {
             event.preventDefault();
-            this._collapse();
+            this.collapse();
           }
         }
       }
@@ -531,7 +531,7 @@
 
         if (menu) {
           event.preventDefault();
-          this._expand().then(() => menu.focusLastMenuItem());
+          this.expand().then(() => menu.focusLastMenuItem());
         }
       }
     }
@@ -540,7 +540,7 @@
 
     // @info
     //   Show the menu or popover associated with this button.
-    _expand() {
+    expand() {
       return new Promise( async (resolve) => {
         if (this._canExpandMenu()) {
           let menu = this.querySelector("x-menu");
@@ -577,7 +577,7 @@
 
     // @info
     //   Hide the menu or popover associated with this button.
-    _collapse(delay = null) {
+    collapse(delay = null) {
       return new Promise(async (resolve) => {
         let popup = null;
 
