@@ -130,7 +130,7 @@
         }
 
         if (iconset) {
-          let symbol = iconset.querySelector(`#${name}`);
+          let symbol = iconset.querySelector("#" + CSS.escape(name));
 
           if (symbol) {
             resolve(symbol);

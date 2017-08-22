@@ -78,7 +78,7 @@
 
     _onClick(event) {
       if (this.for && this.disabled === false) {
-        let target = this.getRootNode().querySelector("#" + this.for);
+        let target = this.getRootNode().querySelector("#" + CSS.escape(this.for));
 
         if (target) {
           target.click();
@@ -88,7 +88,7 @@
 
     _onForAttributeChange() {
       let rootNode = this.getRootNode();
-      let target = rootNode.querySelector("#" + this.for);
+      let target = rootNode.querySelector("#" + CSS.escape(this.for));
 
       if  (target) {
         if (!this.id) {

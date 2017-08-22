@@ -117,7 +117,7 @@
     while (true) {
       let id = prefix + counter;
 
-      if (fragment.querySelector("#" + id) === null) {
+      if (fragment.querySelector("#" + CSS.escape(id)) === null) {
         return id;
       }
       else {
