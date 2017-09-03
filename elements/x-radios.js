@@ -29,6 +29,22 @@ export class XRadiosElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // @type
+  //   string?
+  // @default
+  //   null
+  get value() {
+    let radio = this.querySelector(`x-radio[toggled]`);
+    return radio ? radio.value : null;
+  }
+  set value(value) {
+    for (let radio of this.querySelectorAll("x-radio")) {
+      radio.toggled = (radio.value === value && value !== null);
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   _onClick(event) {
     let clickedRadio = event.target.localName === "x-radio" ? event.target : null;
 
