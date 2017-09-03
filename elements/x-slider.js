@@ -312,7 +312,9 @@ export class XSliderElement extends HTMLElement {
     this["#start-thumb"].style.left = (((this.value - this.min) / (this.max - this.min)) * 100) + "%";
   }
 
-  _updateTicks() {
+  async _updateTicks() {
+    await customElements.whenDefined("x-label");
+
     this["#ticks"].innerHTML = "";
 
     for (let label of this.querySelectorAll(":scope > x-label")) {
