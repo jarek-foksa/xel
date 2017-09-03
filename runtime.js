@@ -2,10 +2,6 @@
 // @copyright
 //   © 2016-2017 Jarosław Foksa
 
-"use strict";
-
-window.Xel = {utils: {}, classes: {}};
-
 //
 // Pointer events polyfills
 //

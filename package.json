@@ -1,6 +1,6 @@
 {
   "name": "xel",
-  "version": "0.0.54",
+  "version": "0.0.55",
   "description": "Widget toolkit for building native-like Electron, NW.js and Chrome apps",
   "repository": {
     "type": "git",
@@ -45,15 +45,10 @@
     "start": "./project.js serve"
   },
   "devDependencies": {
-    "babel-core": "^6.24.0",
-    "babel-plugin-transform-custom-element-classes": "^0.1.0",
-    "babel-preset-babili": "^0.0.12",
-    "babel-preset-es2015": "^6.24.0",
     "csso": "^3.0.1",
     "firebase-tools": "^3.5.0",
     "fs-extra": ">=2.1.2",
-    "glob": ">=7.1.1",
     "prismjs": "^1.6.0",
-    "pushstate-server": "^3.0.0"
+    "rollup": "^0.49.2"
   }
 }

@@ -6,30 +6,26 @@
 // @copyright
 //   © 2016-2017 Jarosław Foksa
 
-"use strict";
+import {html} from "../utils/element.js";
 
-{
-  let {html} = Xel.utils.element;
+let shadowTemplate = html`
+  <template>
+    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-card.css" data-vulcanize>
+    <slot></slot>
+  </template>
+`;
 
-  let shadowTemplate = html`
-    <template>
-      <link rel="stylesheet" href="node_modules/xel/stylesheets/x-card.css" data-vulcanize>
-      <slot></slot>
-    </template>
-  `;
+export class XCardElement extends HTMLElement {
+  constructor() {
+    super();
 
-  class XCardElement extends HTMLElement {
-    constructor() {
-      super();
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
-      this._shadowRoot = this.attachShadow({mode: "closed"});
-      this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-      for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-        this["#" + element.id] = element;
-      }
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
     }
   }
-
-  customElements.define("x-card", XCardElement);
 }
+
+customElements.define("x-card", XCardElement);

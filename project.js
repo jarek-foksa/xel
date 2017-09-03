@@ -3,10 +3,8 @@
 let Fs              = require("fs");
 let Fse             = require("fs-extra");
 let Path            = require("path");
-let Babel           = require("babel-core");
 let Csso            = require("csso");
-let Glob            = require("glob")
-let PushStateServer = require("pushstate-server");
+let Rollup          = require("rollup");
 let childProcess    = require("child_process");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,42 +40,18 @@ let isEmptyDir = (dirPath) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // @info
-//   Generates xel.min.html file which contains minified version of all JS and CSS files (except themes).
+//   Generates xel.min.js file which contains minified version of all JS and CSS files (except themes).
 let build = () => {
-  let xelHTML = readFile(`${__dirname}/xel.html`);
-  let parts = xelHTML.split("<script").filter($0 => $0.includes("</script>"));
-  parts = parts.map($0 => "<script" + $0.substring(0, $0.lastIndexOf("</script>") + "</script>".length));
-  let paths = parts.map($0 => $0.substring($0.indexOf("src=") + 5, $0.lastIndexOf(`"`)));
+  return new Promise(async (resolve) => {
+    let bundle = await Rollup.rollup({input: "./xel.js"});
+    let result = await bundle.generate({format: "iife"});
 
-  let xelMinJS = "";
+    let xelMinJS = result.code;
+    xelMinJS = vulcanizeScript(xelMinJS);
+    writeFile(`${__dirname}/xel.min.js`, xelMinJS);
 
-  for (let path of paths) {
-    xelMinJS += readFile(__dirname + "/" + path);
-  }
-
-  xelMinJS = vulcanizeScript(xelMinJS);
-  xelMinJS = minifyScript(xelMinJS);
-
-  writeFile(`${__dirname}/xel.min.html`, `<script>${xelMinJS}</script>`);
-  writeFile(`${__dirname}/xel.min.js`, xelMinJS);
-};
-
-// @info
-//   Minifiy JS code by removing comments, whitespace and other redundant content.
-let minifyScript = (scriptJS) => {
-  let phase1 = Babel.transform(scriptJS, {
-    presets: ["es2015"],
-    plugins: ["transform-custom-element-classes"]
+    resolve();
   });
-
-  let phase2 = Babel.transform(phase1.code, {
-    presets: ["babili"],
-    minified: true,
-    comments: false,
-    compact: true
-  });
-
-  return `(function() {` + phase2.code + `})()`;
 };
 
 // @info
@@ -108,6 +82,11 @@ let vulcanizeScript = (scriptJS) => {
       let hrefStartIndex = part.indexOf('href="') + 'href="'.length;
       let hrefEndIndex = part.indexOf('"', hrefStartIndex);
       let href = part.substring(hrefStartIndex, hrefEndIndex);
+
+      if (href.startsWith("node_modules/xel/")) {
+        href = href.substring("node_modules/xel/".length);
+      }
+
       let styleCSS = readFile(`${__dirname}/${href}`);
       let minifiedCSS = Csso.minify(styleCSS).css;
 
@@ -163,7 +142,7 @@ let publishFirebaseSite = () => {
         `node_modules/prismjs/prism.js`,
         `node_modules/prismjs/themes/prism-coy.css`,
         `node_modules/prismjs/themes/prism-tomorrow.css`,
-        `node_modules/xel/xel.min.html`,
+        `node_modules/xel/xel.min.js`,
         `node_modules/xel/images`,
         `node_modules/xel/stylesheets/galaxy.theme.css`,
         `node_modules/xel/stylesheets/macos.theme.css`,
@@ -177,10 +156,10 @@ let publishFirebaseSite = () => {
       }
     }
 
-    // Rewrite "dist/firebase/"
+    // Rewrite "dist/firebase/index.html"
     {
       let indexHTML = readFile(`${__dirname}/dist/firebase/index.html`);
-      indexHTML = indexHTML.replace("xel.html", "xel.min.html");
+      indexHTML = indexHTML.replace("xel.js", "xel.min.js");
       writeFile(`${__dirname}/dist/firebase/index.html`, indexHTML);
     }
 
@@ -221,16 +200,22 @@ let publishFirebaseSite = () => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 let serve = () => {
-  PushStateServer.start({
-    port: 5000,
-    directory: "./"
+  let command = "./node_modules/firebase-tools/bin/firebase";
+  let args = ["serve"];
+  let options = {cwd: __dirname, stdio: "inherit"};
+  let firebaseProcess = childProcess.spawn(command, args, options);
+
+  firebaseProcess.on("exit", (error) => {
+    if (error) {
+      console.log("Error", error.toString());
+    }
   });
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 let info = `Usage:
-./project.js build            - Generate xel.min.html and xel.min.js files
+./project.js build            - Generate xel.min.js file
 ./project.js serve            - Serve Xel demo site on http://localhost:5000
 ./project.js publish firebase - Update Xel demo site hosted by Firebase
 ./project.js publish npm      - Update Xel package hosted by NPM

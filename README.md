@@ -69,7 +69,7 @@ $ npm install xel
 Add to the `<head>`:
 
 ```html
-<link rel="import" href="node_modules/xel/xel.min.html">
+<script type="module" href="node_modules/xel/xel.min.js"></script>
 ```
 
 **3. Link Xel theme**

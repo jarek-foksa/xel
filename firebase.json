@@ -15,6 +15,12 @@
         "destination": "/index.html"
       }
     ],
+    "redirects": [
+      {
+        "source": "/node_modules/xel/:where/**",
+        "destination": "/:where/**"
+      }
+    ],
     "headers": [
       {
         "source": "**",

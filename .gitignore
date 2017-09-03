@@ -1,5 +1,4 @@
 # Build
-xel.min.html
 xel.min.js
 
 # Sublime Text
@@ -9,8 +8,7 @@ xel.sublime-workspace
 firebase-debug.log
 
 # NPM
-node_modules/*
-!node_modules/xel
+node_modules
 npm-debug.log
 
 # Dot files
