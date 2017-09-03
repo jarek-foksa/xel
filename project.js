@@ -158,7 +158,7 @@ let publishFirebaseSite = () => {
     // Rewrite "dist/firebase/index.html"
     {
       let indexHTML = readFile(`${__dirname}/dist/firebase/index.html`);
-      indexHTML = indexHTML.replace("xel.js", "xel.min.js");
+      indexHTML = indexHTML.replace(`<script type="module" src="xel.js"></script>`, `<script src="xel.min.js"></script>`);
       writeFile(`${__dirname}/dist/firebase/index.html`, indexHTML);
     }
 
