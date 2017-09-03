@@ -18,7 +18,8 @@
     "redirects": [
       {
         "source": "/node_modules/xel/:where/**",
-        "destination": "/:where/**"
+        "destination": "/:where/**",
+        "type": 308
       }
     ],
     "headers": [

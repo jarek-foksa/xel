@@ -139,15 +139,15 @@ let publishFirebaseSite = () => {
         `database.rules.json`,
         `index.html`,
         `fallback.html`,
+        `xel.min.js`,
+        `docs`,
+        `images`,
+        `stylesheets/macos.theme.css`,
+        `stylesheets/material.theme.css`,
+        `stylesheets/vanilla.theme.css`,
         `node_modules/prismjs/prism.js`,
         `node_modules/prismjs/themes/prism-coy.css`,
-        `node_modules/prismjs/themes/prism-tomorrow.css`,
-        `node_modules/xel/xel.min.js`,
-        `node_modules/xel/images`,
-        `node_modules/xel/stylesheets/macos.theme.css`,
-        `node_modules/xel/stylesheets/material.theme.css`,
-        `node_modules/xel/stylesheets/vanilla.theme.css`,
-        `node_modules/xel/docs`
+        `node_modules/prismjs/themes/prism-tomorrow.css`
       ];
 
       for (let path of paths) {
