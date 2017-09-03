@@ -42,7 +42,6 @@ Thanks to advanced theming capabilities, Xel can imitate native widgets.
 The themes currently shipped with Xel are:
 - Material - implements Material Design Guidelines
 - MacOS - implements macOS Human Interface Guidelines
-- Galaxy - generic dark theme
 - Vanilla - generic light theme
 
 **Supported browsers**
@@ -76,12 +75,6 @@ Add to the `<head>`:
 
 Add to the `<head>` one of the following:
 
-- Galaxy theme
-
-```html
-<link rel="stylesheet" href="node_modules/xel/stylesheets/galaxy.theme.css">
-```
-
 - MacOS theme
 
 ```html
@@ -104,7 +97,7 @@ Add to the `<head>` one of the following:
 
 Some themes require additional fonts to be linked or embedded. Use Google Fonts service to generate necessary code.
 
-- Galaxy, Material and Vanilla themes - [Roboto](https://fonts.google.com/specimen/Roboto) and [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono). For non-latin scripts, also include [Noto Sans](https://fonts.google.com/specimen/Noto+Sans).
+- Material and Vanilla themes - [Roboto](https://fonts.google.com/specimen/Roboto) and [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono). For non-latin scripts, also include [Noto Sans](https://fonts.google.com/specimen/Noto+Sans).
 - MacOS theme - Relies on fonts provided by the operating system, you don't have to link anything.
 
 ## Development

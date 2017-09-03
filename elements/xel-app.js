@@ -10,14 +10,7 @@ import {sleep} from "../utils/time.js";
 let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
 let colorSchemesByTheme = {
-  galaxy: {
-    blue: "hsl(215, 95%, 63%)",
-    green: "hsl(85, 48%, 45%)",
-    red: "hsl(345, 55%, 48%)",
-    purple: "hsl(290, 40%, 55%)",
-    orange: "hsl(20, 55%, 52%)",
-    yellowgreen: "hsl(68, 55%, 40%)"
-  },
+  material: {},
   macos: {
     blue: "hsl(211, 96.7%, 52.9%)",
     green: "hsl(88, 35%, 46%)",
@@ -25,7 +18,6 @@ let colorSchemesByTheme = {
     purple: "hsl(290, 40%, 46%)",
     yellowgreen: "hsl(61, 28%, 45%)"
   },
-  material: {},
   vanilla: {
     blue: "hsl(211, 86%, 57%)",
     green: "hsl(88, 35%, 46%)",
@@ -116,10 +108,6 @@ let shadowTemplate = html`
 
               <x-select id="theme-select">
                 <x-menu>
-                  <x-menuitem value="galaxy">
-                    <x-label>Galaxy</x-label>
-                  </x-menuitem>
-
                   <x-menuitem value="macos">
                     <x-label>MacOS</x-label>
                   </x-menuitem>

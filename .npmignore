@@ -4,7 +4,6 @@
 !images/
 !images/*
 !stylesheets/
-!stylesheets/galaxy.theme.css
 !stylesheets/macos.theme.css
 !stylesheets/material.theme.css
 !stylesheets/vanilla.theme.css

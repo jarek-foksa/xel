@@ -31,9 +31,7 @@ export class XelCodeViewElement extends HTMLElement {
 
   connectedCallback() {
     let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
-    let prismTheme = theme.endsWith("galaxy.theme.css") ? "tomorrow" : "coy";
-
-    this["#prism-theme"].setAttribute("href", `node_modules/prismjs/themes/prism-${prismTheme}.css`);
+    this["#prism-theme"].setAttribute("href", `node_modules/prismjs/themes/prism-coy.css`);
     this._update();
   }
 
