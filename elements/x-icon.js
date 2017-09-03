@@ -72,6 +72,18 @@ export class XIconElement extends HTMLElement {
     this.setAttribute("iconset", iconset);
   }
 
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async _update() {
