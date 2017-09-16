@@ -1,5 +1,6 @@
 
 import "./runtime.js";
+import "./elements/x-accordion.js";
 import "./elements/x-box.js";
 import "./elements/x-button.js";
 import "./elements/x-buttons.js";

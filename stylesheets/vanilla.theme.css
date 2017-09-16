@@ -154,6 +154,51 @@ x-card h3:first-child {
 /*****************************************************************************************************************/
 
 /**
+ * Accordion
+ */
+
+x-accordion {
+  margin: 8px 0;
+  --arrow-color: rgba(0, 0, 0, 0.48);
+  --focused-arrow-background: rgba(0, 0, 0, 0.08);
+  --arrow-align: flex-start;
+  --arrow-d: path("M 91.623 50.002 L 8.377 98.065 L 8.377 1.936 L 91.623 50.002 Z");
+  --arrow-width: 10px;
+  --arrow-height: 10px;
+}
+x-accordion[expanded] {
+  --arrow-transform: rotate(90deg);
+}
+
+x-accordion > header {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 7px 0 7px 16px;
+}
+
+x-accordion > header > x-label {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+x-accordion > header > x-label:first-child {
+  flex: 1;
+}
+x-accordion > header > *:not(:last-child) {
+  margin-right: 20px;
+}
+
+x-accordion > main {
+  padding: 4px 0 8px 0;
+}
+x-accordion:not([expanded]):not([animating]) > main {
+  display: none;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Icon
  */
 
@@ -950,6 +995,12 @@ x-switch {
 x-switch[toggled] {
   box-shadow: 0 0 0px 2px hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 3%));
   --track-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 7%));
+}
+
+x-switch[skin="big"] {
+  width: 42px;
+  height: 24px;
+  --thumb-size: 22px;
 }
 
 /*****************************************************************************************************************/

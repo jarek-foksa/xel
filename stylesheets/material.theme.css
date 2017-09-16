@@ -188,12 +188,79 @@ x-card {
   border-radius: 2px;
 }
 
+x-card > header {
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  background: #f9f9f9;
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+x-card > header h3 {
+  margin: 0;
+  flex: 1;
+  line-height: 1;
+}
+
+x-card > header x-switch {
+  margin: 0;
+}
+
 x-card > main {
   padding: 30px;
 }
 
-x-card h3:first-child {
+x-card > main h3:first-child {
   margin-top: 0;
+}
+
+x-card main > p {
+  line-height: 18px;
+  margin: 10px 0;
+}
+x-card main > p:first-child {
+  margin-top: 0;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Accordion (https://material.io/guidelines/components/expansion-panels.html#expansion-panels-behavior)
+ */
+
+x-accordion {
+  --arrow-color: rgba(0, 0, 0, 0.38);
+  --focused-arrow-background: rgba(0, 0, 0, 0.08);
+  --trigger-effect: ripple;
+}
+
+x-accordion > header {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 50px 10px 24px;
+}
+
+x-accordion > header > x-label {
+  color: rgba(0, 0, 0, 0.54);
+}
+x-accordion > header > x-label strong {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+x-accordion > main {
+  padding: 10px 24px 24px 24px;
+}
+x-accordion:not([expanded]):not([animating]) > main {
+  display: none;
+}
+
+x-accordion + hr {
+  margin: 0;
 }
 
 /*****************************************************************************************************************/
@@ -861,6 +928,14 @@ x-switch[toggled] {
   x-switch {
     --ripple-type: unbounded;
   }
+}
+
+/* Big skin */
+
+x-switch[skin="big"] {
+  width: 40px;
+  --thumb-size: 22px;
+  --track-height: 80%;
 }
 
 /*****************************************************************************************************************/

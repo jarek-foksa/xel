@@ -149,6 +149,12 @@ let shadowTemplate = html`
               </x-button>
             </a>
 
+            <a href="/elements/x-accordion">
+              <x-button skin="nav">
+                <x-label>x-accordion</x-label>
+              </x-button>
+            </a>
+
             <a href="/elements/x-icon">
               <x-button skin="nav">
                 <x-label>x-icon</x-label>
