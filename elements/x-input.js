@@ -58,6 +58,9 @@ export class XInputElement extends HTMLElement {
     else if (name === "spellcheck") {
       this._onSpellcheckAttributeChange();
     }
+    else if (name === "maxlength") {
+      this._onMaxLengthAttributeChange();
+    }
     else if (name === "disabled") {
       this._onDisabledAttributeChange();
     }
@@ -70,7 +73,7 @@ export class XInputElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   static get observedAttributes() {
-    return ["type", "value", "spellcheck", "disabled"];
+    return ["type", "value", "spellcheck", "maxlength", "disabled"];
   }
 
   // @type
@@ -267,6 +270,10 @@ export class XInputElement extends HTMLElement {
 
   _onSpellcheckAttributeChange() {
     this["#input"].spellcheck = this.spellcheck;
+  }
+
+  _onMaxLengthAttributeChange() {
+    this["#input"].maxLength = this.maxLength;
   }
 
   _onDisabledAttributeChange() {
