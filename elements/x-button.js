@@ -202,21 +202,24 @@ export class XButtonElement extends HTMLElement {
   }
 
   _onClick(event) {
-    let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
+    let childPopup = this.querySelector(":scope > x-menu, :scope > x-popover");
+    let closestMenu = event.target.closest("x-menu");
+    let closestMenuItem = event.target.closest("x-menuitem");
+    let closestPopover = event.target.closest("x-popover");
 
-    if (popup && popup.hasAttribute("closing")) {
+    if (childPopup && childPopup.hasAttribute("closing")) {
       return;
     }
     else if (event.target === this["#overlay"]) {
       return;
     }
-    else if (event.target.closest("x-popover")) {
-      return;
-    }
-    else if (event.target.closest("x-menu")) {
-      if (event.target.closest("x-menuitem")) {
+    else if (closestMenu) {
+      if (closestMenuItem) {
         this._onMenuItemClick(event);
       }
+    }
+    else if (closestPopover && this.contains(closestPopover)) {
+      return;
     }
     else {
       this._onButtonClick(event);
