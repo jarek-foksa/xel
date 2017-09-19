@@ -1010,7 +1010,8 @@ x-input::after {
   background: var(--primary-color);
   transition: width 0.2s var(--transition-fn1);
 }
-x-input:focus::after {
+x-input:focus::after,
+x-input:focus-within::after {
   width: 100%;
 }
 x-input[invalid]::after {
