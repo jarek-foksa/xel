@@ -107,9 +107,6 @@ export class XMenuElement extends HTMLElement {
 
         if (item && item.disabled === false && item.closest("x-menu") === this) {
           if (item.matches(":focus") === false) {
-
-
-
             this._delay( async () => {
               let otherItem = this.querySelector(":scope > x-menuitem:focus");
 

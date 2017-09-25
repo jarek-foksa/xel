@@ -233,12 +233,13 @@ export class XButtonElement extends HTMLElement {
   async _onButtonPointerDown(pointerDownEvent) {
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
     if (this.matches(":focus") === false) {
-      event.preventDefault();
-
       let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
 
       if (ancestorFocusableElement) {
         ancestorFocusableElement.focus();
+      }
+      else {
+        sleep(10).then(() => this.blur());
       }
     }
 
