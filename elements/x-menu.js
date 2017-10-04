@@ -436,7 +436,7 @@ export class XMenuElement extends HTMLElement {
   //   Returns a promise that is resolved when the menu finishes animating.
   // @type
   //   (XMenuItem, string) => Promise
-  async openNextToElement(element, direction = "horizontal", elementWhitespace = 0) {
+  openNextToElement(element, direction = "horizontal", elementWhitespace = 0) {
     return new Promise(async (resolve) => {
       this._expandWhenScrolled = false;
       this._openedTimestamp = getTimeStamp();
