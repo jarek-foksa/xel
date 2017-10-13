@@ -91,7 +91,7 @@ export class XButtonElement extends HTMLElement {
   // @type
   //   string
   // @default
-  //   ""
+  //   null
   // @attribute
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;

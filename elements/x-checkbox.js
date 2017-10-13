@@ -61,6 +61,20 @@ export class XCheckboxElement extends HTMLElement {
     return ["toggled", "disabled"];
   }
 
+  // @info
+  //   Values associated with this checkbox.
+  // @type
+  //   string
+  // @default
+  //   null
+  // @attribute
+  get value() {
+    return this.hasAttribute("value") ? this.getAttribute("value") : null;
+  }
+  set value(value) {
+    value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
+  }
+
   // @type
   //   boolean
   // @default
