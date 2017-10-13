@@ -63,10 +63,10 @@ export class XPopoverElement extends HTMLElement {
       let marginLeft = parseFloat(computedStyle.marginLeft);
       let marginRight = parseFloat(computedStyle.marginRight);
 
-      let extraLeft = 0;        // Extra offset needed when popover has fixed-positioned ancestor(s)
-      let extraTop = 0;         // Extra offset needed when popover has fixed-positioned ancestor(s)
-      let windowWhitespace = 5; // Minimal whitespace between popover and window bounds
-      let arrowWhitespace = 2;  // Minimal whitespace between popover and arrow
+      let extraLeft = 0;         // Extra offset needed when popover has fixed-positioned ancestor(s)
+      let extraTop = 0;          // Extra offset needed when popover has fixed-positioned ancestor(s)
+      let windowWhitespace = 10; // Minimal whitespace between popover and window bounds
+      let arrowWhitespace = 2;   // Minimal whitespace between popover and arrow
 
       this.style.left = "0px";
       this.style.top = "0px";
