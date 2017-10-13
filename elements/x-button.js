@@ -235,12 +235,14 @@ export class XButtonElement extends HTMLElement {
     if (this.matches(":focus") === false) {
       let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
 
-      if (ancestorFocusableElement) {
-        ancestorFocusableElement.focus();
-      }
-      else {
-        sleep(10).then(() => this.blur());
-      }
+      sleep(10).then(() => {
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
+        else {
+          this.blur();
+        }
+      });
     }
 
     if (pointerDownEvent.button !== 0) {
