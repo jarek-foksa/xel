@@ -63,15 +63,7 @@ The project makes heavy use of bleeding edge Web Platform features such as Custo
 $ npm install xel
 ```
 
-**2. Link Xel**
-
-Add to the `<head>`:
-
-```html
-<script src="node_modules/xel/xel.min.js"></script>
-```
-
-**3. Link Xel theme**
+**2. Link Xel theme**
 
 Add to the `<head>` one of the following:
 
@@ -91,6 +83,13 @@ Add to the `<head>` one of the following:
 
 ```html
 <link rel="stylesheet" href="node_modules/xel/stylesheets/vanilla.theme.css">
+```
+**3. Link Xel**
+
+Add to the `<head>`:
+
+```html
+<script src="node_modules/xel/xel.min.js"></script>
 ```
 
 **4. Link fonts**
