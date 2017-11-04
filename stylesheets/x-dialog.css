@@ -22,5 +22,5 @@
 :host([offscreen]) {
   opacity: 0;
   pointer-events: none;
-  top: -10000;
+  top: -10000px;
 }

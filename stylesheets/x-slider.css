@@ -9,6 +9,7 @@
   width: 100%;
   position: relative;
   box-sizing: border-box;
+  touch-action: pan-y;
   --focus-ring-color: currentColor;
   --focus-ring-opacity: 1;
   --focus-ring-width: 10px;
