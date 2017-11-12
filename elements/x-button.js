@@ -231,50 +231,49 @@ export class XButtonElement extends HTMLElement {
   }
 
   async _onButtonPointerDown(pointerDownEvent) {
-    // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
+    if (pointerDownEvent.button !== 0) {
+      pointerDownEvent.preventDefault();
+      return;
+    }
+
+    this.setPointerCapture(pointerDownEvent.pointerId);
+
+    // Don't focus the widget with pointer, instead focus the closest ancestor focusable element as soon as
+    // the button is released.
     if (this.matches(":focus") === false) {
       let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
 
-      sleep(10).then(() => {
+      this.addEventListener("lostpointercapture", () => {
         if (ancestorFocusableElement) {
           ancestorFocusableElement.focus();
         }
         else {
           this.blur();
         }
-      });
+      }, {once: true});
     }
 
-    if (pointerDownEvent.button !== 0) {
-      return;
+    if (this.isExpandable()) {
+      this.expand();
     }
+    else {
+      // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
+      // to last at least 150ms.
 
-    this.expand();
-    this.setPointerCapture(pointerDownEvent.pointerId);
-
-    // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
-    // to last at least 100ms.
-    if (this.isExpandable() === false) {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
 
-      let release = async () => {
-        window.removeEventListener("pointerup", release);
-        this.removeEventListener("lostpointercapture", release);
-
+      this.addEventListener("lostpointercapture", async () => {
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
-        let minPressedTime = 100;
+        let minPressedTime = 150;
 
         if (pressedTime < minPressedTime) {
           await sleep(minPressedTime - pressedTime);
         }
 
         this.removeAttribute("pressed");
-      };
-
-      window.addEventListener("pointerup", release);
-      this.addEventListener("lostpointercapture", release);
+      }, {once: true});
 
       (async () => {
         if (this.ownerButtons) {

@@ -277,7 +277,7 @@ x-button {
   --x-toggled-border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 8%));
   --x-pressed-border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 12%));
 }
-x-button:focus {
+x-button:focus:not(:active) {
   box-shadow: 0 0 0px 3px hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%));
   z-index: 1;
 }
