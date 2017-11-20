@@ -16,6 +16,7 @@ let shadowTemplate = html`
 `;
 
 // @events
+//   beforeclose
 //   close
 export class XDialogElement extends HTMLElement {
   constructor() {
@@ -161,6 +162,13 @@ export class XDialogElement extends HTMLElement {
   }
 
   async _close() {
+    let beforeCloseEvent = new CustomEvent("beforeclose", {cancelable: true});
+    this.dispatchEvent(beforeCloseEvent);
+
+    if (beforeCloseEvent.defaultPrevented) {
+      return;
+    }
+
     let computedStyle = getComputedStyle(this);
     let origin = computedStyle.getPropertyValue("--origin").trim();
     let bbox = this.getBoundingClientRect();
