@@ -65,7 +65,7 @@ export class XPopoverElement extends HTMLElement {
 
       let extraLeft = 0;         // Extra offset needed when popover has fixed-positioned ancestor(s)
       let extraTop = 0;          // Extra offset needed when popover has fixed-positioned ancestor(s)
-      let windowWhitespace = 10; // Minimal whitespace between popover and window bounds
+      let windowWhitespace = 8; // Minimal whitespace between popover and window bounds
       let arrowWhitespace = 2;   // Minimal whitespace between popover and arrow
 
       this.style.left = "0px";
