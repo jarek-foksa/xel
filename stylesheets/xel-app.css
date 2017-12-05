@@ -223,3 +223,10 @@
 #views #faq-view h4 {
   margin-top: 0;
 }
+
+/* "Resources" view */
+
+#views #resources-view ul {
+  margin-bottom: 0;
+  padding-left: 20px;
+}

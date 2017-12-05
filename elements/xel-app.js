@@ -70,6 +70,13 @@ let shadowTemplate = html`
                 <x-label>FAQ</x-label>
               </x-button>
             </a>
+
+            <a href="/resources">
+              <x-button skin="nav">
+                <x-icon name="book"></x-icon>
+                <x-label>Resources</x-label>
+              </x-button>
+            </a>
           </section>
 
           <hr/>
