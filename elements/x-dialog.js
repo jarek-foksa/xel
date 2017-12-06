@@ -125,14 +125,21 @@ export class XDialogElement extends HTMLElement {
     let origin = computedStyle.getPropertyValue("--origin").trim();
     let backdropColor = computedStyle.getPropertyValue("--backdrop-color");
 
-    if (origin === "center") {
-      /* http://zerosixthree.se/vertical-align-anything-with-just-3-lines-of-css/ */
-      this.style.transform = "perspective(1px) translate(-50%, -50%)";
-      this.style.top = "50%";
-    }
-    else if (origin === "top") {
-      this.style.transform = "perspective(1px) translate(-50%, -0%)";
-    }
+    let updatePosition = () => {
+      if (origin === "center") {
+        this.style.left = `calc(50% - ${computedStyle.width}/2)`;
+        this.style.top = `calc(50% - ${computedStyle.height}/2)`;
+      }
+      else if (origin === "top") {
+        this.style.left = `calc(50% - ${computedStyle.width}/2)`;
+        this.style.top = "0px";
+      }
+    };
+
+    updatePosition();
+
+    this._resizeObserver = new ResizeObserver(updatePosition);
+    this._resizeObserver.observe(this);
 
     this["#overlay"].style.background = backdropColor;
     this.setAttribute("opened", "");
@@ -164,6 +171,7 @@ export class XDialogElement extends HTMLElement {
   async _close() {
     let beforeCloseEvent = new CustomEvent("beforeclose", {cancelable: true});
     this.dispatchEvent(beforeCloseEvent);
+    this._resizeObserver.unobserve(this);
 
     if (beforeCloseEvent.defaultPrevented) {
       return;
