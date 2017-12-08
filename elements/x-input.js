@@ -224,7 +224,7 @@ export class XInputElement extends HTMLElement {
       valid = false;
       hint = "Entered text is too long";
     }
-    else if (this.required && this.value.length === 0 && this.visited === true) {
+    else if (this.required && this.value.length === 0) {
       valid = false;
       hint = "This field is required";
     }
