@@ -1067,7 +1067,7 @@ x-input[invalid] {
 
 /* Invalid value hint */
 x-input[invalid]::before {
-  top: 31px;
+  top: 33px;
 }
 
 x-input + x-input {
