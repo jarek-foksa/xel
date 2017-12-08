@@ -1065,6 +1065,11 @@ x-input[invalid] {
   outline: 3px solid rgba(255, 0, 0, 0.49);
 }
 
+/* Invalid value hint */
+x-input[invalid]::before {
+  top: 31px;
+}
+
 x-input + x-input {
   margin-top: 20px;
 }
