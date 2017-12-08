@@ -79,5 +79,5 @@
   font-size: 11px;
   line-height: 1.2;
   white-space: pre;
-  content: attr(invalid-hint);
+  content: attr(invalid);
 }

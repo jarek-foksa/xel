@@ -22,56 +22,6 @@ let shadowTemplate = html`
 //   textinputmodestart
 //   textinputmodeend
 export class XInputElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("focusin", () => this._onFocusIn());
-    this.addEventListener("focusout", () => this._onFocusOut());
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-
-    this["#input"].addEventListener("change", () => this._onInputChange());
-    this["#input"].addEventListener("input", (event) => this._onInputInput(event));
-  }
-
-  connectedCallback() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("role", "input");
-    this.setAttribute("aria-disabled", this.disabled);
-
-    this._update();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "type") {
-      this._onTypeAttributeChange();
-    }
-    else if (name === "value") {
-      this._onValueAttributeChange();
-    }
-    else if (name === "spellcheck") {
-      this._onSpellcheckAttributeChange();
-    }
-    else if (name === "maxlength") {
-      this._onMaxLengthAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  selectAll() {
-    this["#input"].select();
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["type", "value", "spellcheck", "maxlength", "disabled"];
   }
@@ -92,7 +42,8 @@ export class XInputElement extends HTMLElement {
   //   string
   // @default
   //   ""
-  // @inertAttribute
+  // @attribute
+  //   partial
   get value() {
     return this["#input"].value;
   }
@@ -108,21 +59,9 @@ export class XInputElement extends HTMLElement {
         this["#input"].value = value;
       }
 
-      this._update();
+      this.validate();
+      this._updateEmptyState();
     }
-  }
-
-  // @info
-  //   Whether the input value should be validated instantly on each key press rather than when user confirms
-  //   the value by pressing the enter key or moving focus away from the input.
-  // @default
-  //   false
-  // @attribute
-  get instantValidation() {
-    return this.hasAttribute("instantvalidation");
-  }
-  set instantValidation(value) {
-    value === true ? this.setAttribute("instantvalidation", "") : this.removeAttribute("instantvalidation");
   }
 
   // @type
@@ -201,9 +140,23 @@ export class XInputElement extends HTMLElement {
   }
 
   // @info
-  //   Whether the input is in invalid state.
+  //   Whether the input value should be validated instantly on each key press rather than when user confirms
+  //   the value by pressing the enter key or moving focus away from the input.
+  // @default
+  //   false
+  // @attribute
+  get instantValidation() {
+    return this.hasAttribute("instantvalidation");
+  }
+  set instantValidation(value) {
+    value === true ? this.setAttribute("instantvalidation", "") : this.removeAttribute("instantvalidation");
+  }
+
+  // @info
+  //   Whether the input is in the "invalid" state
   // @type
   //   boolean
+  // @attribute
   // @readOnly
   get invalid() {
     return this.hasAttribute("invalid");
@@ -211,11 +164,55 @@ export class XInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("focusin", () => this._onFocusIn());
+    this.addEventListener("focusout", () => this._onFocusOut());
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+
+    this["#input"].addEventListener("change", () => this._onInputChange());
+    this["#input"].addEventListener("input", (event) => this._onInputInput(event));
+  }
+
+  connectedCallback() {
+    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
+    this.setAttribute("role", "input");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    this._updateEmptyState();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "type") {
+      this._onTypeAttributeChange();
+    }
+    else if (name === "value") {
+      this._onValueAttributeChange();
+    }
+    else if (name === "spellcheck") {
+      this._onSpellcheckAttributeChange();
+    }
+    else if (name === "maxlength") {
+      this._onMaxLengthAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
   // @info
   //   Override this method to validate the input value manually.
   // @type
-  //   {valid:boolean, hint:string}
-  validate() {
+  //   () => boolean
+  validator() {
     let valid = true;
     let hint = "";
 
@@ -247,6 +244,25 @@ export class XInputElement extends HTMLElement {
     return {valid, hint};
   }
 
+  // @type
+  //   () => boolean
+  validate() {
+    let {valid, hint} = this.validator();
+
+    if (valid) {
+      this.removeAttribute("invalid");
+    }
+    else {
+      this.setAttribute("invalid", hint);
+    }
+
+    return valid;
+  }
+
+  selectAll() {
+    this["#input"].select();
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onTypeAttributeChange() {
@@ -260,12 +276,6 @@ export class XInputElement extends HTMLElement {
 
   _onValueAttributeChange() {
     this.value = this.hasAttribute("value") ? this.getAttribute("value") : "";
-
-    if (this.matches(":focus")) {
-      document.execCommand("selectAll");
-    }
-
-    this._update();
   }
 
   _onSpellcheckAttributeChange() {
@@ -289,22 +299,22 @@ export class XInputElement extends HTMLElement {
 
   _onFocusOut() {
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-    this._updateInvalidState();
+    this.validate();
   }
 
   _onKeyDown(event) {
     if (event.key === "Enter") {
       document.execCommand("selectAll");
-      this._updateInvalidState();
+      this.validate();
     }
   }
 
   _onInputInput(event) {
     if (this.instantValidation) {
-      this._updateInvalidState();
+      this.validate();
     }
-    else if (this.invalid) {
-      this._updateInvalidState();
+    else if (this.hasAttribute("invalid")) {
+      this.validate();
     }
 
     event.stopPropagation();
@@ -313,31 +323,11 @@ export class XInputElement extends HTMLElement {
   }
 
   _onInputChange() {
-    this._updateInvalidState();
+    this.validate();
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _update() {
-    this._updateInvalidState();
-    this._updateEmptyState();
-  }
-
-  _updateInvalidState() {
-    if (this.visited) {
-      let {valid, hint} = this.validate();
-
-      if (valid) {
-        this.removeAttribute("invalid");
-        this.removeAttribute("invalid-hint");
-      }
-      else {
-        this.setAttribute("invalid", "");
-        this.setAttribute("invalid-hint", hint);
-      }
-    }
-  }
 
   _updateEmptyState() {
     if (this.value.length === 0) {
