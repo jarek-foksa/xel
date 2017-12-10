@@ -10,6 +10,9 @@
   height: 30px;
   box-sizing: border-box;
 }
+:host([hidden]) {
+  display: none;
+}
 :host([type="ring"]) {
   color: #4285f4;
 }
