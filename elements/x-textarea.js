@@ -74,6 +74,9 @@ export class XTextareaElement extends HTMLElement {
   }
   set value(value) {
     this["#editor"].textContent = value;
+
+    this.validate();
+    this._updateEmptyState();
   }
 
   // @type
