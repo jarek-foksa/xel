@@ -168,7 +168,7 @@ export class XTextareaElement extends HTMLElement {
   // @info
   //   Override this method to validate the input value manually.
   // @type
-  //   () => boolean
+  //   () => {valid: boolean, hint: string}
   validator() {
     let valid = true;
     let hint = "";
@@ -192,7 +192,7 @@ export class XTextareaElement extends HTMLElement {
   // @info
   //   Override this method to validate the input value manually.
   // @type
-  //   {valid:boolean, hint:string}
+  //   boolean
   validate() {
     let {valid, hint} = this.validator();
 

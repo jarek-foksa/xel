@@ -211,7 +211,7 @@ export class XInputElement extends HTMLElement {
   // @info
   //   Override this method to validate the input value manually.
   // @type
-  //   () => boolean
+  //   () => {valid: boolean, hint: string}
   validator() {
     let valid = true;
     let hint = "";
