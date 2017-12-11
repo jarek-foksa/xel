@@ -53,7 +53,7 @@
 
       this.addEventListener("click", clickListener = (event) => {
         if (closeOnClick) {
-          if (isPointerInsideDialog(event) === false) {
+          if (isPointerInsideDialog(event) === false && this.hasAttribute("open")) {
             this.close();
           }
         }
@@ -78,10 +78,11 @@
       { duration: transitionDuration, easing: transitionTimingFunction }
     );
 
-    // cubic-bezier(0.4, 0.0, 1, 1)
-
     await animation.finished;
-    close.apply(this, arguments);
+
+    if (this.hasAttribute("open")) {
+      close.apply(this, arguments);
+    }
   };
 
   Object.defineProperty(HTMLDialogElement.prototype, "open", {
