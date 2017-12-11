@@ -276,6 +276,10 @@ export class XInputElement extends HTMLElement {
 
   _onValueAttributeChange() {
     this.value = this.hasAttribute("value") ? this.getAttribute("value") : "";
+
+    if (this.matches(":focus")) {
+      this.selectAll();
+    }
   }
 
   _onSpellcheckAttributeChange() {

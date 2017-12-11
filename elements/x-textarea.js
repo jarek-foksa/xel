@@ -21,45 +21,6 @@ let shadowTemplate = html`
 //   textinputmodestart
 //   textinputmodeend
 export class XTextareaElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("focusin", () => this._onFocusIn());
-    this.addEventListener("focusout", () => this._onFocusOut());
-
-    this["#editor"].addEventListener("click", (event) => this._onEditorClick(event));
-    this["#editor"].addEventListener("input", () => this._onEditorInput());
-  }
-
-  connectedCallback() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("role", "input");
-    this.setAttribute("aria-disabled", this.disabled);
-
-    this._updateEmptyState();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "value") {
-      this._onValueAttributeChange();
-    }
-    else if (name === "spellcheck") {
-      this._onSpellcheckAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["value", "spellcheck", "disabled"];
   }
@@ -142,15 +103,6 @@ export class XTextareaElement extends HTMLElement {
     visited ? this.setAttribute("visited", "") : this.removeAttribute("visited");
   }
 
-  // @info
-  //   Whether the current value is valid.
-  // @type
-  //   boolean
-  // @readOnly
-  get invalid() {
-    return this.hasAttribute("invalid");
-  }
-
   // @type
   //   boolean
   // @default
@@ -163,13 +115,61 @@ export class XTextareaElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @info
+  //   Whether the current value is valid.
+  // @type
+  //   boolean
+  // @readOnly
+  get invalid() {
+    return this.hasAttribute("invalid");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("focusin", () => this._onFocusIn());
+    this.addEventListener("focusout", () => this._onFocusOut());
+
+    this["#editor"].addEventListener("click", (event) => this._onEditorClick(event));
+    this["#editor"].addEventListener("input", () => this._onEditorInput());
+  }
+
+  connectedCallback() {
+    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
+    this.setAttribute("role", "input");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    this._updateEmptyState();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "value") {
+      this._onValueAttributeChange();
+    }
+    else if (name === "spellcheck") {
+      this._onSpellcheckAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @info
   //   Override this method to validate the input value manually.
   // @type
-  //   {valid:boolean, hint:string}
-  validate() {
+  //   () => boolean
+  validator() {
     let valid = true;
     let hint = "";
 
@@ -181,12 +181,29 @@ export class XTextareaElement extends HTMLElement {
       valid = false;
       hint = "Entered text is too long";
     }
-    else if (this.required && this.value.length === 0 && this.visited === true) {
+    else if (this.required && this.value.length === 0) {
       valid = false;
       hint = "This field is required";
     }
 
     return {valid, hint};
+  }
+
+  // @info
+  //   Override this method to validate the input value manually.
+  // @type
+  //   {valid:boolean, hint:string}
+  validate() {
+    let {valid, hint} = this.validator();
+
+    if (valid) {
+      this.removeAttribute("invalid");
+    }
+    else {
+      this.setAttribute("invalid", hint);
+    }
+
+    return valid;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -220,7 +237,7 @@ export class XTextareaElement extends HTMLElement {
     this._updateEmptyState();
 
     if (this.invalid) {
-      this._updateValidityState();
+      this.validate();
     }
   }
 
@@ -234,7 +251,7 @@ export class XTextareaElement extends HTMLElement {
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
     this._shadowRoot.getSelection().collapse(this["#main"]);
 
-    this._updateValidityState();
+    this.validate();
 
     if (this.invalid === false && this.value !== this._focusInValue) {
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
@@ -242,19 +259,6 @@ export class XTextareaElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateValidityState() {
-    let {valid, hint} = this.validate();
-
-    if (valid) {
-      this.removeAttribute("invalid");
-      this.removeAttribute("invalid-hint");
-    }
-    else {
-      this.setAttribute("invalid", "");
-      this.setAttribute("invalid-hint", hint);
-    }
-  }
 
   _updateEmptyState() {
     if (this.value.length === 0) {
