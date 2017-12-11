@@ -129,6 +129,10 @@ sidebar {
   background: white;
 }
 
+/**
+ * Navigation
+ */
+
 nav {
   box-sizing: border-box;
   padding: 0 30px;
@@ -154,6 +158,10 @@ nav hr {
   width: calc(100% + 60px);
 }
 
+/**
+ * Selection
+ */
+
 ::selection {
   background: var(--primary-color);
   color: white;
@@ -161,6 +169,10 @@ nav hr {
 :host([invalid]) ::selection {
   background: #d50000;
 }
+
+/**
+ * Scrollbar
+ */
 
 ::-webkit-scrollbar {
   max-width: 6px;
@@ -174,6 +186,53 @@ nav hr {
 
 ::-webkit-scrollbar-corner {
   display: none
+}
+
+/**
+ * Dialog (https://material.google.com/components/dialogs.html)
+ */
+
+dialog {
+  width: 70%;
+  height: auto;
+  min-height: 100px;
+  padding: 0;
+  box-sizing: border-box;
+  transition: transform 300ms cubic-bezier(0.0, 0.0, 0.2, 1);
+  border: 1px solid #a9a9a9;
+  background: white;
+  box-shadow: var(--elevation-24);
+  text-transform: none;
+}
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+dialog h3 {
+  font-size: 25px;
+  color: rgba(0, 0, 0, 0.95);
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+dialog > main {
+  padding: 20px 35px 0px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+dialog > footer {
+  padding: 12px;
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+dialog > footer x-button:last-child {
+  margin-left: 15px;
+  margin-right: 5px;
 }
 
 /*****************************************************************************************************************/
@@ -750,45 +809,6 @@ x-menubar {
 x-menubar > x-menuitem {
   padding: 0 20px;
   height: 100%;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Dialog (https://material.google.com/components/dialogs.html)
- */
-
-x-dialog {
-  background: white;
-  box-shadow: var(--elevation-24);
-  --backdrop-color: rgba(0, 0, 0, 0.5);
-}
-
-x-dialog > main {
-  padding: 20px 35px 0px;
-  font-size: 15px;
-  line-height: 1.6;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-x-dialog > footer {
-  padding: 12px;
-  display: flex;
-  flex-flow: row;
-  justify-content: flex-end;
-  margin-top: auto;
-}
-
-x-dialog > footer x-button:last-child {
-  margin-left: 15px;
-  margin-right: 5px;
-}
-
-x-dialog h3 {
-  font-size: 25px;
-  color: rgba(0, 0, 0, 0.95);
-  margin-top: 0;
-  margin-bottom: 10px;
 }
 
 /*****************************************************************************************************************/

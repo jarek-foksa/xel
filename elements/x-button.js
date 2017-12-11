@@ -31,9 +31,6 @@ export class XButtonElement extends HTMLElement {
     this._shadowRoot = this.attachShadow({mode: "closed"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
-    this["#overlay"] = createElement("x-overlay");
-    this["#overlay"].style.background =  "rgba(0, 0, 0, 0)";
-
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
     }
@@ -41,9 +38,16 @@ export class XButtonElement extends HTMLElement {
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
+
+    (async () => {
+      await customElements.whenDefined("x-overlay");
+      this["#overlay"] = createElement("x-overlay");
+      this["#overlay"].style.background =  "rgba(0, 0, 0, 0)";
+    })();
+
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this.setAttribute("tabindex", this.disabled ? "-1" : "0");
     this.setAttribute("role", "button");
     this.setAttribute("aria-disabled", this.disabled);
@@ -233,6 +237,11 @@ export class XButtonElement extends HTMLElement {
   async _onButtonPointerDown(pointerDownEvent) {
     if (pointerDownEvent.button !== 0) {
       pointerDownEvent.preventDefault();
+      return;
+    }
+
+    if (this.querySelector(":scope > dialog[open]")) {
+      event.preventDefault();
       return;
     }
 
@@ -572,6 +581,10 @@ export class XButtonElement extends HTMLElement {
           popover.focus();
         }
       }
+      else if (this._canExpandDialog()) {
+        let dialog = this.querySelector("dialog");
+        dialog.showModal();
+      }
 
       resolve();
     });
@@ -618,7 +631,7 @@ export class XButtonElement extends HTMLElement {
   }
 
   isExpandable() {
-    return this.querySelector(":scope > x-menu x-menuitem, :scope > x-popover") !== null;
+    return this.querySelector(":scope > x-menu x-menuitem, :scope > x-popover, :scope > dialog") !== null;
   }
 
   _canExpandMenu() {
@@ -639,6 +652,16 @@ export class XButtonElement extends HTMLElement {
     else {
       let popover = this.querySelector("x-popover");
       return popover !== null && !popover.hasAttribute("opened") && !popover.hasAttribute("closing");
+    }
+  }
+
+  _canExpandDialog() {
+    if (this.disabled) {
+      return false;
+    }
+    else {
+      let dialog = this.querySelector("dialog");
+      return dialog !== null && !dialog.hasAttribute("open") && !dialog.hasAttribute("closing");
     }
   }
 

@@ -216,6 +216,37 @@
       <hr/>
 
       <section>
+        <h4>Dialog</h4>
+        <p>To prevent the dialog from closing when backdrop is clicked set <code>dialog::backdrop { pointer-events: none; }</code></p>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-icon name="settings"></x-icon>
+              <dialog>
+                <main>
+                  <h3>Use Google's location service?</h3>
+                  <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
+                </main>
+
+                <footer>
+                  <x-button id="agree-button">
+                    <x-label>Disagree</x-label>
+                  </x-button>
+
+                  <x-button toggled id="disagree-button">
+                    <x-label>Agree</x-label>
+                  </x-button>
+                </footer>
+              </dialog>
+            </x-button>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
         <h4>Disabled</h4>
 
         <xel-demo>

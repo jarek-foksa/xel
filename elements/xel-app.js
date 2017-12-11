@@ -264,12 +264,6 @@ let shadowTemplate = html`
           <section>
             <h3>Modals</h3>
 
-            <a href="/elements/x-dialog">
-              <x-button skin="nav">
-                <x-label>x-dialog</x-label>
-              </x-button>
-            </a>
-
             <a href="/elements/x-drawer">
               <x-button skin="nav">
                 <x-label>x-drawer</x-label>

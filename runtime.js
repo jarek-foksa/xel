@@ -3,6 +3,99 @@
 //   © 2016-2017 Jarosław Foksa
 
 //
+// HTML dialog polyfill
+//
+
+{
+  let showModal = HTMLDialogElement.prototype.showModal;
+  let close = HTMLDialogElement.prototype.close;
+
+  HTMLDialogElement.prototype.showModal = async function() {
+    showModal.apply(this, arguments);
+
+    let dialogRect = this.getBoundingClientRect();
+    let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
+    let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+
+    let animation = this.animate(
+      { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
+      { duration: transitionDuration, easing: transitionTimingFunction }
+    );
+
+    await animation.finished;
+
+    // Close the dialog when backdrop is clicked
+    {
+      let keyDownListener;
+      let pointerDownListener;
+      let clickListener;
+      let closeListener;
+      let closeOnClick = true;
+
+      let isPointerInsideDialog = (event) => {
+        let dialogRect = this.getBoundingClientRect();
+
+        return (
+          event.clientX >= dialogRect.x &&
+          event.clientX <= dialogRect.x + dialogRect.width &&
+          event.clientY >= dialogRect.y &&
+          event.clientY <= dialogRect.y + dialogRect.height
+        );
+      };
+
+      this.addEventListener("keydown", keyDownListener = (event) => {
+        event.stopPropagation();
+      });
+
+      this.addEventListener("pointerdown", pointerDownListener = (event) => {
+        closeOnClick = (isPointerInsideDialog(event) === false);
+      });
+
+      this.addEventListener("click", clickListener = (event) => {
+        if (closeOnClick) {
+          if (isPointerInsideDialog(event) === false) {
+            this.close();
+          }
+        }
+      });
+
+      this.addEventListener("close", closeListener = (event) => {
+        this.removeEventListener("keydown", keyDownListener);
+        this.removeEventListener("pointerdown", pointerDownListener);
+        this.removeEventListener("click", clickListener);
+        this.removeEventListener("close", closeListener);
+      });
+    }
+  };
+
+  HTMLDialogElement.prototype.close = async function() {
+    let dialogRect = this.getBoundingClientRect();
+    let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
+    let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+
+    let animation = this.animate(
+      { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
+      { duration: transitionDuration, easing: transitionTimingFunction }
+    );
+
+    // cubic-bezier(0.4, 0.0, 1, 1)
+
+    await animation.finished;
+    close.apply(this, arguments);
+  };
+
+  Object.defineProperty(HTMLDialogElement.prototype, "open", {
+    get() {
+      return this.hasAttribute("open");
+    },
+    set(open) {
+    }
+  });
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
 // Pointer events polyfills
 //
 
