@@ -76,7 +76,18 @@ export class XButtonElement extends HTMLElement {
   // @type
   //   XButtonsElement?
   get ownerButtons() {
-    return this.closest( 'x-buttons' );
+    if (this.parentElement) {
+      if (this.parentElement.localName === "x-buttons") {
+        return this.parentElement;
+      }
+      else if (this.parentElement.localName === "x-box" && this.parentElement.parentElement) {
+        if (this.parentElement.parentElement.localName === "x-buttons") {
+          return this.parentElement.parentElement;
+        }
+      }
+    }
+
+    return null;
   }
 
   // @info
