@@ -71,9 +71,7 @@ export class XSliderElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
-    this.setAttribute("value", this.value);
+    this._updateAccessabilityAttributes();
 
     this._observer.observe(this, {
       childList: true,
@@ -321,6 +319,31 @@ export class XSliderElement extends HTMLElement {
       label.style.left = (((label.value - this.min) / (this.max - this.min)) * 100) + "%";
       this["#ticks"].insertAdjacentHTML("beforeend", `<div class="tick" style="left: ${label.style.left}"></div>`);
     }
+  }
+
+  _updateAccessabilityAttributes() {
+    let tabIndex  = this.getAttribute('tabindex');
+
+    if (this.disabled) {
+      if (tabIndex >= 0) {
+        // Save the existing 'tabindex' as 'data-tabindex'
+        this.setAttribute('data-tabindex', tabIndex);
+      }
+
+      tabIndex = '-1';
+
+    } else if (this.hasAttribute('data-tabindex')) {
+      // Restore the saved 'tabindex' from 'data-tabindex'
+      tabIndex = this.getAttribute('data-tabindex');
+      this.removeAttribute('data-tabindex');
+
+    } else if (tabIndex == null) {
+      tabIndex = '0';
+    }
+
+    this.setAttribute('tabindex', tabIndex);
+    this.setAttribute("aria-disabled", this.disabled);
+    this.setAttribute("value", this.value);
   }
 }
 

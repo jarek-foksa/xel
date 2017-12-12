@@ -37,13 +37,7 @@ export class XRadioElement extends HTMLElement {
   }
 
   connectedCallback() {
-    if (!this.closest("x-radios")) {
-      this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    }
-
-    this.setAttribute("role", "radio");
-    this.setAttribute("aria-checked", this.toggled);
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
   }
 
   attributeChangedCallback(name) {
@@ -118,8 +112,7 @@ export class XRadioElement extends HTMLElement {
   }
 
   _onDisabledAttributeChange() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
   }
 
   _onClick(event) {
@@ -154,6 +147,35 @@ export class XRadioElement extends HTMLElement {
       event.preventDefault();
       this.click();
     }
+  }
+
+  _updateAccessabilityAttributes() {
+    if (!this.closest("x-radios")) {
+      let tabIndex  = this.getAttribute('tabindex');
+
+      if (this.disabled) {
+        if (tabIndex >= 0) {
+          // Save the existing 'tabindex' as 'data-tabindex'
+          this.setAttribute('data-tabindex', tabIndex);
+        }
+
+        tabIndex = '-1';
+
+      } else if (this.hasAttribute('data-tabindex')) {
+        // Restore the saved 'tabindex' from 'data-tabindex'
+        tabIndex = this.getAttribute('data-tabindex');
+        this.removeAttribute('data-tabindex');
+
+      } else if (tabIndex == null) {
+        tabIndex = '0';
+      }
+
+      this.setAttribute('tabindex', tabIndex);
+    }
+
+    this.setAttribute("role", "radio");
+    this.setAttribute("aria-checked", this.toggled);
+    this.setAttribute("aria-disabled", this.disabled);
   }
 };
 
