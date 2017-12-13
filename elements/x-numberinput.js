@@ -9,6 +9,7 @@ import {normalize, getPrecision} from "../utils/math.js";
 
 let {isFinite} = Number;
 let numericKeys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
+let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
@@ -258,6 +259,7 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   _onDisabledAttributeChange() {
+    this["#editor"].disabled = this.disabled;
     this._updateAccessabilityAttributes();
   }
 
@@ -633,29 +635,20 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
-
-    if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
-      }
-
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
-    }
-
-    this.setAttribute('tabindex', tabIndex);
     this.setAttribute("role", "input");
     this.setAttribute("aria-disabled", this.disabled);
-    this["#editor"].disabled = this.disabled;
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 }
 

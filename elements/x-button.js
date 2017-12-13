@@ -9,6 +9,7 @@ import {sleep} from "../utils/time.js";
 
 let {max} = Math;
 let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
+let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
@@ -48,12 +49,12 @@ export class XButtonElement extends HTMLElement {
   }
 
   async connectedCallback() {
-    this._updateAccessabilityAttributes();
-
+    // Make the parent anchor element non-focusable (button should be focused instead)
     if (this.parentElement && this.parentElement.localName === "a" && this.parentElement.tabIndex !== -1) {
       this.parentElement.tabIndex = -1;
     }
 
+    this._updateAccessabilityAttributes();
     this._updateArrowVisibility();
   }
 
@@ -691,28 +692,20 @@ export class XButtonElement extends HTMLElement {
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
-
-    if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
-      }
-
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
-    }
-
-    this.setAttribute('tabindex', tabIndex);
     this.setAttribute("role", "button");
     this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 }
 

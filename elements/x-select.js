@@ -8,6 +8,7 @@ import {sleep, throttle} from "../utils/time.js";
 let debug = false;
 let windowPadding = 7;
 let $itemChild = Symbol();
+let $oldTabIndex = Symbol()
 
 let shadowTemplate = html`
   <template>
@@ -54,18 +55,7 @@ export class XSelectElement extends HTMLElement {
 
   connectedCallback() {
     this._observer.observe(this, {childList: true, attributes: true, characterData: true, subtree: true});
-
     this._updateAccessabilityAttributes();
-
-    let menu = this.querySelector(":scope > x-menu");
-
-    if (menu) {
-      menu.setAttribute("role", "listbox");
-
-      for (let item of menu.querySelectorAll("x-listitem")) {
-        item.setAttribute("role", "option");
-      }
-    }
 
     if (debug) {
       this.setAttribute("debug", "");
@@ -349,28 +339,36 @@ export class XSelectElement extends HTMLElement {
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
+    this.setAttribute("aria-disabled", this.disabled);
 
-    if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
+    // Update "tabindex" attribute
+    {
+      if (this.disabled) {
+        this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+        this.tabIndex = -1;
       }
+      else {
+        if (this.tabIndex < 0) {
+          this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+        }
 
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
+        delete this[$oldTabIndex];
+      }
     }
 
-    this.setAttribute('tabindex', tabIndex);
-    this.setAttribute("role", "button");
-    this.setAttribute("aria-disabled", this.disabled);
+    // Update "role" attributes
+    {
+      this.setAttribute("role", "button");
+      let menu = this.querySelector(":scope > x-menu");
+
+      if (menu) {
+        menu.setAttribute("role", "listbox");
+
+        for (let item of menu.querySelectorAll("x-menuitem")) {
+          item.setAttribute("role", "option");
+        }
+      }
+    }
   }
 }
 

@@ -9,6 +9,7 @@ import {sleep} from "../utils/time.js";
 
 let {max} = Math;
 let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
+let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
@@ -29,7 +30,7 @@ export class XMenuItemElement extends HTMLElement {
   constructor() {
     super();
 
-    this._observer = new MutationObserver(() => this._update());
+    this._observer = new MutationObserver(() => this._updateArrowIconVisibility());
 
     this._blinking = false;
     this._triggerEndCallbacks = [];
@@ -48,10 +49,8 @@ export class XMenuItemElement extends HTMLElement {
 
   connectedCallback() {
     this._observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
-
+    this._updateArrowIconVisibility();
     this._updateAccessabilityAttributes();
-
-    this._update();
   }
 
   disconnectedCallback() {
@@ -283,42 +282,31 @@ export class XMenuItemElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
-    // Update arrow icon visibility
-    {
-      if (this.parentElement.localName === "x-menubar") {
-        this["#arrow-icon"].hidden = true;
-      }
-      else {
-        let menu = this.querySelector("x-menu");
-        this["#arrow-icon"].hidden = menu ? false : true;
-      }
+  _updateArrowIconVisibility() {
+    if (this.parentElement.localName === "x-menubar") {
+      this["#arrow-icon"].hidden = true;
+    }
+    else {
+      let menu = this.querySelector("x-menu");
+      this["#arrow-icon"].hidden = menu ? false : true;
     }
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
-
-    if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
-      }
-
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
-    }
-
-    this.setAttribute('tabindex', tabIndex);
     this.setAttribute("role", "menuitem");
     this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 }
 

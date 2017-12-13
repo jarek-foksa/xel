@@ -4,6 +4,8 @@
 
 import {html} from "../utils/element.js";
 
+let $oldTabIndex = Symbol()
+
 let shadowTemplate = html`
   <template>
     <link rel="stylesheet" href="node_modules/xel/stylesheets/x-textarea.css" data-vulcanize>
@@ -144,9 +146,8 @@ export class XTextareaElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this._updateAccessabilityAttributes();
-
     this._updateEmptyState();
+    this._updateAccessabilityAttributes();
   }
 
   attributeChangedCallback(name) {
@@ -219,6 +220,7 @@ export class XTextareaElement extends HTMLElement {
   }
 
   _onDisabledAttributeChange() {
+    this["#editor"].disabled = this.disabled;
     this._updateAccessabilityAttributes();
   }
 
@@ -266,29 +268,20 @@ export class XTextareaElement extends HTMLElement {
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
-
-    if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
-      }
-
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
-    }
-
-    this.setAttribute('tabindex', tabIndex);
     this.setAttribute("role", "input");
     this.setAttribute("aria-disabled", this.disabled);
-    this["#editor"].disabled = this.disabled;
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 }
 

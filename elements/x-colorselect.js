@@ -6,6 +6,8 @@ import {createElement, closest, html} from "../utils/element.js";
 import {formatColorString, parseColor, serializeColor} from "../utils/color.js";
 import {debounce} from "../utils/time.js";
 
+let $oldTabIndex = Symbol();
+
 let shadowHTML = `
   <link rel="stylesheet" href="node_modules/xel/stylesheets/x-colorselect.css" data-vulcanize>
   <style>:host { background: url(node_modules/xel/images/checkboard.png) repeat 0 0; }</style>
@@ -51,14 +53,13 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this._updateAccessabilityAttributes();
-
     let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker");
 
     if (picker) {
       picker.setAttribute("value", formatColorString(this.value, "rgba"));
     }
 
+    this._updateAccessabilityAttributes();
     this._updateInput();
   }
 
@@ -246,27 +247,19 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
+    this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
       }
 
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
+      delete this[$oldTabIndex];
     }
-
-    this.setAttribute('tabindex', tabIndex);
-    this.setAttribute("aria-disabled", this.disabled);
   }
 }
 

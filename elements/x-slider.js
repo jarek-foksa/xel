@@ -13,6 +13,7 @@ import {normalize, round, getPrecision} from "../utils/math.js";
 import {throttle} from "../utils/time.js";
 
 let getClosestMultiple = (number, step) => round(round(number / step) * step, getPrecision(step));
+let $oldTabIndex = Symbol()
 
 let shadowTemplate = html`
   <template>
@@ -71,7 +72,7 @@ export class XSliderElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this._updateAccessabilityAttributes();
+    this.setAttribute("value", this.value);
 
     this._observer.observe(this, {
       childList: true,
@@ -81,7 +82,10 @@ export class XSliderElement extends HTMLElement {
       characterData: false
     });
 
-    this._update();
+    this._updateTracks();
+    this._updateThumbs();
+    this._updateTicks();
+    this._updateAccessabilityAttributes();
   }
 
   disconnectedCallback() {
@@ -286,12 +290,6 @@ export class XSliderElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
-    this._updateTracks();
-    this._updateThumbs();
-    this._updateTicks();
-  }
-
   _updateTracks() {
     let left = (((this.value - this.min) / (this.max - this.min)) * 100);
     let originLeft = (((this.min > 0 ? this.min : 0) - this.min) / (this.max - this.min)) * 100;
@@ -322,28 +320,19 @@ export class XSliderElement extends HTMLElement {
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
+    this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
       }
 
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
+      delete this[$oldTabIndex];
     }
-
-    this.setAttribute('tabindex', tabIndex);
-    this.setAttribute("aria-disabled", this.disabled);
-    this.setAttribute("value", this.value);
   }
 }
 

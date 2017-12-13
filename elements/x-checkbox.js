@@ -9,6 +9,7 @@
 import {createElement, closest, html} from "../utils/element.js";
 
 let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
+let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
@@ -207,29 +208,21 @@ export class XCheckboxElement extends HTMLElement {
   }
 
   _updateAccessabilityAttributes() {
-    let tabIndex  = this.getAttribute('tabindex');
-
-    if (this.disabled) {
-      if (tabIndex >= 0) {
-        // Save the existing 'tabindex' as 'data-tabindex'
-        this.setAttribute('data-tabindex', tabIndex);
-      }
-
-      tabIndex = '-1';
-
-    } else if (this.hasAttribute('data-tabindex')) {
-      // Restore the saved 'tabindex' from 'data-tabindex'
-      tabIndex = this.getAttribute('data-tabindex');
-      this.removeAttribute('data-tabindex');
-
-    } else if (tabIndex == null) {
-      tabIndex = '0';
-    }
-
-    this.setAttribute('tabindex', tabIndex);
     this.setAttribute("role", "checkbox");
     this.setAttribute("aria-checked", this.mixed ? "mixed" : this.toggled);
     this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 };
 
