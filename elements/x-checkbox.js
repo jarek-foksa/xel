@@ -40,10 +40,7 @@ export class XCheckboxElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("role", "checkbox");
-    this.setAttribute("aria-checked", this.mixed ? "mixed" : this.toggled);
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
   }
 
   attributeChangedCallback(name) {
@@ -118,8 +115,7 @@ export class XCheckboxElement extends HTMLElement {
   }
 
   _onDisabledAttributeChange() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
   }
 
   _onPointerDown(event) {
@@ -208,6 +204,32 @@ export class XCheckboxElement extends HTMLElement {
       event.preventDefault();
       this.click();
     }
+  }
+
+  _updateAccessabilityAttributes() {
+    let tabIndex  = this.getAttribute('tabindex');
+
+    if (this.disabled) {
+      if (tabIndex >= 0) {
+        // Save the existing 'tabindex' as 'data-tabindex'
+        this.setAttribute('data-tabindex', tabIndex);
+      }
+
+      tabIndex = '-1';
+
+    } else if (this.hasAttribute('data-tabindex')) {
+      // Restore the saved 'tabindex' from 'data-tabindex'
+      tabIndex = this.getAttribute('data-tabindex');
+      this.removeAttribute('data-tabindex');
+
+    } else if (tabIndex == null) {
+      tabIndex = '0';
+    }
+
+    this.setAttribute('tabindex', tabIndex);
+    this.setAttribute("role", "checkbox");
+    this.setAttribute("aria-checked", this.mixed ? "mixed" : this.toggled);
+    this.setAttribute("aria-disabled", this.disabled);
   }
 };
 

@@ -49,9 +49,7 @@ export class XMenuItemElement extends HTMLElement {
   connectedCallback() {
     this._observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
 
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("role", "menuitem");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
 
     this._update();
   }
@@ -147,8 +145,7 @@ export class XMenuItemElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onDisabledAttributeChange() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
   }
 
   async _onPointerDown(pointerDownEvent) {
@@ -297,6 +294,31 @@ export class XMenuItemElement extends HTMLElement {
         this["#arrow-icon"].hidden = menu ? false : true;
       }
     }
+  }
+
+  _updateAccessabilityAttributes() {
+    let tabIndex  = this.getAttribute('tabindex');
+
+    if (this.disabled) {
+      if (tabIndex >= 0) {
+        // Save the existing 'tabindex' as 'data-tabindex'
+        this.setAttribute('data-tabindex', tabIndex);
+      }
+
+      tabIndex = '-1';
+
+    } else if (this.hasAttribute('data-tabindex')) {
+      // Restore the saved 'tabindex' from 'data-tabindex'
+      tabIndex = this.getAttribute('data-tabindex');
+      this.removeAttribute('data-tabindex');
+
+    } else if (tabIndex == null) {
+      tabIndex = '0';
+    }
+
+    this.setAttribute('tabindex', tabIndex);
+    this.setAttribute("role", "menuitem");
+    this.setAttribute("aria-disabled", this.disabled);
   }
 }
 

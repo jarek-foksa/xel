@@ -48,9 +48,7 @@ export class XButtonElement extends HTMLElement {
   }
 
   async connectedCallback() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("role", "button");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
 
     if (this.parentElement && this.parentElement.localName === "a" && this.parentElement.tabIndex !== -1) {
       this.parentElement.tabIndex = -1;
@@ -187,8 +185,7 @@ export class XButtonElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onDisabledAttributeChange() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
   }
 
   _onPointerDown(event) {
@@ -691,6 +688,31 @@ export class XButtonElement extends HTMLElement {
     let menu = this.querySelector("x-menu");
     let popover = this.querySelector("x-popover");
     this["#arrow"].style.display = (menu === null && popover === null) ? "none" : null;
+  }
+
+  _updateAccessabilityAttributes() {
+    let tabIndex  = this.getAttribute('tabindex');
+
+    if (this.disabled) {
+      if (tabIndex >= 0) {
+        // Save the existing 'tabindex' as 'data-tabindex'
+        this.setAttribute('data-tabindex', tabIndex);
+      }
+
+      tabIndex = '-1';
+
+    } else if (this.hasAttribute('data-tabindex')) {
+      // Restore the saved 'tabindex' from 'data-tabindex'
+      tabIndex = this.getAttribute('data-tabindex');
+      this.removeAttribute('data-tabindex');
+
+    } else if (tabIndex == null) {
+      tabIndex = '0';
+    }
+
+    this.setAttribute('tabindex', tabIndex);
+    this.setAttribute("role", "button");
+    this.setAttribute("aria-disabled", this.disabled);
   }
 }
 

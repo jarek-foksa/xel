@@ -183,9 +183,7 @@ export class XInputElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("role", "input");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
 
     this._updateEmptyState();
   }
@@ -291,9 +289,7 @@ export class XInputElement extends HTMLElement {
   }
 
   _onDisabledAttributeChange() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
-    this["#input"].disabled = this.disabled;
+    this._updateAccessabilityAttributes();
   }
 
   _onFocusIn() {
@@ -340,6 +336,33 @@ export class XInputElement extends HTMLElement {
     else {
       this.removeAttribute("empty");
     }
+  }
+
+  _updateAccessabilityAttributes() {
+    let tabIndex  = this.getAttribute('tabindex');
+
+    if (this.disabled) {
+      if (tabIndex >= 0) {
+        // Save the existing 'tabindex' as 'data-tabindex'
+        this.setAttribute('data-tabindex', tabIndex);
+      }
+
+      tabIndex = '-1';
+
+    } else if (this.hasAttribute('data-tabindex')) {
+      // Restore the saved 'tabindex' from 'data-tabindex'
+      tabIndex = this.getAttribute('data-tabindex');
+      this.removeAttribute('data-tabindex');
+
+    } else if (tabIndex == null) {
+      tabIndex = '0';
+    }
+
+    this.setAttribute('tabindex', tabIndex);
+    this.setAttribute("role", "input");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    this["#input"].disabled = this.disabled;
   }
 }
 

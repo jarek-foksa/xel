@@ -51,8 +51,7 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
 
     let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker");
 
@@ -108,8 +107,7 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   _onDisabledAttributeChange() {
-    this.setAttribute("tabindex", this.disabled ? "-1" : "0");
-    this.setAttribute("aria-disabled", this.disabled);
+    this._updateAccessabilityAttributes();
   }
 
   _onChange(event) {
@@ -245,6 +243,30 @@ export class XColorSelectElement extends HTMLElement {
     let [r, g, b, a] = parseColor(this.value, "rgba");
     this["#input"].value = serializeColor([r, g, b, a], "rgba", "hex");
     this["#input"].style.opacity = a;
+  }
+
+  _updateAccessabilityAttributes() {
+    let tabIndex  = this.getAttribute('tabindex');
+
+    if (this.disabled) {
+      if (tabIndex >= 0) {
+        // Save the existing 'tabindex' as 'data-tabindex'
+        this.setAttribute('data-tabindex', tabIndex);
+      }
+
+      tabIndex = '-1';
+
+    } else if (this.hasAttribute('data-tabindex')) {
+      // Restore the saved 'tabindex' from 'data-tabindex'
+      tabIndex = this.getAttribute('data-tabindex');
+      this.removeAttribute('data-tabindex');
+
+    } else if (tabIndex == null) {
+      tabIndex = '0';
+    }
+
+    this.setAttribute('tabindex', tabIndex);
+    this.setAttribute("aria-disabled", this.disabled);
   }
 }
 
