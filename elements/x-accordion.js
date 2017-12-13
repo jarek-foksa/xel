@@ -3,7 +3,6 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html} from "../utils/element.js";
-import {sleep} from "../utils/time.js";
 
 let {max} = Math;
 let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
@@ -37,6 +36,8 @@ export class XAccordionElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
+    this._resizeObserver = new ResizeObserver(() => this._updateArrowPosition());
+
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this["#arrow"].addEventListener("keydown", (event) => this._onArrowKeyDown(event));
@@ -51,20 +52,12 @@ export class XAccordionElement extends HTMLElement {
     }
   }
 
-  async connectedCallback() {
-    // Replace this lame code with ResizeObserver when it becomes available
-    await sleep(100);
-    this._updateArrowPosition();
-    await sleep(400);
-    this._updateArrowPosition();
-    await sleep(1000);
-    this._updateArrowPosition();
-    await sleep(2000);
-    this._updateArrowPosition();
-    await sleep(4000);
-    this._updateArrowPosition();
-    await sleep(7000);
-    this._updateArrowPosition();
+  connectedCallback() {
+    this._resizeObserver.observe(this);
+  }
+
+  disconnectedCallback() {
+    this._resizeObserver.unobserve(this);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,7 +199,7 @@ export class XAccordionElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async _updateArrowPosition() {
+  _updateArrowPosition() {
     let header = this.querySelector(":scope > header");
 
     if (header) {
