@@ -93,21 +93,6 @@ export class XTextareaElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @info
-  //   Validation hints are not shown unless user focuses the element for the first time. Set this attribute to
-  //   true to show the hints immediately.
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get visited() {
-    return this.hasAttribute("visited");
-  }
-  set visited(visited) {
-    visited ? this.setAttribute("visited", "") : this.removeAttribute("visited");
-  }
-
   // @type
   //   boolean
   // @default
@@ -250,7 +235,6 @@ export class XTextareaElement extends HTMLElement {
   }
 
   _onFocusIn() {
-    this.visited = true;
     this._focusInValue = this.value;
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
