@@ -1157,7 +1157,7 @@ x-numberinput {
   --selection-color: white;
   --selection-background: var(--primary-color);
 }
-x-numberinput[invalid] {
+x-numberinput[error] {
   --selection-background: #d50000;
 }
 
@@ -1177,7 +1177,7 @@ x-numberinput::after {
 x-numberinput:focus::after {
   width: 100%;
 }
-x-numberinput[invalid]::after {
+x-numberinput[error]::after {
   width: 100%;
   background: #d50000;
 }

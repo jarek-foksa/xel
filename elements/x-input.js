@@ -25,7 +25,7 @@ let shadowTemplate = html`
 //   textinputmodeend
 export class XInputElement extends HTMLElement {
   static get observedAttributes() {
-    return ["type", "value", "spellcheck", "maxlength", "disabled"];
+    return ["type", "value", "spellcheck", "maxlength", "disabled", "validation"];
   }
 
   // @type
@@ -179,6 +179,10 @@ export class XInputElement extends HTMLElement {
   connectedCallback() {
     this._updateAccessabilityAttributes();
     this._updateEmptyState();
+
+    if (this.validation === "instant") {
+      this.validate();
+    }
   }
 
   attributeChangedCallback(name) {
@@ -196,6 +200,9 @@ export class XInputElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this._onDisabledAttributeChange();
+    }
+    else if (name === "validation") {
+      this._onValidationAttributeChnage();
     }
   }
 
@@ -294,6 +301,12 @@ export class XInputElement extends HTMLElement {
   _onDisabledAttributeChange() {
     this["#input"].disabled = this.disabled;
     this._updateAccessabilityAttributes();
+  }
+
+  _onValidationAttributeChnage() {
+    if (this.validation === "instant") {
+      this.validate();
+    }
   }
 
   _onFocusIn() {

@@ -24,7 +24,7 @@ let shadowTemplate = html`
 //   textinputmodeend
 export class XTextareaElement extends HTMLElement {
   static get observedAttributes() {
-    return ["value", "spellcheck", "disabled"];
+    return ["value", "spellcheck", "disabled", "validation"];
   }
 
   // @type
@@ -154,6 +154,10 @@ export class XTextareaElement extends HTMLElement {
   connectedCallback() {
     this._updateEmptyState();
     this._updateAccessabilityAttributes();
+
+    if (this.validation === "instant") {
+      this.validate();
+    }
   }
 
   attributeChangedCallback(name) {
@@ -165,6 +169,9 @@ export class XTextareaElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this._onDisabledAttributeChange();
+    }
+    else if (name === "validation") {
+      this._onValidationAttributeChnage();
     }
   }
 
@@ -232,6 +239,12 @@ export class XTextareaElement extends HTMLElement {
   _onDisabledAttributeChange() {
     this["#editor"].disabled = this.disabled;
     this._updateAccessabilityAttributes();
+  }
+
+  _onValidationAttributeChnage() {
+    if (this.validation === "instant") {
+      this.validate();
+    }
   }
 
   _onFocusIn() {

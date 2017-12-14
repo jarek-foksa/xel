@@ -1151,7 +1151,7 @@ x-numberinput:focus {
   border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 3%));
   z-index: 10;
 }
-x-numberinput[invalid] {
+x-numberinput[error] {
   border-color: #d50000;
   outline: 3px solid rgba(255, 0, 0, 0.49);
 }

@@ -18,7 +18,7 @@
 :host(:hover) {
   cursor: text;
 }
-:host([invalid]) {
+:host([error]) {
   --selection-color: white;
   --selection-background: #d50000;
 }

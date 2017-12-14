@@ -148,21 +148,6 @@ export class XNumberInputElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @info
-  //   Validation hints are not shown unless user focuses the element for the first time. Set this attribute to
-  //   true to show the hints immediately.
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get visited() {
-    return this.hasAttribute("visited");
-  }
-  set visited(visited) {
-    visited ? this.setAttribute("visited", "") : this.removeAttribute("visited");
-  }
-
   // @type
   //   boolean
   // @default
@@ -173,6 +158,18 @@ export class XNumberInputElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  // @type
+  //   string?
+  // @default
+  //   null
+  // @attribute
+  get error() {
+    return this.getAttribute("error");
+  }
+  set error(error) {
+    error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -236,26 +233,23 @@ export class XNumberInputElement extends HTMLElement {
     }
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // @info
   //   Override this method to validate the input value manually.
   // @type
-  //   {valid:boolean, hint:string}
+  //   () => void
   validate() {
-    let valid = true;
-
     if (this.value < this.min) {
-      valid = false;
+      this.error = "Value is too low";
     }
     else if (this.value > this.max) {
-      valid = false;
+      this.error = "Value is too high";
     }
-    else if (this.required && this.value === null && this.visited === true) {
-      valid = false;
+    else if (this.required && this.value === null) {
+      this.error = "This field is required";
     }
-
-    return valid;
+    else {
+      this.error = null;
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,6 +275,7 @@ export class XNumberInputElement extends HTMLElement {
       document.execCommand("selectAll");
     }
 
+    this.validate();
     this._updateState();
   }
 
@@ -305,6 +300,7 @@ export class XNumberInputElement extends HTMLElement {
       document.execCommand("selectAll");
     }
 
+    this.validate();
     this._updateState();
   }
 
@@ -338,6 +334,8 @@ export class XNumberInputElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _update() {
+    this.validate();
+
     this._updateEditorTextContent();
     this._updateState();
     this._updateStepper();
@@ -353,15 +351,6 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   _updateState() {
-    let isValid = this.validate();
-
-    if (isValid) {
-      this.removeAttribute("invalid");
-    }
-    else {
-      this.setAttribute("invalid", "");
-    }
-
     if (this.value === null) {
       this.setAttribute("empty", "");
     }
@@ -439,7 +428,6 @@ export class XNumberInputElement extends HTMLElement {
   _onFocusIn() {
     document.execCommand("selectAll");
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
-    this.visited = true;
   }
 
   _onFocusOut() {
@@ -449,6 +437,7 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   _onEditorInput() {
+    this.validate();
     this._updateState();
     this._updateStepper();
   }
