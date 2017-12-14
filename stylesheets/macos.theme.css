@@ -128,7 +128,8 @@ h5 {
 ::selection {
   background: var(--selection-background);
 }
-:host([invalid]) ::selection {
+:host([invalid]) ::selection,
+:host([error]) ::selection {
   color: white;
   background: #d50000;
 }
@@ -1333,7 +1334,7 @@ x-input:focus {
   outline: 3px solid hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%));
   border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 3%));
 }
-x-input[invalid] {
+x-input[error] {
   border-color: #d50000;
   outline: 3px solid rgba(255, 0, 0, 0.49);
 }
@@ -1391,7 +1392,7 @@ x-input[skin="textured"]:focus {
   box-shadow: 0 0 0px 3px hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%));
   outline: none;
 }
-x-input[skin="textured"][invalid] {
+x-input[skin="textured"][error] {
   border-color: #d50000;
   box-shadow: 0 0 0px 3px rgba(255, 0, 0, 0.49);
   outline: none;

@@ -166,7 +166,8 @@ nav hr {
   background: var(--primary-color);
   color: white;
 }
-:host([invalid]) ::selection {
+:host([invalid]) ::selection,
+:host([error]) ::selection {
   background: #d50000;
 }
 
@@ -1008,12 +1009,12 @@ x-input {
   --selection-background: var(--primary-color);
   --inner-padding: 0px 7px;
 }
-x-input[invalid] {
+x-input[error] {
   --selection-background: #d50000;
 }
 
-/* Invalid value hint */
-x-input[invalid]::before {
+/* Error text */
+x-input[error]::before {
   top: 37px;
 }
 
@@ -1033,7 +1034,7 @@ x-input::after {
 x-input:focus::after {
   width: 100%;
 }
-x-input[invalid]::after {
+x-input[error]::after {
   width: 100%;
   background: #d50000;
 }
@@ -1108,7 +1109,7 @@ x-input[skin="flat"] > x-icon {
 x-input[skin="flat"]:focus > x-icon {
   color: var(--primary-color);
 }
-x-input[skin="flat"][invalid] > x-icon {
+x-input[skin="flat"][error] > x-icon {
   color: #d50000;
 }
 
@@ -1127,8 +1128,8 @@ x-input[skin="flat"]:focus > x-label {
   font-size: 12px;
   pointer-events: all;
 }
-x-input[skin="flat"][invalid]:not([empty]) > x-label,
-x-input[skin="flat"][invalid] > x-label {
+x-input[skin="flat"][error]:not([empty]) > x-label,
+x-input[skin="flat"][error] > x-label {
   color: #d50000;
 }
 x-input[skin="flat"]:focus > x-label::after {

@@ -159,14 +159,16 @@ export class XInputElement extends HTMLElement {
     this.setAttribute("validation", validation);
   }
 
-  // @info
-  //   Whether the input is in the "invalid" state
   // @type
-  //   boolean
+  //   string?
+  // @default
+  //   null
   // @attribute
-  // @readOnly
-  get invalid() {
-    return this.hasAttribute("invalid");
+  get error() {
+    return this.getAttribute("error");
+  }
+  set error(error) {
+    error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,10 +256,10 @@ export class XInputElement extends HTMLElement {
     let {valid, hint} = this.validator();
 
     if (valid) {
-      this.removeAttribute("invalid");
+      this.error = null;
     }
     else {
-      this.setAttribute("invalid", hint);
+      this.error = hint;
     }
 
     return valid;
@@ -269,7 +271,7 @@ export class XInputElement extends HTMLElement {
 
   clear() {
     this.value = "";
-    this.removeAttribute("invalid");
+    this.error = null;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -360,7 +362,7 @@ export class XInputElement extends HTMLElement {
       this.validate();
     }
     else if (this.validation === "auto") {
-      if (this.hasAttribute("invalid")) {
+      if (this.error !== null) {
         this.validate();
       }
     }

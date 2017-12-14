@@ -120,7 +120,8 @@ h5 {
 ::selection {
   background: var(--selection-background);
 }
-:host([invalid]) ::selection {
+:host([invalid]) ::selection,
+:host([error]) ::selection {
   color: white;
   background: #d50000;
 }
@@ -1080,14 +1081,14 @@ x-input:focus {
   outline: 3px solid hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 15%));
   border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 3%));
 }
-x-input[invalid] {
+x-input[error] {
   border-color: #d50000;
   outline: 3px solid rgba(255, 0, 0, 0.49);
   --selection-background: #d50000;
 }
 
-/* Invalid value hint */
-x-input[invalid]::before {
+/* Error text */
+x-input[error]::before {
   top: 33px;
 }
 
