@@ -38,8 +38,13 @@ export class XTextareaElement extends HTMLElement {
   set value(value) {
     this["#editor"].textContent = value;
 
-    if (this.validation === "instant" || this.validation === "auto") {
+    if (this.validation === "instant") {
       this.validate();
+    }
+    else if (this.validation === "auto" || this.validation === "manual") {
+      if (this.error !== null) {
+        this.validate();
+      }
     }
 
     this._updateEmptyState();
@@ -108,7 +113,7 @@ export class XTextareaElement extends HTMLElement {
   // @info
   //   "auto"    - validate() is called when input loses focus and when user presses "Enter"
   //   "instant" - validate() is called on each key press
-  //   "manual"  - validate() is never called automatically, you are responsible for calling it manually
+  //   "manual"  - you will call validate() manually when user submits the form
   // @type
   //   "auto" || "instant" || "manual"
   // @default
@@ -157,6 +162,11 @@ export class XTextareaElement extends HTMLElement {
 
     if (this.validation === "instant") {
       this.validate();
+    }
+    else if (this.validation === "auto" || this.validation === "manual") {
+      if (this.error !== null) {
+        this.validate();
+      }
     }
   }
 
@@ -244,6 +254,11 @@ export class XTextareaElement extends HTMLElement {
   _onValidationAttributeChnage() {
     if (this.validation === "instant") {
       this.validate();
+    }
+    else if (this.validation === "auto" || this.validation === "manual") {
+      if (this.error !== null) {
+        this.validate();
+      }
     }
   }
 
