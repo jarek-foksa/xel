@@ -23,7 +23,7 @@
 :host(:focus) {
   outline: 1px solid blue;
 }
-:host([invalid]) {
+:host([error]) {
   --selection-color: white;
   --selection-background: #d50000;
 }

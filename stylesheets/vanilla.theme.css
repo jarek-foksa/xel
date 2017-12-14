@@ -120,7 +120,6 @@ h5 {
 ::selection {
   background: var(--selection-background);
 }
-:host([invalid]) ::selection,
 :host([error]) ::selection {
   color: white;
   background: #d50000;
@@ -1210,7 +1209,7 @@ x-taginput:focus {
   border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 3%));
   z-index: 10;
 }
-x-taginput[invalid] {
+x-taginput[error] {
   border-color: #d50000;
   outline: 3px solid rgba(255, 0, 0, 0.49);
 }

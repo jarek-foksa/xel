@@ -166,7 +166,6 @@ nav hr {
   background: var(--primary-color);
   color: white;
 }
-:host([invalid]) ::selection,
 :host([error]) ::selection {
   background: #d50000;
 }
@@ -1224,7 +1223,7 @@ x-taginput {
   --selection-color: white;
   --selection-background: var(--primary-color);
 }
-x-taginput[invalid] {
+x-taginput[error] {
   --selection-background: #d50000;
 }
 
@@ -1250,7 +1249,7 @@ x-taginput::after {
 x-taginput:focus::after {
   width: 100%;
 }
-x-taginput[invalid]::after {
+x-taginput[error]::after {
   width: 100%;
   background: #d50000;
 }

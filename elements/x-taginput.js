@@ -144,7 +144,7 @@ export class XTagInputElement extends HTMLElement {
   _commitInput() {
     this._updateValidityState();
 
-    if (this.hasAttribute("invalid") === false) {
+    if (this.hasAttribute("error") === false) {
       let tag = this["#editable-item"].textContent.trim();
       this["#editable-item"].textContent = "";
 
@@ -183,10 +183,10 @@ export class XTagInputElement extends HTMLElement {
     let tag = this["#editable-item"].textContent.trim();
 
     if (this.validateTag(tag) === true || tag.length === 0) {
-      this.removeAttribute("invalid");
+      this.removeAttribute("error");
     }
     else {
-      this.setAttribute("invalid", "");
+      this.setAttribute("error", "");
     }
   }
 
@@ -238,9 +238,9 @@ export class XTagInputElement extends HTMLElement {
     this["#editable-item"].removeAttribute("contenteditable");
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
 
-    if (this.hasAttribute("invalid")) {
+    if (this.hasAttribute("error")) {
       this["#editable-item"].textContent = "";
-      this.removeAttribute("invalid");
+      this.removeAttribute("error");
     }
   }
 
@@ -308,7 +308,7 @@ export class XTagInputElement extends HTMLElement {
 
     this._updatePlaceholderVisibility();
 
-    if (this.hasAttribute("invalid")) {
+    if (this.hasAttribute("error")) {
       this._updateValidityState();
     }
 
