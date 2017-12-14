@@ -136,7 +136,6 @@ let publishFirebaseSite = () => {
     // Copy over files to "dist/firebase/"
     {
       let paths = [
-        `database.rules.json`,
         `index.html`,
         `fallback.html`,
         `xel.min.js`,
