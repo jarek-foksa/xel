@@ -217,52 +217,30 @@ export class XInputElement extends HTMLElement {
   // @info
   //   Override this method to validate the input value manually.
   // @type
-  //   () => {valid: boolean, hint: string}
-  validator() {
-    let valid = true;
-    let hint = "";
+  //   () => void
+  validate() {
+    let error = null;
 
     if (this.value.length < this.minLength) {
-      valid = false;
-      hint = "Entered text is too short";
+      error = "Entered text is too short";
     }
     else if (this.value.length > this.maxLength) {
-      valid = false;
-      hint = "Entered text is too long";
+      error = "Entered text is too long";
     }
     else if (this.required && this.value.length === 0) {
-      valid = false;
-      hint = "This field is required";
+      error = "This field is required";
     }
     else if (this.type === "email" && this["#input"].validity.valid === false) {
-      valid = false;
-      hint = "Invalid e-mail address";
+      error = "Invalid e-mail address";
     }
     else if (this.type === "url" && this["#input"].validity.valid === false) {
-      valid = false;
-      hint = "Invalid URL";
+      error = "Invalid URL";
     }
     else if (this.type === "color" && isValidColorString(this["#input"].value) === false) {
-      valid = false;
-      hint = "Invalid color";
+      error = "Invalid color";
     }
 
-    return {valid, hint};
-  }
-
-  // @type
-  //   () => boolean
-  validate() {
-    let {valid, hint} = this.validator();
-
-    if (valid) {
-      this.error = null;
-    }
-    else {
-      this.error = hint;
-    }
-
-    return valid;
+    this.error = error;
   }
 
   selectAll() {
