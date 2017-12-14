@@ -65,8 +65,10 @@ export class XSelectElement extends HTMLElement {
     super();
 
     this._wasFocusedBeforeExpanding = false;
-    this._observer = new MutationObserver((args) => this._onMutation(args));
     this._updateButtonTh300 = throttle(this._updateButton, 300, this);
+
+    this._mutationObserver = new MutationObserver((args) => this._onMutation(args));
+    this._resizeObserver = new ResizeObserver(() => this._updateButtonChildrenSize());
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
@@ -83,21 +85,24 @@ export class XSelectElement extends HTMLElement {
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
+
   }
 
   connectedCallback() {
-    this._observer.observe(this, {childList: true, attributes: true, characterData: true, subtree: true});
+    this._mutationObserver.observe(this, {childList: true, attributes: true, characterData: true, subtree: true});
+    this._resizeObserver.observe(this);
+
+    this._updateButton();
     this._updateAccessabilityAttributes();
 
     if (debug) {
       this.setAttribute("debug", "");
     }
-
-    sleep(500).then(() => this._updateButtonTh300());
   }
 
   disconnectedCallback() {
-    this._observer.disconnect();
+    this._mutationObserver.disconnect();
+    this._resizeObserver.disconnect();
   }
 
   attributeChangedCallback(name) {
@@ -239,8 +244,6 @@ export class XSelectElement extends HTMLElement {
 
   _updateButton() {
     let selectedItem = this.querySelector(`:scope > x-menu x-menuitem[selected="true"]`);
-    let arrowContainer = this["#arrow-container"];
-
     this["#button"].innerHTML = "";
 
     if (selectedItem) {
@@ -249,22 +252,31 @@ export class XSelectElement extends HTMLElement {
         buttonChild[$itemChild] = itemChild;
         buttonChild.removeAttribute("id");
         buttonChild.removeAttribute("style");
-        buttonChild.style.marginLeft = getComputedStyle(itemChild).marginLeft;
+        this["#button"].append(buttonChild);
+      }
 
-        if (["x-icon", "x-swatch", "img", "svg"].includes(itemChild.localName)) {
-          let {width, height, border} = getComputedStyle(itemChild);
+      this._updateButtonChildrenSize();
+    }
 
+    this["#button"].append(this["#arrow-container"]);
+  }
+
+  _updateButtonChildrenSize() {
+    for (let buttonChild of this["#button"].children) {
+      if (buttonChild !== this["#arrow-container"]) {
+        let {width, height, margin, padding, border} = getComputedStyle(buttonChild[$itemChild]);
+
+        if (["x-icon", "x-swatch", "img", "svg"].includes(buttonChild[$itemChild].localName)) {
           buttonChild.style.width = width;
           buttonChild.style.height = height;
           buttonChild.style.minWidth = width;
-          buttonChild.style.border = border;
         }
 
-        this["#button"].append(buttonChild);
+        buttonChild.style.margin = margin;
+        buttonChild.style.padding = padding;
+        buttonChild.style.border = border;
       }
     }
-
-    this["#button"].append(arrowContainer);
   }
 
   _updateAccessabilityAttributes() {
