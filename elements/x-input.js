@@ -61,7 +61,10 @@ export class XInputElement extends HTMLElement {
         this["#input"].value = value;
       }
 
-      this.validate();
+      if (this.validation === "instant" || this.validation === "auto") {
+        this.validate();
+      }
+
       this._updateEmptyState();
     }
   }
@@ -142,16 +145,18 @@ export class XInputElement extends HTMLElement {
   }
 
   // @info
-  //   Whether the input value should be validated instantly on each key press rather than when user confirms
-  //   the value by pressing the enter key or moving focus away from the input.
+  //   "auto"    - validate() is called when input loses focus and when user presses "Enter"
+  //   "instant" - validate() is called on each key press
+  //   "manual"  - validate() is never called automatically, you are responsible for calling it manually
+  // @type
+  //   "auto" || "instant" || "manual"
   // @default
-  //   false
-  // @attribute
-  get instantValidation() {
-    return this.hasAttribute("instantvalidation");
+  //   "auto"
+  get validation() {
+    return this.hasAttribute("validation") ? this.getAttribute("validation") : "auto";
   }
-  set instantValidation(value) {
-    value === true ? this.setAttribute("instantvalidation", "") : this.removeAttribute("instantvalidation");
+  set validation(validation) {
+    this.setAttribute("validation", validation);
   }
 
   // @info
@@ -334,22 +339,30 @@ export class XInputElement extends HTMLElement {
 
   _onFocusOut() {
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-    this.validate();
+
+    if (this.validation === "auto") {
+      this.validate();
+    }
   }
 
   _onKeyDown(event) {
     if (event.key === "Enter") {
       document.execCommand("selectAll");
-      this.validate();
+
+      if (this.validation === "auto") {
+        this.validate();
+      }
     }
   }
 
   _onInputInput(event) {
-    if (this.instantValidation) {
+    if (this.validation === "instant") {
       this.validate();
     }
-    else if (this.hasAttribute("invalid")) {
-      this.validate();
+    else if (this.validation === "auto") {
+      if (this.hasAttribute("invalid")) {
+        this.validate();
+      }
     }
 
     event.stopPropagation();
@@ -358,7 +371,10 @@ export class XInputElement extends HTMLElement {
   }
 
   _onInputChange() {
-    this.validate();
+    if (this.validation === "auto" || this.validation === "instant") {
+      this.validate();
+    }
+
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
   }
 }
