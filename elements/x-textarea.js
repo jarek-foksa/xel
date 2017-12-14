@@ -38,7 +38,10 @@ export class XTextareaElement extends HTMLElement {
   set value(value) {
     this["#editor"].textContent = value;
 
-    this.validate();
+    if (this.validation === "instant" || this.validation === "auto") {
+      this.validate();
+    }
+
     this._updateEmptyState();
   }
 
@@ -118,12 +121,30 @@ export class XTextareaElement extends HTMLElement {
   }
 
   // @info
-  //   Whether the current value is valid.
+  //   "auto"    - validate() is called when input loses focus and when user presses "Enter"
+  //   "instant" - validate() is called on each key press
+  //   "manual"  - validate() is never called automatically, you are responsible for calling it manually
   // @type
-  //   boolean
-  // @readOnly
-  get invalid() {
-    return this.hasAttribute("invalid");
+  //   "auto" || "instant" || "manual"
+  // @default
+  //   "auto"
+  get validation() {
+    return this.hasAttribute("validation") ? this.getAttribute("validation") : "auto";
+  }
+  set validation(validation) {
+    this.setAttribute("validation", validation);
+  }
+
+  // @type
+  //   string?
+  // @default
+  //   null
+  // @attribute
+  get error() {
+    return this.getAttribute("error");
+  }
+  set error(error) {
+    error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,97 +183,22 @@ export class XTextareaElement extends HTMLElement {
     }
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // @info
-  //   Override this method to validate the input value manually.
+  //   Override this method to validate the textarea value manually.
   // @type
-  //   () => {valid: boolean, hint: string}
-  validator() {
-    let valid = true;
-    let hint = "";
-
+  //   () => void
+  validate() {
     if (this.value.length < this.minLength) {
-      valid = false;
-      hint = "Entered text is too short";
+      this.error = "Entered text is too short";
     }
     else if (this.value.length > this.maxLength) {
-      valid = false;
-      hint = "Entered text is too long";
+      this.error = "Entered text is too long";
     }
     else if (this.required && this.value.length === 0) {
-      valid = false;
-      hint = "This field is required";
-    }
-
-    return {valid, hint};
-  }
-
-  // @info
-  //   Override this method to validate the input value manually.
-  // @type
-  //   boolean
-  validate() {
-    let {valid, hint} = this.validator();
-
-    if (valid) {
-      this.removeAttribute("invalid");
+      this.error = "This field is required";
     }
     else {
-      this.setAttribute("invalid", hint);
-    }
-
-    return valid;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _onValueAttributeChange() {
-    this.value = this.hasAttribute("value") ? this.getAttribute("value") : "";
-
-    if (this.matches(":focus")) {
-      document.execCommand("selectAll");
-    }
-  }
-
-  _onSpellcheckAttributeChange() {
-    this["#editor"].spellcheck = this.spellcheck;
-  }
-
-  _onDisabledAttributeChange() {
-    this["#editor"].disabled = this.disabled;
-    this._updateAccessabilityAttributes();
-  }
-
-  _onEditorClick(event) {
-    if (event.detail >= 4) {
-      document.execCommand("selectAll");
-    }
-  }
-
-  _onEditorInput(event) {
-    this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
-    this._updateEmptyState();
-
-    if (this.invalid) {
-      this.validate();
-    }
-  }
-
-  _onFocusIn() {
-    this.visited = true;
-    this._focusInValue = this.value;
-    this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
-  }
-
-  _onFocusOut() {
-    this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-    this._shadowRoot.getSelection().collapse(this["#main"]);
-
-    this.validate();
-
-    if (this.invalid === false && this.value !== this._focusInValue) {
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      this.error = null;
     }
   }
 
@@ -281,6 +227,64 @@ export class XTextareaElement extends HTMLElement {
       }
 
       delete this[$oldTabIndex];
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _onValueAttributeChange() {
+    this.value = this.hasAttribute("value") ? this.getAttribute("value") : "";
+
+    if (this.matches(":focus")) {
+      document.execCommand("selectAll");
+    }
+  }
+
+  _onSpellcheckAttributeChange() {
+    this["#editor"].spellcheck = this.spellcheck;
+  }
+
+  _onDisabledAttributeChange() {
+    this["#editor"].disabled = this.disabled;
+    this._updateAccessabilityAttributes();
+  }
+
+  _onFocusIn() {
+    this.visited = true;
+    this._focusInValue = this.value;
+    this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
+  }
+
+  _onFocusOut() {
+    this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
+    this._shadowRoot.getSelection().collapse(this["#main"]);
+
+    if (this.validation === "auto") {
+      this.validate();
+    }
+
+    if (this.error === null && this.value !== this._focusInValue) {
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+    }
+  }
+
+  _onEditorClick(event) {
+    if (event.detail >= 4) {
+      document.execCommand("selectAll");
+    }
+  }
+
+  _onEditorInput(event) {
+    this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
+    this._updateEmptyState();
+
+    if (this.validation === "instant") {
+      this.validate();
+    }
+    else if (this.validation === "auto") {
+      if (this.error !== null) {
+        this.validate();
+      }
     }
   }
 }

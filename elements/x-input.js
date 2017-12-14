@@ -117,21 +117,6 @@ export class XInputElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @info
-  //   Validation hints are not shown unless user focuses the element for the first time. Set this attribute to
-  //   true to show the hints immediately.
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get visited() {
-    return this.hasAttribute("visited");
-  }
-  set visited(visited) {
-    visited ? this.setAttribute("visited", "") : this.removeAttribute("visited");
-  }
-
   // @type
   //   boolean
   // @default
@@ -219,28 +204,27 @@ export class XInputElement extends HTMLElement {
   // @type
   //   () => void
   validate() {
-    let error = null;
-
     if (this.value.length < this.minLength) {
-      error = "Entered text is too short";
+      this.error = "Entered text is too short";
     }
     else if (this.value.length > this.maxLength) {
-      error = "Entered text is too long";
+      this.error = "Entered text is too long";
     }
     else if (this.required && this.value.length === 0) {
-      error = "This field is required";
+      this.error = "This field is required";
     }
     else if (this.type === "email" && this["#input"].validity.valid === false) {
-      error = "Invalid e-mail address";
+      this.error = "Invalid e-mail address";
     }
     else if (this.type === "url" && this["#input"].validity.valid === false) {
-      error = "Invalid URL";
+      this.error = "Invalid URL";
     }
     else if (this.type === "color" && isValidColorString(this["#input"].value) === false) {
-      error = "Invalid color";
+      this.error = "Invalid color";
     }
-
-    this.error = error;
+    else {
+      this.error = null;
+    }
   }
 
   selectAll() {
@@ -313,7 +297,6 @@ export class XInputElement extends HTMLElement {
   }
 
   _onFocusIn() {
-    this.visited = true;
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
 

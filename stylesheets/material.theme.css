@@ -1288,7 +1288,7 @@ x-textarea::after {
 x-textarea:focus::after {
   width: 100%;
 }
-x-textarea[invalid]::after {
+x-textarea[error]::after {
   width: 100%;
   background: #d50000;
 }
@@ -1342,8 +1342,8 @@ x-textarea[skin="flat"]:focus > x-label {
   color: var(--primary-color);
   pointer-events: all;
 }
-x-textarea[skin="flat"][invalid]:not([empty]) > x-label,
-x-textarea[skin="flat"][invalid] > x-label {
+x-textarea[skin="flat"][error]:not([empty]) > x-label,
+x-textarea[skin="flat"][error] > x-label {
   color: #d50000;
 }
 x-textarea[skin="flat"]:focus > x-label::after {

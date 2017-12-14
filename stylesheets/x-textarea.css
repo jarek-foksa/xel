@@ -19,7 +19,7 @@
 :host(:hover) {
   cursor: text;
 }
-:host([invalid]) {
+:host([error]) {
   --selection-color: white;
   --selection-background: #d50000;
 }
@@ -72,8 +72,8 @@
   overflow: auto;
 }
 
-/* Invalid value hint */
-:host([invalid])::before {
+/* Error text */
+:host([error])::before {
   position: absolute;
   left: 0;
   bottom: -20px;
@@ -83,5 +83,5 @@
   font-size: 11px;
   line-height: 1.2;
   white-space: pre;
-  content: attr(invalid) " ";
+  content: attr(error) " ";
 }
