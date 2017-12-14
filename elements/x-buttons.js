@@ -3,7 +3,6 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html} from "../utils/element.js";
-import {sleep} from "../utils/time.js";
 
 let {isArray} = Array;
 
