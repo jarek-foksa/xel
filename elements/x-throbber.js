@@ -12,6 +12,24 @@ let shadowTemplate = html`
 `;
 
 export class XThrobberElement extends HTMLElement {
+  static get observedAttributes() {
+    return ["type"];
+  }
+
+  // @type
+  //   "ring" || "spin"
+  // @default
+  //   "ring"
+  // @attribute
+  get type() {
+    return this.hasAttribute("type") ? this.getAttribute("type") : "ring";
+  }
+  set type(type) {
+    this.setAttribute("type", type);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -34,24 +52,6 @@ export class XThrobberElement extends HTMLElement {
     else if (name === "type") {
       this._update();
     }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  static get observedAttributes() {
-    return ["type"];
-  }
-
-  // @type
-  //   "ring" || "spin"
-  // @default
-  //   "ring"
-  // @attribute
-  get type() {
-    return this.hasAttribute("type") ? this.getAttribute("type") : "ring";
-  }
-  set type(type) {
-    this.setAttribute("type", type);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

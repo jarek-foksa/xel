@@ -26,40 +26,6 @@ let shadowTemplate = html`
 `;
 
 export class XTabElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-  }
-
-  connectedCallback() {
-    this.setAttribute("tabindex", this.selected ? "0" : "-1");
-    this.setAttribute("role", "tab");
-    this.setAttribute("aria-selected", this.selected);
-    this.setAttribute("aria-disabled", this.disabled);
-
-    this._updateArrowVisibility();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "selected") {
-      this._onSelectedAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["selected", "disabled"];
   }
@@ -99,6 +65,48 @@ export class XTabElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("click", (event) => this._onClick(event));
+  }
+
+  connectedCallback() {
+    this.setAttribute("tabindex", this.selected ? "0" : "-1");
+    this.setAttribute("role", "tab");
+    this.setAttribute("aria-selected", this.selected);
+    this.setAttribute("aria-disabled", this.disabled);
+
+    this._updateArrowVisibility();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "selected") {
+      this._onSelectedAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateArrowVisibility() {
+    let menu = this.querySelector("x-menu");
+    let popover = this.querySelector("x-popover");
+    this["#arrow"].style.display = (menu === null && popover === null) ? "none" : null;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -213,14 +221,6 @@ export class XTabElement extends HTMLElement {
         ripple.remove();
       }
     }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateArrowVisibility() {
-    let menu = this.querySelector("x-menu");
-    let popover = this.querySelector("x-popover");
-    this["#arrow"].style.display = (menu === null && popover === null) ? "none" : null;
   }
 }
 

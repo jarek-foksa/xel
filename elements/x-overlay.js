@@ -28,19 +28,6 @@ let shadowTemplate = html`
 `;
 
 export class XOverlayElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._ownerElement = null;
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    this.addEventListener("wheel", (event) => event.preventDefault());
-    this.addEventListener("pointerdown", (event) => event.preventDefault()); // Don't steal the focus
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // @info
   //   Element below which the overlay should be placed.
   // @type
@@ -50,6 +37,19 @@ export class XOverlayElement extends HTMLElement {
   }
   set ownerElement(ownerElement) {
     this._ownerElement = ownerElement;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._ownerElement = null;
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    this.addEventListener("wheel", (event) => event.preventDefault());
+    this.addEventListener("pointerdown", (event) => event.preventDefault()); // Don't steal the focus
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

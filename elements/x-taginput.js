@@ -25,54 +25,6 @@ let shadowTemplate = html`
 //   textinputmodestart
 //   textinputmodeend
 export class XTagInputElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("focusin", () => this._onFocusIn());
-    this.addEventListener("focusout", () => this._onFocusOut());
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
-    this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event));
-    this["#editable-item"].addEventListener("keydown", (event) => this._onInputKeyDown(event));
-    this["#editable-item"].addEventListener("input", () => this._onInputInput());
-  }
-
-  connectedCallback() {
-    this._update();
-    this._updateAccessabilityAttributes();
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "value") {
-      this._onValueAttributeChange();
-    }
-    else if (name === "spellcheck") {
-      this._onSpellcheckAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  // @info
-  //   Override this method if you want the entered tags to match specific criteria.
-  // @type
-  //   (string) => boolean
-  validateTag(tag) {
-    return true;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["value", "spellcheck", "disabled"];
   }
@@ -143,6 +95,128 @@ export class XTagInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("focusin", () => this._onFocusIn());
+    this.addEventListener("focusout", () => this._onFocusOut());
+    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
+    this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event));
+    this["#editable-item"].addEventListener("keydown", (event) => this._onInputKeyDown(event));
+    this["#editable-item"].addEventListener("input", () => this._onInputInput());
+  }
+
+  connectedCallback() {
+    this._update();
+    this._updateAccessabilityAttributes();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
+      this._onValueAttributeChange();
+    }
+    else if (name === "spellcheck") {
+      this._onSpellcheckAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
+  // @info
+  //   Override this method if you want the entered tags to match specific criteria.
+  // @type
+  //   (string) => boolean
+  validateTag(tag) {
+    return true;
+  }
+
+  _commitInput() {
+    this._updateValidityState();
+
+    if (this.hasAttribute("invalid") === false) {
+      let tag = this["#editable-item"].textContent.trim();
+      this["#editable-item"].textContent = "";
+
+      if (tag.length > 0) {
+        if (this.value.includes(tag) === false) {
+          let value = this.value.filter($0 => $0 !== tag);
+          this.value = [...value, tag];
+          this.dispatchEvent(new CustomEvent("change"));
+        }
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _update() {
+    for (let item of [...this["#items"].children]) {
+      if (item !== this["#editable-item"]) {
+        item.remove();
+      }
+    }
+
+    for (let tag of this.value) {
+      this["#editable-item"].insertAdjacentHTML("beforebegin", `
+        <div class="item" data-tag="${tag}">
+          <label>${this.prefix}${tag}</label>
+          <svg class="close-button" viewBox="0 0 100 100"><path class="close-button-path"></path></svg>
+        </div>
+      `);
+    }
+
+    this._updatePlaceholderVisibility();
+  }
+
+  _updateValidityState() {
+    let tag = this["#editable-item"].textContent.trim();
+
+    if (this.validateTag(tag) === true || tag.length === 0) {
+      this.removeAttribute("invalid");
+    }
+    else {
+      this.setAttribute("invalid", "");
+    }
+  }
+
+  _updatePlaceholderVisibility() {
+    let placeholder = this.querySelector(":scope > x-label");
+
+    if (placeholder) {
+      placeholder.hidden = (this.value.length > 0 || this["#editable-item"].textContent.length > 0);
+    }
+  }
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("role", "input");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   _onValueAttributeChange() {
     this._update();
   }
@@ -154,8 +228,6 @@ export class XTagInputElement extends HTMLElement {
   _onDisabledAttributeChange() {
     this._updateAccessabilityAttributes();
   }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onFocusIn() {
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
@@ -241,82 +313,6 @@ export class XTagInputElement extends HTMLElement {
     }
 
     this.dispatchEvent(new CustomEvent("input"));
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _commitInput() {
-    this._updateValidityState();
-
-    if (this.hasAttribute("invalid") === false) {
-      let tag = this["#editable-item"].textContent.trim();
-      this["#editable-item"].textContent = "";
-
-      if (tag.length > 0) {
-        if (this.value.includes(tag) === false) {
-          let value = this.value.filter($0 => $0 !== tag);
-          this.value = [...value, tag];
-          this.dispatchEvent(new CustomEvent("change"));
-        }
-      }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _update() {
-    for (let item of [...this["#items"].children]) {
-      if (item !== this["#editable-item"]) {
-        item.remove();
-      }
-    }
-
-    for (let tag of this.value) {
-      this["#editable-item"].insertAdjacentHTML("beforebegin", `
-        <div class="item" data-tag="${tag}">
-          <label>${this.prefix}${tag}</label>
-          <svg class="close-button" viewBox="0 0 100 100"><path class="close-button-path"></path></svg>
-        </div>
-      `);
-    }
-
-    this._updatePlaceholderVisibility();
-  }
-
-  _updateValidityState() {
-    let tag = this["#editable-item"].textContent.trim();
-
-    if (this.validateTag(tag) === true || tag.length === 0) {
-      this.removeAttribute("invalid");
-    }
-    else {
-      this.setAttribute("invalid", "");
-    }
-  }
-
-  _updatePlaceholderVisibility() {
-    let placeholder = this.querySelector(":scope > x-label");
-
-    if (placeholder) {
-      placeholder.hidden = (this.value.length > 0 || this["#editable-item"].textContent.length > 0);
-    }
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("role", "input");
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
-    }
   }
 };
 

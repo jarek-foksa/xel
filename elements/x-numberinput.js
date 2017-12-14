@@ -32,67 +32,6 @@ let shadowTemplate = html`
 //   textinputmodestart
 //   textinputmodeend
 export class XNumberInputElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._isDragging = false;
-    this._isChangeStart = false;
-    this._isArrowKeyDown = false;
-    this._isBackspaceKeyDown = false;
-    this._isStepperButtonDown = false;
-
-    this._maybeDispatchChangeEndEvent = debounce(this._maybeDispatchChangeEndEvent, 500, this);
-
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
-    this._shadowRoot.addEventListener("wheel", (event) => this._onWheel(event));
-    this["#editor"].addEventListener("paste", (event) => this._onPaste(event));
-    this["#editor"].addEventListener("input", (event) => this._onEditorInput(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-    this.addEventListener("keyup", (event) => this._onKeyUp(event));
-    this.addEventListener("keypress", (event) => this._onKeyPress(event));
-    this.addEventListener("incrementstart", (event) => this._onStepperIncrementStart(event));
-    this.addEventListener("decrementstart", (event) => this._onStepperDecrementStart(event));
-    this.addEventListener("focusin", (event) => this._onFocusIn(event));
-    this.addEventListener("focusout", (event) => this._onFocusOut(event));
-  }
-
-  connectedCallback() {
-    this._updateAccessabilityAttributes();
-
-    this._update();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "value") {
-      this._onValueAttributeChange();
-    }
-    else if (name === "min") {
-      this._onMinAttributeChange();
-    }
-    else if (name === "max") {
-      this._onMaxAttributeChange();
-    }
-    else if (name === "prefix") {
-      this._onPrefixAttributeChange();
-    }
-    else if (name === "suffix") {
-      this._onSuffixAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["value", "min", "max", "prefix", "suffix", "disabled"];
   }
@@ -234,6 +173,240 @@ export class XNumberInputElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._isDragging = false;
+    this._isChangeStart = false;
+    this._isArrowKeyDown = false;
+    this._isBackspaceKeyDown = false;
+    this._isStepperButtonDown = false;
+
+    this._maybeDispatchChangeEndEvent = debounce(this._maybeDispatchChangeEndEvent, 500, this);
+
+    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
+    this._shadowRoot.addEventListener("wheel", (event) => this._onWheel(event));
+    this["#editor"].addEventListener("paste", (event) => this._onPaste(event));
+    this["#editor"].addEventListener("input", (event) => this._onEditorInput(event));
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("keyup", (event) => this._onKeyUp(event));
+    this.addEventListener("keypress", (event) => this._onKeyPress(event));
+    this.addEventListener("incrementstart", (event) => this._onStepperIncrementStart(event));
+    this.addEventListener("decrementstart", (event) => this._onStepperDecrementStart(event));
+    this.addEventListener("focusin", (event) => this._onFocusIn(event));
+    this.addEventListener("focusout", (event) => this._onFocusOut(event));
+  }
+
+  connectedCallback() {
+    this._updateAccessabilityAttributes();
+
+    this._update();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "value") {
+      this._onValueAttributeChange();
+    }
+    else if (name === "min") {
+      this._onMinAttributeChange();
+    }
+    else if (name === "max") {
+      this._onMaxAttributeChange();
+    }
+    else if (name === "prefix") {
+      this._onPrefixAttributeChange();
+    }
+    else if (name === "suffix") {
+      this._onSuffixAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @info
+  //   Override this method to validate the input value manually.
+  // @type
+  //   {valid:boolean, hint:string}
+  validate() {
+    let valid = true;
+
+    if (this.value < this.min) {
+      valid = false;
+    }
+    else if (this.value > this.max) {
+      valid = false;
+    }
+    else if (this.required && this.value === null && this.visited === true) {
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _increment(large = false) {
+    let oldValue = this.value
+    let newValue = this.value;
+
+    if (large) {
+      newValue += this.step * 10;
+    }
+    else {
+      newValue += this.step;
+    }
+
+    newValue = normalize(newValue, this.min, this.max, getPrecision(this.step));
+
+    if (oldValue !== newValue) {
+      this.value = newValue;
+    }
+
+    if (this.matches(":focus")) {
+      document.execCommand("selectAll");
+    }
+
+    this._updateState();
+  }
+
+  _decrement(large = false) {
+    let oldValue = this.value
+    let newValue = this.value;
+
+    if (large) {
+      newValue -= this.step * 10;
+    }
+    else {
+      newValue -= this.step;
+    }
+
+    newValue = normalize(newValue, this.min, this.max, getPrecision(this.step));
+
+    if (oldValue !== newValue) {
+      this.value = newValue;
+    }
+
+    if (this.matches(":focus")) {
+      document.execCommand("selectAll");
+    }
+
+    this._updateState();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _maybeDispatchChangeStartEvent() {
+    if (!this._isChangeStart) {
+      this._isChangeStart = true;
+      this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+    }
+  }
+
+  _maybeDispatchChangeEndEvent() {
+    if (this._isChangeStart && !this._isArrowKeyDown && !this._isBackspaceKeyDown && !this._isStepperButtonDown) {
+      this._isChangeStart = false;
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+    }
+  }
+
+  _commitEditorChanges() {
+    let editorValue = this["#editor"].textContent.trim() === "" ? null : parseFloat(this["#editor"].textContent);
+
+    if (editorValue !== this.value) {
+      this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+      this.value = editorValue;
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _update() {
+    this._updateEditorTextContent();
+    this._updateState();
+    this._updateStepper();
+  }
+
+  _updateEditorTextContent() {
+    if (this.hasAttribute("value")) {
+      this["#editor"].textContent = this.getAttribute("value").trim();
+    }
+    else {
+      this["#editor"].textContent = "";
+    }
+  }
+
+  _updateState() {
+    let isValid = this.validate();
+
+    if (isValid) {
+      this.removeAttribute("invalid");
+    }
+    else {
+      this.setAttribute("invalid", "");
+    }
+
+    if (this.value === null) {
+      this.setAttribute("empty", "");
+    }
+    else {
+      this.removeAttribute("empty");
+    }
+  }
+
+  _updateStepper() {
+    let stepper = this.querySelector("x-stepper");
+
+    if (stepper) {
+      let canDecrement = (this.value > this.min);
+      let canIncrement = (this.value < this.max);
+
+      if (canIncrement === true && canDecrement === true) {
+        stepper.removeAttribute("disabled");
+      }
+      else if (canIncrement === false && canDecrement === false) {
+        stepper.setAttribute("disabled", "");
+      }
+      else if (canIncrement === false) {
+        stepper.setAttribute("disabled", "increment");
+      }
+      else if (canDecrement === false) {
+        stepper.setAttribute("disabled", "decrement");
+      }
+    }
+  }
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("role", "input");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -475,179 +648,6 @@ export class XNumberInputElement extends HTMLElement {
       await sleep(1);
 
       document.execCommand("insertText", false, content);
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @info
-  //   Override this method to validate the input value manually.
-  // @type
-  //   {valid:boolean, hint:string}
-  validate() {
-    let valid = true;
-
-    if (this.value < this.min) {
-      valid = false;
-    }
-    else if (this.value > this.max) {
-      valid = false;
-    }
-    else if (this.required && this.value === null && this.visited === true) {
-      valid = false;
-    }
-
-    return valid;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _maybeDispatchChangeStartEvent() {
-    if (!this._isChangeStart) {
-      this._isChangeStart = true;
-      this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-    }
-  }
-
-  _maybeDispatchChangeEndEvent() {
-    if (this._isChangeStart && !this._isArrowKeyDown && !this._isBackspaceKeyDown && !this._isStepperButtonDown) {
-      this._isChangeStart = false;
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-    }
-  }
-
-  _commitEditorChanges() {
-    let editorValue = this["#editor"].textContent.trim() === "" ? null : parseFloat(this["#editor"].textContent);
-
-    if (editorValue !== this.value) {
-      this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-      this.value = editorValue;
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _increment(large = false) {
-    let oldValue = this.value
-    let newValue = this.value;
-
-    if (large) {
-      newValue += this.step * 10;
-    }
-    else {
-      newValue += this.step;
-    }
-
-    newValue = normalize(newValue, this.min, this.max, getPrecision(this.step));
-
-    if (oldValue !== newValue) {
-      this.value = newValue;
-    }
-
-    if (this.matches(":focus")) {
-      document.execCommand("selectAll");
-    }
-
-    this._updateState();
-  }
-
-  _decrement(large = false) {
-    let oldValue = this.value
-    let newValue = this.value;
-
-    if (large) {
-      newValue -= this.step * 10;
-    }
-    else {
-      newValue -= this.step;
-    }
-
-    newValue = normalize(newValue, this.min, this.max, getPrecision(this.step));
-
-    if (oldValue !== newValue) {
-      this.value = newValue;
-    }
-
-    if (this.matches(":focus")) {
-      document.execCommand("selectAll");
-    }
-
-    this._updateState();
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _update() {
-    this._updateEditorTextContent();
-    this._updateState();
-    this._updateStepper();
-  }
-
-  _updateEditorTextContent() {
-    if (this.hasAttribute("value")) {
-      this["#editor"].textContent = this.getAttribute("value").trim();
-    }
-    else {
-      this["#editor"].textContent = "";
-    }
-  }
-
-  _updateState() {
-    let isValid = this.validate();
-
-    if (isValid) {
-      this.removeAttribute("invalid");
-    }
-    else {
-      this.setAttribute("invalid", "");
-    }
-
-    if (this.value === null) {
-      this.setAttribute("empty", "");
-    }
-    else {
-      this.removeAttribute("empty");
-    }
-  }
-
-  _updateStepper() {
-    let stepper = this.querySelector("x-stepper");
-
-    if (stepper) {
-      let canDecrement = (this.value > this.min);
-      let canIncrement = (this.value < this.max);
-
-      if (canIncrement === true && canDecrement === true) {
-        stepper.removeAttribute("disabled");
-      }
-      else if (canIncrement === false && canDecrement === false) {
-        stepper.setAttribute("disabled", "");
-      }
-      else if (canIncrement === false) {
-        stepper.setAttribute("disabled", "increment");
-      }
-      else if (canDecrement === false) {
-        stepper.setAttribute("disabled", "decrement");
-      }
-    }
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("role", "input");
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
     }
   }
 }

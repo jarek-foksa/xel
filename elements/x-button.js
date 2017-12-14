@@ -26,67 +26,8 @@ let shadowTemplate = html`
 // @events
 //   toggle
 export class XButtonElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-
-    (async () => {
-      await customElements.whenDefined("x-overlay");
-      this["#overlay"] = createElement("x-overlay");
-      this["#overlay"].style.background =  "rgba(0, 0, 0, 0)";
-    })();
-
-  }
-
-  async connectedCallback() {
-    // Make the parent anchor element non-focusable (button should be focused instead)
-    if (this.parentElement && this.parentElement.localName === "a" && this.parentElement.tabIndex !== -1) {
-      this.parentElement.tabIndex = -1;
-    }
-
-    this._updateAccessabilityAttributes();
-    this._updateArrowVisibility();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["disabled"];
-  }
-
-  // @info
-  //   Direct ancestor <x-buttons> element.
-  // @type
-  //   XButtonsElement?
-  get ownerButtons() {
-    if (this.parentElement) {
-      if (this.parentElement.localName === "x-buttons") {
-        return this.parentElement;
-      }
-      else if (this.parentElement.localName === "x-box" && this.parentElement.parentElement) {
-        if (this.parentElement.parentElement.localName === "x-buttons") {
-          return this.parentElement.parentElement;
-        }
-      }
-    }
-
-    return null;
   }
 
   // @info
@@ -181,6 +122,228 @@ export class XButtonElement extends HTMLElement {
   //   read-only
   get expanded() {
     return this.hasAttribute("expanded");
+  }
+
+  // @info
+  //   Direct ancestor <x-buttons> element.
+  // @type
+  //   XButtonsElement?
+  get ownerButtons() {
+    if (this.parentElement) {
+      if (this.parentElement.localName === "x-buttons") {
+        return this.parentElement;
+      }
+      else if (this.parentElement.localName === "x-box" && this.parentElement.parentElement) {
+        if (this.parentElement.parentElement.localName === "x-buttons") {
+          return this.parentElement.parentElement;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+
+    (async () => {
+      await customElements.whenDefined("x-overlay");
+      this["#overlay"] = createElement("x-overlay");
+      this["#overlay"].style.background =  "rgba(0, 0, 0, 0)";
+    })();
+
+  }
+
+  async connectedCallback() {
+    // Make the parent anchor element non-focusable (button should be focused instead)
+    if (this.parentElement && this.parentElement.localName === "a" && this.parentElement.tabIndex !== -1) {
+      this.parentElement.tabIndex = -1;
+    }
+
+    this._updateAccessabilityAttributes();
+    this._updateArrowVisibility();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @info
+  //   Show the menu or popover associated with this button.
+  expand() {
+    return new Promise( async (resolve) => {
+      if (this._canExpandMenu()) {
+        let menu = this.querySelector("x-menu");
+
+        if (menu) {
+          this._wasFocusedBeforeExpanding = this.matches(":focus");
+          this.setAttribute("expanded", "");
+
+          this["#overlay"].ownerElement = menu;
+          this["#overlay"].show(false);
+
+          await menu.openNextToElement(this, "vertical", 3);
+          menu.focus();
+        }
+      }
+      else if (this._canExpandPopover()) {
+        let popover = this.querySelector("x-popover");
+
+        if (popover) {
+          this._wasFocusedBeforeExpanding = this.matches(":focus");
+          this.setAttribute("expanded", "");
+
+          this["#overlay"].ownerElement = popover;
+          this["#overlay"].show(false);
+
+          await popover.open(this);
+          popover.focus();
+        }
+      }
+      else if (this._canExpandDialog()) {
+        let dialog = this.querySelector("dialog");
+        dialog.showModal();
+      }
+
+      resolve();
+    });
+  }
+
+  // @info
+  //   Hide the menu or popover associated with this button.
+  collapse(delay = null) {
+    return new Promise(async (resolve) => {
+      let popup = null;
+
+      if (this._canCollapseMenu()) {
+        popup = this.querySelector("x-menu");
+      }
+      else if (this._canCollapsePopover()) {
+        popup = this.querySelector("x-popover");
+      }
+
+      if (popup) {
+        popup.setAttribute("closing", "");
+
+        await delay;
+        await popup.close();
+
+        this["#overlay"].hide(false);
+        this.removeAttribute("expanded");
+
+        if (this._wasFocusedBeforeExpanding) {
+          this.focus();
+        }
+        else {
+          let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+          if (ancestorFocusableElement) {
+            ancestorFocusableElement.focus();
+          }
+        }
+
+        popup.removeAttribute("closing");
+      }
+
+      resolve();
+    });
+  }
+
+  isExpandable() {
+    return this.querySelector(":scope > x-menu x-menuitem, :scope > x-popover, :scope > dialog") !== null;
+  }
+
+  _canExpandMenu() {
+    if (this.disabled) {
+      return false;
+    }
+    else {
+      let menu = this.querySelector(":scope > x-menu");
+      let item = this.querySelector(":scope > x-menu x-menuitem");
+      return menu !== null && item !== null && !menu.hasAttribute("opened") && !menu.hasAttribute("closing");
+    }
+  }
+
+  _canExpandPopover() {
+    if (this.disabled) {
+      return false;
+    }
+    else {
+      let popover = this.querySelector("x-popover");
+      return popover !== null && !popover.hasAttribute("opened") && !popover.hasAttribute("closing");
+    }
+  }
+
+  _canExpandDialog() {
+    if (this.disabled) {
+      return false;
+    }
+    else {
+      let dialog = this.querySelector("dialog");
+      return dialog !== null && !dialog.hasAttribute("open") && !dialog.hasAttribute("closing");
+    }
+  }
+
+  _canCollapseMenu() {
+    if (this.disabled) {
+      return false;
+    }
+    else {
+      let menu = this.querySelector(":scope > x-menu");
+      return menu !== null && menu.opened; /* && menu.hasAttribute("closing") === false; */
+    }
+  }
+
+  _canCollapsePopover() {
+    if (this.disabled) {
+      return false;
+    }
+    else {
+      let popover = this.querySelector("x-popover");
+      return popover !== null && popover.opened === true; /* && popover.hasAttribute("closing") === false; */
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateArrowVisibility() {
+    let menu = this.querySelector("x-menu");
+    let popover = this.querySelector("x-popover");
+    this["#arrow"].style.display = (menu === null && popover === null) ? "none" : null;
+  }
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("role", "button");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -542,169 +705,6 @@ export class XButtonElement extends HTMLElement {
         event.preventDefault();
         this.expand().then(() => menu.focusLastMenuItem());
       }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @info
-  //   Show the menu or popover associated with this button.
-  expand() {
-    return new Promise( async (resolve) => {
-      if (this._canExpandMenu()) {
-        let menu = this.querySelector("x-menu");
-
-        if (menu) {
-          this._wasFocusedBeforeExpanding = this.matches(":focus");
-          this.setAttribute("expanded", "");
-
-          this["#overlay"].ownerElement = menu;
-          this["#overlay"].show(false);
-
-          await menu.openNextToElement(this, "vertical", 3);
-          menu.focus();
-        }
-      }
-      else if (this._canExpandPopover()) {
-        let popover = this.querySelector("x-popover");
-
-        if (popover) {
-          this._wasFocusedBeforeExpanding = this.matches(":focus");
-          this.setAttribute("expanded", "");
-
-          this["#overlay"].ownerElement = popover;
-          this["#overlay"].show(false);
-
-          await popover.open(this);
-          popover.focus();
-        }
-      }
-      else if (this._canExpandDialog()) {
-        let dialog = this.querySelector("dialog");
-        dialog.showModal();
-      }
-
-      resolve();
-    });
-  }
-
-  // @info
-  //   Hide the menu or popover associated with this button.
-  collapse(delay = null) {
-    return new Promise(async (resolve) => {
-      let popup = null;
-
-      if (this._canCollapseMenu()) {
-        popup = this.querySelector("x-menu");
-      }
-      else if (this._canCollapsePopover()) {
-        popup = this.querySelector("x-popover");
-      }
-
-      if (popup) {
-        popup.setAttribute("closing", "");
-
-        await delay;
-        await popup.close();
-
-        this["#overlay"].hide(false);
-        this.removeAttribute("expanded");
-
-        if (this._wasFocusedBeforeExpanding) {
-          this.focus();
-        }
-        else {
-          let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
-
-          if (ancestorFocusableElement) {
-            ancestorFocusableElement.focus();
-          }
-        }
-
-        popup.removeAttribute("closing");
-      }
-
-      resolve();
-    });
-  }
-
-  isExpandable() {
-    return this.querySelector(":scope > x-menu x-menuitem, :scope > x-popover, :scope > dialog") !== null;
-  }
-
-  _canExpandMenu() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
-      let menu = this.querySelector(":scope > x-menu");
-      let item = this.querySelector(":scope > x-menu x-menuitem");
-      return menu !== null && item !== null && !menu.hasAttribute("opened") && !menu.hasAttribute("closing");
-    }
-  }
-
-  _canExpandPopover() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
-      let popover = this.querySelector("x-popover");
-      return popover !== null && !popover.hasAttribute("opened") && !popover.hasAttribute("closing");
-    }
-  }
-
-  _canExpandDialog() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
-      let dialog = this.querySelector("dialog");
-      return dialog !== null && !dialog.hasAttribute("open") && !dialog.hasAttribute("closing");
-    }
-  }
-
-  _canCollapseMenu() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
-      let menu = this.querySelector(":scope > x-menu");
-      return menu !== null && menu.opened; /* && menu.hasAttribute("closing") === false; */
-    }
-  }
-
-  _canCollapsePopover() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
-      let popover = this.querySelector("x-popover");
-      return popover !== null && popover.opened === true; /* && popover.hasAttribute("closing") === false; */
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateArrowVisibility() {
-    let menu = this.querySelector("x-menu");
-    let popover = this.querySelector("x-popover");
-    this["#arrow"].style.display = (menu === null && popover === null) ? "none" : null;
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("role", "button");
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
     }
   }
 }

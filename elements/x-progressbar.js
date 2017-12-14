@@ -19,35 +19,6 @@ let shadowTemplate = html`
 `;
 
 export class XProgressbarElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-  }
-
-  connectedCallback() {
-    this._update();
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "value") {
-      this._update();
-    }
-    else if (name === "disabled") {
-      this._update();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["value", "max", "disabled"];
   }
@@ -90,6 +61,35 @@ export class XProgressbarElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+  }
+
+  connectedCallback() {
+    this._update();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
+      this._update();
+    }
+    else if (name === "disabled") {
+      this._update();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,44 +27,6 @@ let shadowTemplate = html`
 `;
 
 export class XMenuItemElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._observer = new MutationObserver(() => this._updateArrowIconVisibility());
-
-    this._blinking = false;
-    this._triggerEndCallbacks = [];
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-  }
-
-  connectedCallback() {
-    this._observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
-    this._updateArrowIconVisibility();
-    this._updateAccessabilityAttributes();
-  }
-
-  disconnectedCallback() {
-    this._observer.disconnect();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["disabled"];
   }
@@ -139,6 +101,73 @@ export class XMenuItemElement extends HTMLElement {
         this._triggerEndCallbacks.push(resolve);
       }
     });
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._observer = new MutationObserver(() => this._updateArrowIconVisibility());
+
+    this._blinking = false;
+    this._triggerEndCallbacks = [];
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+  }
+
+  connectedCallback() {
+    this._observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
+    this._updateArrowIconVisibility();
+    this._updateAccessabilityAttributes();
+  }
+
+  disconnectedCallback() {
+    this._observer.disconnect();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateArrowIconVisibility() {
+    if (this.parentElement.localName === "x-menubar") {
+      this["#arrow-icon"].hidden = true;
+    }
+    else {
+      let menu = this.querySelector("x-menu");
+      this["#arrow-icon"].hidden = menu ? false : true;
+    }
+  }
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("role", "menuitem");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,35 +306,6 @@ export class XMenuItemElement extends HTMLElement {
         event.stopPropagation();
         this.click();
       }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateArrowIconVisibility() {
-    if (this.parentElement.localName === "x-menubar") {
-      this["#arrow-icon"].hidden = true;
-    }
-    else {
-      let menu = this.querySelector("x-menu");
-      this["#arrow-icon"].hidden = menu ? false : true;
-    }
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("role", "menuitem");
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
     }
   }
 }

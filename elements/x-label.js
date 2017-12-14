@@ -16,23 +16,6 @@ export class XLabelElement extends HTMLElement {
     return ["for"];
   }
 
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    this.addEventListener("click", (event) => this._onClick(event));
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "for") {
-      this._onForAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // @info
   //   Values associated with this label.
   // @type
@@ -69,6 +52,23 @@ export class XLabelElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    this.addEventListener("click", (event) => this._onClick(event));
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "for") {
+      this._onForAttributeChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

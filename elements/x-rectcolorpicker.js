@@ -39,6 +39,20 @@ export class XRectColorPickerElement extends HTMLElement {
     return ["value"];
   }
 
+  // @type
+  //   string
+  // @default
+  //   "hsla(0, 0%, 100%, 1)"
+  // @attribute
+  get value() {
+    return this.hasAttribute("value") ? this.getAttribute("value") : "hsla(0, 0%, 100%, 1)";
+  }
+  set value(value) {
+    this.setAttribute("value", value);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -79,16 +93,44 @@ export class XRectColorPickerElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type
-  //   string
-  // @default
-  //   "hsla(0, 0%, 100%, 1)"
-  // @attribute
-  get value() {
-    return this.hasAttribute("value") ? this.getAttribute("value") : "hsla(0, 0%, 100%, 1)";
+  _update() {
+    this._updateHueSliderMarker();
+
+    this._updateSatlightSliderMarker();
+    this._updateSatlightSliderBackground();
+
+    this._updateAlphaSliderMarker();
+    this._updateAlphaSliderBackground();
   }
-  set value(value) {
-    this.setAttribute("value", value);
+
+  _updateHueSliderMarker() {
+    this["#hue-slider-marker"].style.left = ((normalize(this._h, 0, 360, 0) / 360) * 100) + "%";
+  }
+
+  _updateSatlightSliderMarker() {
+    let left = (this._s / 100) * 100;
+    let top = 100 - ((this._v / 100) * 100);
+
+    this["#satlight-marker"].style.left = `${left}%`;
+    this["#satlight-marker"].style.top = `${top}%`;
+  }
+
+  _updateSatlightSliderBackground() {
+    let background1 = serializeColor([this._h, 100, 50, 1], "hsla", "hex");
+    let background2 = "linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,1))";
+    let background3 = "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1))";
+    this["#satlight-slider"].style.background = `${background3}, ${background2}, ${background1}`;
+  }
+
+  _updateAlphaSliderMarker() {
+    this["#alpha-slider-marker"].style.left = normalize((1 - this._a) * 100, 0, 100, 2) + "%";
+  }
+
+  _updateAlphaSliderBackground() {
+    let [r, g, b] = hsvToRgb(this._h, this._s, this._v).map($0 => round($0, 0));
+    let backroundA = `url(node_modules/xel/images/checkboard.png) repeat 0 0`;
+    let background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))`;
+    this["#alpha-slider"].style.background = background + "," + backroundA;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,48 +281,6 @@ export class XRectColorPickerElement extends HTMLElement {
 
       this._isDraggingAlphaSliderMarker = false;
     });
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _update() {
-    this._updateHueSliderMarker();
-
-    this._updateSatlightSliderMarker();
-    this._updateSatlightSliderBackground();
-
-    this._updateAlphaSliderMarker();
-    this._updateAlphaSliderBackground();
-  }
-
-  _updateHueSliderMarker() {
-    this["#hue-slider-marker"].style.left = ((normalize(this._h, 0, 360, 0) / 360) * 100) + "%";
-  }
-
-  _updateSatlightSliderMarker() {
-    let left = (this._s / 100) * 100;
-    let top = 100 - ((this._v / 100) * 100);
-
-    this["#satlight-marker"].style.left = `${left}%`;
-    this["#satlight-marker"].style.top = `${top}%`;
-  }
-
-  _updateSatlightSliderBackground() {
-    let background1 = serializeColor([this._h, 100, 50, 1], "hsla", "hex");
-    let background2 = "linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,1))";
-    let background3 = "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1))";
-    this["#satlight-slider"].style.background = `${background3}, ${background2}, ${background1}`;
-  }
-
-  _updateAlphaSliderMarker() {
-    this["#alpha-slider-marker"].style.left = normalize((1 - this._a) * 100, 0, 100, 2) + "%";
-  }
-
-  _updateAlphaSliderBackground() {
-    let [r, g, b] = hsvToRgb(this._h, this._s, this._v).map($0 => round($0, 0));
-    let backroundA = `url(node_modules/xel/images/checkboard.png) repeat 0 0`;
-    let background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))`;
-    this["#alpha-slider"].style.background = background + "," + backroundA;
   }
 };
 

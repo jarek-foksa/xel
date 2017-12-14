@@ -33,25 +33,6 @@ let shadowTemplate = html`
 `;
 
 export class XShortcutElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "value") {
-      this._update();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["value"];
   }
@@ -87,6 +68,25 @@ export class XShortcutElement extends HTMLElement {
   get normalKey() {
     let key = this.value.find(key => modKeys.includes(key) === false);
     return key === undefined ? null : key;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "value") {
+      this._update();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

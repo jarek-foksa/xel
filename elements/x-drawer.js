@@ -15,39 +15,6 @@ let shadowTemplate = html`
 `;
 
 export class XDrawerElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this["#overlay"] = html`<x-overlay id="overlay"></x-overlay>`;
-    this["#overlay"].ownerElement = this;
-    this["#overlay"].addEventListener("click", (event) => this._onOverlayClick(event));
-  }
-
-  connectedCallback() {
-    if (this.hasAttribute("position") === false) {
-      this.setAttribute("position", "left");
-    }
-
-    if (this.opened === false) {
-      this.setAttribute("offscreen", "");
-    }
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "opened") {
-      this._onOpenedAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["opened"];
   }
@@ -78,17 +45,35 @@ export class XDrawerElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onOpenedAttributeChange() {
-    if (this.opened) {
-      this._open();
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
     }
-    else {
-      this._close();
+
+    this["#overlay"] = html`<x-overlay id="overlay"></x-overlay>`;
+    this["#overlay"].ownerElement = this;
+    this["#overlay"].addEventListener("click", (event) => this._onOverlayClick(event));
+  }
+
+  connectedCallback() {
+    if (this.hasAttribute("position") === false) {
+      this.setAttribute("position", "left");
+    }
+
+    if (this.opened === false) {
+      this.setAttribute("offscreen", "");
     }
   }
 
-  _onOverlayClick() {
-    this.opened = false;
+  attributeChangedCallback(name) {
+    if (name === "opened") {
+      this._onOpenedAttributeChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,6 +201,21 @@ export class XDrawerElement extends HTMLElement {
 
       resolve();
     });
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _onOpenedAttributeChange() {
+    if (this.opened) {
+      this._open();
+    }
+    else {
+      this._close();
+    }
+  }
+
+  _onOverlayClick() {
+    this.opened = false;
   }
 }
 

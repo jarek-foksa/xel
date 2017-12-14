@@ -14,13 +14,6 @@ let shadowTemplate = html`
 `;
 
 export class XBoxElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-  }
-
   // @info
   //   Whether to use vertical (rather than horizontal) layout.
   // @type
@@ -32,6 +25,15 @@ export class XBoxElement extends HTMLElement {
   }
   set vertical(vertical) {
     vertical ? this.setAttribute("vertical", "") : this.removeAttribute("vertical");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
   }
 }
 

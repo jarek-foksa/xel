@@ -44,56 +44,6 @@ let shadowTemplate = html`
 //   changestart
 //   changeend
 export class XSliderElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    this._observer = new MutationObserver((args) => this._onMutation(args));
-    this._updateTicks500ms = throttle(this._updateTicks, 500, this);
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "value") {
-      this._onValueAttributeChange();
-    }
-  }
-
-  connectedCallback() {
-    this.setAttribute("value", this.value);
-
-    this._observer.observe(this, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["value"],
-      characterData: false
-    });
-
-    this._updateTracks();
-    this._updateThumbs();
-    this._updateTicks();
-    this._updateAccessabilityAttributes();
-  }
-
-  disconnectedCallback() {
-    this._observer.disconnect();
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["value"];
   }
@@ -162,6 +112,103 @@ export class XSliderElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    this._observer = new MutationObserver((args) => this._onMutation(args));
+    this._updateTicks500ms = throttle(this._updateTicks, 500, this);
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
+      this._onValueAttributeChange();
+    }
+  }
+
+  connectedCallback() {
+    this.setAttribute("value", this.value);
+
+    this._observer.observe(this, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["value"],
+      characterData: false
+    });
+
+    this._updateTracks();
+    this._updateThumbs();
+    this._updateTicks();
+    this._updateAccessabilityAttributes();
+  }
+
+  disconnectedCallback() {
+    this._observer.disconnect();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateTracks() {
+    let left = (((this.value - this.min) / (this.max - this.min)) * 100);
+    let originLeft = (((this.min > 0 ? this.min : 0) - this.min) / (this.max - this.min)) * 100;
+
+    if (left >= originLeft) {
+      this["#tint-track"].style.left = `${originLeft}%`;
+      this["#tint-track"].style.width = (left - originLeft) + "%";
+    }
+    else {
+      this["#tint-track"].style.left = `${left}%`;
+      this["#tint-track"].style.width = `${originLeft - left}%`;
+    }
+  }
+
+  _updateThumbs(animate) {
+    this["#start-thumb"].style.left = (((this.value - this.min) / (this.max - this.min)) * 100) + "%";
+  }
+
+  async _updateTicks() {
+    await customElements.whenDefined("x-label");
+
+    this["#ticks"].innerHTML = "";
+
+    for (let label of this.querySelectorAll(":scope > x-label")) {
+      label.style.left = (((label.value - this.min) / (this.max - this.min)) * 100) + "%";
+      this["#ticks"].insertAdjacentHTML("beforeend", `<div class="tick" style="left: ${label.style.left}"></div>`);
+    }
+  }
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,53 +332,6 @@ export class XSliderElement extends HTMLElement {
       }
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateTracks() {
-    let left = (((this.value - this.min) / (this.max - this.min)) * 100);
-    let originLeft = (((this.min > 0 ? this.min : 0) - this.min) / (this.max - this.min)) * 100;
-
-    if (left >= originLeft) {
-      this["#tint-track"].style.left = `${originLeft}%`;
-      this["#tint-track"].style.width = (left - originLeft) + "%";
-    }
-    else {
-      this["#tint-track"].style.left = `${left}%`;
-      this["#tint-track"].style.width = `${originLeft - left}%`;
-    }
-  }
-
-  _updateThumbs(animate) {
-    this["#start-thumb"].style.left = (((this.value - this.min) / (this.max - this.min)) * 100) + "%";
-  }
-
-  async _updateTicks() {
-    await customElements.whenDefined("x-label");
-
-    this["#ticks"].innerHTML = "";
-
-    for (let label of this.querySelectorAll(":scope > x-label")) {
-      label.style.left = (((label.value - this.min) / (this.max - this.min)) * 100) + "%";
-      this["#ticks"].insertAdjacentHTML("beforeend", `<div class="tick" style="left: ${label.style.left}"></div>`);
-    }
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
     }
   }
 }

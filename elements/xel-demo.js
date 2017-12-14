@@ -25,6 +25,22 @@ export class XelDemoElement extends HTMLElement {
     return ["name"];
   }
 
+  // @info
+  //   Compact demo has a scrollable code view with limited max height.
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get compact() {
+    return this.hasAttribute("compact");
+  }
+  set compact(compact) {
+    compact ? this.setAttribute("compact", "") : this.removeAttribute("compact");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -44,22 +60,6 @@ export class XelDemoElement extends HTMLElement {
     if (name === "name") {
       this._update();
     }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @info
-  //   Compact demo has a scrollable code view with limited max height.
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get compact() {
-    return this.hasAttribute("compact");
-  }
-  set compact(compact) {
-    compact ? this.setAttribute("compact", "") : this.removeAttribute("compact");
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

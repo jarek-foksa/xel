@@ -31,27 +31,6 @@ let shadowTemplate = html`
 //   decrementstart
 //   decrementend
 export class XStepperElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["disabled"];
   }
@@ -85,6 +64,27 @@ export class XStepperElement extends HTMLElement {
     }
     else {
       this.setAttribute("disabled", disabled);
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this._shadowRoot.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "disabled") {
+      this._onDisabledAttributeChange();
     }
   }
 

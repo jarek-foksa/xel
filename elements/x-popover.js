@@ -21,6 +21,16 @@ let shadowTemplate = html`
 //   open
 //   close
 export class XPopoverElement extends HTMLElement {
+  // @type
+  //   boolean
+  // @readonly
+  // @attribute
+  get opened() {
+    return this.hasAttribute("opened");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -34,16 +44,6 @@ export class XPopoverElement extends HTMLElement {
 
   connectedCallback() {
     this.tabIndex = -1;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @type
-  //   boolean
-  // @readonly
-  // @attribute
-  get opened() {
-    return this.hasAttribute("opened");
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

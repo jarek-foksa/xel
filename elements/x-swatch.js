@@ -15,29 +15,6 @@ let shadowTemplate = html`
 `;
 
 export class XSwatchElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-  }
-
-  connectedCallback() {
-    this._update();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "value") {
-      this._update();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["disabled"];
   }
@@ -80,6 +57,29 @@ export class XSwatchElement extends HTMLElement {
   }
   set showicon(showicon) {
     showicon ? this.setAttribute("showicon", "") : this.removeAttribute("showicon");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+  }
+
+  connectedCallback() {
+    this._update();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "value") {
+      this._update();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

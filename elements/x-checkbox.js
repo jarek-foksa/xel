@@ -25,36 +25,6 @@ let shadowTemplate = html`
 // @events
 //   change
 export class XCheckboxElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-  }
-
-  connectedCallback() {
-    this._updateAccessabilityAttributes();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "toggled") {
-      this._onToggledAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["toggled", "disabled"];
   }
@@ -107,6 +77,56 @@ export class XCheckboxElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+  }
+
+  connectedCallback() {
+    this._updateAccessabilityAttributes();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "toggled") {
+      this._onToggledAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("role", "checkbox");
+    this.setAttribute("aria-checked", this.mixed ? "mixed" : this.toggled);
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,24 +224,6 @@ export class XCheckboxElement extends HTMLElement {
     if (event.code === "Enter" || event.code === "Space") {
       event.preventDefault();
       this.click();
-    }
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("role", "checkbox");
-    this.setAttribute("aria-checked", this.mixed ? "mixed" : this.toggled);
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
     }
   }
 };

@@ -23,36 +23,6 @@ let shadowTemplate = html`
 // @events
 //   change
 export class XRadioElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-  }
-
-  connectedCallback() {
-    this._updateAccessabilityAttributes();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "toggled") {
-      this._onToggledAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["toggled", "disabled"];
   }
@@ -109,6 +79,58 @@ export class XRadioElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+  }
+
+  connectedCallback() {
+    this._updateAccessabilityAttributes();
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "toggled") {
+      this._onToggledAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("role", "radio");
+    this.setAttribute("aria-checked", this.toggled);
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (!this.closest("x-radios")) {
+      if (this.disabled) {
+        this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+        this.tabIndex = -1;
+      }
+      else {
+        if (this.tabIndex < 0) {
+          this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+        }
+
+        delete this[$oldTabIndex];
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   _onToggledAttributeChange() {
     this.setAttribute("aria-checked", this.toggled);
   }
@@ -148,28 +170,6 @@ export class XRadioElement extends HTMLElement {
     if (event.code === "Enter" || event.code === "Space") {
       event.preventDefault();
       this.click();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("role", "radio");
-    this.setAttribute("aria-checked", this.toggled);
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (!this.closest("x-radios")) {
-      if (this.disabled) {
-        this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-        this.tabIndex = -1;
-      }
-      else {
-        if (this.tabIndex < 0) {
-          this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-        }
-
-        delete this[$oldTabIndex];
-      }
     }
   }
 };

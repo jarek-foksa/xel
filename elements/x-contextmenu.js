@@ -14,6 +14,20 @@ let shadowTemplate = html`
 `;
 
 export class XContextMenuElement extends HTMLElement {
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -46,18 +60,35 @@ export class XContextMenuElement extends HTMLElement {
     this._parentElement = null;
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////'/////////////////////////////////////////////////////////////////////////////
 
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get disabled() {
-    return this.hasAttribute("disabled");
+  open(clientX, clientY) {
+    let menu = this.querySelector("x-menu");
+
+    if (menu.opened === false) {
+      menu.openAtPoint(clientX, clientY);
+
+      this["#overlay"].ownerElement = menu;
+      this["#overlay"].show(false);
+
+      menu.focus();
+    }
   }
-  set disabled(disabled) {
-    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+
+  close() {
+    return new Promise(async (resolve) => {
+      let menu = this.querySelector("x-menu");
+      await menu.close();
+      this["#overlay"].hide(false);
+
+      let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+      if (ancestorFocusableElement) {
+        ancestorFocusableElement.focus();
+      }
+
+      resolve();
+    });
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,37 +168,6 @@ export class XContextMenuElement extends HTMLElement {
       let menu = this.querySelector("x-menu");
       menu.focusNextMenuItem();
     }
-  }
-
-  ///////////////////////////////////'/////////////////////////////////////////////////////////////////////////////
-
-  open(clientX, clientY) {
-    let menu = this.querySelector("x-menu");
-
-    if (menu.opened === false) {
-      menu.openAtPoint(clientX, clientY);
-
-      this["#overlay"].ownerElement = menu;
-      this["#overlay"].show(false);
-
-      menu.focus();
-    }
-  }
-
-  close() {
-    return new Promise(async (resolve) => {
-      let menu = this.querySelector("x-menu");
-      await menu.close();
-      this["#overlay"].hide(false);
-
-      let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
-
-      if (ancestorFocusableElement) {
-        ancestorFocusableElement.focus();
-      }
-
-      resolve();
-    });
   }
 }
 

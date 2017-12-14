@@ -20,6 +20,24 @@ let shadowTemplate = html`
 `;
 
 export class XMenuBarElement extends HTMLElement {
+  static get observedAttributes() {
+    return ["disabled"];
+  }
+
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -60,20 +78,99 @@ export class XMenuBarElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  static get observedAttributes() {
-    return ["disabled"];
+  _expandMenubarItem(item) {
+    let menu = item.querySelector(":scope > x-menu");
+
+    if (menu && menu.opened === false) {
+      item.focus();
+      this._expanded = true;
+      this.style.touchAction = "none";
+
+      // Open item's menu and close other menus
+      {
+        menu.openNextToElement(item, "vertical");
+
+        let menus = this.querySelectorAll(":scope > x-menuitem > x-menu");
+        let otherMenus = [...menus].filter($0 => $0 !== menu);
+
+        for (let otherMenu of otherMenus) {
+          if (otherMenu) {
+            otherMenu.close(false);
+          }
+        }
+      }
+
+      // Show the overlay
+      {
+        let {x, y, width, height} = this.getBoundingClientRect();
+
+        this["#overlay-path"].setAttribute("d", `
+          M 0 0
+          L ${window.innerWidth} 0
+          L ${window.innerWidth} ${window.innerHeight}
+          L 0 ${window.innerHeight}
+          L 0 0
+          M ${x} ${y}
+          L ${x + width} ${y}
+          L ${x + width} ${y + height}
+          L ${x} ${y + height}
+        `);
+
+        this["#overlay"].removeAttribute("hidden");
+      }
+    }
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get disabled() {
-    return this.hasAttribute("disabled");
+  _collapseMenubarItems() {
+    return new Promise( async (resolve) => {
+      this._expanded = false;
+      this.style.touchAction = null;
+
+      // Hide the overlay
+      {
+        this["#overlay"].setAttribute("hidden", "");
+        this["#overlay-path"].setAttribute("d", "");
+      }
+
+      // Close all opened menus
+      {
+        let menus = this.querySelectorAll(":scope > x-menuitem > x-menu[opened]");
+
+        for (let menu of menus) {
+          await menu.close(true);
+        }
+      }
+
+      let focusedMenuItem = this.querySelector("x-menuitem:focus");
+
+      if (focusedMenuItem) {
+        focusedMenuItem.blur();
+      }
+
+      resolve();
+    });
   }
-  set disabled(disabled) {
-    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+
+  _expandPreviousMenubarItem() {
+    let items = [...this.querySelectorAll(":scope > x-menuitem:not([disabled])")];
+    let focusedItem = this.querySelector(":focus").closest("x-menubar > x-menuitem");
+
+    if (items.length > 1 && focusedItem) {
+      let i = items.indexOf(focusedItem);
+      let previousItem = items[i - 1] || items[items.length-1];
+      this._expandMenubarItem(previousItem);
+    }
+  }
+
+  _expandNextMenubarItem() {
+    let items = [...this.querySelectorAll(":scope > x-menuitem:not([disabled])")];
+    let focusedItem = this.querySelector(":focus").closest("x-menubar > x-menuitem");
+
+    if (focusedItem && items.length > 1) {
+      let i = items.indexOf(focusedItem);
+      let nextItem = items[i + 1] || items[0];
+      this._expandMenubarItem(nextItem);
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,103 +320,6 @@ export class XMenuBarElement extends HTMLElement {
         event.preventDefault();
         menu.focusLastMenuItem();
       }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _expandMenubarItem(item) {
-    let menu = item.querySelector(":scope > x-menu");
-
-    if (menu && menu.opened === false) {
-      item.focus();
-      this._expanded = true;
-      this.style.touchAction = "none";
-
-      // Open item's menu and close other menus
-      {
-        menu.openNextToElement(item, "vertical");
-
-        let menus = this.querySelectorAll(":scope > x-menuitem > x-menu");
-        let otherMenus = [...menus].filter($0 => $0 !== menu);
-
-        for (let otherMenu of otherMenus) {
-          if (otherMenu) {
-            otherMenu.close(false);
-          }
-        }
-      }
-
-      // Show the overlay
-      {
-        let {x, y, width, height} = this.getBoundingClientRect();
-
-        this["#overlay-path"].setAttribute("d", `
-          M 0 0
-          L ${window.innerWidth} 0
-          L ${window.innerWidth} ${window.innerHeight}
-          L 0 ${window.innerHeight}
-          L 0 0
-          M ${x} ${y}
-          L ${x + width} ${y}
-          L ${x + width} ${y + height}
-          L ${x} ${y + height}
-        `);
-
-        this["#overlay"].removeAttribute("hidden");
-      }
-    }
-  }
-
-  _collapseMenubarItems() {
-    return new Promise( async (resolve) => {
-      this._expanded = false;
-      this.style.touchAction = null;
-
-      // Hide the overlay
-      {
-        this["#overlay"].setAttribute("hidden", "");
-        this["#overlay-path"].setAttribute("d", "");
-      }
-
-      // Close all opened menus
-      {
-        let menus = this.querySelectorAll(":scope > x-menuitem > x-menu[opened]");
-
-        for (let menu of menus) {
-          await menu.close(true);
-        }
-      }
-
-      let focusedMenuItem = this.querySelector("x-menuitem:focus");
-
-      if (focusedMenuItem) {
-        focusedMenuItem.blur();
-      }
-
-      resolve();
-    });
-  }
-
-  _expandPreviousMenubarItem() {
-    let items = [...this.querySelectorAll(":scope > x-menuitem:not([disabled])")];
-    let focusedItem = this.querySelector(":focus").closest("x-menubar > x-menuitem");
-
-    if (items.length > 1 && focusedItem) {
-      let i = items.indexOf(focusedItem);
-      let previousItem = items[i - 1] || items[items.length-1];
-      this._expandMenubarItem(previousItem);
-    }
-  }
-
-  _expandNextMenubarItem() {
-    let items = [...this.querySelectorAll(":scope > x-menuitem:not([disabled])")];
-    let focusedItem = this.querySelector(":focus").closest("x-menubar > x-menuitem");
-
-    if (focusedItem && items.length > 1) {
-      let i = items.indexOf(focusedItem);
-      let nextItem = items[i + 1] || items[0];
-      this._expandMenubarItem(nextItem);
     }
   }
 }

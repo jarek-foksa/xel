@@ -29,6 +29,38 @@ let shadowTemplate = html`
 // @event
 //   change {oldValue: string?, newValue: string?}
 export class XSelectElement extends HTMLElement {
+  static get observedAttributes() {
+    return ["disabled"];
+  }
+
+  // @type
+  //   string?
+  // @default
+  //   null
+  get value() {
+    let item = this.querySelector(`x-menuitem[selected="true"]`);
+    return item ? item.value : null;
+  }
+  set value(value) {
+    for (let item of this.querySelectorAll("x-menuitem")) {
+      item.selected = (item.value === value && value !== null);
+    }
+  }
+
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -71,109 +103,6 @@ export class XSelectElement extends HTMLElement {
   attributeChangedCallback(name) {
     if (name === "disabled") {
       this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  static get observedAttributes() {
-    return ["disabled"];
-  }
-
-  // @type
-  //   string?
-  // @default
-  //   null
-  get value() {
-    let item = this.querySelector(`x-menuitem[selected="true"]`);
-    return item ? item.value : null;
-  }
-  set value(value) {
-    for (let item of this.querySelectorAll("x-menuitem")) {
-      item.selected = (item.value === value && value !== null);
-    }
-  }
-
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get disabled() {
-    return this.hasAttribute("disabled");
-  }
-  set disabled(disabled) {
-    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _onDisabledAttributeChange() {
-    this._updateAccessabilityAttributes();
-  }
-
-  _onMutation(records) {
-    for (let record of records) {
-      if (record.type === "attributes" && record.target.localName === "x-menuitem" && record.attributeName === "selected") {
-        this._updateButtonTh300();
-      }
-    }
-  }
-
-  _onPointerDown(event) {
-    // Don't focus the widget with pointer
-    if (!event.target.closest("x-menu") && this.matches(":focus") === false) {
-      event.preventDefault();
-    }
-  }
-
-  _onClick(event) {
-    if (event.button !== 0) {
-      return;
-    }
-
-    if (this._canExpand()) {
-      this._expand();
-    }
-    else if (this._canCollapse()) {
-      let clickedItem = event.target.closest("x-menuitem");
-
-      if (clickedItem) {
-        let oldValue = this.value;
-        let newValue = clickedItem.value;
-
-        for (let item of this.querySelectorAll("x-menuitem")) {
-          item.selected = (item === clickedItem);
-        }
-
-        if (oldValue !== newValue) {
-          this.dispatchEvent(new CustomEvent("change", {bubbles: true, detail: {oldValue, newValue}}));
-        }
-
-        this._collapse(clickedItem.whenTriggerEnd);
-      }
-    }
-  }
-
-  _onOverlayClick(event) {
-    this._collapse();
-  }
-
-  _onKeyDown(event) {
-    let menu = this.querySelector(":scope > x-menu");
-
-    if (event.key === "Enter" || event.key === "Space" || event.key === "ArrowUp" || event.key === "ArrowDown") {
-      if (this._canExpand()) {
-        event.preventDefault();
-        this._expand();
-      }
-    }
-
-    else if (event.key === "Escape") {
-      if (this._canCollapse()) {
-        event.preventDefault();
-        this._collapse();
-      }
     }
   }
 
@@ -367,6 +296,77 @@ export class XSelectElement extends HTMLElement {
         for (let item of menu.querySelectorAll("x-menuitem")) {
           item.setAttribute("role", "option");
         }
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _onDisabledAttributeChange() {
+    this._updateAccessabilityAttributes();
+  }
+
+  _onMutation(records) {
+    for (let record of records) {
+      if (record.type === "attributes" && record.target.localName === "x-menuitem" && record.attributeName === "selected") {
+        this._updateButtonTh300();
+      }
+    }
+  }
+
+  _onPointerDown(event) {
+    // Don't focus the widget with pointer
+    if (!event.target.closest("x-menu") && this.matches(":focus") === false) {
+      event.preventDefault();
+    }
+  }
+
+  _onClick(event) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    if (this._canExpand()) {
+      this._expand();
+    }
+    else if (this._canCollapse()) {
+      let clickedItem = event.target.closest("x-menuitem");
+
+      if (clickedItem) {
+        let oldValue = this.value;
+        let newValue = clickedItem.value;
+
+        for (let item of this.querySelectorAll("x-menuitem")) {
+          item.selected = (item === clickedItem);
+        }
+
+        if (oldValue !== newValue) {
+          this.dispatchEvent(new CustomEvent("change", {bubbles: true, detail: {oldValue, newValue}}));
+        }
+
+        this._collapse(clickedItem.whenTriggerEnd);
+      }
+    }
+  }
+
+  _onOverlayClick(event) {
+    this._collapse();
+  }
+
+  _onKeyDown(event) {
+    let menu = this.querySelector(":scope > x-menu");
+
+    if (event.key === "Enter" || event.key === "Space" || event.key === "ArrowUp" || event.key === "ArrowDown") {
+      if (this._canExpand()) {
+        event.preventDefault();
+        this._expand();
+      }
+    }
+
+    else if (event.key === "Escape") {
+      if (this._canCollapse()) {
+        event.preventDefault();
+        this._collapse();
       }
     }
   }

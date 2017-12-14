@@ -5,6 +5,22 @@
 //   https://www.youtube.com/watch?v=uCIC2LNt0bk
 
 export class XRadiosElement extends HTMLElement {
+  // @type
+  //   string?
+  // @default
+  //   null
+  get value() {
+    let radio = this.querySelector(`x-radio[toggled]`);
+    return radio ? radio.value : null;
+  }
+  set value(value) {
+    for (let radio of this.querySelectorAll("x-radio")) {
+      radio.toggled = (radio.value === value && value !== null);
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -24,22 +40,6 @@ export class XRadiosElement extends HTMLElement {
     for (let radio of radios) {
       radio.setAttribute("tabindex", radio === defaultRadio ? "0 ": "-1");
       radio.setAttribute("aria-checked", radio === defaultRadio);
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @type
-  //   string?
-  // @default
-  //   null
-  get value() {
-    let radio = this.querySelector(`x-radio[toggled]`);
-    return radio ? radio.value : null;
-  }
-  set value(value) {
-    for (let radio of this.querySelectorAll("x-radio")) {
-      radio.toggled = (radio.value === value && value !== null);
     }
   }
 

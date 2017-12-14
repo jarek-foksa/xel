@@ -31,26 +31,6 @@ let shadowTemplate = html`
 //   select
 //   rearrange
 export class XDocTabsElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._waitingForTabToClose = false;
-    this._waitingForPointerMoveAfterClosingTab = false;
-
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this["#open-button"].addEventListener("click", (event) => this._onOpenButtonClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // @type
   //   boolean
   // @default
@@ -75,6 +55,26 @@ export class XDocTabsElement extends HTMLElement {
   }
   set maxTabs(maxTabs) {
     this.setAttribute("maxtabs", maxTabs);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._waitingForTabToClose = false;
+    this._waitingForPointerMoveAfterClosingTab = false;
+
+    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this["#open-button"].addEventListener("click", (event) => this._onOpenButtonClick(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -294,6 +294,219 @@ export class XDocTabsElement extends HTMLElement {
       otherTab.style.order = parseInt(otherTab.style.order) - 1;
       selectedTab.style.order = parseInt(selectedTab.style.order) + 1;
     }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @info
+  //   Returns a promise that is resolved when the pointer is moved by at least the given distance.
+  // @type
+  //   (number) => Promise
+  _whenPointerMoved(distance = 3) {
+    return new Promise((resolve) => {
+      let pointerMoveListener, pointerOutListener, blurListener;
+      let fromPoint = null;
+
+      let removeListeners = () => {
+        window.removeEventListener("pointermove", pointerMoveListener);
+        window.removeEventListener("pointerout", pointerOutListener);
+        window.removeEventListener("blur", blurListener);
+      };
+
+      window.addEventListener("pointermove", pointerMoveListener = (event) => {
+        if (fromPoint === null) {
+          fromPoint = {x: event.clientX, y: event.clientY};
+        }
+        else {
+          let toPoint = {x: event.clientX, y: event.clientY};
+
+          if (getDistanceBetweenPoints(fromPoint, toPoint) >= distance) {
+            removeListeners();
+            resolve();
+          }
+        }
+      });
+
+      window.addEventListener("pointerout", pointerOutListener = (event) => {
+        if (event.toElement === null) {
+          removeListeners();
+          resolve();
+        }
+      });
+
+      window.addEventListener("blur", blurListener = () => {
+        removeListeners();
+        resolve();
+      });
+    });
+  }
+
+  _animateSelectionIndicator(fromTab, toTab) {
+    let mainBBox = this.getBoundingClientRect();
+    let startBBox = fromTab ? fromTab.getBoundingClientRect() : null;
+    let endBBox = toTab.getBoundingClientRect();
+    let computedStyle = getComputedStyle(toTab);
+
+    if (startBBox === null) {
+      startBBox = DOMRect.fromRect(endBBox);
+      startBBox.x += startBBox.width / 2;
+      startBBox.width = 0;
+    }
+
+    this["#selection-indicator"].style.height = computedStyle.getPropertyValue("--selection-indicator-height");
+    this["#selection-indicator"].style.background = computedStyle.getPropertyValue("--selection-indicator-color");
+    this["#selection-indicator"].hidden = false;
+
+    this.setAttribute("animatingindicator", "");
+
+    let animation = this["#selection-indicator"].animate(
+      [
+        {
+          bottom: (startBBox.bottom - mainBBox.bottom) + "px",
+          left: (startBBox.left - mainBBox.left) + "px",
+          width: startBBox.width + "px",
+        },
+        {
+          bottom: (endBBox.bottom - mainBBox.bottom) + "px",
+          left: (endBBox.left - mainBBox.left) + "px",
+          width: endBBox.width + "px",
+        }
+      ],
+      {
+        duration: 200,
+        iterations: 1,
+        delay: 0,
+        easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
+      }
+    );
+
+    animation.finished.then(() => {
+      this["#selection-indicator"].hidden = true;
+      this.removeAttribute("animatingindicator");
+    });
+
+    return animation;
+  }
+
+  getTabsByScreenIndex() {
+    let $screenIndex = Symbol();
+
+    for (let tab of this.children) {
+      tab[$screenIndex] = this._getTabScreenIndex(tab);
+    }
+
+    return [...this.children].sort((tab1, tab2) => tab1[$screenIndex] > tab2[$screenIndex]);
+  }
+
+  _getTabScreenIndex(tab) {
+    let tabBounds = tab.getBoundingClientRect();
+    let tabsBounds = this.getBoundingClientRect();
+
+    if (tabBounds.left - tabsBounds.left < tabBounds.width / 2) {
+      return 0;
+    }
+    else {
+      let offset = (tabBounds.width / 2);
+
+      for (let i = 1; i < this.maxTabs; i += 1) {
+        if (tabBounds.left - tabsBounds.left >= offset &&
+            tabBounds.left - tabsBounds.left < offset + tabBounds.width) {
+          if (i > this.childElementCount - 1) {
+            return this.childElementCount - 1;
+          }
+          else {
+            return i;
+          }
+        }
+        else {
+          offset += tabBounds.width;
+        }
+      }
+    }
+  }
+
+  _getTabWithScreenIndex(screenIndex) {
+    for (let tab of this.children) {
+      if (this._getTabScreenIndex(tab) === screenIndex) {
+        return tab;
+      }
+    }
+
+    return null;
+  }
+
+  _getPreviousTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
+    let tabs = this.getTabsByScreenIndex();
+    let tabScreenIndex = tabs.indexOf(tab);
+    let previousTab = null;
+
+    for (let i = tabScreenIndex - 1; i >= 0; i -= 1) {
+      let tab = tabs[i];
+
+      if (skipDisabled && tab.disabled) {
+        continue;
+      }
+      else {
+        previousTab = tab;
+        break;
+      }
+    }
+
+    if (wrapAround) {
+      if (previousTab === null) {
+        for (let i = tabs.length - 1; i > tabScreenIndex; i -= 1) {
+          let tab = tabs[i];
+
+          if (skipDisabled && tab.disabled) {
+            continue;
+          }
+          else {
+            previousTab = tab;
+            break;
+          }
+        }
+      }
+    }
+
+    return previousTab;
+  }
+
+  // @info
+  //   Get previous tab on screen.
+  _getNextTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
+    let tabs = this.getTabsByScreenIndex();
+    let tabScreenIndex = tabs.indexOf(tab);
+    let nextTab = null;
+
+    for (let i = tabScreenIndex + 1; i < tabs.length; i += 1) {
+      let tab = tabs[i];
+
+      if (skipDisabled && tab.disabled) {
+        continue;
+      }
+      else {
+        nextTab = tab;
+        break;
+      }
+    }
+
+    if (wrapAround) {
+      if (nextTab === null) {
+        for (let i = 0; i < tabScreenIndex; i += 1) {
+          let tab = tabs[i];
+
+          if (skipDisabled && tab.disabled) {
+            continue;
+          }
+          else {
+            nextTab = tab;
+            break;
+          }
+        }
+      }
+    }
+
+    return nextTab;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -523,222 +736,6 @@ export class XDocTabsElement extends HTMLElement {
         nextTab.focus();
       }
     }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @info
-  //   Returns a promise that is resolved when the pointer is moved by at least the given distance.
-  // @type
-  //   (number) => Promise
-  _whenPointerMoved(distance = 3) {
-    return new Promise((resolve) => {
-      let pointerMoveListener, pointerOutListener, blurListener;
-      let fromPoint = null;
-
-      let removeListeners = () => {
-        window.removeEventListener("pointermove", pointerMoveListener);
-        window.removeEventListener("pointerout", pointerOutListener);
-        window.removeEventListener("blur", blurListener);
-      };
-
-      window.addEventListener("pointermove", pointerMoveListener = (event) => {
-        if (fromPoint === null) {
-          fromPoint = {x: event.clientX, y: event.clientY};
-        }
-        else {
-          let toPoint = {x: event.clientX, y: event.clientY};
-
-          if (getDistanceBetweenPoints(fromPoint, toPoint) >= distance) {
-            removeListeners();
-            resolve();
-          }
-        }
-      });
-
-      window.addEventListener("pointerout", pointerOutListener = (event) => {
-        if (event.toElement === null) {
-          removeListeners();
-          resolve();
-        }
-      });
-
-      window.addEventListener("blur", blurListener = () => {
-        removeListeners();
-        resolve();
-      });
-    });
-  }
-
-  _animateSelectionIndicator(fromTab, toTab) {
-    let mainBBox = this.getBoundingClientRect();
-    let startBBox = fromTab ? fromTab.getBoundingClientRect() : null;
-    let endBBox = toTab.getBoundingClientRect();
-    let computedStyle = getComputedStyle(toTab);
-
-    if (startBBox === null) {
-      startBBox = DOMRect.fromRect(endBBox);
-      startBBox.x += startBBox.width / 2;
-      startBBox.width = 0;
-    }
-
-    this["#selection-indicator"].style.height = computedStyle.getPropertyValue("--selection-indicator-height");
-    this["#selection-indicator"].style.background = computedStyle.getPropertyValue("--selection-indicator-color");
-    this["#selection-indicator"].hidden = false;
-
-    this.setAttribute("animatingindicator", "");
-
-    let animation = this["#selection-indicator"].animate(
-      [
-        {
-          bottom: (startBBox.bottom - mainBBox.bottom) + "px",
-          left: (startBBox.left - mainBBox.left) + "px",
-          width: startBBox.width + "px",
-        },
-        {
-          bottom: (endBBox.bottom - mainBBox.bottom) + "px",
-          left: (endBBox.left - mainBBox.left) + "px",
-          width: endBBox.width + "px",
-        }
-      ],
-      {
-        duration: 200,
-        iterations: 1,
-        delay: 0,
-        easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
-      }
-    );
-
-    animation.finished.then(() => {
-      this["#selection-indicator"].hidden = true;
-      this.removeAttribute("animatingindicator");
-    });
-
-    return animation;
-  }
-
-  _moveSelectedTabRight() {
-  }
-
-  getTabsByScreenIndex() {
-    let $screenIndex = Symbol();
-
-    for (let tab of this.children) {
-      tab[$screenIndex] = this._getTabScreenIndex(tab);
-    }
-
-    return [...this.children].sort((tab1, tab2) => tab1[$screenIndex] > tab2[$screenIndex]);
-  }
-
-  _getTabScreenIndex(tab) {
-    let tabBounds = tab.getBoundingClientRect();
-    let tabsBounds = this.getBoundingClientRect();
-
-    if (tabBounds.left - tabsBounds.left < tabBounds.width / 2) {
-      return 0;
-    }
-    else {
-      let offset = (tabBounds.width / 2);
-
-      for (let i = 1; i < this.maxTabs; i += 1) {
-        if (tabBounds.left - tabsBounds.left >= offset &&
-            tabBounds.left - tabsBounds.left < offset + tabBounds.width) {
-          if (i > this.childElementCount - 1) {
-            return this.childElementCount - 1;
-          }
-          else {
-            return i;
-          }
-        }
-        else {
-          offset += tabBounds.width;
-        }
-      }
-    }
-  }
-
-  _getTabWithScreenIndex(screenIndex) {
-    for (let tab of this.children) {
-      if (this._getTabScreenIndex(tab) === screenIndex) {
-        return tab;
-      }
-    }
-
-    return null;
-  }
-
-  _getPreviousTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
-    let tabs = this.getTabsByScreenIndex();
-    let tabScreenIndex = tabs.indexOf(tab);
-    let previousTab = null;
-
-    for (let i = tabScreenIndex - 1; i >= 0; i -= 1) {
-      let tab = tabs[i];
-
-      if (skipDisabled && tab.disabled) {
-        continue;
-      }
-      else {
-        previousTab = tab;
-        break;
-      }
-    }
-
-    if (wrapAround) {
-      if (previousTab === null) {
-        for (let i = tabs.length - 1; i > tabScreenIndex; i -= 1) {
-          let tab = tabs[i];
-
-          if (skipDisabled && tab.disabled) {
-            continue;
-          }
-          else {
-            previousTab = tab;
-            break;
-          }
-        }
-      }
-    }
-
-    return previousTab;
-  }
-
-  // @info
-  //   Get previous tab on screen.
-  _getNextTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
-    let tabs = this.getTabsByScreenIndex();
-    let tabScreenIndex = tabs.indexOf(tab);
-    let nextTab = null;
-
-    for (let i = tabScreenIndex + 1; i < tabs.length; i += 1) {
-      let tab = tabs[i];
-
-      if (skipDisabled && tab.disabled) {
-        continue;
-      }
-      else {
-        nextTab = tab;
-        break;
-      }
-    }
-
-    if (wrapAround) {
-      if (nextTab === null) {
-        for (let i = 0; i < tabScreenIndex; i += 1) {
-          let tab = tabs[i];
-
-          if (skipDisabled && tab.disabled) {
-            continue;
-          }
-          else {
-            nextTab = tab;
-            break;
-          }
-        }
-      }
-    }
-
-    return nextTab;
   }
 };
 

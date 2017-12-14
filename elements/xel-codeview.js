@@ -13,6 +13,19 @@ let shadowTemplate = html`
 `;
 
 export class XelCodeViewElement extends HTMLElement {
+  // @type
+  //   string
+  // @default
+  //   ""
+  get value() {
+    return this._value;
+  }
+  set value(value) {
+    this._value = value;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -33,20 +46,6 @@ export class XelCodeViewElement extends HTMLElement {
     let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
     this["#prism-theme"].setAttribute("href", `node_modules/prismjs/themes/prism-coy.css`);
     this._update();
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @type
-  //   string
-  // @default
-  //   ""
-  get value() {
-    return this._value;
-  }
-  set value(value) {
-    this._value = value;
-    //this._update();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

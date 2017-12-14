@@ -24,6 +24,22 @@ let shadowTemplate = html`
 //   open XMenu
 //   close XMenu
 export class XMenuElement extends HTMLElement {
+  static get observedAttributes() {
+    return ["opened"];
+  }
+
+  // @info
+  //   Whether the menu is shown on screen.
+  // @type
+  //   boolean
+  // @readonly
+  // @attribute
+  get opened() {
+    return this.hasAttribute("opened");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -60,237 +76,6 @@ export class XMenuElement extends HTMLElement {
   attributeChangedCallback(name) {
     if (name === "opened") {
       this._onOpenedAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  static get observedAttributes() {
-    return ["opened"];
-  }
-
-  // @info
-  //   Whether the menu is shown on screen.
-  // @type
-  //   boolean
-  // @readonly
-  // @attribute
-  get opened() {
-    return this.hasAttribute("opened");
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _onOpenedAttributeChange() {
-    this.setAttribute("aria-hidden", !this.opened);
-  }
-
-  _onPointerDown(event) {
-    if (event.target === this || event.target.localName === "hr") {
-      event.stopPropagation();
-    }
-  }
-
-  _onPointerOver(event) {
-    if (this._isClosing() || event.pointerType !== "mouse") {
-      return;
-    }
-
-    if (event.target.closest("x-menu") === this) {
-      if (this._isPointerOverMenuBlock === false) {
-        this._onMenuBlockPointerEnter();
-      }
-
-      // Focus and expand the menu item under pointer and collapse other items
-      {
-        let item = event.target.closest("x-menuitem");
-
-        if (item && item.disabled === false && item.closest("x-menu") === this) {
-          if (item.matches(":focus") === false) {
-            this._delay( async () => {
-              let otherItem = this.querySelector(":scope > x-menuitem:focus");
-
-              if (otherItem) {
-                let otherSubmenu = otherItem.querySelector("x-menu");
-
-                if (otherSubmenu) {
-                  // otherItem.removeAttribute("expanded");
-                  otherSubmenu.close();
-                }
-              }
-
-              item.focus();
-
-              let menu = item.closest("x-menu");
-              let submenu = item.querySelector("x-menu");
-              let otherItems = [...this.querySelectorAll(":scope > x-menuitem")].filter($0 => $0 !== item);
-
-              if (submenu) {
-                await sleep(60);
-
-                if (item.matches(":focus") && submenu.opened === false) {
-                  submenu.openNextToElement(item, "horizontal");
-                }
-              }
-
-              for (let otherItem of otherItems) {
-                let otherSubmenu = otherItem.querySelector("x-menu");
-
-                if (otherSubmenu) {
-                  otherSubmenu.close();
-                }
-              }
-            })
-          }
-        }
-        else {
-          this._delay(() => {
-            this.focus();
-          });
-        }
-      }
-    }
-  }
-
-  _onPointerOut(event) {
-    // @bug: event.relatedTarget leaks shadowDOM, so we have to use closest() utility function
-    if (!event.relatedTarget || closest(event.relatedTarget, "x-menu") !== this) {
-      if (this._isPointerOverMenuBlock === true) {
-        this._onMenuBlockPointerLeave();
-      }
-    }
-  }
-
-  _onMenuBlockPointerEnter() {
-    if (this._isClosing()) {
-      return;
-    }
-
-    this._isPointerOverMenuBlock = true;
-    this._clearDelay();
-  }
-
-  _onMenuBlockPointerLeave() {
-    if (this._isClosing()) {
-      return;
-    }
-
-    this._isPointerOverMenuBlock = false;
-    this._clearDelay();
-    this.focus();
-  }
-
-  _onPointerMove(event) {
-    this._delayPoints.push({
-      x: event.clientX,
-      y: event.clientY
-    });
-
-    if (this._delayPoints.length > 3) {
-      this._delayPoints.shift();
-    }
-  }
-
-  _onWheel(event) {
-    if (event.target.closest("x-menu") === this) {
-      this._isPointerOverMenuBlock = true;
-    }
-    else {
-      this._isPointerOverMenuBlock = false;
-    }
-  }
-
-  _onScroll(event) {
-    if (this._expandWhenScrolled) {
-      let delta = this["#main"].scrollTop - this._lastScrollTop;
-      this._lastScrollTop = this["#main"].scrollTop;
-
-      if (getTimeStamp() - this._openedTimestamp > 100) {
-        let menuRect = this.getBoundingClientRect();
-
-        if (delta < 0) {
-          if (menuRect.bottom + abs(delta) <= window.innerHeight - windowWhitespace) {
-            this.style.height = (menuRect.height + abs(delta)) + "px";
-          }
-          else {
-            this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
-          }
-        }
-        else if (delta > 0) {
-          let {top, left, height} = getComputedStyle(this);
-
-          if (menuRect.top - abs(delta) >= windowWhitespace) {
-            this.style.top = (parseFloat(top) - abs(delta)) + "px";
-            this.style.height = (parseFloat(height) + abs(delta)) + "px";
-
-            this["#main"].scrollTop = 0;
-            this._lastScrollTop = 0;
-          }
-          else {
-            this.style.top = windowWhitespace + "px";
-            this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
-          }
-        }
-      }
-    }
-  }
-
-  _onKeyDown(event) {
-    if (this._isClosing()) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      event.stopPropagation();
-      this.focusPreviousMenuItem();
-    }
-
-    else if (event.key === "ArrowDown") {
-      event.preventDefault();
-      event.stopPropagation();
-      this.focusNextMenuItem();
-    }
-
-    else if (event.code === "ArrowRight" || event.code === "Enter" || event.code === "Space") {
-      let focusedItem = this.querySelector("x-menuitem:focus");
-
-      if (focusedItem) {
-        let submenu = focusedItem.querySelector("x-menu");
-
-        if (submenu) {
-          event.preventDefault();
-          event.stopPropagation();
-
-          if (submenu.opened === false) {
-            submenu.openNextToElement(focusedItem, "horizontal");
-          }
-
-          let submenuFirstItem = submenu.querySelector("x-menuitem:not([disabled]):not([hidden])");
-
-          if (submenuFirstItem) {
-            submenuFirstItem.focus();
-          }
-        }
-      }
-    }
-
-    else if (event.code === "ArrowLeft") {
-      let focusedItem = this.querySelector("x-menuitem:focus");
-
-      if (focusedItem) {
-        let parentMenu = focusedItem.closest("x-menu");
-        let parentItem = parentMenu.closest("x-menuitem");
-
-        if (parentItem && parentItem.closest("x-menu")) {
-          event.preventDefault();
-          event.stopPropagation();
-
-          parentItem.focus();
-          this.close();
-        }
-      }
     }
   }
 
@@ -971,6 +756,221 @@ export class XMenuElement extends HTMLElement {
     let duration = parseFloat(rawDuration);
     let easing = rest.join(" ");
     return [property, duration, easing];
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _onOpenedAttributeChange() {
+    this.setAttribute("aria-hidden", !this.opened);
+  }
+
+  _onPointerDown(event) {
+    if (event.target === this || event.target.localName === "hr") {
+      event.stopPropagation();
+    }
+  }
+
+  _onPointerOver(event) {
+    if (this._isClosing() || event.pointerType !== "mouse") {
+      return;
+    }
+
+    if (event.target.closest("x-menu") === this) {
+      if (this._isPointerOverMenuBlock === false) {
+        this._onMenuBlockPointerEnter();
+      }
+
+      // Focus and expand the menu item under pointer and collapse other items
+      {
+        let item = event.target.closest("x-menuitem");
+
+        if (item && item.disabled === false && item.closest("x-menu") === this) {
+          if (item.matches(":focus") === false) {
+            this._delay( async () => {
+              let otherItem = this.querySelector(":scope > x-menuitem:focus");
+
+              if (otherItem) {
+                let otherSubmenu = otherItem.querySelector("x-menu");
+
+                if (otherSubmenu) {
+                  // otherItem.removeAttribute("expanded");
+                  otherSubmenu.close();
+                }
+              }
+
+              item.focus();
+
+              let menu = item.closest("x-menu");
+              let submenu = item.querySelector("x-menu");
+              let otherItems = [...this.querySelectorAll(":scope > x-menuitem")].filter($0 => $0 !== item);
+
+              if (submenu) {
+                await sleep(60);
+
+                if (item.matches(":focus") && submenu.opened === false) {
+                  submenu.openNextToElement(item, "horizontal");
+                }
+              }
+
+              for (let otherItem of otherItems) {
+                let otherSubmenu = otherItem.querySelector("x-menu");
+
+                if (otherSubmenu) {
+                  otherSubmenu.close();
+                }
+              }
+            })
+          }
+        }
+        else {
+          this._delay(() => {
+            this.focus();
+          });
+        }
+      }
+    }
+  }
+
+  _onPointerOut(event) {
+    // @bug: event.relatedTarget leaks shadowDOM, so we have to use closest() utility function
+    if (!event.relatedTarget || closest(event.relatedTarget, "x-menu") !== this) {
+      if (this._isPointerOverMenuBlock === true) {
+        this._onMenuBlockPointerLeave();
+      }
+    }
+  }
+
+  _onMenuBlockPointerEnter() {
+    if (this._isClosing()) {
+      return;
+    }
+
+    this._isPointerOverMenuBlock = true;
+    this._clearDelay();
+  }
+
+  _onMenuBlockPointerLeave() {
+    if (this._isClosing()) {
+      return;
+    }
+
+    this._isPointerOverMenuBlock = false;
+    this._clearDelay();
+    this.focus();
+  }
+
+  _onPointerMove(event) {
+    this._delayPoints.push({
+      x: event.clientX,
+      y: event.clientY
+    });
+
+    if (this._delayPoints.length > 3) {
+      this._delayPoints.shift();
+    }
+  }
+
+  _onWheel(event) {
+    if (event.target.closest("x-menu") === this) {
+      this._isPointerOverMenuBlock = true;
+    }
+    else {
+      this._isPointerOverMenuBlock = false;
+    }
+  }
+
+  _onScroll(event) {
+    if (this._expandWhenScrolled) {
+      let delta = this["#main"].scrollTop - this._lastScrollTop;
+      this._lastScrollTop = this["#main"].scrollTop;
+
+      if (getTimeStamp() - this._openedTimestamp > 100) {
+        let menuRect = this.getBoundingClientRect();
+
+        if (delta < 0) {
+          if (menuRect.bottom + abs(delta) <= window.innerHeight - windowWhitespace) {
+            this.style.height = (menuRect.height + abs(delta)) + "px";
+          }
+          else {
+            this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
+          }
+        }
+        else if (delta > 0) {
+          let {top, left, height} = getComputedStyle(this);
+
+          if (menuRect.top - abs(delta) >= windowWhitespace) {
+            this.style.top = (parseFloat(top) - abs(delta)) + "px";
+            this.style.height = (parseFloat(height) + abs(delta)) + "px";
+
+            this["#main"].scrollTop = 0;
+            this._lastScrollTop = 0;
+          }
+          else {
+            this.style.top = windowWhitespace + "px";
+            this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
+          }
+        }
+      }
+    }
+  }
+
+  _onKeyDown(event) {
+    if (this._isClosing()) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.focusPreviousMenuItem();
+    }
+
+    else if (event.key === "ArrowDown") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.focusNextMenuItem();
+    }
+
+    else if (event.code === "ArrowRight" || event.code === "Enter" || event.code === "Space") {
+      let focusedItem = this.querySelector("x-menuitem:focus");
+
+      if (focusedItem) {
+        let submenu = focusedItem.querySelector("x-menu");
+
+        if (submenu) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (submenu.opened === false) {
+            submenu.openNextToElement(focusedItem, "horizontal");
+          }
+
+          let submenuFirstItem = submenu.querySelector("x-menuitem:not([disabled]):not([hidden])");
+
+          if (submenuFirstItem) {
+            submenuFirstItem.focus();
+          }
+        }
+      }
+    }
+
+    else if (event.code === "ArrowLeft") {
+      let focusedItem = this.querySelector("x-menuitem:focus");
+
+      if (focusedItem) {
+        let parentMenu = focusedItem.closest("x-menu");
+        let parentItem = parentMenu.closest("x-menuitem");
+
+        if (parentItem && parentItem.closest("x-menu")) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          parentItem.focus();
+          this.close();
+        }
+      }
+    }
   }
 }
 

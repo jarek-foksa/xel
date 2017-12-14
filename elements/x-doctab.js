@@ -27,43 +27,6 @@ let shadowTemplate = html`
 // @events
 //   close
 export class XDocTabElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this["#close-button"].addEventListener("pointerdown", (event) => this._onCloseButtonPointerDown(event));
-    this["#close-button"].addEventListener("click", (event) => this._onCloseButtonClick(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-  }
-
-  connectedCallback() {
-    this.setAttribute("tabindex", this.selected ? "0" : "-1");
-    this.setAttribute("role", "tab");
-    this.setAttribute("aria-selected", this.selected);
-    this.setAttribute("aria-disabled", this.disabled);
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "selected") {
-      this._onSelectedAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   static get observedAttributes() {
     return ["selected", "disabled"];
   }
@@ -125,6 +88,43 @@ export class XDocTabElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled === true ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this["#close-button"].addEventListener("pointerdown", (event) => this._onCloseButtonPointerDown(event));
+    this["#close-button"].addEventListener("click", (event) => this._onCloseButtonClick(event));
+    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("click", (event) => this._onClick(event));
+  }
+
+  connectedCallback() {
+    this.setAttribute("tabindex", this.selected ? "0" : "-1");
+    this.setAttribute("role", "tab");
+    this.setAttribute("aria-selected", this.selected);
+    this.setAttribute("aria-disabled", this.disabled);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "selected") {
+      this._onSelectedAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

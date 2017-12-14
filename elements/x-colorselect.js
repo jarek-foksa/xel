@@ -20,6 +20,36 @@ let shadowHTML = `
 //   changestart
 //   changeend
 export class XColorSelectElement extends HTMLElement {
+  static get observedAttributes() {
+    return ["value", "disabled"];
+  }
+
+  // @type
+  //   string
+  // @default
+  //   #000000
+  // @attribute
+  get value() {
+    return this.hasAttribute("value") ? this.getAttribute("value") : "#ffffff";
+  }
+  set value(value) {
+    this.setAttribute("value", value);
+  }
+
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -65,32 +95,69 @@ export class XColorSelectElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  static get observedAttributes() {
-    return ["value", "disabled"];
+  async _expand() {
+    let popover = this.querySelector("x-popover");
+
+    if (popover) {
+      this._wasFocusedBeforeExpanding = this.matches(":focus");
+      this.setAttribute("expanded", "");
+
+      this["#overlay"].ownerElement = popover;
+      this["#overlay"].show(false);
+
+      await popover.open(this);
+      popover.focus();
+    }
   }
 
-  // @type
-  //   string
-  // @default
-  //   #000000
-  // @attribute
-  get value() {
-    return this.hasAttribute("value") ? this.getAttribute("value") : "#ffffff";
-  }
-  set value(value) {
-    this.setAttribute("value", value);
+  async _collapse(delay = null) {
+    let popover = this.querySelector("x-popover");
+
+    if (popover) {
+      popover.setAttribute("closing", "");
+
+      await popover.close();
+
+      this["#overlay"].hide(false);
+      this.removeAttribute("expanded");
+
+      if (this._wasFocusedBeforeExpanding) {
+        this.focus();
+      }
+      else {
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
+      }
+
+      popover.removeAttribute("closing");
+    }
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get disabled() {
-    return this.hasAttribute("disabled");
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateInput() {
+    let [r, g, b, a] = parseColor(this.value, "rgba");
+    this["#input"].value = serializeColor([r, g, b, a], "rgba", "hex");
+    this["#input"].style.opacity = a;
   }
-  set disabled(disabled) {
-    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,73 +259,6 @@ export class XColorSelectElement extends HTMLElement {
       if (this.hasAttribute("expanded")) {
         event.preventDefault();
       }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  async _expand() {
-    let popover = this.querySelector("x-popover");
-
-    if (popover) {
-      this._wasFocusedBeforeExpanding = this.matches(":focus");
-      this.setAttribute("expanded", "");
-
-      this["#overlay"].ownerElement = popover;
-      this["#overlay"].show(false);
-
-      await popover.open(this);
-      popover.focus();
-    }
-  }
-
-  async _collapse(delay = null) {
-    let popover = this.querySelector("x-popover");
-
-    if (popover) {
-      popover.setAttribute("closing", "");
-
-      await popover.close();
-
-      this["#overlay"].hide(false);
-      this.removeAttribute("expanded");
-
-      if (this._wasFocusedBeforeExpanding) {
-        this.focus();
-      }
-      else {
-        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
-
-        if (ancestorFocusableElement) {
-          ancestorFocusableElement.focus();
-        }
-      }
-
-      popover.removeAttribute("closing");
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateInput() {
-    let [r, g, b, a] = parseColor(this.value, "rgba");
-    this["#input"].value = serializeColor([r, g, b, a], "rgba", "hex");
-    this["#input"].style.opacity = a;
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
     }
   }
 }

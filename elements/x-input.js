@@ -264,6 +264,34 @@ export class XInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  _updateEmptyState() {
+    if (this.value.length === 0) {
+      this.setAttribute("empty", "");
+    }
+    else {
+      this.removeAttribute("empty");
+    }
+  }
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("role", "input");
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+      }
+
+      delete this[$oldTabIndex];
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   _onTypeAttributeChange() {
     if (this.type === "color") {
       this["#input"].type = "text";
@@ -327,34 +355,6 @@ export class XInputElement extends HTMLElement {
   _onInputChange() {
     this.validate();
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateEmptyState() {
-    if (this.value.length === 0) {
-      this.setAttribute("empty", "");
-    }
-    else {
-      this.removeAttribute("empty");
-    }
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("role", "input");
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
-    }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
-    }
   }
 }
 

@@ -26,6 +26,19 @@ let shadowTemplate = html`
 `;
 
 export class XAccordionElement extends HTMLElement {
+  static get observedAttributes() {
+    return ["expanded"];
+  }
+
+  get expanded() {
+    return this.hasAttribute("expanded");
+  }
+  set expanded(expanded) {
+    expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -62,15 +75,15 @@ export class XAccordionElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  static get observedAttributes() {
-    return ["expanded"];
-  }
+  _updateArrowPosition() {
+    let header = this.querySelector(":scope > header");
 
-  get expanded() {
-    return this.hasAttribute("expanded");
-  }
-  set expanded(expanded) {
-    expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
+    if (header) {
+      this["#arrow-container"].style.height = header.getBoundingClientRect().height + "px";
+    }
+    else {
+      this["#arrow-container"].style.height = null;
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,19 +207,6 @@ export class XAccordionElement extends HTMLElement {
           this.removeAttribute("animating");
         }
       }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateArrowPosition() {
-    let header = this.querySelector(":scope > header");
-
-    if (header) {
-      this["#arrow-container"].style.height = header.getBoundingClientRect().height + "px";
-    }
-    else {
-      this["#arrow-container"].style.height = null;
     }
   }
 }

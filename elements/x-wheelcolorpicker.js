@@ -41,6 +41,20 @@ export class XWheelColorPickerElement extends HTMLElement {
     return ["value"];
   }
 
+  // @type
+  //   string
+  // @default
+  //   "hsla(0, 0%, 100%, 1)"
+  // @attribute
+  get value() {
+    return this.hasAttribute("value") ? this.getAttribute("value") : "hsla(0, 0%, 100%, 1)";
+  }
+  set value(value) {
+    this.setAttribute("value", value);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   constructor() {
     super();
 
@@ -81,16 +95,49 @@ export class XWheelColorPickerElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type
-  //   string
-  // @default
-  //   "hsla(0, 0%, 100%, 1)"
-  // @attribute
-  get value() {
-    return this.hasAttribute("value") ? this.getAttribute("value") : "hsla(0, 0%, 100%, 1)";
+  _update() {
+    this._updateHuesatMarker();
+    this._updateValueSliderMarker();
+    this._updateValueSliderBackground();
+    this._updateAlphaSliderMarker();
+    this._updateAlphaSliderBackground();
   }
-  set value(value) {
-    this.setAttribute("value", value);
+
+  _updateHuesatMarker() {
+    let h = this._h;
+    let s = this._s;
+
+    let wheelSize = 100;
+    let angle = degToRad(h);
+    let radius = (s / 100) * wheelSize/2;
+    let centerPoint = {x: wheelSize/2, y: wheelSize/2};
+
+    let x = ((wheelSize - (centerPoint.x + (radius * cos(angle)))) / wheelSize) * 100;
+    let y = ((centerPoint.y - (radius * sin(angle))) / wheelSize) * 100;
+
+    this["#huesat-marker"].style.left = x + "%";
+    this["#huesat-marker"].style.top = y + "%";
+  }
+
+  _updateValueSliderMarker() {
+    this["#value-slider-marker"].style.left = (100 - normalize(this._v, 0, 100, 2)) + "%";
+  }
+
+  _updateValueSliderBackground() {
+    let gradientBackground = "linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,1))";
+    let solidBackground = serializeColor([this._h, this._s, 100, 1], "hsva", "hex");
+    this["#value-slider"].style.background = `${gradientBackground}, ${solidBackground}`;
+  }
+
+  _updateAlphaSliderMarker() {
+    this["#alpha-slider-marker"].style.left = normalize((1 - this._a) * 100, 0, 100, 2) + "%";
+  }
+
+  _updateAlphaSliderBackground() {
+    let [r, g, b] = hsvToRgb(this._h, this._s, this._v).map($0 => round($0, 0));
+    let backroundA = `url(node_modules/xel/images/checkboard.png) repeat 0 0`;
+    let background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))`;
+    this["#alpha-slider"].style.background = background + "," + backroundA;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,53 +301,6 @@ export class XWheelColorPickerElement extends HTMLElement {
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this._isDraggingAlphaSliderMarker = false;
     });
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _update() {
-    this._updateHuesatMarker();
-    this._updateValueSliderMarker();
-    this._updateValueSliderBackground();
-    this._updateAlphaSliderMarker();
-    this._updateAlphaSliderBackground();
-  }
-
-  _updateHuesatMarker() {
-    let h = this._h;
-    let s = this._s;
-
-    let wheelSize = 100;
-    let angle = degToRad(h);
-    let radius = (s / 100) * wheelSize/2;
-    let centerPoint = {x: wheelSize/2, y: wheelSize/2};
-
-    let x = ((wheelSize - (centerPoint.x + (radius * cos(angle)))) / wheelSize) * 100;
-    let y = ((centerPoint.y - (radius * sin(angle))) / wheelSize) * 100;
-
-    this["#huesat-marker"].style.left = x + "%";
-    this["#huesat-marker"].style.top = y + "%";
-  }
-
-  _updateValueSliderMarker() {
-    this["#value-slider-marker"].style.left = (100 - normalize(this._v, 0, 100, 2)) + "%";
-  }
-
-  _updateValueSliderBackground() {
-    let gradientBackground = "linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,1))";
-    let solidBackground = serializeColor([this._h, this._s, 100, 1], "hsva", "hex");
-    this["#value-slider"].style.background = `${gradientBackground}, ${solidBackground}`;
-  }
-
-  _updateAlphaSliderMarker() {
-    this["#alpha-slider-marker"].style.left = normalize((1 - this._a) * 100, 0, 100, 2) + "%";
-  }
-
-  _updateAlphaSliderBackground() {
-    let [r, g, b] = hsvToRgb(this._h, this._s, this._v).map($0 => round($0, 0));
-    let backroundA = `url(node_modules/xel/images/checkboard.png) repeat 0 0`;
-    let background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))`;
-    this["#alpha-slider"].style.background = background + "," + backroundA;
   }
 };
 

@@ -20,31 +20,6 @@ let shadowTemplate = html`
 // @events
 //   change
 export class XTabsElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._wasFocusedBeforeExpanding = false;
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
-
-    this["#overlay"] = createElement("x-overlay");
-    this["#overlay"].style.background = "rgba(0, 0, 0, 0)";
-
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-  }
-
-  connectedCallback() {
-    this.setAttribute("role", "tablist");
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // @type
   //   string?
   // @default
@@ -73,6 +48,163 @@ export class XTabsElement extends HTMLElement {
   }
   set centered(centered) {
     centered === true ? this.setAttribute("centered", "") : this.removeAttribute("centered");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._wasFocusedBeforeExpanding = false;
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this["#overlay"] = createElement("x-overlay");
+    this["#overlay"].style.background = "rgba(0, 0, 0, 0)";
+
+    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+  }
+
+  connectedCallback() {
+    this.setAttribute("role", "tablist");
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @info
+  //   Expands given tab by opening its menu.
+  _expand(tab) {
+    return new Promise( async (resolve) => {
+      let menu = tab.querySelector(":scope > x-menu");
+      let label = tab.querySelector("x-label");
+
+      if (menu) {
+        this._wasFocusedBeforeExpanding = this.querySelector("*:focus") !== null;
+
+        let over = getComputedStyle(tab).getPropertyValue("--menu-position").trim() === "over";
+        let whenOpened = over ? menu.openOverLabel(label) :  menu.openNextToElement(tab, "vertical", 3);
+
+        tab.setAttribute("expanded", "");
+
+        // When menu closes, focus the tab
+        menu.addEventListener("close", () => {
+          let tabs = this.querySelectorAll("x-tab");
+          let closedTab = tab;
+
+          if (this._wasFocusedBeforeExpanding) {
+            for (let tab of tabs) {
+              tab.tabIndex = (tab === closedTab ? 0 : -1);
+            }
+
+            closedTab.focus();
+          }
+          else {
+            for (let tab of tabs) {
+              tab.tabIndex = (tab.selected ? 0 : -1);
+            }
+
+            let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+            if (ancestorFocusableElement) {
+              ancestorFocusableElement.focus();
+            }
+          }
+        }, {once: true});
+
+        await whenOpened;
+
+        if (!tab.querySelector("*:focus")) {
+          menu.focus();
+        }
+
+        this["#overlay"].ownerElement = menu;
+        this["#overlay"].show(false);
+      }
+
+      resolve();
+    });
+  }
+
+  // @info
+  //   Collapses currently expanded tab by closing its menu.
+  _collapse(delay) {
+    return new Promise( async (resolve) => {
+      let menu = this.querySelector("x-menu[opened]");
+
+      if (menu && !menu.hasAttribute("closing")) {
+        let tabs = this.querySelectorAll("x-tab");
+        let closedTab = menu.closest("x-tab");
+        menu.setAttribute("closing", "");
+
+        await delay;
+        await menu.close();
+
+        this["#overlay"].hide(false);
+
+        menu.removeAttribute("closing");
+        closedTab.removeAttribute("expanded");
+      }
+    });
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _animateSelectionIndicator(startTab, endTab) {
+    return new Promise( async (resolve) => {
+      let mainBBox = this.getBoundingClientRect();
+      let startBBox = startTab ? startTab.getBoundingClientRect() : null;
+      let endBBox = endTab.getBoundingClientRect();
+      let computedStyle = getComputedStyle(endTab);
+
+      if (startBBox === null) {
+        startBBox = DOMRect.fromRect(endBBox);
+        startBBox.x += startBBox.width / 2;
+        startBBox.width = 0;
+      }
+
+      this["#selection-indicator"].style.height = computedStyle.getPropertyValue("--selection-indicator-height");
+
+      if (this["#selection-indicator"].style.height !== "0px") {
+        this["#selection-indicator"].style.background = computedStyle.getPropertyValue("--selection-indicator-background");
+        this["#selection-indicator"].hidden = false;
+
+        this.setAttribute("animatingindicator", "");
+
+        let animation = this["#selection-indicator"].animate(
+          [
+            {
+              bottom: (startBBox.bottom - mainBBox.bottom) + "px",
+              left: (startBBox.left - mainBBox.left) + "px",
+              width: startBBox.width + "px",
+            },
+            {
+              bottom: (endBBox.bottom - mainBBox.bottom) + "px",
+              left: (endBBox.left - mainBBox.left) + "px",
+              width: endBBox.width + "px",
+            }
+          ],
+          {
+            duration: 100,
+            iterations: 1,
+            delay: 0,
+            easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
+          }
+        );
+
+        await animation.finished;
+
+        this["#selection-indicator"].hidden = true;
+        this.removeAttribute("animatingindicator");
+      }
+
+      resolve();
+    });
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,138 +373,6 @@ export class XTabsElement extends HTMLElement {
         }
       }
     }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @info
-  //   Expands given tab by opening its menu.
-  _expand(tab) {
-    return new Promise( async (resolve) => {
-      let menu = tab.querySelector(":scope > x-menu");
-      let label = tab.querySelector("x-label");
-
-      if (menu) {
-        this._wasFocusedBeforeExpanding = this.querySelector("*:focus") !== null;
-
-        let over = getComputedStyle(tab).getPropertyValue("--menu-position").trim() === "over";
-        let whenOpened = over ? menu.openOverLabel(label) :  menu.openNextToElement(tab, "vertical", 3);
-
-        tab.setAttribute("expanded", "");
-
-        // When menu closes, focus the tab
-        menu.addEventListener("close", () => {
-          let tabs = this.querySelectorAll("x-tab");
-          let closedTab = tab;
-
-          if (this._wasFocusedBeforeExpanding) {
-            for (let tab of tabs) {
-              tab.tabIndex = (tab === closedTab ? 0 : -1);
-            }
-
-            closedTab.focus();
-          }
-          else {
-            for (let tab of tabs) {
-              tab.tabIndex = (tab.selected ? 0 : -1);
-            }
-
-            let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
-
-            if (ancestorFocusableElement) {
-              ancestorFocusableElement.focus();
-            }
-          }
-        }, {once: true});
-
-        await whenOpened;
-
-        if (!tab.querySelector("*:focus")) {
-          menu.focus();
-        }
-
-        this["#overlay"].ownerElement = menu;
-        this["#overlay"].show(false);
-      }
-
-      resolve();
-    });
-  }
-
-  // @info
-  //   Collapses currently expanded tab by closing its menu.
-  _collapse(delay) {
-    return new Promise( async (resolve) => {
-      let menu = this.querySelector("x-menu[opened]");
-
-      if (menu && !menu.hasAttribute("closing")) {
-        let tabs = this.querySelectorAll("x-tab");
-        let closedTab = menu.closest("x-tab");
-        menu.setAttribute("closing", "");
-
-        await delay;
-        await menu.close();
-
-        this["#overlay"].hide(false);
-
-        menu.removeAttribute("closing");
-        closedTab.removeAttribute("expanded");
-      }
-    });
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _animateSelectionIndicator(startTab, endTab) {
-    return new Promise( async (resolve) => {
-      let mainBBox = this.getBoundingClientRect();
-      let startBBox = startTab ? startTab.getBoundingClientRect() : null;
-      let endBBox = endTab.getBoundingClientRect();
-      let computedStyle = getComputedStyle(endTab);
-
-      if (startBBox === null) {
-        startBBox = DOMRect.fromRect(endBBox);
-        startBBox.x += startBBox.width / 2;
-        startBBox.width = 0;
-      }
-
-      this["#selection-indicator"].style.height = computedStyle.getPropertyValue("--selection-indicator-height");
-
-      if (this["#selection-indicator"].style.height !== "0px") {
-        this["#selection-indicator"].style.background = computedStyle.getPropertyValue("--selection-indicator-background");
-        this["#selection-indicator"].hidden = false;
-
-        this.setAttribute("animatingindicator", "");
-
-        let animation = this["#selection-indicator"].animate(
-          [
-            {
-              bottom: (startBBox.bottom - mainBBox.bottom) + "px",
-              left: (startBBox.left - mainBBox.left) + "px",
-              width: startBBox.width + "px",
-            },
-            {
-              bottom: (endBBox.bottom - mainBBox.bottom) + "px",
-              left: (endBBox.left - mainBBox.left) + "px",
-              width: endBBox.width + "px",
-            }
-          ],
-          {
-            duration: 100,
-            iterations: 1,
-            delay: 0,
-            easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
-          }
-        );
-
-        await animation.finished;
-
-        this["#selection-indicator"].hidden = true;
-        this.removeAttribute("animatingindicator");
-      }
-
-      resolve();
-    });
   }
 }
 

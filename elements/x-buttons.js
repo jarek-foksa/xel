@@ -17,35 +17,6 @@ let shadowTemplate = html`
 // @events
 //   toggle
 export class XButtonsElement extends HTMLElement {
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    this.addEventListener("click", (event) => this._onClick(event), true);
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-  }
-
-  connectedCallback() {
-    for (let child of this.children) {
-      if (child.localName === "x-button") {
-        let boxShadow = getComputedStyle(child).boxShadow;
-
-        if (boxShadow !== "none") {
-          this.setAttribute("hasboxshadow", "");
-        }
-        else {
-          this.removeAttribute("hasboxshadow");
-        }
-
-        break;
-      }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // @info
   //  Specifies what should happen when user clicks a button:
   //  -1 - Do not toggle any buttons
@@ -104,6 +75,41 @@ export class XButtonsElement extends HTMLElement {
         button.toggled = (button === matchedButton);
       }
     }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+    this.addEventListener("click", (event) => this._onClick(event), true);
+    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+  }
+
+  connectedCallback() {
+    for (let child of this.children) {
+      if (child.localName === "x-button") {
+        let boxShadow = getComputedStyle(child).boxShadow;
+
+        if (boxShadow !== "none") {
+          this.setAttribute("hasboxshadow", "");
+        }
+        else {
+          this.removeAttribute("hasboxshadow");
+        }
+
+        break;
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _getButtons() {
+    return [...this.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,12 +191,6 @@ export class XButtonsElement extends HTMLElement {
         element.parentElement.lastElementChild.focus();
       }
     }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _getButtons() {
-    return [...this.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
   }
 }
 
