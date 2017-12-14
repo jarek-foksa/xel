@@ -262,6 +262,11 @@ export class XInputElement extends HTMLElement {
     this["#input"].select();
   }
 
+  clear() {
+    this.value = "";
+    this.removeAttribute("invalid");
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _updateEmptyState() {
