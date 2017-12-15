@@ -13,6 +13,8 @@ let shadowTemplate = html`
 
     <main id="main">
       <slot></slot>
+      <x-icon id="date-clear"  name="clear"></x-icon>
+      <x-icon id="date-picker" name="date-range"></x-icon>
       <input id="input" spellcheck="false"></input>
     </main>
   </template>
@@ -29,7 +31,7 @@ export class XInputElement extends HTMLElement {
   }
 
   // @type
-  //   "text" || "email" || "password" || "url" || "color"
+  //   "text" || "email" || "password" || "url" || "color" || "date"
   // @default
   //   "text"
   // @attribute
@@ -51,7 +53,7 @@ export class XInputElement extends HTMLElement {
   }
   set value(value) {
     if (this["#input"].value !== value) {
-      if (this.matches(":focus")) {
+      if (this["#input"].type !== 'date' && this.matches(":focus")) {
         // https://goo.gl/s1UnHh
         this["#input"].selectionStart = 0;
         this["#input"].selectionEnd = this["#input"].value.length;
