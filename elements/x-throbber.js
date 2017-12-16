@@ -3,6 +3,7 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html} from "../utils/element.js";
+import {readFile} from "../utils/file.js";
 
 let shadowTemplate = html`
   <template>
@@ -57,8 +58,7 @@ export class XThrobberElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async _update() {
-    let response = await fetch(`node_modules/xel/images/${this.type}-throbber.svg`);
-    let artworkSVG = await response.text();
+    let artworkSVG = await readFile(`node_modules/xel/images/${this.type}-throbber.svg`);
     this["#main"].innerHTML = artworkSVG;
 
     if (this.hasAttribute("type") === false) {
