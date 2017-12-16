@@ -312,6 +312,12 @@ let shadowTemplate = html`
               </x-button>
             </a>
 
+            <a href="/elements/x-dateselect">
+              <x-button skin="nav">
+                <x-label>x-dateselect</x-label>
+              </x-button>
+            </a>
+
             <a href="/elements/x-input">
               <x-button skin="nav">
                 <x-label>x-input</x-label>

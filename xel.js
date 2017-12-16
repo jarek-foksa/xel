@@ -8,6 +8,7 @@ import "./elements/x-card.js";
 import "./elements/x-checkbox.js";
 import "./elements/x-colorselect.js";
 import "./elements/x-contextmenu.js";
+import "./elements/x-dateselect.js";
 import "./elements/x-doctab.js";
 import "./elements/x-doctabs.js";
 import "./elements/x-drawer.js";
