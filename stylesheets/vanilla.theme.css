@@ -1131,20 +1131,6 @@ x-input > x-icon + x-label {
   padding: 0 5px 0 25px;
 }
 
-/* Date */
-x-input #date-clear {
-  right: 19px;  /* 17px icon width + 2px padding */
-}
-
-x-input input::-webkit-clear-button,
-x-input input::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  cursor: default;
-  width: 17px;
-  height: 17px;
-  padding: 2px;
-}
-
 /*****************************************************************************************************************/
 
 /**

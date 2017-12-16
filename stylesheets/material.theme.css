@@ -1138,8 +1138,6 @@ x-input[skin="flat"] > x-icon + x-label {
   left: 0px;
 }
 
-/* Date : no theme-related styling changes since x-icon is 24px */
-
 /*****************************************************************************************************************/
 
 /**
