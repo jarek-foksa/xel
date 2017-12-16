@@ -5,6 +5,7 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html, svg} from "../utils/element.js";
+import {readFile} from "../utils/file";
 
 let shadowTemplate = html`
   <template>
@@ -118,23 +119,18 @@ export class XIconElement extends HTMLElement {
         iconset = cache[url];
       }
       else {
-        let fetchResponse;
+        let iconsetSVG;
 
         try {
-          fetchResponse = await fetch(url);
+          iconsetSVG = await readFile(url);
         }
         catch (error) {
-          fetchResponse = null;
+          iconsetSVG = null;
         }
 
-        if (fetchResponse && fetchResponse.ok) {
-          try {
-            let iconsetSVG = await fetchResponse.text();
-            iconset = svg`${iconsetSVG}`;
-            cache[url] = iconset;
-          }
-          catch (error) {
-          }
+        if (iconsetSVG) {
+          iconset = svg`${iconsetSVG}`;
+          cache[url] = iconset;
         }
       }
 

@@ -4,6 +4,7 @@
 
 import {createElement, svg} from "./element.js";
 import {replaceAll} from "./string.js";
+import {readFile} from "../utils/file";
 
 let materialIconsURL = `https://raw.githubusercontent.com/google/material-design-icons/master/sprites/svg-sprite`;
 
@@ -22,8 +23,7 @@ export let generateMaterialIconsSVG = () => {
     sprite.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
     for (let category of materialIconsCategories) {
-      let response = await fetch(`${materialIconsURL}/svg-sprite-${category}-symbol.svg`);
-      let iconsSVG = await response.text();
+      let iconsSVG = await readFile(`${materialIconsURL}/svg-sprite-${category}-symbol.svg`);
       let icons = svg`${iconsSVG}`.querySelector("svg");
       let group = createElement("svg:g");
 

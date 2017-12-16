@@ -6,6 +6,7 @@ import {parseColor} from "../utils/color.js";
 import {html} from "../utils/element.js";
 import {capitalize} from "../utils/string.js";
 import {sleep} from "../utils/time.js";
+import {readFile} from "../utils/file";
 
 let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
@@ -589,8 +590,7 @@ export class XelAppElement extends HTMLElement {
       if (!view) {
         let $0 = (location.pathname === "/") ? "/about" : location.pathname;
         let url = `/docs` + $0 + `.html`;
-        let result = await fetch(url);
-        let viewHTML = await result.text();
+        let viewHTML = await readFile(url);
 
         view = html`${viewHTML}`;
         view.setAttribute("data-pathname", location.pathname);
