@@ -4,7 +4,7 @@
 
 import {createElement, svg} from "./element.js";
 import {replaceAll} from "./string.js";
-import {readFile} from "../utils/file";
+import {readFile} from "../utils/file.js";
 
 let materialIconsURL = `https://raw.githubusercontent.com/google/material-design-icons/master/sprites/svg-sprite`;
 

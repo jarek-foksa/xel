@@ -3,7 +3,7 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html} from "../utils/element.js";
-import {readFile} from "../utils/file";
+import {readFile} from "../utils/file.js";
 
 let shadowTemplate = html`
   <template>

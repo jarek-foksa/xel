@@ -6,7 +6,7 @@ import {parseColor} from "../utils/color.js";
 import {html} from "../utils/element.js";
 import {capitalize} from "../utils/string.js";
 import {sleep} from "../utils/time.js";
-import {readFile} from "../utils/file";
+import {readFile} from "../utils/file.js";
 
 let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
 
