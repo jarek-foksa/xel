@@ -1134,6 +1134,78 @@ x-input > x-icon + x-label {
 /*****************************************************************************************************************/
 
 /**
+ * DateSelect
+ */
+
+x-dateselect {
+  height: 28px;
+  border: 1px solid #BFBFBF;
+  font-size: 12.5px;
+  --inner-padding: 0 5px;
+  --selection-background: inherit;
+}
+x-dateselect:focus {
+  outline: 3px solid hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 15%));
+  border-color: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 3%));
+}
+x-dateselect[error] {
+  border-color: #d50000;
+  outline: 3px solid rgba(255, 0, 0, 0.49);
+  --selection-background: #d50000;
+}
+
+/* Error text */
+x-dateselect[error]::before {
+  top: 33px;
+}
+
+x-dateselect + x-dateselect {
+  margin-top: 20px;
+}
+
+/* Icon */
+x-dateselect > x-icon {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  margin: 0 0 0 5px;
+  color: #565656;
+}
+x-dateselect > x-icon:hover {
+  cursor: default;
+}
+
+/* Placehodler */
+x-dateselect > x-label {
+  display: none;
+  position: absolute;
+  top: 50%;
+  max-width: 100%;
+  padding: 0 5px 0 5px;
+  transform: translateY(-50%);
+  color: rgba(0, 0, 0, 0.4);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+x-dateselect[empty] > x-label {
+  display: block;
+}
+x-dateselect > x-icon + x-label {
+  padding: 0 5px 0 25px;
+}
+
+x-dateselect:active > x-label,
+x-dateselect:focus > x-label {
+  display: none;
+}
+
+/*****************************************************************************************************************/
+/**
  * Number input
  */
 
