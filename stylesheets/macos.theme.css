@@ -1404,14 +1404,13 @@ x-input[skin="textured"] > x-icon {
 /*****************************************************************************************************************/
 
 /**
- * DateSelect
+ * Date select
  */
 
 x-dateselect {
   border: 1px solid #BFBFBF;
   font-size: 12px;
   --inner-padding: 0 5px;
-  --selection-background: inherit;
 }
 x-dateselect:focus {
   outline: 3px solid hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%));
@@ -1423,18 +1422,6 @@ x-dateselect[error] {
 }
 x-dateselect + x-dateselect {
   margin-top: 20px;
-}
-
-/* Icon */
-x-dateselect > x-icon {
-  width: 15px;
-  height: 15px;
-  min-width: 15px;
-  margin: 0 0 0 5px;
-  color: #565656;
-}
-x-dateselect > x-icon:hover {
-  cursor: default;
 }
 
 /* Placehodler */
@@ -1457,15 +1444,11 @@ x-dateselect > x-label {
 x-dateselect[empty] > x-label {
   display: block;
 }
-x-dateselect > x-icon + x-label {
-  padding: 0 5px 0 25px;
-}
 
 x-dateselect:active > x-label,
 x-dateselect:focus > x-label {
   display: none;
 }
-
 
 /* @skin "textured" */
 
@@ -1487,11 +1470,8 @@ x-dateselect[skin="textured"][error] {
   outline: none;
 }
 
-x-dateselect[skin="textured"] > x-icon {
-  color: #767676;
-}
-
 /*****************************************************************************************************************/
+
 /**
  * Number input
  */

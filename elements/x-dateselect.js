@@ -12,8 +12,7 @@ let shadowTemplate = html`
 
     <main id="main">
       <slot></slot>
-      <x-icon id="date-clear"  name="clear"></x-icon>
-      <x-icon id="date-picker" name="date-range"></x-icon>
+      <x-icon id="expand-icon" name="date-range"></x-icon>
       <input id="input" type="date"></input>
     </main>
   </template>
@@ -26,7 +25,7 @@ let shadowTemplate = html`
 //   textinputmodeend
 export class XDateSelectElement extends HTMLElement {
   static get observedAttributes() {
-    return ["value", "max", "min", "disabled", "validation"];
+    return ["value", "min", "max", "disabled", "validation"];
   }
 
   // @type
@@ -56,19 +55,7 @@ export class XDateSelectElement extends HTMLElement {
   }
 
   // @type
-  //   date string
-  // @default
-  //   null
-  // @attribute
-  get max() {
-    return this.hasAttribute("max") ? this.getAttribute("max") : null;
-  }
-  set max(date) {
-    this.setAttribute("max", date);
-  }
-
-  // @type
-  //   date string
+  //   string
   // @default
   //   null
   // @attribute
@@ -77,6 +64,18 @@ export class XDateSelectElement extends HTMLElement {
   }
   set min(date) {
     this.setAttribute("min", date);
+  }
+
+  // @type
+  //   string
+  // @default
+  //   null
+  // @attribute
+  get max() {
+    return this.hasAttribute("max") ? this.getAttribute("max") : null;
+  }
+  set max(date) {
+    this.setAttribute("max", date);
   }
 
   // @type
