@@ -7,8 +7,7 @@ import {html} from "../utils/element.js";
 import {capitalize} from "../utils/string.js";
 import {sleep} from "../utils/time.js";
 import {readFile} from "../utils/file.js";
-
-let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
+import {themePath, themeName} from "../utils/theme.js";
 
 let colorSchemesByTheme = {
   material: {},
@@ -30,7 +29,7 @@ let colorSchemesByTheme = {
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="${theme}">
+    <link rel="stylesheet" href="${themePath()}">
     <link rel="stylesheet" href="node_modules/xel/stylesheets/xel-app.css" data-vulcanize>
 
     <main id="main">
@@ -542,9 +541,8 @@ export class XelAppElement extends HTMLElement {
     let accentColorName = sessionStorage.getItem("accentColorName");
 
     if (accentColorName !== null) {
-      let themePath = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
-      let theme = themePath.substring(themePath.lastIndexOf("/") + 1, themePath.length - 10);
-      let accentColor = colorSchemesByTheme[theme][accentColorName];
+      const theme       = themeName();
+      let   accentColor = colorSchemesByTheme[theme][accentColorName];
 
       if (!accentColor) {
         let names = Object.keys(colorSchemesByTheme[theme]);
@@ -629,12 +627,11 @@ export class XelAppElement extends HTMLElement {
 
       // Hide theme-specific sections that don't match the current theme
       {
-        let theme = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
-        let themeName = theme.substring(theme.lastIndexOf("/") + 1, theme.length - 10);
+        const theme = themeName();
 
         for (let section of view.querySelectorAll("section")) {
           if (section.hasAttribute("data-themes")) {
-            if (section.getAttribute("data-themes").includes(themeName) === false) {
+            if (section.getAttribute("data-themes").includes(theme) === false) {
               section.hidden = true;
             }
           }
@@ -660,8 +657,7 @@ export class XelAppElement extends HTMLElement {
   }
 
   _updateThemeSection() {
-    let themePath = document.querySelector('link[href*=".theme.css"]').getAttribute('href');
-    let theme = themePath.substring(themePath.lastIndexOf("/") + 1, themePath.length - 10);
+    const theme = themeName();
 
     // Update theme subsection
     {
