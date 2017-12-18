@@ -3,30 +3,28 @@
 //   © 2016-2017 Jarosław Foksa
 
 // @info
-//   Retrieve the url/path to the currently loaded theme, defaulting to
-//   'vanilla.theme.css'
+//   Retrieve the path to the currently loaded theme, defaulting to "vanilla.theme.css".
 // @type
 //   (void) => string
-export let themePath = () => {
-  const themeCss   = document.querySelector('link[href*=".theme.css"]');
-  const themePath  = (themeCss
-                          ? themeCss.getAttribute('href')
-                          : 'node_modules/xel/stylesheets/vanilla.theme.css');
+export let getThemePath = () => {
+  let themeStyleElement = document.querySelector(`link[href*=".theme.css"]`);
+  let themePath = "node_modules/xel/stylesheets/vanilla.theme.css";
+
+  if (themeStyleElement) {
+    themePath = themeStyleElement.getAttribute("href");
+  }
+
   return themePath;
 };
 
 // @info
-//   Retrieve the base name of the currently loaded theme, defaulting to
-//   'vanilla'
+//   Retrieve the base name of the currently loaded theme, defaulting to "vanilla".
 // @type
 //   (void) => string
-export let themeName = () => {
-  const path  = themePath();
-  const start = path.lastIndexOf('/') + 1;
-  const end   = path.length - 10;
-  const theme = (end > start
-                  ? path.substring( start, end )
-                  : 'vanilla');
-
+export let getThemeName = () => {
+  let path  = getThemePath();
+  let startIndex = path.lastIndexOf("/") + 1;
+  let endIndex = path.length - 10;
+  let theme = (endIndex > startIndex ? path.substring(startIndex, endIndex) : "vanilla");
   return theme;
 };

@@ -4,13 +4,13 @@
 
 import {html} from "../utils/element.js";
 import {isDOMWhitespace, replaceAll} from "../utils/string.js";
-import {themePath} from "../utils/theme.js";
+import {getThemePath} from "../utils/theme.js";
 
 let counter = 0;
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="${themePath()}">
+    <link rel="stylesheet" href="${getThemePath()}">
     <link rel="stylesheet" href="node_modules/xel/stylesheets/xel-demo.css" data-vulcanize>
 
     <main>

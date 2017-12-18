@@ -7,7 +7,7 @@ import {html} from "../utils/element.js";
 import {capitalize} from "../utils/string.js";
 import {sleep} from "../utils/time.js";
 import {readFile} from "../utils/file.js";
-import {themePath, themeName} from "../utils/theme.js";
+import {getThemePath, getThemeName} from "../utils/theme.js";
 
 let colorSchemesByTheme = {
   material: {},
@@ -29,7 +29,7 @@ let colorSchemesByTheme = {
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="${themePath()}">
+    <link rel="stylesheet" href="${getThemePath()}">
     <link rel="stylesheet" href="node_modules/xel/stylesheets/xel-app.css" data-vulcanize>
 
     <main id="main">
@@ -541,14 +541,14 @@ export class XelAppElement extends HTMLElement {
     let accentColorName = sessionStorage.getItem("accentColorName");
 
     if (accentColorName !== null) {
-      const theme       = themeName();
-      let   accentColor = colorSchemesByTheme[theme][accentColorName];
+      let themeName = getThemeName();
+      let accentColor = colorSchemesByTheme[themeName][accentColorName];
 
       if (!accentColor) {
-        let names = Object.keys(colorSchemesByTheme[theme]);
+        let names = Object.keys(colorSchemesByTheme[themeName]);
 
         if (names.length > 0) {
-          accentColor = colorSchemesByTheme[theme][names[0]];
+          accentColor = colorSchemesByTheme[themeName][names[0]];
         }
       }
 
@@ -627,11 +627,11 @@ export class XelAppElement extends HTMLElement {
 
       // Hide theme-specific sections that don't match the current theme
       {
-        const theme = themeName();
+        let themeName = getThemeName();
 
         for (let section of view.querySelectorAll("section")) {
           if (section.hasAttribute("data-themes")) {
-            if (section.getAttribute("data-themes").includes(theme) === false) {
+            if (section.getAttribute("data-themes").includes(themeName) === false) {
               section.hidden = true;
             }
           }
@@ -657,27 +657,27 @@ export class XelAppElement extends HTMLElement {
   }
 
   _updateThemeSection() {
-    const theme = themeName();
+    let themeName = getThemeName();
 
     // Update theme subsection
     {
       for (let item of this["#theme-select"].querySelectorAll("x-menuitem")) {
-        item.setAttribute("selected", (item.getAttribute("value") === theme) ? "true" : "false");
+        item.setAttribute("selected", (item.getAttribute("value") === themeName) ? "true" : "false");
       }
     }
 
     // Update accent color subsection
     {
-      if (theme === "material") {
+      if (themeName === "material") {
         this["#accent-color-subsection"].hidden = true;
       }
       else {
         let accentColorName = sessionStorage.getItem("accentColorName");
-        let supportedAccentColorNames = Object.keys(colorSchemesByTheme[theme]);
+        let supportedAccentColorNames = Object.keys(colorSchemesByTheme[themeName]);
 
         let itemsHTML = "";
 
-        for (let [colorName, colorValue] of Object.entries(colorSchemesByTheme[theme])) {
+        for (let [colorName, colorValue] of Object.entries(colorSchemesByTheme[themeName])) {
           itemsHTML += `
             <x-menuitem value="${colorName}" selected="true">
               <x-swatch value="${colorValue}"></x-swatch>

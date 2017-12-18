@@ -43,7 +43,7 @@ export class XelCodeViewElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this["#prism-theme"].setAttribute("href", 'node_modules/prismjs/themes/prism-coy.css');
+    this["#prism-theme"].setAttribute("href", "node_modules/prismjs/themes/prism-coy.css");
     this._update();
   }
 
