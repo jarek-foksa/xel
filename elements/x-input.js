@@ -25,7 +25,7 @@ let shadowTemplate = html`
 //   textinputmodeend
 export class XInputElement extends HTMLElement {
   static get observedAttributes() {
-    return ["type", "value", "spellcheck", "maxlength", "disabled", "validation"];
+    return ["type", "value", "spellcheck", "maxlength", "readonly", "disabled", "validation"];
   }
 
   // @type
@@ -126,6 +126,18 @@ export class XInputElement extends HTMLElement {
   //   boolean
   // @default
   //   false
+  // @atrribute
+  get readOnly() {
+    return this.hasAttribute("readonly");
+  }
+  set readOnly(readOnly) {
+    readOnly === true ? this.setAttribute("readonly", readOnly) : this.removeAttribute("readonly");
+  }
+
+  // @type
+  //   boolean
+  // @default
+  //   false
   // @attribute
   get disabled() {
     return this.hasAttribute("disabled");
@@ -208,6 +220,9 @@ export class XInputElement extends HTMLElement {
     else if (name === "maxlength") {
       this._onMaxLengthAttributeChange();
     }
+    else if (name === "readonly") {
+      this._onReadOnlyAttributeChnage();
+    }
     else if (name === "disabled") {
       this._onDisabledAttributeChange();
     }
@@ -267,6 +282,7 @@ export class XInputElement extends HTMLElement {
   _updateAccessabilityAttributes() {
     this.setAttribute("role", "input");
     this.setAttribute("aria-disabled", this.disabled);
+    this.setAttribute("aria-readonly", this.readOnly);
 
     if (this.disabled) {
       this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
@@ -306,6 +322,11 @@ export class XInputElement extends HTMLElement {
 
   _onMaxLengthAttributeChange() {
     this["#input"].maxLength = this.maxLength;
+  }
+
+  _onReadOnlyAttributeChnage() {
+    this["#input"].readOnly = this.readOnly;
+    this._updateAccessabilityAttributes();
   }
 
   _onDisabledAttributeChange() {

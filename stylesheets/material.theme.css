@@ -1008,6 +1008,9 @@ x-input {
   --selection-background: var(--primary-color);
   --inner-padding: 0px 7px;
 }
+x-input[readonly] {
+  color: rgba(0, 0, 0, 0.75);
+}
 x-input[error] {
   --selection-background: #d50000;
 }
