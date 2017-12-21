@@ -592,10 +592,19 @@ export class XelAppElement extends HTMLElement {
 
       // If the view does not exist, try to create it
       if (!view) {
-        let $0 = (location.pathname === "/") ? "/about" : location.pathname;
-        let url = `/docs` + $0 + `.html`;
-        let viewHTML = await readFile(url);
+        let url = "";
 
+        if (location.pathname === "/") {
+          url = "docs/about.html";
+        }
+        else if (location.pathname.startsWith("/elements/")) {
+          url = "docs" + location.pathname.substring(9) + ".html";
+        }
+        else {
+          url = "docs" + location.pathname + ".html";
+        }
+
+        let viewHTML = await readFile(url);
         view = html`${viewHTML}`;
         view.setAttribute("data-pathname", location.pathname);
         this["#views"].append(view);
