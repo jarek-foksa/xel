@@ -212,48 +212,52 @@ let serve = () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let info = `Usage:
-./project.js build            - Generate xel.min.js file
-./project.js serve            - Serve Xel demo site on http://localhost:5000
-./project.js publish firebase - Update Xel demo site hosted by Firebase
-./project.js publish npm      - Update Xel package hosted by NPM
-./project.js publish all      - Update Xel demo site hosted by Firebase and packaged hosted by NPM.`;
+let main = async () => {
+  let info = `Usage:
+  ./project.js build            - Generate xel.min.js file
+  ./project.js serve            - Serve Xel demo site on http://localhost:5000
+  ./project.js publish firebase - Update Xel demo site hosted by Firebase
+  ./project.js publish npm      - Update Xel package hosted by NPM
+  ./project.js publish all      - Update Xel demo site hosted by Firebase and packaged hosted by NPM.`;
 
-let arg1 = process.argv[2];
-let arg2 = process.argv[3];
+  let arg1 = process.argv[2];
+  let arg2 = process.argv[3];
 
-if (arg1 === undefined) {
-  console.log(info);
-}
-else if (arg1 === "build") {
-  build();
-}
-else if (arg1 === "serve") {
-  serve();
-}
-else if (arg1 === "publish") {
-  if (arg2 === undefined) {
-    console.log("\n" + info);
+  if (arg1 === undefined) {
+    console.log(info);
   }
-  else if (arg2 === "npm") {
+  else if (arg1 === "build") {
     build();
-    publishNpmPackage();
   }
-  else if (arg2 === "firebase") {
-    build();
-    publishFirebaseSite();
+  else if (arg1 === "serve") {
+    serve();
   }
-  else if (arg2 === "all") {
-    build();
-    publishNpmPackage();
-    publishFirebaseSite();
+  else if (arg1 === "publish") {
+    if (arg2 === undefined) {
+      console.log("\n" + info);
+    }
+    else if (arg2 === "npm") {
+      await build();
+      publishNpmPackage();
+    }
+    else if (arg2 === "firebase") {
+      await build();
+      publishFirebaseSite();
+    }
+    else if (arg2 === "all") {
+      await build();
+      publishNpmPackage();
+      publishFirebaseSite();
+    }
+    else {
+      console.log("Invalid argument: ", arg2);
+      console.log("\n" + info);
+    }
   }
   else {
-    console.log("Invalid argument: ", arg2);
+    console.log("Invalid argument: ", arg1);
     console.log("\n" + info);
   }
-}
-else {
-  console.log("Invalid argument: ", arg1);
-  console.log("\n" + info);
-}
+};
+
+main();
