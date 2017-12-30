@@ -17,6 +17,9 @@
   --bar-background: #3B99FB;
   --bar-box-shadow: 0px 0px 0px 1px #3385DB;
 }
+:host([hidden]) {
+  display: none;
+}
 
 #indeterminate-bars {
   width: 100%;
