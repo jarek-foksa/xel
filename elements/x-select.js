@@ -38,12 +38,12 @@ export class XSelectElement extends HTMLElement {
   // @default
   //   null
   get value() {
-    let item = this.querySelector(`x-menuitem[selected="true"]`);
+    let item = this.querySelector(`x-menuitem[selected]`);
     return item ? item.value : null;
   }
   set value(value) {
     for (let item of this.querySelectorAll("x-menuitem")) {
-      item.selected = (item.value === value && value !== null);
+      item.selected = (item.value === value && value != null);
     }
   }
 
@@ -139,10 +139,10 @@ export class XSelectElement extends HTMLElement {
       let selectedItem = null;
 
       for (let item of menu.querySelectorAll("x-menuitem")) {
-        if (item.selected === null) {
+        if (item.selected !== true) {
           item.selected = false;
         }
-        else if (item.selected === true) {
+        else {
           if (selectedItem === null) {
             selectedItem = item;
           }
@@ -155,7 +155,7 @@ export class XSelectElement extends HTMLElement {
 
     // Open the menu
     {
-      let selectedItem = menu.querySelector(`x-menuitem[selected="true"]`);
+      let selectedItem = menu.querySelector(`x-menuitem[selected]`);
 
       if (selectedItem) {
         let buttonChild = this["#button"].querySelector("x-label") || this["#button"].firstElementChild;
@@ -243,7 +243,7 @@ export class XSelectElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _updateButton() {
-    let selectedItem = this.querySelector(`:scope > x-menu x-menuitem[selected="true"]`);
+    let selectedItem = this.querySelector(`:scope > x-menu x-menuitem[selected]`);
     this["#button"].innerHTML = "";
 
     if (selectedItem) {
@@ -322,6 +322,12 @@ export class XSelectElement extends HTMLElement {
     for (let record of records) {
       if (record.type === "attributes" && record.target.localName === "x-menuitem" && record.attributeName === "selected") {
         this._updateButtonTh300();
+      }
+      if (record.type === "childList" && record.target.localName === "x-menu") {
+        // Ensure that all 'x-menuitem' children have the 'checkable' attribute
+        for (let item of record.target.querySelectorAll('x-menuitem:not([checkable])')) {
+          item.setAttribute("checkable", "");
+        }
       }
     }
   }
