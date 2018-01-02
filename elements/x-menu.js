@@ -339,7 +339,7 @@ export class XMenuElement extends HTMLElement {
           }
         }
 
-        if (element.parentElement.localName === "x-menubar") {
+        if (element.parentElement && element.parentElement.localName === "x-menubar") {
           let menuBounds = this.getBoundingClientRect();
 
           // Reduce menu height if it overflows bottom screen edge
@@ -551,7 +551,7 @@ export class XMenuElement extends HTMLElement {
         }
       }
 
-      if (nextItem === null) {
+      if (nextItem === null && refItem.parentElement != null) {
         for (let item of refItem.parentElement.children) {
           if (item.localName === "x-menuitem" && item.disabled === false && item.hidden === false) {
             nextItem = item;
@@ -588,7 +588,7 @@ export class XMenuElement extends HTMLElement {
         }
       }
 
-      if (previousItem === null) {
+      if (previousItem === null && refItem.parentElement != null) {
         for (let item of [...refItem.parentElement.children].reverse()) {
           if (item.localName === "x-menuitem" && item.disabled === false && item.hidden === false) {
             previousItem = item;
