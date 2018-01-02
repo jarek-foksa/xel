@@ -324,9 +324,9 @@ export class XSelectElement extends HTMLElement {
         this._updateButtonTh300();
       }
       if (record.type === "childList" && record.target.localName === "x-menu") {
-        // Ensure that all 'x-menuitem' children have the 'checkable' attribute
-        for (let item of record.target.querySelectorAll('x-menuitem:not([checkable])')) {
-          item.setAttribute("checkable", "");
+        // Ensure that all 'x-menuitem' children have the 'togglable' attribute
+        for (let item of record.target.querySelectorAll('x-menuitem:not([togglable])')) {
+          item.setAttribute("togglable", "");
         }
       }
     }
