@@ -38,7 +38,7 @@ export class XSelectElement extends HTMLElement {
   // @default
   //   null
   get value() {
-    let item = this.querySelector(`x-menuitem[selected="true"]`);
+    let item = this.querySelector(`x-menuitem[selected]:not([selected="false"])`);
     return item ? item.value : null;
   }
   set value(value) {
@@ -142,7 +142,7 @@ export class XSelectElement extends HTMLElement {
         if (item.selected === null) {
           item.selected = false;
         }
-        else if (item.selected === true) {
+        else if (item.selected !== false) {
           if (selectedItem === null) {
             selectedItem = item;
           }
@@ -155,7 +155,7 @@ export class XSelectElement extends HTMLElement {
 
     // Open the menu
     {
-      let selectedItem = menu.querySelector(`x-menuitem[selected="true"]`);
+      let selectedItem = menu.querySelector(`x-menuitem[selected]:not([selected="false"])`);
 
       if (selectedItem) {
         let buttonChild = this["#button"].querySelector("x-label") || this["#button"].firstElementChild;
@@ -243,7 +243,7 @@ export class XSelectElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _updateButton() {
-    let selectedItem = this.querySelector(`:scope > x-menu x-menuitem[selected="true"]`);
+    let selectedItem = this.querySelector(`:scope > x-menu x-menuitem[selected]:not([selected="false"])`);
     this["#button"].innerHTML = "";
 
     if (selectedItem) {

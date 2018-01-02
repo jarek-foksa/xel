@@ -119,7 +119,7 @@ let shadowTemplate = html`
                     <x-label>MacOS</x-label>
                   </x-menuitem>
 
-                  <x-menuitem value="material" selected="true">
+                  <x-menuitem value="material" selected>
                     <x-label>Material</x-label>
                   </x-menuitem>
 
@@ -688,7 +688,7 @@ export class XelAppElement extends HTMLElement {
 
         for (let [colorName, colorValue] of Object.entries(colorSchemesByTheme[themeName])) {
           itemsHTML += `
-            <x-menuitem value="${colorName}" selected="true">
+            <x-menuitem value="${colorName}" selected>
               <x-swatch value="${colorValue}"></x-swatch>
               <x-label>${capitalize(colorName)}</x-label>
             </x-menuitem>
