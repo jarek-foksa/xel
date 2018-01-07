@@ -508,7 +508,7 @@ export class XButtonElement extends HTMLElement {
           await inAnimation.finished;
 
           let outAnimation = ripple.animate(
-            { opacity: [getComputedStyle(ripple).opacity, "0"]},
+            { opacity: [getComputedStyle(ripple).opacity || "0", "0"]},
             { duration: 300, easing }
           );
 
@@ -546,7 +546,7 @@ export class XButtonElement extends HTMLElement {
         await inAnimation.finished;
 
         let outAnimation = ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity, "0"] },
+          { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
           { duration: 200, easing }
         );
 
@@ -609,7 +609,7 @@ export class XButtonElement extends HTMLElement {
           await inAnimation.finished;
 
           let outAnimation = ripple.animate(
-            { opacity: [getComputedStyle(ripple).opacity, "0"] },
+            { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
             { duration: 300, easing }
           );
 
@@ -638,7 +638,7 @@ export class XButtonElement extends HTMLElement {
         ).finished;
 
         await ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity, "0"] },
+          { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
           { duration: 300, easing }
         ).finished;
 
