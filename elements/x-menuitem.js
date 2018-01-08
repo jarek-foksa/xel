@@ -52,26 +52,20 @@ export class XMenuItemElement extends HTMLElement {
   // @default
   //   null
   get selected() {
-    if (this.hasAttribute("selected") === false) {
-      return null;
-    }
-    else if (this.getAttribute("selected") === "false") {
-      return false;
+    if (this.hasAttribute("selected")) {
+      return true;
     }
     else {
-      return true;
+      return false;
     }
   }
   set selected(selected) {
     if (this.selected !== selected) {
-      if (selected === null) {
+      if (! selected) {
         this.removeAttribute("selected");
       }
-      else if (selected === false) {
-        this.setAttribute("selected", "false");
-      }
       else {
-        this.setAttribute("selected", "true");
+        this.setAttribute("selected", "");
       }
     }
   }
