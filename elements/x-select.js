@@ -83,6 +83,7 @@ export class XSelectElement extends HTMLElement {
     this["#overlay"].addEventListener("click", (event) => this._onOverlayClick(event));
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.addEventListener("toggle", (event) => this._onMenuItemToggle(event));
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
@@ -358,6 +359,11 @@ export class XSelectElement extends HTMLElement {
         this._collapse(clickedItem.whenTriggerEnd);
       }
     }
+  }
+
+  _onMenuItemToggle(event) {
+    // We will toggle the menu items manually
+    event.preventDefault();
   }
 
   _onOverlayClick(event) {
