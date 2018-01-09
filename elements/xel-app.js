@@ -119,7 +119,7 @@ let shadowTemplate = html`
                     <x-label>MacOS</x-label>
                   </x-menuitem>
 
-                  <x-menuitem value="material" selected="true">
+                  <x-menuitem value="material" toggled>
                     <x-label>Material</x-label>
                   </x-menuitem>
 
@@ -671,7 +671,12 @@ export class XelAppElement extends HTMLElement {
     // Update theme subsection
     {
       for (let item of this["#theme-select"].querySelectorAll("x-menuitem")) {
-        item.setAttribute("selected", (item.getAttribute("value") === themeName) ? "true" : "false");
+        if (item.getAttribute("value") === themeName) {
+          item.setAttribute("toggled", "");
+        }
+        else {
+          item.removeAttribute("toggled");
+        }
       }
     }
 
@@ -688,7 +693,7 @@ export class XelAppElement extends HTMLElement {
 
         for (let [colorName, colorValue] of Object.entries(colorSchemesByTheme[themeName])) {
           itemsHTML += `
-            <x-menuitem value="${colorName}" selected="true">
+            <x-menuitem value="${colorName}" toggled>
               <x-swatch value="${colorValue}"></x-swatch>
               <x-label>${capitalize(colorName)}</x-label>
             </x-menuitem>
@@ -715,7 +720,12 @@ export class XelAppElement extends HTMLElement {
         }
 
         for (let item of this["#accent-color-select"].querySelectorAll("x-menuitem")) {
-          item.setAttribute("selected", (item.getAttribute("value") === accentColorName) ? "true" : "false");
+          if (item.getAttribute("value") === accentColorName) {
+            item.setAttribute("toggled", "");
+          }
+          else {
+            item.removeAttribute("toggled");
+          }
         }
 
         this["#accent-color-subsection"].hidden = false;

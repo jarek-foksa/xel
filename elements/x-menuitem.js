@@ -26,6 +26,8 @@ let shadowTemplate = html`
   </template>
 `;
 
+// @events
+//   toggle
 export class XMenuItemElement extends HTMLElement {
   static get observedAttributes() {
     return ["disabled"];
@@ -48,32 +50,27 @@ export class XMenuItemElement extends HTMLElement {
   }
 
   // @type
-  //   boolean?
+  //   boolean
   // @default
-  //   null
-  get selected() {
-    if (this.hasAttribute("selected") === false) {
-      return null;
-    }
-    else if (this.getAttribute("selected") === "false") {
-      return false;
-    }
-    else {
-      return true;
-    }
+  //   false
+  // @attribute
+  get toggled() {
+    return this.hasAttribute("toggled");
   }
-  set selected(selected) {
-    if (this.selected !== selected) {
-      if (selected === null) {
-        this.removeAttribute("selected");
-      }
-      else if (selected === false) {
-        this.setAttribute("selected", "false");
-      }
-      else {
-        this.setAttribute("selected", "true");
-      }
-    }
+  set toggled(toggled) {
+    toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
+  }
+
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get togglable() {
+    return this.hasAttribute("togglable");
+  }
+  set togglable(togglable) {
+    togglable ? this.setAttribute("togglable", "") : this.removeAttribute("togglable");
   }
 
   // @type
@@ -239,6 +236,15 @@ export class XMenuItemElement extends HTMLElement {
       this.matches("[closing] x-menuitem")
     ) {
       return;
+    }
+
+    if (this.togglable) {
+      let event = new CustomEvent("toggle", {bubbles: true, cancelable: true});
+      this.dispatchEvent(event);
+
+      if (event.defaultPrevented === false) {
+        this.toggled = !this.toggled;
+      }
     }
 
     // Trigger effect

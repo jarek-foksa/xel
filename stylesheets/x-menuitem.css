@@ -80,12 +80,12 @@
   margin: var(--checkmark-margin);
   d: var(--checkmark-d);
 }
-:host([selected]) #checkmark {
+:host([togglable]) #checkmark {
   display: flex;
   transform: scale(0);
   transform-origin: 50% 50%;
 }
-:host([selected="true"]) #checkmark {
+:host([toggled]) #checkmark {
   display: flex;
   transform: scale(1);
 }

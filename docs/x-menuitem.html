@@ -76,17 +76,33 @@
       <hr/>
 
       <section>
-        <h4>Selected</h4>
+        <h4>Toggled</h4>
 
         <xel-demo>
           <template>
             <x-menu opened>
-              <x-menuitem selected="true">
-                <x-label>Small</x-label>
+              <x-menuitem toggled>
+                <x-label>Inspector</x-label>
+              </x-menuitem>
+            </x-menu>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Togglable</h4>
+
+        <xel-demo>
+          <template>
+            <x-menu opened>
+              <x-menuitem togglable toggled>
+                <x-label>Show Grid</x-label>
               </x-menuitem>
 
-              <x-menuitem selected="false">
-                <x-label>Medium</x-label>
+              <x-menuitem togglable>
+                <x-label>Show Guides</x-label>
               </x-menuitem>
             </x-menu>
           </template>

@@ -38,12 +38,12 @@ export class XSelectElement extends HTMLElement {
   // @default
   //   null
   get value() {
-    let item = this.querySelector(`x-menuitem[selected="true"]`);
+    let item = this.querySelector(`x-menuitem[toggled]`);
     return item ? item.value : null;
   }
   set value(value) {
     for (let item of this.querySelectorAll("x-menuitem")) {
-      item.selected = (item.value === value && value !== null);
+      item.toggled = (item.value === value && value !== null);
     }
   }
 
@@ -134,20 +134,19 @@ export class XSelectElement extends HTMLElement {
 
     let menu = this.querySelector(":scope > x-menu");
 
-    // Ensure there is at most one selected menu item and all other items are unselected
+    // Ensure all items are togglable, there is at most one toggled menu item and all other items are not toggled
     {
-      let selectedItem = null;
+      let toggledItem = null;
 
       for (let item of menu.querySelectorAll("x-menuitem")) {
-        if (item.selected === null) {
-          item.selected = false;
-        }
-        else if (item.selected === true) {
-          if (selectedItem === null) {
-            selectedItem = item;
+        item.togglable = true;
+
+        if (item.toggled) {
+          if (toggledItem === null) {
+            toggledItem = item;
           }
           else {
-            item.selected = false;
+            item.toggled = false;
           }
         }
       }
@@ -155,9 +154,9 @@ export class XSelectElement extends HTMLElement {
 
     // Open the menu
     {
-      let selectedItem = menu.querySelector(`x-menuitem[selected="true"]`);
+      let toggledItem = menu.querySelector(`x-menuitem[toggled]`);
 
-      if (selectedItem) {
+      if (toggledItem) {
         let buttonChild = this["#button"].querySelector("x-label") || this["#button"].firstElementChild;
         let itemChild = buttonChild[$itemChild];
 
@@ -243,11 +242,11 @@ export class XSelectElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _updateButton() {
-    let selectedItem = this.querySelector(`:scope > x-menu x-menuitem[selected="true"]`);
+    let toggledItem = this.querySelector(`:scope > x-menu x-menuitem[toggled]`);
     this["#button"].innerHTML = "";
 
-    if (selectedItem) {
-      for (let itemChild of selectedItem.children) {
+    if (toggledItem) {
+      for (let itemChild of toggledItem.children) {
         let buttonChild = itemChild.cloneNode(true);
         buttonChild[$itemChild] = itemChild;
         buttonChild.removeAttribute("id");
@@ -320,7 +319,7 @@ export class XSelectElement extends HTMLElement {
 
   _onMutation(records) {
     for (let record of records) {
-      if (record.type === "attributes" && record.target.localName === "x-menuitem" && record.attributeName === "selected") {
+      if (record.type === "attributes" && record.target.localName === "x-menuitem" && record.attributeName === "toggled") {
         this._updateButtonTh300();
       }
     }
@@ -349,7 +348,7 @@ export class XSelectElement extends HTMLElement {
         let newValue = clickedItem.value;
 
         for (let item of this.querySelectorAll("x-menuitem")) {
-          item.selected = (item === clickedItem);
+          item.toggled = (item === clickedItem);
         }
 
         if (oldValue !== newValue) {
