@@ -1436,6 +1436,7 @@ x-textarea[skin="flat"] {
   border-right: none;
   border-top: none;
   min-height: 0;
+  max-height: none;
   padding: 0;
   --inner-padding: 9px 0px 5px;
 }
