@@ -57,6 +57,8 @@
   flex-flow: column;
   height: 100%;
   min-height: inherit;
+  max-height: inherit;
+  overflow-y: auto;
 }
 
 #editor {
