@@ -274,7 +274,7 @@ export class XSliderElement extends HTMLElement {
       }
     };
 
-    if (event.target.closest(".thumb") !== thumb) {
+    if (pointerDownEvent.target.closest(".thumb") !== thumb) {
       updateValue(pointerDownEvent.clientX, true);
     }
 

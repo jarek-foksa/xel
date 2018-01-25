@@ -105,12 +105,12 @@ export class XTagInputElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    this.addEventListener("focusin", () => this._onFocusIn());
-    this.addEventListener("focusout", () => this._onFocusOut());
+    this.addEventListener("focusin", (event) => this._onFocusIn(event));
+    this.addEventListener("focusout", (event) => this._onFocusOut(event));
     this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
     this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event));
     this["#editable-item"].addEventListener("keydown", (event) => this._onInputKeyDown(event));
-    this["#editable-item"].addEventListener("input", () => this._onInputInput());
+    this["#editable-item"].addEventListener("input", (event) => this._onInputInput(event));
   }
 
   connectedCallback() {

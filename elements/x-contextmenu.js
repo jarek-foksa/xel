@@ -41,8 +41,8 @@ export class XContextMenuElement extends HTMLElement {
     this["#overlay"].addEventListener("contextmenu", (event) => this._onOverlayContextMenu(event));
     this["#overlay"].addEventListener("pointerdown", (event) => this._onOverlayPointerDown(event));
 
-    window.addEventListener("blur", () => this._onBlur());
-    this.addEventListener("blur", () => this._onBlur());
+    window.addEventListener("blur", (event) => this._onBlur(event));
+    this.addEventListener("blur", (event) => this._onBlur(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event), true);
     this.addEventListener("click", (event) => this._onClick(event));
   }
@@ -126,7 +126,7 @@ export class XContextMenuElement extends HTMLElement {
     }
   }
 
-  async _onClick() {
+  async _onClick(event) {
     let item = event.target.closest("x-menuitem");
 
     if (item && item.disabled === false) {

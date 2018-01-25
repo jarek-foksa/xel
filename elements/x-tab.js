@@ -123,8 +123,8 @@ export class XTabElement extends HTMLElement {
 
   async _onPointerDown(pointerDownEvent) {
     // Don't focus the tab with pointer
-    if (this.matches(":focus") === false && !event.target.closest("x-menu, x-popup")) {
-      event.preventDefault();
+    if (this.matches(":focus") === false && !pointerDownEvent.target.closest("x-menu, x-popup")) {
+      pointerDownEvent.preventDefault();
 
       let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
 

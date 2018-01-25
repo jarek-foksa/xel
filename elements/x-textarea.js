@@ -149,11 +149,11 @@ export class XTextareaElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    this.addEventListener("focusin", () => this._onFocusIn());
-    this.addEventListener("focusout", () => this._onFocusOut());
+    this.addEventListener("focusin", (event) => this._onFocusIn(event));
+    this.addEventListener("focusout", (event) => this._onFocusOut(event));
 
     this["#editor"].addEventListener("click", (event) => this._onEditorClick(event));
-    this["#editor"].addEventListener("input", () => this._onEditorInput());
+    this["#editor"].addEventListener("input", (event) => this._onEditorInput(event));
   }
 
   connectedCallback() {

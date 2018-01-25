@@ -70,7 +70,7 @@ export class XColorSelectElement extends HTMLElement {
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("change", (event) => this._onChange(event));
-    this["#input"].addEventListener("change", (event) => this._onInputChange());
+    this["#input"].addEventListener("change", (event) => this._onInputChange(event));
   }
 
   attributeChangedCallback(name) {

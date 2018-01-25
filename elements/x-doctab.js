@@ -142,7 +142,7 @@ export class XDocTabElement extends HTMLElement {
   _onPointerDown(pointerDownEvent) {
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
     if (this.matches(":focus") === false) {
-      event.preventDefault();
+      pointerDownEvent.preventDefault();
 
       let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
 

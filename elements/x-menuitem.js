@@ -178,12 +178,12 @@ export class XMenuItemElement extends HTMLElement {
       return false;
     }
     if (this.matches("[closing] x-menuitem")) {
-      event.preventDefault();
-      event.stopPropagation();
+      pointerDownEvent.preventDefault();
+      pointerDownEvent.stopPropagation();
       return;
     }
 
-    event.stopPropagation();
+    pointerDownEvent.stopPropagation();
 
     // Trigger effect
     {

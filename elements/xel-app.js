@@ -385,15 +385,15 @@ export class XelAppElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    window.addEventListener("load", () => this._onWindowLoad());
+    window.addEventListener("load", (event) => this._onWindowLoad(event));
     window.addEventListener("popstate", (event) => this._onPopState(event));
     window.addEventListener("beforeunload", (event) => this._onWindowUnload(event));
 
     this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event));
     this["#hide-sidebar-button"].addEventListener("click", (event) => this._onHideNavButtonClick(event));
     this["#show-sidebar-button"].addEventListener("click", (event) => this._onShowNavButtonClick(event));
-    this["#theme-select"].addEventListener("change", () => this._onThemeSelectChange());
-    this["#accent-color-select"].addEventListener("change", () => this._onAccentColorSelectChange());
+    this["#theme-select"].addEventListener("change", (event) => this._onThemeSelectChange(event));
+    this["#accent-color-select"].addEventListener("change", (event) => this._onAccentColorSelectChange(event));
   }
 
   connectedCallback() {

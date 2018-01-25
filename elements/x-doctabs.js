@@ -116,7 +116,7 @@ export class XDocTabsElement extends HTMLElement {
           this.append(tab);
           await sleep(30);
 
-          tab.addEventListener("transitionend", (event) => {
+          tab.addEventListener("transitionend", () => {
             tab.removeAttribute("opening");
             resolve(tab);
           }, {once: true});

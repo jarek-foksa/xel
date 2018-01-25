@@ -100,9 +100,9 @@ export class XAccordionElement extends HTMLElement {
     }
 
     let header = this.querySelector("header");
-    let closestFocusableElement = event.target.closest("[tabindex]");
+    let closestFocusableElement = pointerDownEvent.target.closest("[tabindex]");
 
-    if (header.contains(event.target) && this.contains(closestFocusableElement) === false) {
+    if (header.contains(pointerDownEvent.target) && this.contains(closestFocusableElement) === false) {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       // Ripple

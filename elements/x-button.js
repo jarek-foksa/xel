@@ -402,7 +402,7 @@ export class XButtonElement extends HTMLElement {
     }
 
     if (this.querySelector(":scope > dialog[open]")) {
-      event.preventDefault();
+      pointerDownEvent.preventDefault();
       return;
     }
 

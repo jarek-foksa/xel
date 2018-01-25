@@ -141,11 +141,11 @@ export class XDateSelectElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    this.addEventListener("focusin", () => this._onFocusIn());
-    this.addEventListener("focusout", () => this._onFocusOut());
+    this.addEventListener("focusin", (event) => this._onFocusIn(event));
+    this.addEventListener("focusout", (event) => this._onFocusOut(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
-    this["#input"].addEventListener("change", () => this._onInputChange());
+    this["#input"].addEventListener("change", (event) => this._onInputChange(event));
     this["#input"].addEventListener("input", (event) => this._onInputInput(event));
   }
 
