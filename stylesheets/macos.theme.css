@@ -1052,7 +1052,7 @@ x-menu hr:last-child {
  */
 
 x-menuitem {
-  padding: 4px 12px 4px 23px;
+  padding: 0 12px 0 23px;
   min-height: 24px;
   color: #3E3E3E;
   --trigger-effect: blink;
