@@ -41,6 +41,10 @@
   height: 100%;
 }
 
+:host([mixed]) #button > * {
+  opacity: 0.7;
+}
+
 #button > x-label {
   white-space: nowrap;
   text-overflow: ellipsis;

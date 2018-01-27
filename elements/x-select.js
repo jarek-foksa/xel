@@ -47,6 +47,20 @@ export class XSelectElement extends HTMLElement {
     }
   }
 
+  // @info
+  //   Whether the this select has "mixed" state.
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get mixed() {
+    return this.hasAttribute("mixed");
+  }
+  set mixed(mixed) {
+    mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
+  }
+
   // @type
   //   boolean
   // @default
