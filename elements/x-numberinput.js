@@ -149,7 +149,7 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   // @info
-  //   Whether the this button has "mixed" state.
+  //   Whether this input has "mixed" state.
   // @type
   //   boolean
   // @default
