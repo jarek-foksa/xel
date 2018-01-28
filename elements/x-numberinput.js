@@ -148,6 +148,20 @@ export class XNumberInputElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
+  // @info
+  //   Whether the this button has "mixed" state.
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get mixed() {
+    return this.hasAttribute("mixed");
+  }
+  set mixed(mixed) {
+    mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
+  }
+
   // @type
   //   boolean
   // @default

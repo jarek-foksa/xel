@@ -134,6 +134,20 @@ export class XInputElement extends HTMLElement {
     readOnly === true ? this.setAttribute("readonly", readOnly) : this.removeAttribute("readonly");
   }
 
+  // @info
+  //   Whether the this button has "mixed" state.
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get mixed() {
+    return this.hasAttribute("mixed");
+  }
+  set mixed(mixed) {
+    mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
+  }
+
   // @type
   //   boolean
   // @default

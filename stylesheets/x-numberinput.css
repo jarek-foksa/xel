@@ -22,6 +22,9 @@
   --selection-color: white;
   --selection-background: #d50000;
 }
+:host([mixed]) {
+  color: rgba(0, 0, 0, 0.7);
+}
 :host([disabled]) {
   pointer-events: none;
   opacity: 0.5;

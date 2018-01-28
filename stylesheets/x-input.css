@@ -29,6 +29,9 @@
 :host([readonly]) {
   color: rgba(0, 0, 0, 0.75);
 }
+:host([mixed]) {
+  color: rgba(0, 0, 0, 0.7);
+}
 :host([disabled]) {
   pointer-events: none;
   opacity: 0.5;
