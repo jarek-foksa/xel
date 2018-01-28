@@ -86,6 +86,18 @@ export class XTagInputElement extends HTMLElement {
   // @default
   //   false
   // @attribute
+  get mixed() {
+    return this.hasAttribute("mixed");
+  }
+  set mixed(mixed) {
+    mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
+  }
+
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
   get disabled() {
     return this.hasAttribute("disabled");
   }

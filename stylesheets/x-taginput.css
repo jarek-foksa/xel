@@ -57,6 +57,9 @@
   flex-wrap: wrap;
   padding: 2px;
 }
+:host([mixed]) #items {
+  opacity: 0.7;
+}
 
 .item {
   height: 100%;

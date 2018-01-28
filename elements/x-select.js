@@ -48,7 +48,7 @@ export class XSelectElement extends HTMLElement {
   }
 
   // @info
-  //   Whether the this select has "mixed" state.
+  //   Whether this select has "mixed" state.
   // @type
   //   boolean
   // @default
