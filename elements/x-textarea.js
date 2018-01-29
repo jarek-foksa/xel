@@ -289,7 +289,8 @@ export class XTextareaElement extends HTMLElement {
       this.validate();
     }
 
-    if (this.error === null && this.value !== this._focusInValue) {
+    if (this.error === null && (this.value !== this._focusInValue || this.mixed)) {
+      this.mixed = false;
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
     }
   }
