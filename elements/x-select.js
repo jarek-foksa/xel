@@ -366,7 +366,8 @@ export class XSelectElement extends HTMLElement {
           item.toggled = (item === clickedItem);
         }
 
-        if (oldValue !== newValue) {
+        if (oldValue !== newValue || this.mixed) {
+          this.mixed = false;
           this.dispatchEvent(new CustomEvent("change", {bubbles: true, detail: {oldValue, newValue}}));
         }
 
