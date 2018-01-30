@@ -91,10 +91,10 @@ export class XSelectElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    this["#overlay"] = createElement("x-overlay");
-    this["#overlay"].style.opacity = "0";
-    this["#overlay"].ownerElement = this;
-    this["#overlay"].addEventListener("click", (event) => this._onOverlayClick(event));
+    this["#backdrop"] = createElement("x-backdrop");
+    this["#backdrop"].style.opacity = "0";
+    this["#backdrop"].ownerElement = this;
+    this["#backdrop"].addEventListener("click", (event) => this._onBackdropClick(event));
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("toggle", (event) => this._onMenuItemToggle(event));
@@ -135,7 +135,7 @@ export class XSelectElement extends HTMLElement {
 
     this._wasFocusedBeforeExpanding = this.matches(":focus");
 
-    this["#overlay"].show(false);
+    this["#backdrop"].show(false);
 
     window.addEventListener("resize", this._resizeListener = () => {
       this._collapse();
@@ -212,7 +212,7 @@ export class XSelectElement extends HTMLElement {
     let menu = this.querySelector(":scope > x-menu");
     menu.setAttribute("closing", "");
     await whenTriggerEnd;
-    this["#overlay"].hide(false);
+    this["#backdrop"].hide(false);
 
     if (this._wasFocusedBeforeExpanding) {
       this.focus();
@@ -381,7 +381,7 @@ export class XSelectElement extends HTMLElement {
     event.preventDefault();
   }
 
-  _onOverlayClick(event) {
+  _onBackdropClick(event) {
     this._collapse();
   }
 

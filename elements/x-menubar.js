@@ -10,8 +10,8 @@ let shadowTemplate = html`
   <template>
     <link rel="stylesheet" href="node_modules/xel/stylesheets/x-menubar.css" data-vulcanize>
 
-    <svg id="overlay" hidden>
-      <path id="overlay-path"></path>
+    <svg id="backdrop" hidden>
+      <path id="backdrop-path"></path>
     </svg>
 
     <slot></slot>
@@ -99,11 +99,11 @@ export class XMenuBarElement extends HTMLElement {
         }
       }
 
-      // Show the overlay
+      // Show the backdrop
       {
         let {x, y, width, height} = this.getBoundingClientRect();
 
-        this["#overlay-path"].setAttribute("d", `
+        this["#backdrop-path"].setAttribute("d", `
           M 0 0
           L ${window.innerWidth} 0
           L ${window.innerWidth} ${window.innerHeight}
@@ -115,7 +115,7 @@ export class XMenuBarElement extends HTMLElement {
           L ${x} ${y + height}
         `);
 
-        this["#overlay"].removeAttribute("hidden");
+        this["#backdrop"].removeAttribute("hidden");
       }
     }
   }
@@ -125,10 +125,10 @@ export class XMenuBarElement extends HTMLElement {
       this._expanded = false;
       this.style.touchAction = null;
 
-      // Hide the overlay
+      // Hide the backdrop
       {
-        this["#overlay"].setAttribute("hidden", "");
-        this["#overlay-path"].setAttribute("d", "");
+        this["#backdrop"].setAttribute("hidden", "");
+        this["#backdrop-path"].setAttribute("d", "");
       }
 
       // Close all opened menus
@@ -229,7 +229,7 @@ export class XMenuBarElement extends HTMLElement {
       }
     }
 
-    else if (event.target === this["#overlay-path"]) {
+    else if (event.target === this["#backdrop-path"]) {
       this._collapseMenubarItems();
       event.preventDefault();
       event.stopPropagation();

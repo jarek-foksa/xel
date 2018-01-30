@@ -64,8 +64,8 @@ export class XTabsElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    this["#overlay"] = createElement("x-overlay");
-    this["#overlay"].style.background = "rgba(0, 0, 0, 0)";
+    this["#backdrop"] = createElement("x-backdrop");
+    this["#backdrop"].style.background = "rgba(0, 0, 0, 0)";
 
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
@@ -123,8 +123,8 @@ export class XTabsElement extends HTMLElement {
           menu.focus();
         }
 
-        this["#overlay"].ownerElement = menu;
-        this["#overlay"].show(false);
+        this["#backdrop"].ownerElement = menu;
+        this["#backdrop"].show(false);
       }
 
       resolve();
@@ -145,7 +145,7 @@ export class XTabsElement extends HTMLElement {
         await delay;
         await menu.close();
 
-        this["#overlay"].hide(false);
+        this["#backdrop"].hide(false);
 
         menu.removeAttribute("closing");
         closedTab.removeAttribute("expanded");
@@ -214,7 +214,7 @@ export class XTabsElement extends HTMLElement {
       return;
     }
 
-    if (event.target.closest("x-overlay")) {
+    if (event.target.closest("x-backdrop")) {
       this._collapse();
     }
 

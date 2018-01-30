@@ -262,7 +262,7 @@ let shadowTemplate = html`
           <hr/>
 
           <section>
-            <h3>Modals</h3>
+            <h3>Popups</h3>
 
             <a href="/elements/x-drawer">
               <x-button skin="nav">
@@ -273,6 +273,12 @@ let shadowTemplate = html`
             <a href="/elements/x-popover">
               <x-button skin="nav">
                 <x-label>x-popover</x-label>
+              </x-button>
+            </a>
+
+            <a href="/elements/x-notification">
+              <x-button skin="nav">
+                <x-label>x-notification</x-label>
               </x-button>
             </a>
           </section>

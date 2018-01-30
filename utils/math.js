@@ -65,6 +65,22 @@ export let getDistanceBetweenPoints = (point1, point2) => {
 };
 
 // @type
+//   (DOMRect, DOMPoint) => boolean
+export let rectContainsPoint = (rect, point) => {
+  if (
+    point.x >= rect.x &&
+    point.x <= rect.x + rect.width &&
+    point.y >= rect.y &&
+    point.y <= rect.y + rect.height
+  ) {
+    return true;
+  }
+  else {
+    return false;
+  }
+};
+
+// @type
 //   (number) => number
 export let degToRad = (degrees) => {
   let radians = (PI * degrees) / 180;

@@ -850,6 +850,26 @@ x-popover > main {
 /*****************************************************************************************************************/
 
 /**
+ * Notification
+ */
+
+x-notification {
+  bottom: 0;
+  padding: 14px 24px;
+  text-transform: none;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  background: #323232;
+  min-width: 288px;
+  max-width: 568px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Checkbox (https://material.google.com/components/selection-controls.html#selection-controls-checkbox)
  */
 

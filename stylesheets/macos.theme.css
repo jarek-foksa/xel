@@ -1159,6 +1159,26 @@ x-popover > main {
 /*****************************************************************************************************************/
 
 /**
+ * Notification
+ */
+
+x-notification {
+  border-radius: 5px;
+}
+
+x-notification::selection,
+x-notification ::selection {
+  color: black;
+  background: white;
+}
+
+x-notification p {
+  margin: 0;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Checkbox
  */
 

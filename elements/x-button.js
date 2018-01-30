@@ -115,13 +115,21 @@ export class XButtonElement extends HTMLElement {
   }
 
   // @info
-  //   Whether the menu or popup associated with this button is opened.
+  //   Whether the menu or popover associated with this button is opened.
   // @type
   //   boolean
   // @attribute
   //   read-only
   get expanded() {
     return this.hasAttribute("expanded");
+  }
+
+  // @info
+  //   Whether clicking this button will cause a menu or popover to show up.
+  // @type
+  //   boolean
+  get expandable() {
+    return this._canOpenMenu() || this._canOpenPopover();
   }
 
   // @info
@@ -160,9 +168,9 @@ export class XButtonElement extends HTMLElement {
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
     (async () => {
-      await customElements.whenDefined("x-overlay");
-      this["#overlay"] = createElement("x-overlay");
-      this["#overlay"].style.background =  "rgba(0, 0, 0, 0)";
+      await customElements.whenDefined("x-backdrop");
+      this["#backdrop"] = createElement("x-backdrop");
+      this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
     })();
 
   }
@@ -186,40 +194,15 @@ export class XButtonElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @info
-  //   Show the menu or popover associated with this button.
+  //   Open the child menu or overlay.
   expand() {
     return new Promise( async (resolve) => {
-      if (this._canExpandMenu()) {
-        let menu = this.querySelector("x-menu");
-
-        if (menu) {
-          this._wasFocusedBeforeExpanding = this.matches(":focus");
-          this.setAttribute("expanded", "");
-
-          this["#overlay"].ownerElement = menu;
-          this["#overlay"].show(false);
-
-          await menu.openNextToElement(this, "vertical", 3);
-          menu.focus();
-        }
+      if (this._canOpenMenu()) {
+        await this._openMenu();
       }
-      else if (this._canExpandPopover()) {
-        let popover = this.querySelector("x-popover");
 
-        if (popover) {
-          this._wasFocusedBeforeExpanding = this.matches(":focus");
-          this.setAttribute("expanded", "");
-
-          this["#overlay"].ownerElement = popover;
-          this["#overlay"].show(false);
-
-          await popover.open(this);
-          popover.focus();
-        }
-      }
-      else if (this._canExpandDialog()) {
-        let dialog = this.querySelector("dialog");
-        dialog.showModal();
+      else if (this._canOpenPopover()) {
+        await this._openPopover();
       }
 
       resolve();
@@ -227,25 +210,51 @@ export class XButtonElement extends HTMLElement {
   }
 
   // @info
-  //   Hide the menu or popover associated with this button.
+  //   Close the child menu or overlay.
   collapse(delay = null) {
     return new Promise(async (resolve) => {
       let popup = null;
 
-      if (this._canCollapseMenu()) {
-        popup = this.querySelector("x-menu");
+      if (this._canCloseMenu()) {
+        await this._closeMenu(delay);
       }
-      else if (this._canCollapsePopover()) {
-        popup = this.querySelector("x-popover");
+      else if (this._canClosePopover()) {
+        await this._closePopover(delay);
       }
 
-      if (popup) {
-        popup.setAttribute("closing", "");
+      resolve();
+    });
+  }
+
+  _openMenu() {
+    return new Promise( async (resolve) => {
+      if (this._canOpenMenu()) {
+        let menu = this.querySelector(":scope > x-menu");
+
+        this._wasFocusedBeforeExpanding = this.matches(":focus");
+        this.setAttribute("expanded", "");
+
+        this["#backdrop"].ownerElement = menu;
+        this["#backdrop"].show(false);
+
+        await menu.openNextToElement(this, "vertical", 3);
+        menu.focus();
+      }
+
+      resolve();
+    });
+  }
+
+  _closeMenu(delay = null) {
+    return new Promise( async (resolve) => {
+      if (this._canCloseMenu()) {
+        let menu = this.querySelector(":scope > x-menu");
+        menu.setAttribute("closing", "");
 
         await delay;
-        await popup.close();
+        await menu.close();
 
-        this["#overlay"].hide(false);
+        this["#backdrop"].hide(false);
         this.removeAttribute("expanded");
 
         if (this._wasFocusedBeforeExpanding) {
@@ -259,74 +268,177 @@ export class XButtonElement extends HTMLElement {
           }
         }
 
-        popup.removeAttribute("closing");
+        menu.removeAttribute("closing");
       }
 
       resolve();
     });
   }
 
-  isExpandable() {
-    return this.querySelector(":scope > x-menu x-menuitem, :scope > x-popover, :scope > dialog") !== null;
-  }
+  _canOpenMenu() {
+    let result = false;
 
-  _canExpandMenu() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
+    if (this.disabled === false) {
       let menu = this.querySelector(":scope > x-menu");
-      let item = this.querySelector(":scope > x-menu x-menuitem");
-      return menu !== null && item !== null && !menu.hasAttribute("opened") && !menu.hasAttribute("closing");
+
+      if (menu && menu.hasAttribute("opened") === false && menu.hasAttribute("closing") === false) {
+        let item = menu.querySelector("x-menuitem");
+
+        if (item !== null) {
+          result = true;
+        }
+      }
     }
+
+    return result;
   }
 
-  _canExpandPopover() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
-      let popover = this.querySelector("x-popover");
-      return popover !== null && !popover.hasAttribute("opened") && !popover.hasAttribute("closing");
-    }
-  }
+  _canCloseMenu() {
+    let result = false;
 
-  _canExpandDialog() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
-      let dialog = this.querySelector("dialog");
-      return dialog !== null && !dialog.hasAttribute("open") && !dialog.hasAttribute("closing");
-    }
-  }
-
-  _canCollapseMenu() {
-    if (this.disabled) {
-      return false;
-    }
-    else {
+    if (this.disabled === false) {
       let menu = this.querySelector(":scope > x-menu");
-      return menu !== null && menu.opened; /* && menu.hasAttribute("closing") === false; */
+
+      if (menu && menu.opened) {
+        result = true;
+      }
     }
+
+    return result;
   }
 
-  _canCollapsePopover() {
-    if (this.disabled) {
-      return false;
+  _openPopover() {
+    return new Promise( async (resolve) => {
+      if (this._canOpenPopover()) {
+        let popover = this.querySelector(":scope > x-popover");
+
+        this._wasFocusedBeforeExpanding = this.matches(":focus");
+        this.setAttribute("expanded", "");
+
+        this["#backdrop"].ownerElement = popover;
+        this["#backdrop"].show(false);
+
+        await popover.open(this);
+        popover.focus();
+      }
+
+      resolve();
+    });
+  }
+
+  _closePopover(delay = null) {
+    return new Promise( async (resolve) => {
+      if (this._canClosePopover()) {
+        let popover = this.querySelector(":scope > x-popover");
+        popover.setAttribute("closing", "");
+
+        await delay;
+        await popover.close();
+
+        this["#backdrop"].hide(false);
+        this.removeAttribute("expanded");
+
+        if (this._wasFocusedBeforeExpanding) {
+          this.focus();
+        }
+        else {
+          let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+          if (ancestorFocusableElement) {
+            ancestorFocusableElement.focus();
+          }
+        }
+
+        popover.removeAttribute("closing");
+      }
+
+      resolve();
+    });
+  }
+
+  _canOpenPopover() {
+    let result = false;
+
+    if (this.disabled === false) {
+      let popover = this.querySelector(":scope > x-popover");
+
+      if (popover && popover.hasAttribute("opened") === false && popover.hasAttribute("closing") === false) {
+        result = true;
+      }
     }
-    else {
-      let popover = this.querySelector("x-popover");
-      return popover !== null && popover.opened === true; /* && popover.hasAttribute("closing") === false; */
+
+    return result;
+  }
+
+  _canClosePopover() {
+    let result = false;
+
+    if (this.disabled === false) {
+      let popover = this.querySelector(":scope > x-popover");
+
+      if (popover && popover.opened) {
+        result = true;
+      }
     }
+
+    return result;
+  }
+
+  _openDialog() {
+    return new Promise((resolve) => {
+      if (this._canOpenDialog()) {
+        let dialog = this.querySelector(":scope > dialog");
+        dialog.showModal();
+      }
+
+      resolve();
+    });
+  }
+
+  _canOpenDialog() {
+    let result = false;
+
+    if (this.disabled === false) {
+      let dialog = this.querySelector(":scope > dialog");
+
+      if (dialog && dialog.hasAttribute("open") === false && dialog.hasAttribute("closing") === false) {
+        result = true;
+      }
+    }
+
+    return result;
+  }
+
+  _openNotification() {
+    return new Promise((resolve) => {
+      if (this._canOpenNotification()) {
+        let notification = this.querySelector(":scope > x-notification");
+        notification.opened = true;
+      }
+
+      resolve();
+    });
+  }
+
+  _canOpenNotification() {
+    let result = false;
+
+    if (this.disabled === false) {
+      let notification = this.querySelector(":scope > x-notification");
+
+      if (notification && !notification.hasAttribute("opened") && !notification.hasAttribute("closing")) {
+        result = true;
+      }
+    }
+
+    return result;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _updateArrowVisibility() {
-    let menu = this.querySelector("x-menu");
-    let popover = this.querySelector("x-popover");
-    this["#arrow"].style.display = (menu === null && popover === null) ? "none" : null;
+    let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
+    this["#arrow"].style.display = (popup ? null : "none");
   }
 
   _updateAccessabilityAttributes() {
@@ -353,13 +465,25 @@ export class XButtonElement extends HTMLElement {
   }
 
   _onPointerDown(event) {
-    let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
+    let openedMenu = this.querySelector(":scope > x-menu[opened]");
+    let openedPopover = this.querySelector(":scope > x-popover[opened]");
+    let openedDialog = this.querySelector(":scope > dialog[open]");
+    let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
-    if (popup && (popup.hasAttribute("closing") || popup.contains(event.target))) {
+    if (event.target === this["#backdrop"]) {
+      this._onBackdropPointerDown(event);
+    }
+    else if (openedMenu && openedMenu.contains(event.target)) {
       return;
     }
-    else if (event.target === this["#overlay"]) {
-      this._onOverlayPointerDown(event);
+    else if (openedPopover && openedPopover.contains(event.target)) {
+      return;
+    }
+    else if (openedDialog && openedDialog.contains(event.target)) {
+      return;
+    }
+    else if (openedNotification && openedNotification.contains(event.target)) {
+      return;
     }
     else {
       this._onButtonPointerDown(event);
@@ -367,23 +491,26 @@ export class XButtonElement extends HTMLElement {
   }
 
   _onClick(event) {
-    let childPopup = this.querySelector(":scope > x-menu, :scope > x-popover");
-    let closestMenu = event.target.closest("x-menu");
-    let closestMenuItem = event.target.closest("x-menuitem");
-    let closestPopover = event.target.closest("x-popover");
+    let openedMenu = this.querySelector(":scope > x-menu[opened]");
+    let openedPopover = this.querySelector(":scope > x-popover[opened]");
+    let openedDialog = this.querySelector(":scope > dialog[open]");
+    let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
-    if (childPopup && childPopup.hasAttribute("closing")) {
+    if (event.target === this["#backdrop"]) {
       return;
     }
-    else if (event.target === this["#overlay"]) {
-      return;
-    }
-    else if (closestMenu) {
-      if (closestMenuItem) {
+    else if (openedMenu && openedMenu.contains(event.target)) {
+      if (openedMenu.hasAttribute("closing") === false && event.target.closest("x-menuitem")) {
         this._onMenuItemClick(event);
       }
     }
-    else if (closestPopover && this.contains(closestPopover)) {
+    else if (openedPopover && openedPopover.contains(event.target)) {
+      return;
+    }
+    else if (openedDialog && openedDialog.contains(event.target)) {
+      return;
+    }
+    else if (openedNotification && openedNotification.contains(event.target)) {
       return;
     }
     else {
@@ -391,7 +518,7 @@ export class XButtonElement extends HTMLElement {
     }
   }
 
-  _onOverlayPointerDown(pointerDownEvent) {
+  _onBackdropPointerDown(pointerDownEvent) {
     this.collapse();
   }
 
@@ -423,10 +550,21 @@ export class XButtonElement extends HTMLElement {
       }, {once: true});
     }
 
-    if (this.isExpandable()) {
-      this.expand();
+
+    if (this._canOpenMenu()) {
+      this._openMenu();
+    }
+    else if (this._canOpenPopover()) {
+      this._openPopover();
     }
     else {
+      if (this._canOpenDialog()) {
+        this._openDialog();
+      }
+      else if (this._canOpenNotification()) {
+        this._openNotification();
+      }
+
       // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
       // to last at least 150ms.
 
@@ -476,7 +614,7 @@ export class XButtonElement extends HTMLElement {
         let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
         let delay = true;
 
-        if (this.isExpandable() === false) {
+        if (this.expandable === false) {
           if (this.ownerButtons) {
             if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
               delay = false;
@@ -647,7 +785,7 @@ export class XButtonElement extends HTMLElement {
     }
   }
 
-  async _onMenuItemClick(event) {
+  _onMenuItemClick(event) {
     let item = event.target.closest("x-menuitem");
     let menu = this.querySelector(":scope > x-menu");
 
@@ -657,21 +795,53 @@ export class XButtonElement extends HTMLElement {
   }
 
   _onKeyDown(event) {
-    if (event.code === "Enter" || event.code === "Space" || event.code === "ArrowDown") {
-      let menu = this.querySelector("x-menu");
-      let popover = this.querySelector("x-popover");
-
-      if (menu) {
-        if (menu.opened === false) {
-          event.preventDefault();
-          this.expand().then(() => menu.focusFirstMenuItem());
-        }
+    if (event.code === "Enter" || event.code === "Space") {
+      if (this._canOpenMenu()) {
+        event.preventDefault();
+        this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
       }
-      else if (popover) {
-        if (popover.opened === false) {
-          event.preventDefault();
-          this.expand();
-        }
+      else if (this._canOpenPopover()) {
+        event.preventDefault();
+        this._openPopover();
+      }
+      else if (this._canOpenDialog()) {
+        event.preventDefault();
+        this._openDialog();
+      }
+      else if (this._canOpenNotification()) {
+        event.preventDefault();
+        this._openNotification();
+      }
+      else {
+        event.preventDefault();
+        this.click();
+      }
+    }
+
+    else if (event.code === "ArrowDown") {
+      if (this._canOpenMenu()) {
+        let menu = this.querySelector(":scope > x-menu");
+        event.preventDefault();
+        this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
+      }
+      else if (this._canOpenPopover()) {
+        event.preventDefault();
+        this._openPopover();
+      }
+      else {
+        event.preventDefault();
+        this.click();
+      }
+    }
+
+    else if (event.code === "ArrowUp") {
+      if (this._canOpenMenu()) {
+        event.preventDefault();
+        this._openMenu().then(() => this.querySelector(":scope > x-menu").focusLastMenuItem());
+      }
+      else if (this._canOpenPopover()) {
+        event.preventDefault();
+        this._openPopover();
       }
       else {
         event.preventDefault();
@@ -680,30 +850,13 @@ export class XButtonElement extends HTMLElement {
     }
 
     else if (event.code === "Escape") {
-      let menu = this.querySelector("x-menu");
-      let popover = this.querySelector("x-popover");
-
-      if (menu) {
-        if (menu.opened) {
-          event.preventDefault();
-          this.collapse();
-        }
-      }
-      else if (popover) {
-        if (popover.opened) {
-          event.preventDefault();
-          this.collapse();
-        }
-      }
-    }
-
-    else if (event.code === "ArrowUp") {
-      let menu = this.querySelector("x-menu");
-      let popover = this.querySelector("x-popover");
-
-      if (menu) {
+      if (this._canCloseMenu()) {
         event.preventDefault();
-        this.expand().then(() => menu.focusLastMenuItem());
+        this.collapse();
+      }
+      else if (this._canClosePopover()) {
+        event.preventDefault();
+        this.collapse();
       }
     }
   }

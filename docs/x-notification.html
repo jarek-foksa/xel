@@ -1,0 +1,63 @@
+<div class="view">
+  <article>
+    <h2>Notification</h2>
+
+    <section>
+      <h3>Examples</h3>
+
+      <section>
+        <h4>Default</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open notification</x-label>
+              <x-notification>Sample notification text</x-notification>
+            </x-button>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Timeout</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open notification</x-label>
+              <x-notification timeout="2000">This notification will disappear after 2000 miliseconds.</x-notification>
+            </x-button>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>JS API</h4>
+
+        <xel-demo>
+          <template>
+            <x-notification id="notification" timeout="800"></x-notification>
+
+            <x-input id="input">
+              <x-label>Enter text here</x-label>
+            </x-input>
+
+            <script>
+              let notification = document.querySelector("#notification");
+              let input = document.querySelector("#input");
+
+              input.addEventListener("keydown", (event) => {
+                notification.innerHTML = `You pressed ${event.key} key.`;
+                notification.opened = true;
+              });
+            </script>
+          </template>
+        </xel-demo>
+      </section>
+    </section>
+  </article>
+</div>

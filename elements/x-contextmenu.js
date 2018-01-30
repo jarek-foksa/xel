@@ -36,10 +36,10 @@ export class XContextMenuElement extends HTMLElement {
     this._shadowRoot = this.attachShadow({mode: "closed"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
-    this["#overlay"] = createElement("x-overlay");
-    this["#overlay"].style.background =  "rgba(0, 0, 0, 0)";
-    this["#overlay"].addEventListener("contextmenu", (event) => this._onOverlayContextMenu(event));
-    this["#overlay"].addEventListener("pointerdown", (event) => this._onOverlayPointerDown(event));
+    this["#backdrop"] = createElement("x-backdrop");
+    this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+    this["#backdrop"].addEventListener("contextmenu", (event) => this._onBackdropContextMenu(event));
+    this["#backdrop"].addEventListener("pointerdown", (event) => this._onBackdropPointerDown(event));
 
     window.addEventListener("blur", (event) => this._onBlur(event));
     this.addEventListener("blur", (event) => this._onBlur(event));
@@ -68,8 +68,8 @@ export class XContextMenuElement extends HTMLElement {
     if (menu.opened === false) {
       menu.openAtPoint(clientX, clientY);
 
-      this["#overlay"].ownerElement = menu;
-      this["#overlay"].show(false);
+      this["#backdrop"].ownerElement = menu;
+      this["#backdrop"].show(false);
 
       menu.focus();
     }
@@ -79,7 +79,7 @@ export class XContextMenuElement extends HTMLElement {
     return new Promise(async (resolve) => {
       let menu = this.querySelector("x-menu");
       await menu.close();
-      this["#overlay"].hide(false);
+      this["#backdrop"].hide(false);
 
       let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
 
@@ -106,7 +106,7 @@ export class XContextMenuElement extends HTMLElement {
     }
   }
 
-  _onOverlayContextMenu(event) {
+  _onBackdropContextMenu(event) {
     event.preventDefault()
     event.stopImmediatePropagation();
 
@@ -119,7 +119,7 @@ export class XContextMenuElement extends HTMLElement {
     });
   }
 
-  _onOverlayPointerDown(event) {
+  _onBackdropPointerDown(event) {
     if (event.button === 0) {
       event.preventDefault();
       this.close();

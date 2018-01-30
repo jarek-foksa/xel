@@ -119,7 +119,7 @@ export class XButtonsElement extends HTMLElement {
     }
 
     let clickedButton = event.target.closest("x-button");
-    let canToggle = (clickedButton && clickedButton.disabled === false && clickedButton.isExpandable() === false);
+    let canToggle = (clickedButton && clickedButton.disabled === false && clickedButton.expandable === false);
 
     if (canToggle) {
       let otherButtons = this._getButtons().filter(button => button !== clickedButton);

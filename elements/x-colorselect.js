@@ -59,8 +59,8 @@ export class XColorSelectElement extends HTMLElement {
     this._shadowRoot = this.attachShadow({mode: "closed"});
     this._shadowRoot.innerHTML = shadowHTML;
 
-    this["#overlay"] = createElement("x-overlay");
-    this["#overlay"].style.background =  "rgba(0, 0, 0, 0)";
+    this["#backdrop"] = createElement("x-backdrop");
+    this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
@@ -102,8 +102,8 @@ export class XColorSelectElement extends HTMLElement {
       this._wasFocusedBeforeExpanding = this.matches(":focus");
       this.setAttribute("expanded", "");
 
-      this["#overlay"].ownerElement = popover;
-      this["#overlay"].show(false);
+      this["#backdrop"].ownerElement = popover;
+      this["#backdrop"].show(false);
 
       await popover.open(this);
       popover.focus();
@@ -118,7 +118,7 @@ export class XColorSelectElement extends HTMLElement {
 
       await popover.close();
 
-      this["#overlay"].hide(false);
+      this["#backdrop"].hide(false);
       this.removeAttribute("expanded");
 
       if (this._wasFocusedBeforeExpanding) {
@@ -208,7 +208,7 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   _onClick(event) {
-    if (event.target === this["#overlay"]) {
+    if (event.target === this["#backdrop"]) {
       this._collapse();
     }
     else {

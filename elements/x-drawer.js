@@ -54,9 +54,9 @@ export class XDrawerElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    this["#overlay"] = html`<x-overlay id="overlay"></x-overlay>`;
-    this["#overlay"].ownerElement = this;
-    this["#overlay"].addEventListener("click", (event) => this._onOverlayClick(event));
+    this["#backdrop"] = html`<x-backdrop id="backdrop"></x-backdrop>`;
+    this["#backdrop"].ownerElement = this;
+    this["#backdrop"].addEventListener("click", (event) => this._onBackdropClick(event));
   }
 
   connectedCallback() {
@@ -79,10 +79,10 @@ export class XDrawerElement extends HTMLElement {
 
   _open() {
     return new Promise( async (resolve) => {
-      // Overlay
+      // Backdrop
       {
-        this["#overlay"].style.background = getComputedStyle(this).getPropertyValue("--backdrop-color");
-        this["#overlay"].show(true)
+        this["#backdrop"].style.background = getComputedStyle(this).getPropertyValue("--backdrop-color");
+        this["#backdrop"].show(true)
       }
 
       // Drawer
@@ -143,9 +143,9 @@ export class XDrawerElement extends HTMLElement {
 
   _close() {
     return new Promise( async (resolve) => {
-      // Overlay
+      // Backdrop
       {
-        this["#overlay"].hide(true)
+        this["#backdrop"].hide(true)
       }
 
       // Drawer
@@ -213,7 +213,7 @@ export class XDrawerElement extends HTMLElement {
     }
   }
 
-  _onOverlayClick() {
+  _onBackdropClick() {
     this.opened = false;
   }
 }

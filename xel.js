@@ -1,6 +1,7 @@
 
 import "./runtime.js";
 import "./elements/x-accordion.js";
+import "./elements/x-backdrop.js";
 import "./elements/x-box.js";
 import "./elements/x-button.js";
 import "./elements/x-buttons.js";
@@ -18,8 +19,8 @@ import "./elements/x-label.js";
 import "./elements/x-menu.js";
 import "./elements/x-menubar.js";
 import "./elements/x-menuitem.js";
+import "./elements/x-notification.js";
 import "./elements/x-numberinput.js";
-import "./elements/x-overlay.js";
 import "./elements/x-popover.js";
 import "./elements/x-progressbar.js";
 import "./elements/x-radio.js";

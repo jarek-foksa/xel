@@ -27,9 +27,9 @@ let shadowTemplate = html`
   </template>
 `;
 
-export class XOverlayElement extends HTMLElement {
+export class XBackdropElement extends HTMLElement {
   // @info
-  //   Element below which the overlay should be placed.
+  //   Element below which the backdrop should be placed.
   // @type
   //   HTMLElement
   get ownerElement() {
@@ -64,7 +64,7 @@ export class XOverlayElement extends HTMLElement {
     let extraTop = 0;
     let extraLeft = 0;
 
-    // Determine extraLeft and extraTop which represent the extra offset needed when the overlay is inside another
+    // Determine extraLeft and extraTop which represent the extra offset needed when the backdrop is inside another
     // fixed-positioned element such as a popover
     {
       if (bounds.top !== 0 || bounds.left !== 0) {
@@ -80,7 +80,7 @@ export class XOverlayElement extends HTMLElement {
       }
     }
 
-    // Ensure the overlay is stacked directly below the ref element
+    // Ensure the backdrop is stacked directly below the ref element
     {
       let zIndex = parseFloat(getComputedStyle(this.ownerElement).zIndex);
       this.style.zIndex = zIndex - 1;
@@ -89,9 +89,9 @@ export class XOverlayElement extends HTMLElement {
     this.style.top = (extraTop) + "px";
     this.style.left = (extraLeft) + "px";
 
-    // Animate the overlay
+    // Animate the backdrop
     if (animate) {
-      let overlayAnimation = this.animate(
+      let backdropAnimation = this.animate(
         {
           opacity: ["0", "1"]
         },
@@ -101,13 +101,13 @@ export class XOverlayElement extends HTMLElement {
         }
       );
 
-      return overlayAnimation.finished;
+      return backdropAnimation.finished;
     }
   }
 
   hide(animate = true) {
     if (animate) {
-      let overlayAnimation = this.animate(
+      let backdropAnimation = this.animate(
         {
           opacity: ["1", "0"]
         },
@@ -117,12 +117,12 @@ export class XOverlayElement extends HTMLElement {
         }
       );
 
-      overlayAnimation.finished.then(() => {
+      backdropAnimation.finished.then(() => {
         document.body.style.overflow = null;
         this.remove();
       });
 
-      return overlayAnimation.finished;
+      return backdropAnimation.finished;
     }
     else {
       document.body.style.overflow = null;
@@ -131,4 +131,4 @@ export class XOverlayElement extends HTMLElement {
   }
 }
 
-customElements.define("x-overlay", XOverlayElement);
+customElements.define("x-backdrop", XBackdropElement);

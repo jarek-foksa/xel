@@ -29,7 +29,6 @@
     "select",
     "dialog",
     "drawer",
-    "overlay",
     "popover",
     "slider",
     "throbber"
