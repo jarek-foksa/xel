@@ -12,7 +12,6 @@ import "./elements/x-contextmenu.js";
 import "./elements/x-dateselect.js";
 import "./elements/x-doctab.js";
 import "./elements/x-doctabs.js";
-import "./elements/x-drawer.js";
 import "./elements/x-icon.js";
 import "./elements/x-input.js";
 import "./elements/x-label.js";

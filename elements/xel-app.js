@@ -264,9 +264,9 @@ let shadowTemplate = html`
           <section>
             <h3>Popups</h3>
 
-            <a href="/elements/x-drawer">
+            <a href="/elements/dialog">
               <x-button skin="nav">
-                <x-label>x-drawer</x-label>
+                <x-label>dialog</x-label>
               </x-button>
             </a>
 

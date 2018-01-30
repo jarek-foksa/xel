@@ -16,11 +16,29 @@
     let dialogRect = this.getBoundingClientRect();
     let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
     let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+    let animation;
 
-    let animation = this.animate(
-      { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
-      { duration: transitionDuration, easing: transitionTimingFunction }
-    );
+    // Animate from left
+    if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
+      animation = this.animate(
+        { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
+        { duration: transitionDuration, easing: transitionTimingFunction }
+      );
+    }
+    // Animate from right
+    else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
+      animation = this.animate(
+        { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
+        { duration: transitionDuration, easing: transitionTimingFunction }
+      );
+    }
+    // Animate from top
+    else {
+      animation = this.animate(
+        { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
+        { duration: transitionDuration, easing: transitionTimingFunction }
+      );
+    }
 
     await animation.finished;
 
@@ -72,11 +90,29 @@
     let dialogRect = this.getBoundingClientRect();
     let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
     let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+    let animation;
 
-    let animation = this.animate(
-      { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
-      { duration: transitionDuration, easing: transitionTimingFunction }
-    );
+    // Animate to left
+    if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
+      animation = this.animate(
+        { transform: ["translateX(0px)", `translateX(-${dialogRect.right}px)`]},
+        { duration: transitionDuration, easing: transitionTimingFunction }
+      );
+    }
+    // Animate to right
+    else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
+      animation = this.animate(
+        { transform: ["translateX(0px)", `translateX(${dialogRect.width}px)`]},
+        { duration: transitionDuration, easing: transitionTimingFunction }
+      );
+    }
+    // Animate to top
+    else {
+      animation = this.animate(
+        { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
+        { duration: transitionDuration, easing: transitionTimingFunction }
+      );
+    }
 
     await animation.finished;
 

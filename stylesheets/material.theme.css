@@ -814,19 +814,6 @@ x-menubar > x-menuitem {
 /*****************************************************************************************************************/
 
 /**
- * Drawer (https://material.google.com/patterns/navigation-drawer.html)
- */
-
-x-drawer {
-  background: #fff;
-  box-shadow: var(--elevation-16);
-  outline: 1px solid rgba(0, 0, 0, 0.14);
-  --backdrop-color: rgba(0, 0, 0, 0.5);
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Popover
  */
 

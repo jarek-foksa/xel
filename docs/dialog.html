@@ -1,0 +1,160 @@
+<div class="view">
+  <article>
+    <h2>Dialog</h2>
+
+    <section>
+      <h3>Examples</h3>
+
+      <section>
+        <h4>Basic</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open</x-label>
+              <dialog></dialog>
+            </x-button>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Confirmation</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open</x-label>
+
+              <dialog>
+                <main>
+                  <h3>Use Google's location service?</h3>
+                  <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
+                </main>
+
+                <footer>
+                  <x-button id="agree-button">
+                    <x-label>Disagree</x-label>
+                  </x-button>
+                  <x-button toggled id="disagree-button">
+                    <x-label>Agree</x-label>
+                  </x-button>
+                </footer>
+              </dialog>
+            </x-button>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Left side drawer</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open</x-label>
+              <dialog></dialog>
+            </x-button>
+
+            <style>
+              dialog {
+                width: 300px;
+                height: 100%;
+                left: 0;
+                right: auto;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Right side drawer</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open</x-label>
+              <dialog></dialog>
+            </x-button>
+
+            <style>
+              dialog {
+                width: 300px;
+                height: 100%;
+                right: 0;
+                left: auto;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Do not close when backdrop clicked</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open</x-label>
+              <dialog>
+                <main>
+                  <p>This dialog can't be closed by clicking the backdrop. Use ESC key to close it.</p>
+                </main>
+              </dialog>
+            </x-button>
+
+            <style>
+              dialog::backdrop {
+                pointer-events: none;
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+
+      <hr/>
+
+      <section>
+        <h4>Custom style</h4>
+
+        <xel-demo>
+          <template>
+            <x-button>
+              <x-label>Open</x-label>
+              <dialog></dialog>
+            </x-button>
+
+            <style>
+              dialog {
+                width: 30vw;
+                height: 70vh;
+                left: 0;
+                right: auto;
+                top: auto;
+                color: white;
+                background: #009788;
+                border-radius: 0 15px 15px 0;
+                opacity: 0.85;
+                border: 1px solid #326960;
+                padding: 10px 20px;
+              }
+
+              dialog::backdrop {
+                background: rgba(0, 0, 0, 0);
+              }
+            </style>
+          </template>
+        </xel-demo>
+      </section>
+    </section>
+  </article>
+</div>
