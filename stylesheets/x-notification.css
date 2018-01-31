@@ -12,10 +12,10 @@
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 20px;
+  padding: 5px 12px;
   box-sizing: border-box;
-  color: white;
-  background: #505050;
+  color: rgba(255, 255, 255, 0.9);
+  background: #434343;
   z-index: 9999;
   font-size: 12px;
   user-select: text;
