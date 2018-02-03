@@ -18,7 +18,7 @@
   --ripple-opacity: 0.2;
   --arrow-width: 8px;
   --arrow-height: 8px;
-  --arrow-margin: 0 0 0 4px;
+  --arrow-margin: 0 0 0 3px;
   --arrow-d: path("M 11.699 19.846 L 49.822 57.886 L 87.945 19.846 L 99.657 31.557 L 49.822 81.392 L -0.013 31.557 Z");
 }
 :host(:focus) {
