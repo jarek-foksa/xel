@@ -158,7 +158,7 @@ export class XColorSelectElement extends HTMLElement {
       this._updateInput();
     }
 
-    let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker");
+    let picker = [...this.querySelectorAll("*")].find(element => element.localName.endsWith("colorpicker"));
 
     if (picker && picker.getAttribute("value") !== this.getAttribute("value")) {
       picker.setAttribute("value", this.getAttribute("value"));
