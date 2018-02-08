@@ -2,7 +2,7 @@
 // @copyright
 //   © 2016-2017 Jarosław Foksa
 
-import {html} from "../utils/element.js";
+import {html, createElement} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
@@ -26,6 +26,19 @@ export class XPopoverElement extends HTMLElement {
   // @attribute
   get opened() {
     return this.hasAttribute("opened");
+  }
+
+
+  // @type
+  //   boolean
+  // @default
+  //   false
+  // @attribute
+  get modal() {
+    return this.hasAttribute("modal");
+  }
+  set modal(modal) {
+    modal ? this.setAttribute("modal", "") : this.removeAttribute("modal");
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,6 +86,13 @@ export class XPopoverElement extends HTMLElement {
       this.style.height = null;
 
       this.setAttribute("opened", "");
+
+      if (this.modal) {
+        this["#backdrop"] = createElement("x-backdrop");
+        this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+        this["#backdrop"].ownerElement = this;
+        this["#backdrop"].show(false);
+      }
 
       // Determine extraLeft and extraTop which represent the extra offset when the popover is inside another
       // fixed-positioned element.
@@ -449,6 +469,10 @@ export class XPopoverElement extends HTMLElement {
         }
 
         this.removeAttribute("animating");
+
+        if (this["#backdrop"]) {
+          this["#backdrop"].remove();
+        }
       }
 
       resolve();

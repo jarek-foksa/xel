@@ -315,9 +315,6 @@ export class XButtonElement extends HTMLElement {
         this._wasFocusedBeforeExpanding = this.matches(":focus");
         this.setAttribute("expanded", "");
 
-        this["#backdrop"].ownerElement = popover;
-        this["#backdrop"].show(false);
-
         await popover.open(this);
         popover.focus();
       }
@@ -335,7 +332,6 @@ export class XButtonElement extends HTMLElement {
         await delay;
         await popover.close();
 
-        this["#backdrop"].hide(false);
         this.removeAttribute("expanded");
 
         if (this._wasFocusedBeforeExpanding) {
@@ -362,7 +358,7 @@ export class XButtonElement extends HTMLElement {
     if (this.disabled === false) {
       let popover = this.querySelector(":scope > x-popover");
 
-      if (popover && popover.hasAttribute("opened") === false && popover.hasAttribute("closing") === false) {
+      if (popover && popover.hasAttribute("opened") === false ) {
         result = true;
       }
     }
@@ -550,24 +546,9 @@ export class XButtonElement extends HTMLElement {
       }, {once: true});
     }
 
-
-    if (this._canOpenMenu()) {
-      this._openMenu();
-    }
-    else if (this._canOpenPopover()) {
-      this._openPopover();
-    }
-    else {
-      if (this._canOpenDialog()) {
-        this._openDialog();
-      }
-      else if (this._canOpenNotification()) {
-        this._openNotification();
-      }
-
-      // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
-      // to last at least 150ms.
-
+    // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
+    // to last at least 150ms.
+    if (this._canOpenMenu() === false && this._canOpenPopover() === false && this._canClosePopover() === false) {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
 
@@ -600,6 +581,16 @@ export class XButtonElement extends HTMLElement {
           this.setAttribute("pressed", "");
         }
       })();
+    }
+
+    if (this._canOpenMenu()) {
+      this._openMenu();
+    }
+    else if (this._canOpenPopover()) {
+      this._openPopover();
+    }
+    else if (this._canClosePopover()) {
+      this._closePopover();
     }
 
     // Ripple
@@ -700,6 +691,43 @@ export class XButtonElement extends HTMLElement {
     if (popup && popup.hasAttribute("closing")) {
       return;
     }
+
+
+
+
+
+    if (this._canClosePopover()) {
+      // this._closePopover();
+    }
+    else {
+      if (this._canOpenDialog()) {
+        this._openDialog();
+      }
+      else if (this._canOpenNotification()) {
+        this._openNotification();
+      }
+    }
+
+
+
+
+
+    // Collapse  the button
+
+    /*
+    console.log(this.hasAttribute("opening"));
+    let popover = this.querySelector(":scope > x-popover");
+
+    if (popover) {
+      if (popover.opened) {
+        this.collapse();
+      }
+    }
+    */
+
+
+
+
 
     // Toggle the button
     if (this.togglable) {

@@ -59,9 +59,6 @@ export class XColorSelectElement extends HTMLElement {
     this._shadowRoot = this.attachShadow({mode: "closed"});
     this._shadowRoot.innerHTML = shadowHTML;
 
-    this["#backdrop"] = createElement("x-backdrop");
-    this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
-
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
     }
@@ -101,10 +98,6 @@ export class XColorSelectElement extends HTMLElement {
     if (popover) {
       this._wasFocusedBeforeExpanding = this.matches(":focus");
       this.setAttribute("expanded", "");
-
-      this["#backdrop"].ownerElement = popover;
-      this["#backdrop"].show(false);
-
       await popover.open(this);
       popover.focus();
     }
@@ -117,8 +110,6 @@ export class XColorSelectElement extends HTMLElement {
       popover.setAttribute("closing", "");
 
       await popover.close();
-
-      this["#backdrop"].hide(false);
       this.removeAttribute("expanded");
 
       if (this._wasFocusedBeforeExpanding) {
@@ -208,17 +199,20 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   _onClick(event) {
-    if (event.target === this["#backdrop"]) {
-      this._collapse();
-    }
-    else {
-      let popover = this.querySelector("x-popover");
+    let popover = this.querySelector(":scope > x-popover");
 
-      if (popover) {
-        event.preventDefault();
+    if (popover) {
+      if (popover.opened) {
+        if (popover.modal === false && event.target === this) {
+          event.preventDefault();
+          this._collapse();
+        }
+        else if (popover.modal === true && event.target.localName === "x-backdrop") {
+          event.preventDefault();
+          this._collapse();
+        }
       }
-
-      if (popover && popover.hasAttribute("opened") === false) {
+      else {
         event.preventDefault();
         this._expand();
       }
