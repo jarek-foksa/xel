@@ -472,6 +472,7 @@ export class XPopoverElement extends HTMLElement {
       if (this.opened) {
         this.removeAttribute("opened");
         this.setAttribute("animating", "");
+        this["#backdrop"].hide();
         this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
 
         let transition = getComputedStyle(this).getPropertyValue("--close-transition");
@@ -482,7 +483,6 @@ export class XPopoverElement extends HTMLElement {
         }
 
         this.removeAttribute("animating");
-        this["#backdrop"].hide();
       }
 
       resolve();
