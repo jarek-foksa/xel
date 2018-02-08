@@ -20,6 +20,10 @@ let shadowTemplate = html`
 //   open
 //   close
 export class XPopoverElement extends HTMLElement {
+  static get observedAttributes() {
+    return ["modal"];
+  }
+
   // @type
   //   boolean
   // @readonly
@@ -27,7 +31,6 @@ export class XPopoverElement extends HTMLElement {
   get opened() {
     return this.hasAttribute("opened");
   }
-
 
   // @type
   //   boolean
@@ -52,10 +55,23 @@ export class XPopoverElement extends HTMLElement {
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
     }
+
+    this["#backdrop"] = createElement("x-backdrop");
+    this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+    this["#backdrop"].ownerElement = this;
   }
 
   connectedCallback() {
     this.tabIndex = -1;
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "modal") {
+      this._onModalAttributeChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,9 +104,6 @@ export class XPopoverElement extends HTMLElement {
       this.setAttribute("opened", "");
 
       if (this.modal) {
-        this["#backdrop"] = createElement("x-backdrop");
-        this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
-        this["#backdrop"].ownerElement = this;
         this["#backdrop"].show(false);
       }
 
@@ -469,10 +482,7 @@ export class XPopoverElement extends HTMLElement {
         }
 
         this.removeAttribute("animating");
-
-        if (this["#backdrop"]) {
-          this["#backdrop"].remove();
-        }
+        this["#backdrop"].hide();
       }
 
       resolve();
@@ -480,6 +490,15 @@ export class XPopoverElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _onModalAttributeChange() {
+    if (this.modal && this.opened) {
+      this["#backdrop"].show();
+    }
+    else {
+      this["#backdrop"].hide();
+    }
+  }
 
   // @info
   //   Parse the value of CSS transition property.
