@@ -195,7 +195,9 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   _onPointerDown(event) {
-    event.preventDefault();
+    if (event.target === this) {
+      event.preventDefault();
+    }
   }
 
   _onClick(event) {
