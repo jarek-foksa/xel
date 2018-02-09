@@ -25,7 +25,7 @@ let shadowTemplate = html`
 `;
 
 // @events
-//   change
+//   toggle
 export class XSwitchElement extends HTMLElement {
   static get observedAttributes() {
     return ["toggled", "disabled"];
@@ -181,7 +181,7 @@ export class XSwitchElement extends HTMLElement {
         this.toggled = !this.toggled;
       }
 
-      this.dispatchEvent(new CustomEvent("change"));
+      this.dispatchEvent(new CustomEvent("toggle"));
     }
 
     // Ripple

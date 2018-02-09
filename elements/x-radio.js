@@ -21,7 +21,7 @@ let shadowTemplate = html`
 `;
 
 // @events
-//   change
+//   toggle
 export class XRadioElement extends HTMLElement {
   static get observedAttributes() {
     return ["toggled", "disabled"];
@@ -149,7 +149,7 @@ export class XRadioElement extends HTMLElement {
         this.toggled = !this.toggled;
       }
 
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      this.dispatchEvent(new CustomEvent("toggle", {bubbles: true}));
     }
   }
 

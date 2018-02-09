@@ -23,7 +23,7 @@ let shadowTemplate = html`
 `;
 
 // @events
-//   change
+//   toggle
 export class XCheckboxElement extends HTMLElement {
   static get observedAttributes() {
     return ["toggled", "disabled"];
@@ -193,7 +193,7 @@ export class XCheckboxElement extends HTMLElement {
         this.toggled = !this.toggled;
       }
 
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      this.dispatchEvent(new CustomEvent("toggle", {bubbles: true}));
     }
 
     // Ripple
