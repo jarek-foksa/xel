@@ -93,37 +93,41 @@ export class XColorSelectElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async _expand() {
-    let popover = this.querySelector("x-popover");
+    if (this.hasAttribute("expanded") === false) {
+      let popover = this.querySelector("x-popover");
 
-    if (popover) {
-      this._wasFocusedBeforeExpanding = this.matches(":focus");
-      this.setAttribute("expanded", "");
-      await popover.open(this);
-      popover.focus();
+      if (popover) {
+        this._wasFocusedBeforeExpanding = this.matches(":focus");
+        this.setAttribute("expanded", "");
+        await popover.open(this);
+        popover.focus();
+      }
     }
   }
 
   async _collapse(delay = null) {
-    let popover = this.querySelector("x-popover");
+    if (this.hasAttribute("expanded")) {
+      let popover = this.querySelector("x-popover");
 
-    if (popover) {
-      popover.setAttribute("closing", "");
+      if (popover) {
+        popover.setAttribute("closing", "");
 
-      await popover.close();
-      this.removeAttribute("expanded");
+        await popover.close();
+        this.removeAttribute("expanded");
 
-      if (this._wasFocusedBeforeExpanding) {
-        this.focus();
-      }
-      else {
-        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
-
-        if (ancestorFocusableElement) {
-          ancestorFocusableElement.focus();
+        if (this._wasFocusedBeforeExpanding) {
+          this.focus();
         }
-      }
+        else {
+          let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
 
-      popover.removeAttribute("closing");
+          if (ancestorFocusableElement) {
+            ancestorFocusableElement.focus();
+          }
+        }
+
+        popover.removeAttribute("closing");
+      }
     }
   }
 
