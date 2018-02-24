@@ -51,7 +51,7 @@ export class XInputElement extends HTMLElement {
   }
   set value(value) {
     if (this["#input"].value !== value) {
-      if (this.matches(":focus")) {
+      if (this.matches(":focus") && ! this.hasAttribute('no-auto-select')) {
         // https://goo.gl/s1UnHh
         this["#input"].selectionStart = 0;
         this["#input"].selectionEnd = this["#input"].value.length;
@@ -325,7 +325,7 @@ export class XInputElement extends HTMLElement {
   _onValueAttributeChange() {
     this.value = this.hasAttribute("value") ? this.getAttribute("value") : "";
 
-    if (this.matches(":focus")) {
+    if (this.matches(":focus") && ! this.hasAttribute('no-auto-select')) {
       this.selectAll();
     }
   }
