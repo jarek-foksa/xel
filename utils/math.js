@@ -14,6 +14,17 @@ export let round = (number, precision = 0) => {
 };
 
 // @type
+//   (DOMRect, number) => DOMRect
+export let roundRect = (rect, precision = 0) => {
+  return new DOMRect(
+    round(rect.x, precision),
+    round(rect.y, precision),
+    round(rect.width, precision),
+    round(rect.height, precision)
+  );
+};
+
+// @type
 //   (number, number, number, number?) => number
 export let normalize = (number, min, max = Infinity, precision = null) => {
   if (precision !== null) {

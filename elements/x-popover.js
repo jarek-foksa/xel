@@ -3,6 +3,7 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html, createElement} from "../utils/element.js";
+import {roundRect} from "../utils/math.js";
 
 let shadowTemplate = html`
   <template>
@@ -110,7 +111,7 @@ export class XPopoverElement extends HTMLElement {
       // Determine extraLeft and extraTop which represent the extra offset when the popover is inside another
       // fixed-positioned element.
       {
-        let popoverBounds = this.getBoundingClientRect();
+        let popoverBounds = roundRect(this.getBoundingClientRect());
 
         if (popoverBounds.top !== 0 || popoverBounds.left !== 0) {
           extraLeft = -popoverBounds.left;
@@ -129,9 +130,9 @@ export class XPopoverElement extends HTMLElement {
       }
 
       if (align === "bottom") {
-        let buttonBounds = button.getBoundingClientRect();
-        let popoverBounds = this.getBoundingClientRect();
-        let arrowBounds = this["#arrow"].getBoundingClientRect();
+        let buttonBounds = roundRect(button.getBoundingClientRect());
+        let popoverBounds = roundRect(this.getBoundingClientRect());
+        let arrowBounds = roundRect(this["#arrow"].getBoundingClientRect());
         let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
 
         // Place the popover below the button
@@ -139,7 +140,7 @@ export class XPopoverElement extends HTMLElement {
           this.style.top = (buttonBounds.bottom + arrowBounds.height + arrowWhitespace + extraTop) + "px";
           this["#arrow"].style.top = (buttonBounds.bottom + arrowWhitespace + borderWidth + extraTop) + "px";
           this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows bottom client bound, reduce its height (respecting min-height)
@@ -149,7 +150,7 @@ export class XPopoverElement extends HTMLElement {
 
           if (reducedHeight >= minHeight) {
             this.style.height = reducedHeight + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -164,7 +165,7 @@ export class XPopoverElement extends HTMLElement {
           ) + "px";
 
           this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows top client bound, reduce its height (respecting min-height)
@@ -175,7 +176,7 @@ export class XPopoverElement extends HTMLElement {
           if (reducedHeight >= minHeight) {
             this.style.top = (windowWhitespace + extraTop) + "px";
             this.style.height = reducedHeight + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -188,9 +189,9 @@ export class XPopoverElement extends HTMLElement {
       }
 
       else if (align === "top") {
-        let buttonBounds = button.getBoundingClientRect();
-        let popoverBounds = this.getBoundingClientRect();
-        let arrowBounds = this["#arrow"].getBoundingClientRect();
+        let buttonBounds = roundRect(button.getBoundingClientRect());
+        let popoverBounds = roundRect(this.getBoundingClientRect());
+        let arrowBounds = roundRect(this["#arrow"].getBoundingClientRect());
         let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
 
         // Place the popover above the button
@@ -204,7 +205,7 @@ export class XPopoverElement extends HTMLElement {
           ) + "px";
 
           this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows top client bound, reduce its height (respecting min-height)
@@ -215,7 +216,7 @@ export class XPopoverElement extends HTMLElement {
           if (reducedHeight >= minHeight) {
             this.style.top = (windowWhitespace + extraTop) + "px";
             this.style.height = reducedHeight + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -224,7 +225,7 @@ export class XPopoverElement extends HTMLElement {
           this.style.top = (buttonBounds.bottom + arrowBounds.height + arrowWhitespace + extraTop) + "px";
           this["#arrow"].style.top = (buttonBounds.bottom + arrowWhitespace + borderWidth + extraTop) + "px";
           this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows bottom client bound, reduce its height (respecting min-height)
@@ -234,7 +235,7 @@ export class XPopoverElement extends HTMLElement {
 
           if (reducedHeight >= minHeight) {
             this.style.height = reducedHeight + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -249,14 +250,14 @@ export class XPopoverElement extends HTMLElement {
           ) + "px";
 
           this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
       }
 
       else if (align === "left") {
-        let buttonBounds = button.getBoundingClientRect();
-        let popoverBounds = this.getBoundingClientRect();
-        let arrowBounds = this["#arrow"].getBoundingClientRect();
+        let buttonBounds = roundRect(button.getBoundingClientRect());
+        let popoverBounds = roundRect(this.getBoundingClientRect());
+        let arrowBounds = roundRect(this["#arrow"].getBoundingClientRect());
         let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
 
         // Place the popover on the left side of the button
@@ -270,7 +271,7 @@ export class XPopoverElement extends HTMLElement {
           ) + "px";
 
           this["#arrow-path"].style.d = `path("M 0 0, L 100 50, L 00 100")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows left client bound, reduce its width (respecting min-width)
@@ -281,7 +282,7 @@ export class XPopoverElement extends HTMLElement {
           if (reducedWidth >= minWidth) {
             this.style.left = (windowWhitespace + extraLeft) + "px";
             this.style.width = reducedWidth + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -290,7 +291,7 @@ export class XPopoverElement extends HTMLElement {
           this.style.left = (buttonBounds.right + arrowBounds.height + arrowWhitespace + extraLeft) + "px";
           this["#arrow"].style.top = (buttonBounds.right + arrowWhitespace + borderWidth + extraLeft) + "px";
           this["#arrow-path"].style.d = `path("M 0 100, L 50 0, L 100 100")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows right client bound, reduce its width (respecting min-width)
@@ -300,7 +301,7 @@ export class XPopoverElement extends HTMLElement {
 
           if (reducedWidth >= minWidth) {
             this.style.width = reducedWidth + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -315,14 +316,14 @@ export class XPopoverElement extends HTMLElement {
           ) + "px";
 
           this["#arrow-path"].style.d = `path("M 0 0, L 100 50, L 00 100")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
       }
 
       else if (align === "right") {
-        let buttonBounds = button.getBoundingClientRect();
-        let popoverBounds = this.getBoundingClientRect();
-        let arrowBounds = this["#arrow"].getBoundingClientRect();
+        let buttonBounds = roundRect(button.getBoundingClientRect());
+        let popoverBounds = roundRect(this.getBoundingClientRect());
+        let arrowBounds = roundRect(this["#arrow"].getBoundingClientRect());
         let borderWidth = parseFloat(getComputedStyle(this).borderWidth);
 
         // Place the popover on the right side of the button
@@ -330,7 +331,7 @@ export class XPopoverElement extends HTMLElement {
           this.style.left = (buttonBounds.right + arrowBounds.width + arrowWhitespace + extraLeft) + "px";
           this["#arrow"].style.left = (buttonBounds.right + arrowWhitespace + borderWidth + extraLeft) + "px";
           this["#arrow-path"].style.d = `path("M 100 0, L 0 50, L 100 100")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows right client bound, reduce its width (respecting min-width)
@@ -340,7 +341,7 @@ export class XPopoverElement extends HTMLElement {
 
           if (reducedWidth >= minWidth) {
             this.style.width = reducedWidth + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -355,7 +356,7 @@ export class XPopoverElement extends HTMLElement {
           ) + "px";
 
           this["#arrow-path"].style.d = `path("M 0 0, L 50 100, L 100 0")`;
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows left client bound, reduce its width (respecting min-width)
@@ -366,7 +367,7 @@ export class XPopoverElement extends HTMLElement {
           if (reducedWidth >= minWidth) {
             this.style.left = (windowWhitespace + extraLeft) + "px";
             this.style.width = reducedWidth + "px";
-            popoverBounds = this.getBoundingClientRect();
+            popoverBounds = roundRect(this.getBoundingClientRect());
           }
         }
 
@@ -379,28 +380,28 @@ export class XPopoverElement extends HTMLElement {
       }
 
       if (align === "bottom" || align === "top") {
-        let buttonBounds = button.getBoundingClientRect();
-        let popoverBounds = this.getBoundingClientRect();
-        let arrowBounds = this["#arrow"].getBoundingClientRect();
+        let buttonBounds = roundRect(button.getBoundingClientRect());
+        let popoverBounds = roundRect(this.getBoundingClientRect());
+        let arrowBounds = roundRect(this["#arrow"].getBoundingClientRect());
 
         // Place the popover along the same X-axis as the button
         {
           this.style.left = (buttonBounds.left + buttonBounds.width/2 - popoverBounds.width/2 + extraLeft) + "px";
           this["#arrow"].style.left = (buttonBounds.left + buttonBounds.width/2 + extraLeft) + "px";
 
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows left client bound, move it right
         if (popoverBounds.left - windowWhitespace < 0) {
           this.style.left = (windowWhitespace + extraLeft) + "px";
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows right client bound, move it left
         if (popoverBounds.right + windowWhitespace > window.innerWidth) {
           this.style.left = (window.innerWidth - windowWhitespace - popoverBounds.width + extraLeft) + "px";
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover still overflows left client bound, reduce its width
@@ -411,27 +412,27 @@ export class XPopoverElement extends HTMLElement {
       }
 
       else if (align === "left" || align === "right") {
-        let buttonBounds = button.getBoundingClientRect();
-        let popoverBounds = this.getBoundingClientRect();
+        let buttonBounds = roundRect(button.getBoundingClientRect());
+        let popoverBounds = roundRect(this.getBoundingClientRect());
 
         // Place the popover along the same Y-axis as the button
         {
           this.style.top = (buttonBounds.top + buttonBounds.height/2 - popoverBounds.height/2 + extraTop) + "px";
           this["#arrow"].style.top = (buttonBounds.top + buttonBounds.height/2 + extraTop + marginTop) + "px";
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows top client bound, move it down
         if (popoverBounds.top - windowWhitespace < 0) {
           this.style.top = (windowWhitespace + extraTop + marginTop) + "px";
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover overflows bottom client bound, move it up
         if (popoverBounds.bottom + windowWhitespace > window.innerHeight) {
           let overflowBottom = popoverBounds.bottom + windowWhitespace - window.innerHeight;
           this.style.top = (popoverBounds.top - overflowBottom + extraTop) + "px";
-          popoverBounds = this.getBoundingClientRect();
+          popoverBounds = roundRect(this.getBoundingClientRect());
         }
 
         // If popover still overflows top client bound, reduce its size
