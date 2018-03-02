@@ -456,6 +456,9 @@ export class XPopoverElement extends HTMLElement {
             { duration, easing }
           ).finished;
         }
+        else if (property === "opacity") {
+          await this.animate({ opacity: ["0", "1"] }, { duration, easing }).finished;
+        }
       }
 
       this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
