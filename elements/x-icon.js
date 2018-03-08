@@ -14,6 +14,8 @@ let shadowTemplate = html`
   </template>
 `;
 
+let cache = {};
+
 export class XIconElement extends HTMLElement {
   static get observedAttributes() {
     return ["name", "iconset"];
@@ -92,53 +94,58 @@ export class XIconElement extends HTMLElement {
       this["#svg"].innerHTML = "";
     }
     else {
-      if (this.iconset.startsWith("http") && new URL(this.iconset).origin !== window.location.origin) {
-        let symbol = await this._getSymbol(this.name, this.iconset);
+      let symbol = await this._getSymbol(this.name, this.iconset);
 
-        if (symbol) {
-          this["#svg"].innerHTML = `${symbol.outerHTML}<use href="#${this.name}" width="100%" height="100%"></use>`
-        }
+      if (symbol) {
+        this["#svg"].innerHTML = `${symbol.outerHTML}<use href="#${this.name}" width="100%" height="100%"></use>`
       }
       else {
-        let href = `${this.iconset}#${this.name}`;
-        this["#svg"].innerHTML = `<use href="${href}" width="100%" height="100%"></use>`;
+        this["#svg"].innerHTML = "";
       }
     }
   }
 
-  _getSymbol(name, url) {
+  _getSymbol(name, iconsetURL) {
     return new Promise(async (resolve) => {
-      let iconset = null;
-      let cache = XIconElement._cache || [];
+      let iconset = await this._getIconset(iconsetURL);
+      let symbol = null;
 
-      if (!XIconElement._cache) {
-        XIconElement._cache = cache;
+      if (iconset) {
+        symbol = iconset.querySelector("#" + CSS.escape(name));
       }
 
-      if (cache[url]) {
-        iconset = cache[url];
+      resolve(symbol);
+    });
+  }
+
+  _getIconset(iconsetURL) {
+    return new Promise(async (resolve) => {
+      if (cache[iconsetURL]) {
+        if (cache[iconsetURL].iconset) {
+          resolve(cache[iconsetURL].iconset);
+        }
+        else {
+          cache[iconsetURL].callbacks.push(resolve);
+        }
       }
       else {
-        let iconsetSVG;
+        cache[iconsetURL] = {callbacks: [resolve], iconset: null};
+
+        let iconsetSVG = null;
 
         try {
-          iconsetSVG = await readFile(url);
+          iconsetSVG = await readFile(iconsetURL);
         }
         catch (error) {
           iconsetSVG = null;
         }
 
         if (iconsetSVG) {
-          iconset = svg`${iconsetSVG}`;
-          cache[url] = iconset;
-        }
-      }
+          cache[iconsetURL].iconset = svg`${iconsetSVG}`;
 
-      if (iconset) {
-        let symbol = iconset.querySelector("#" + CSS.escape(name));
-
-        if (symbol) {
-          resolve(symbol);
+          for (let callback of cache[iconsetURL].callbacks) {
+            callback(cache[iconsetURL].iconset);
+          }
         }
       }
     });
