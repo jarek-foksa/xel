@@ -164,7 +164,7 @@ export class XWheelColorPickerElement extends HTMLElement {
   }
 
   _onHuesatSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return;
     }
 
@@ -219,7 +219,7 @@ export class XWheelColorPickerElement extends HTMLElement {
   }
 
   _onValueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return;
     }
 
@@ -263,7 +263,7 @@ export class XWheelColorPickerElement extends HTMLElement {
   }
 
   _onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return;
     }
 

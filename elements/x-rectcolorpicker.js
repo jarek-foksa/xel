@@ -157,7 +157,7 @@ export class XRectColorPickerElement extends HTMLElement {
   }
 
   _onSatlightSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return;
     }
 
@@ -201,7 +201,7 @@ export class XRectColorPickerElement extends HTMLElement {
   }
 
   _onHueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return;
     }
 
@@ -245,7 +245,7 @@ export class XRectColorPickerElement extends HTMLElement {
   }
 
   _onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return;
     }
 

@@ -133,7 +133,7 @@ export class XTabElement extends HTMLElement {
       }
     }
 
-    if (pointerDownEvent.button !== 0 || this.querySelector("x-menu")) {
+    if (pointerDownEvent.buttons !== 1 || this.querySelector("x-menu")) {
       return;
     }
 

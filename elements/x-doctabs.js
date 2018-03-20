@@ -516,7 +516,7 @@ export class XDocTabsElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onPointerDown(event) {
-    if (event.button === 0 && !this._waitingForTabToClose && event.target.closest("x-doctab")) {
+    if (event.buttons === 1 && !this._waitingForTabToClose && event.target.closest("x-doctab")) {
       this._onTabPointerDown(event);
     }
   }

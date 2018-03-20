@@ -140,6 +140,11 @@ export class XDocTabElement extends HTMLElement {
   }
 
   _onPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.buttons !== 1) {
+      pointerDownEvent.preventDefault();
+      return;
+    }
+
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
     if (this.matches(":focus") === false) {
       pointerDownEvent.preventDefault();
@@ -149,10 +154,6 @@ export class XDocTabElement extends HTMLElement {
       if (ancestorFocusableElement) {
         ancestorFocusableElement.focus();
       }
-    }
-
-    if (pointerDownEvent.button !== 0) {
-      return;
     }
 
     // Provide "pressed" attribute for theming purposes
@@ -244,7 +245,7 @@ export class XDocTabElement extends HTMLElement {
   }
 
   _onCloseButtonPointerDown(event) {
-    if (event.button !== 0) {
+    if (event.buttons !== 1) {
       return;
     }
 

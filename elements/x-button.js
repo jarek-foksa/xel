@@ -519,7 +519,7 @@ export class XButtonElement extends HTMLElement {
   }
 
   async _onButtonPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       pointerDownEvent.preventDefault();
       return;
     }

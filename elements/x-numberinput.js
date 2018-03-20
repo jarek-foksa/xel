@@ -486,7 +486,7 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   _onShadowRootPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0 || pointerDownEvent.isPrimary === false) {
+    if (pointerDownEvent.buttons !== 1 || pointerDownEvent.isPrimary === false) {
       pointerDownEvent.preventDefault();
       return;
     }

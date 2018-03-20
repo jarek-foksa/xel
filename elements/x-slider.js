@@ -243,7 +243,7 @@ export class XSliderElement extends HTMLElement {
   }
 
   _onShadowRootPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0 || pointerDownEvent.isPrimary === false) {
+    if (pointerDownEvent.buttons !== 1 || pointerDownEvent.isPrimary === false) {
       return;
     }
 

@@ -108,7 +108,7 @@ export class XStepperElement extends HTMLElement {
       action = "decrement";
     }
 
-    if (pointerDownEvent.button !== 0 || action === null) {
+    if (pointerDownEvent.buttons !== 1 || action === null) {
       return;
     }
 

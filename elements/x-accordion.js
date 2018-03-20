@@ -95,7 +95,7 @@ export class XAccordionElement extends HTMLElement {
   }
 
   async _onPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return;
     }
 

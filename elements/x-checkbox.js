@@ -140,6 +140,11 @@ export class XCheckboxElement extends HTMLElement {
   }
 
   _onPointerDown(event) {
+    if (event.buttons !== 1) {
+      event.preventDefault();
+      return;
+    }
+
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
     if (this.matches(":focus") === false) {
       event.preventDefault();

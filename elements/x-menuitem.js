@@ -174,9 +174,10 @@ export class XMenuItemElement extends HTMLElement {
   }
 
   async _onPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button !== 0) {
+    if (pointerDownEvent.buttons !== 1) {
       return false;
     }
+
     if (this.matches("[closing] x-menuitem")) {
       pointerDownEvent.preventDefault();
       pointerDownEvent.stopPropagation();

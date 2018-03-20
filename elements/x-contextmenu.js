@@ -120,7 +120,7 @@ export class XContextMenuElement extends HTMLElement {
   }
 
   _onBackdropPointerDown(event) {
-    if (event.button === 0) {
+    if (event.buttons === 1) {
       event.preventDefault();
       this.close();
     }
