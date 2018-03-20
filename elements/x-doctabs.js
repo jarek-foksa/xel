@@ -248,10 +248,6 @@ export class XDocTabsElement extends HTMLElement {
 
     nextTab.tabIndex = 0;
     nextTab.selected = true;
-
-    if (currentTab != nextTab) {
-      this.dispatchEvent(new CustomEvent("select", {detail: nextTab}));
-    }
   }
 
   moveSelectedTabLeft() {
@@ -535,6 +531,9 @@ export class XDocTabsElement extends HTMLElement {
     let selectedTab = this.querySelector("x-doctab[selected]");
 
     this.selectTab(pointerDownTab);
+    if (selectedTab != pointerDownTab) {
+      this.dispatchEvent(new CustomEvent("select", {detail: pointerDownTab}));
+    }
 
     let selectionIndicatorAnimation = this._animateSelectionIndicator(selectedTab, pointerDownTab);
     this.setPointerCapture(pointerDownEvent.pointerId);
