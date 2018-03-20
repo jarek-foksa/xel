@@ -216,11 +216,7 @@ export class XDocTabsElement extends HTMLElement {
     let previousTab = this._getPreviousTabOnScreen(currentTab);
 
     if (currentTab && previousTab) {
-      currentTab.tabIndex = -1;
-      currentTab.selected = false;
-
-      previousTab.tabIndex = 0;
-      previousTab.selected = true;
+      this.selectTab(previousTab);
 
       return previousTab;
     }
@@ -234,16 +230,24 @@ export class XDocTabsElement extends HTMLElement {
     let nextTab = this._getNextTabOnScreen(currentTab);
 
     if (currentTab && nextTab) {
-      currentTab.tabIndex = -1;
-      currentTab.selected = false;
-
-      nextTab.tabIndex = 0;
-      nextTab.selected = true;
+      this.selectTab(nextTab);
 
       return nextTab;
     }
 
     return null;
+  }
+
+  selectTab(nextTab) {
+    let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab:last-of-type");
+
+    if (currentTab) {
+      currentTab.tabIndex = -1;
+      currentTab.selected = false;
+    }
+
+    nextTab.tabIndex = 0;
+    nextTab.selected = true;
   }
 
   moveSelectedTabLeft() {
@@ -526,18 +530,9 @@ export class XDocTabsElement extends HTMLElement {
     let pointerDownTab = pointerDownEvent.target.closest("x-doctab");
     let selectedTab = this.querySelector("x-doctab[selected]");
 
-    for (let tab of this.querySelectorAll("x-doctab")) {
-      if (tab === pointerDownTab) {
-        if (tab.selected === false) {
-          tab.selected = true;
-          this.dispatchEvent(new CustomEvent("select"));
-        }
-      }
-      else {
-        tab.selected = false;
-      }
-
-      tab.tabIndex = (tab === pointerDownTab) ? 0 : -1;
+    this.selectTab(pointerDownTab);
+    if (selectedTab != pointerDownTab) {
+      this.dispatchEvent(new CustomEvent("select", {detail: pointerDownTab}));
     }
 
     let selectionIndicatorAnimation = this._animateSelectionIndicator(selectedTab, pointerDownTab);
@@ -683,9 +678,7 @@ export class XDocTabsElement extends HTMLElement {
         openedTab.style.order = this.childElementCount;
         this.openTab(openedTab);
 
-        for (let tab of this.children) {
-          tab.selected = (tab === openedTab);
-        }
+        this.selectTab(openedTab);
       }
     }
   }
@@ -703,8 +696,7 @@ export class XDocTabsElement extends HTMLElement {
       currentTab.click();
 
       if (currentTab !== selectedTab) {
-        selectedTab.selected = false;
-        currentTab.selected = true;
+        this.selectTab(currentTab);
         this._animateSelectionIndicator(selectedTab, currentTab);
       }
     }
