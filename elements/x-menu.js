@@ -47,6 +47,7 @@ export class XMenuElement extends HTMLElement {
     this._delayTimeoutID = null;
     this._lastDelayPoint = null;
 
+    this._extraTop = 0;
     this._lastScrollTop = 0;
     this._isPointerOverMenuBlock = false;
     this._expandWhenScrolled = false;
@@ -178,6 +179,7 @@ export class XMenuElement extends HTMLElement {
         }
 
         this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
+        this._extraTop = extraTop;
       }
 
       resolve();
@@ -410,6 +412,7 @@ export class XMenuElement extends HTMLElement {
         }
       }
 
+      this._extraTop = extraTop;
       resolve();
     });
   }
@@ -489,6 +492,7 @@ export class XMenuElement extends HTMLElement {
         }
       }
 
+      this._extraTop = extraTop;
       resolve();
     });
   }
@@ -906,7 +910,7 @@ export class XMenuElement extends HTMLElement {
             this._lastScrollTop = 0;
           }
           else {
-            this.style.top = windowWhitespace + "px";
+            this.style.top = (windowWhitespace + this._extraTop) + "px";
             this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
           }
         }
