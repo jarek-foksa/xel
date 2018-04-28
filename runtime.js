@@ -237,6 +237,39 @@ if (!Node.prototype.closest) {
 // DOMPoint polyfill (http://dev.w3.org/fxtf/geometry/#DOMPoint)
 //
 
+// @info
+//   Work around Chrome bug #730441 (fixed in Electron 2.x).
+if (window.DOMPoint) {
+  DOMPoint.prototype.matrixTransform = function(matrix) {
+    // SVGMatrix
+    if (matrix instanceof SVGMatrix) {
+      return new DOMPoint(
+        this.x * matrix.a + this.y * matrix.c + matrix.e,
+        this.x * matrix.b + this.y * matrix.d + matrix.f,
+        0, 1
+      );
+    }
+    // DOMMatrix
+    else {
+      if (matrix.is2D && this.z === 0 && this.w === 1) {
+        return new DOMPoint(
+          this.x * matrix.m11 + this.y * matrix.m21 + matrix.m41,
+          this.x * matrix.m12 + this.y * matrix.m22 + matrix.m42,
+          0, 1
+        );
+      }
+      else {
+        return new DOMPoint(
+          this.x * matrix.m11 + this.y * matrix.m21 + this.z * matrix.m31 + this.w * matrix.m41,
+          this.x * matrix.m12 + this.y * matrix.m22 + this.z * matrix.m32 + this.w * matrix.m42,
+          this.x * matrix.m13 + this.y * matrix.m23 + this.z * matrix.m33 + this.w * matrix.m43,
+          this.x * matrix.m14 + this.y * matrix.m24 + this.z * matrix.m34 + this.w * matrix.m44
+        );
+      }
+    }
+  };
+}
+
 {
   try {
     new SVGPoint();
