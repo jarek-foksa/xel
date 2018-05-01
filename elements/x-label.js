@@ -6,7 +6,24 @@ import {html, generateUniqueID} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-label.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        line-height: 1.2;
+        user-select: none;
+        box-sizing: border-box;
+      }
+      :host(:hover) {
+        cursor: default;
+      }
+      :host([disabled]) {
+        opacity: 0.5;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+    </style>
+
     <slot></slot>
   </template>
 `;

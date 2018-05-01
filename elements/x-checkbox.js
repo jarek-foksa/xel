@@ -13,7 +13,93 @@ let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-checkbox.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        margin: 0 8px 0 0;
+        width: 24px;
+        height: 24px;
+        box-sizing: border-box;
+        border: 2px solid currentColor;
+        --checkmark-width: 100%;
+        --checkmark-height: 100%;
+        --checkmark-opacity: 0;
+        --checkmark-d: path(
+          "M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 95 23 L 86 13 L 37 66 L 13.6 41 L 4.5 51 L 37 85 L 95 23 Z"
+        );
+        --ripple-type: none; /* unbounded, none */
+        --ripple-background: currentColor;
+        --ripple-opacity: 0.15;
+      }
+      :host([toggled]) {
+        --checkmark-opacity: 1;
+      }
+      :host([mixed]) {
+        --checkmark-opacity: 1;
+        --checkmark-d: path("M 0 0 L 100 0 L 100 100 L 0 100 Z M 87 42.6 L 13 42.6 L 13 57.4 L 87 57.4 Z");
+      }
+      :host([disabled]) {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+      :host(:focus) {
+        outline: none;
+      }
+
+      /**
+       * Icons
+       */
+
+      #checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: var(--checkmark-width);
+        height: var(--checkmark-height);
+        opacity: var(--checkmark-opacity);
+        d: var(--checkmark-d);
+        transition-property: opacity;
+        transition-timing-function: inherit;
+        transition-duration: inherit;
+      }
+
+      #checkmark path {
+        fill: currentColor;
+        d: inherit;
+      }
+
+      /**
+       * Ripples
+       */
+
+      #ripples {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      #ripples .ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--ripple-background);
+        opacity: var(--ripple-opacity);
+        z-index: -1;
+        will-change: opacity, transform;
+        border-radius: 999px;
+        transform: scale(2.6);
+      }
+    </style>
+
     <div id="ripples"></div>
 
     <svg id="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">

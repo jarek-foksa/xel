@@ -10,7 +10,33 @@ import {getTimeStamp} from "../utils/time.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-notification.css" data-vulcanize>
+    <style>
+      :host {
+        display: none;
+        position: fixed;
+        min-width: 15px;
+        min-height: 15px;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 5px 12px;
+        box-sizing: border-box;
+        color: rgba(255, 255, 255, 0.9);
+        background: #434343;
+        z-index: 9999;
+        font-size: 12px;
+        user-select: text;
+        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      :host([opened]),
+      :host([animating]) {
+        display: block;
+      }
+      :host(:focus) {
+        outline: none;
+      }
+    </style>
+
     <slot></slot>
   </template>
 `;

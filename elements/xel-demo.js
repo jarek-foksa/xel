@@ -10,8 +10,21 @@ let counter = 0;
 
 let shadowTemplate = html`
   <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #code-view {
+        margin-top: 25px;
+      }
+      :host([compact]) #code-view {
+        max-height: 350px;
+        overflow: scroll;
+      }
+    </style>
+
     <link rel="stylesheet" href="${getThemePath()}">
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/xel-demo.css" data-vulcanize>
 
     <main>
       <div id="live-view"></div>

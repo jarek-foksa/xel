@@ -13,7 +13,89 @@ let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-button.css" data-vulcanize>
+    <style>
+      :host {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        height: fit-content;
+        box-sizing: border-box;
+        opacity: 1;
+        position: relative;
+        --trigger-effect: none; /* ripple, unbounded-ripple, none */
+        --ripple-background: currentColor;
+        --ripple-opacity: 0.2;
+        --arrow-width: 8px;
+        --arrow-height: 8px;
+        --arrow-margin: 0 0 0 3px;
+        --arrow-d: path("M 11.7 19.9 L 49.8 57.9 L 87.9 19.9 L 99.7 31.6 L 49.8 81.4 L -0.0 31.6 Z");
+      }
+      :host(:focus) {
+        outline: none;
+      }
+      :host([mixed]) {
+        opacity: 0.75;
+      }
+      :host([disabled]) {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+
+      /**
+       * Arrow
+       */
+
+      #arrow {
+        width: var(--arrow-width);
+        height: var(--arrow-height);
+        min-width: var(--arrow-width);
+        margin: var(--arrow-margin);
+        color: currentColor;
+        d: var(--arrow-d);
+      }
+
+      #arrow path {
+        fill: currentColor;
+        d: inherit;
+      }
+      #arrow[hidden] {
+        display: none;
+      }
+
+      /**
+       * Ripples
+       */
+
+      #ripples {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        border-radius: inherit;
+      }
+
+      #ripples .ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background: var(--ripple-background);
+        opacity: var(--ripple-opacity);
+        border-radius: 999px;
+        transform: none;
+        transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+        pointer-events: none;
+      }
+    </style>
+
     <div id="ripples"></div>
     <slot></slot>
 

@@ -10,7 +10,16 @@ import {html} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-card.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        min-width: 20px;
+        min-height: 48px;
+        box-sizing: border-box;
+        margin: 30px 0;
+      }
+    </style>
     <slot></slot>
   </template>
 `;

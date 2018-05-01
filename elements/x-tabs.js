@@ -11,7 +11,34 @@ import {html, closest, createElement} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-tabs.css" data-vulcanize>
+    <style>
+      :host {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        justify-content: flex-start;
+      }
+      :host([centered]) {
+        margin: 0 auto;
+        justify-content: center;
+      }
+
+      :host([centered]) ::slotted(x-tab) {
+        flex: 0;
+      }
+
+      #selection-indicator {
+        position: absolute;
+        width: 100%;
+        height: fit-content;
+        bottom: 0;
+        left: 0;
+        pointer-events: none;
+      }
+    </style>
+
     <slot></slot>
     <div id="selection-indicator" hidden></div>
   </template>

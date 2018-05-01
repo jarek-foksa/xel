@@ -3,15 +3,73 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html} from "../utils/element.js";
-import {sleep} from "../utils/time.js";
 import {getDistanceBetweenPoints} from "../utils/math.js";
+import {sleep} from "../utils/time.js";
 
 let {abs} = Math;
 let {parseInt} = Number;
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-doctabs.css" data-vulcanize>
+    <style>
+      :host {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        position: relative;
+        --open-button-width: 24px;
+        --open-button-height: 24px;
+        --open-button-margin: 0 10px;
+        --open-button-path-d: path(
+          "M 79 54 L 54 54 L 54 79 L 46 79 L 46 54 L 21 54 L 21 46 L 46 46 L 46 21 L 54 21 L 54 46 L 79 46 L 79 54 Z"
+        );
+      }
+      :host(:focus) {
+        outline: none;
+      }
+      :host([disabled]) {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      #open-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--open-button-width);
+        height: var(--open-button-height);
+        margin: var(--open-button-margin);
+        order: 9999;
+        opacity: 0.7;
+        color: inherit;
+        -webkit-app-region: no-drag;
+      }
+      #open-button:hover {
+        opacity: 1;
+      }
+
+      #open-button-path {
+        d: var(--open-button-path-d);
+        fill: currentColor;
+      }
+
+      #selection-indicator-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      #selection-indicator {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
 
     <slot></slot>
 

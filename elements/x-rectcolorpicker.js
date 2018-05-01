@@ -9,7 +9,130 @@ import {round, normalize} from "../utils/math.js";
 let debug = false;
 
 let shadowHTML = `
-  <link rel="stylesheet" href="node_modules/xel/stylesheets/x-rectcolorpicker.css" data-vulcanize>
+  <style>
+    :host {
+      display: block;
+      width: 100%;
+      user-select: none;
+    }
+    :host([hidden]) {
+      display: none;
+    }
+
+    /**
+     * Hue slider
+     */
+
+    #hue-slider {
+      width: 100%;
+      height: 28px;
+      padding: 0 calc(var(--marker-width) / 2);
+      margin-bottom: 14px;
+      box-sizing: border-box;
+      border-radius: 2px;
+      touch-action: pan-y;
+      --marker-width: 18px;
+      background: red;
+    }
+
+    #hue-slider-track {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(to right,
+        rgba(255, 0, 0, 1),
+        rgba(255, 255, 0, 1),
+        rgba(0, 255, 0, 1),
+        rgba(0, 255, 255, 1),
+        rgba(0, 0, 255, 1),
+        rgba(255, 0, 255, 1),
+        rgba(255, 0, 0, 1)
+      );
+    }
+
+    #hue-slider-marker {
+      position: absolute;
+      left: 0%;
+      background: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 3px black;
+      box-sizing: border-box;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      border: 3px solid white;
+      width: var(--marker-width);
+      height: 32px;
+      position: absolute;
+    }
+
+    /**
+     * Saturation-lightness slider
+     */
+
+    #satlight-slider {
+      width: 100%;
+      height: 174px;
+      border-radius: 2px;
+      position: relative;
+      touch-action: pinch-zoom;
+    }
+
+    #satlight-marker {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: var(--marker-size);
+      height: var(--marker-size);
+      transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.3);
+      border: 3px solid white;
+      border-radius: 999px;
+      box-shadow: 0 0 3px black;
+      --marker-size: 20px;
+    }
+
+    /**
+     * Alpha slider
+     */
+
+    #alpha-slider {
+      display: none;
+      width: 100%;
+      height: 28px;
+      margin-top: 14px;
+      padding: 0 calc(var(--marker-width) / 2);
+      box-sizing: border-box;
+      border: 1px solid #cecece;
+      border-radius: 2px;
+      touch-action: pan-y;
+      --marker-width: 18px;
+    }
+    :host([alphaslider]) #alpha-slider {
+      display: block;
+    }
+
+    #alpha-slider-track {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    #alpha-slider-marker {
+      position: absolute;
+      left: 0%;
+      background: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 3px black;
+      box-sizing: border-box;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      border: 3px solid white;
+      width: var(--marker-width);
+      height: 32px;
+      position: absolute;
+    }
+  </style>
 
   <x-box vertical>
     <div id="hue-slider">

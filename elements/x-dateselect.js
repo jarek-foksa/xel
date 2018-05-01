@@ -8,7 +8,111 @@ let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-dateselect.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        max-width: 140px;
+        height: 24px;
+        box-sizing: border-box;
+        color: #000000;
+        background: white;
+        --inner-padding: 0;
+      }
+      :host(:focus) {
+        z-index: 10;
+      }
+      :host(:hover) {
+        cursor: text;
+      }
+      :host([disabled]) {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+
+      #main {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      /**
+       * Input
+       */
+
+      #input {
+        width: 100%;
+        height: 100%;
+        padding: var(--inner-padding);
+        box-sizing: border-box;
+        color: inherit;
+        background: none;
+        border: none;
+        outline: none;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        text-align: inherit;
+        cursor: inherit;
+      }
+      #input::-webkit-clear-button {
+        display: none;
+      }
+      #input::-webkit-inner-spin-button {
+        display: none;
+      }
+      #input::-webkit-calendar-picker-indicator {
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+        width: 16px;
+        height: 16px;
+      }
+      :host([empty]) #input::-webkit-datetime-edit-fields-wrapper {
+        display: none;
+      }
+      :host(:active) #input::-webkit-datetime-edit-fields-wrapper,
+      :host(:focus) #input::-webkit-datetime-edit-fields-wrapper {
+        display: initial;
+      }
+
+      /**
+       * Expand icon
+       */
+
+      #expand-icon {
+        display: block;
+        position: absolute;
+        right: 5px;
+        width: 16px;
+        height: 16px;
+        opacity: 0.7;
+        color: inherit;
+        background-color: inherit;
+        pointer-events: none;
+      }
+
+      /**
+       * Error message
+       */
+
+      :host([error])::before {
+        position: absolute;
+        left: 0;
+        top: 26px;
+        box-sizing: border-box;
+        color: #d50000;
+        font-family: inherit;
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: pre;
+        content: attr(error);
+      }
+    </style>
 
     <main id="main">
       <slot></slot>

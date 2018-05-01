@@ -12,7 +12,52 @@ let windowWhitespace = 7;
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-menu.css" data-vulcanize>
+    <style>
+      :host {
+        display: none;
+        top: 0;
+        left: 0;
+        width: fit-content;
+        z-index: 1001;
+        box-sizing: border-box;
+        background: white;
+        cursor: default;
+        -webkit-app-region: no-drag;
+        --scrollbar-background: rgba(0, 0, 0, 0.2);
+        --scrollbar-width: 6px;
+        --open-transition: 100 transform cubic-bezier(0.4, 0, 0.2, 1);
+        --close-transition: 200 opacity cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      :host([opened]),
+      :host([animating]) {
+        display: block;
+      }
+      :host(:focus) {
+        outline: none;
+      }
+      :host-context([debug]):host(:focus) {
+        outline: 2px solid red;
+      }
+
+      #main {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      ::-webkit-scrollbar {
+        max-width: var(--scrollbar-width);
+        background: none;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-background);
+      }
+      ::-webkit-scrollbar-corner {
+        display: none
+      }
+    </style>
 
     <main id="main" role="presentation">
       <slot id="slot"></slot>

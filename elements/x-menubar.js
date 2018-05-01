@@ -8,7 +8,41 @@ let debug = false;
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-menubar.css" data-vulcanize>
+    <style>
+      :host {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: fit-content;
+        overflow: auto;
+        box-sizing: border-box;
+      }
+      :host([disabled]) {
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      #backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        pointer-events: none;
+        touch-action: none;
+      }
+      #backdrop[hidden] {
+        display: none;
+      }
+
+      #backdrop path {
+        fill: red;
+        fill-rule: evenodd;
+        opacity: 0;
+        pointer-events: all;
+      }
+    </style>
 
     <svg id="backdrop" hidden>
       <path id="backdrop-path"></path>

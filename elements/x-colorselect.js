@@ -9,8 +9,49 @@ import {debounce} from "../utils/time.js";
 let $oldTabIndex = Symbol();
 
 let shadowHTML = `
-  <link rel="stylesheet" href="node_modules/xel/stylesheets/x-colorselect.css" data-vulcanize>
-  <style>:host { background: url(node_modules/xel/images/checkboard.png) repeat 0 0; }</style>
+  <style>
+    :host {
+      display: block;
+      height: 24px;
+      width: 40px;
+      box-sizing: border-box;
+      background: url(node_modules/xel/images/checkboard.png) repeat 0 0;
+      border: 1px solid rgb(150, 150, 150);
+      position: relative;
+    }
+    :host([hidden]) {
+      display: none;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    ::slotted(x-popover) {
+      width: 190px;
+      height: auto;
+      padding: 12px 12px;
+    }
+
+    #input {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border: none;
+      background: none;
+      padding: 0;
+      opacity: 0;
+      -webkit-appearance: none;
+    }
+    #input::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    #input::-webkit-color-swatch {
+      border: none;
+    }
+  </style>
+
   <input tabindex="-1" id="input" type="color" value="#ffffff">
   <slot></slot>
 `;

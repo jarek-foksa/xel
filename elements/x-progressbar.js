@@ -7,7 +7,62 @@ import {normalize} from "../utils/math.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-progressbar.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        height: 4px;
+        width: 100%;
+        position: relative;
+        contain: strict;
+        overflow: hidden;
+        background: #acece6;
+        cursor: default;
+        --bar-background: #3B99FB;
+        --bar-box-shadow: 0px 0px 0px 1px #3385DB;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+
+      #indeterminate-bars {
+        width: 100%;
+        height: 100%;
+      }
+
+      #determinate-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 0%;
+        height: 100%;
+        background: var(--bar-background);
+        box-shadow: var(--bar-box-shadow);
+        transition: width 0.4s ease-in-out;
+        will-change: left, right;
+      }
+
+      #primary-indeterminate-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        height: 100%;
+        background: var(--bar-background);
+        will-change: left, right;
+      }
+
+      #secondary-indeterminate-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        height: 100%;
+        background: var(--bar-background);
+        will-change: left, right;
+      }
+    </style>
 
     <div id="determinate-bar"></div>
 

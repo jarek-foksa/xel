@@ -11,7 +11,140 @@ let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-doctab.css" data-vulcanize>
+    <style>
+      :host {
+        display: flex;
+        align-items: center;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        max-width: 200px;
+        flex: 1 0 0;
+        transition-property: max-width, padding, order;
+        transition-duration: 0.15s;
+        transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+        cursor: default;
+        padding: 0 4px 0 16px;
+        user-select: none;
+        touch-action: pan-y;
+        box-sizing: border-box;
+        overflow: hidden;
+        contain: strict;
+        will-change: max-width;
+        z-index: 0;
+        -webkit-app-region: no-drag;
+        --ripple-type: none; /* bounded, none */
+        --ripple-background: currentColor;
+        --ripple-opacity: 0.2;
+        --selection-indicator-height: 3px;
+        --selection-indicator-color: var(--accent-color);
+        --close-button-position: static;
+        --close-button-left: 0;
+        --close-button-right: initial;
+        --close-button-width: 18px;
+        --close-button-height: 18px;
+        --close-button-margin: 0 0 0 auto;
+        --close-button-opacity: 0.8;
+        --close-button-path-d: path(
+          "M 74 31 L 69 26 L 50 45 L 31 26 L 26 31 L 45 50 L 26 69 L 31 74 L 50 55 L 69 74 L 74 69 L 55 50 Z"
+        );
+      }
+      :host([edited]) {
+        --close-button-path-d: path(
+          "M 68 50 C 68 60 60 68 50 68 C 40 68 32 60 32 50 C 32 40 40 32 50 32 C 60 32 68 40 68 50 Z"
+        );
+      }
+      :host(:focus) {
+        outline: none;
+      }
+      :host([closing]) {
+        pointer-events: none;
+      }
+      :host([selected]) {
+        z-index: 1;
+      }
+      :host([disabled]) {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+
+      /**
+       * Close button
+       */
+
+      #close-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: var(--close-button-position);
+        left: var(--close-button-left);
+        right: var(--close-button-right);
+        width: var(--close-button-width);
+        height: var(--close-button-height);
+        margin: var(--close-button-margin);
+        opacity: var(--close-button-opacity);
+        padding: 1px;
+      }
+      #close-button:hover {
+        background: rgba(0, 0, 0, 0.08);
+        opacity: 1;
+      }
+
+      #close-button-path {
+        pointer-events: none;
+        d: var(--close-button-path-d);
+        fill: currentColor;
+      }
+
+      /**
+       * Ripples
+       */
+
+      #ripples {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+        contain: strict;
+      }
+
+      #ripples .ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background: var(--ripple-background);
+        opacity: var(--ripple-opacity);
+        border-radius: 999px;
+        will-change: opacity, transform;
+        pointer-events: none;
+      }
+
+      /**
+       * Selection indicator
+       */
+
+      #selection-indicator {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: var(--selection-indicator-height);
+        background: var(--selection-indicator-color);
+        pointer-events: none;
+      }
+      :host([selected]) #selection-indicator {
+        display: block;
+      }
+      :host-context(x-doctabs[animatingindicator]) #selection-indicator {
+        display: none;
+      }
+    </style>
 
     <div id="ripples"></div>
     <div id="selection-indicator"></div>

@@ -8,7 +8,15 @@ let debug = true;
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-contextmenu.css" data-vulcanize>
+    <style>
+      :host {
+        display: fixed;
+        width: 0px;
+        height: 0px;
+        z-index: 1001;
+      }
+    </style>
+
     <slot></slot>
   </template>
 `;

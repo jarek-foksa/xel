@@ -8,7 +8,19 @@ let {isArray} = Array;
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-buttons.css" data-vulcanize>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: flex-start;
+        box-sizing: border-box;
+        width: fit-content;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+    </style>
     <slot></slot>
   </template>
 `;

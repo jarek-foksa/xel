@@ -7,7 +7,55 @@ import {roundRect} from "../utils/math.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-popover.css" data-vulcanize>
+    <style>
+      :host {
+        position: fixed;
+        display: none;
+        top: 0;
+        left: 0;
+        min-height: 30px;
+        z-index: 1001;
+        box-sizing: border-box;
+        background: white;
+        -webkit-app-region: no-drag;
+        --orientation: vertical; /* horizontal, vertical */
+        --align: bottom;
+        --arrow-size: 20px;
+        --open-transition: 900 transform cubic-bezier(0.4, 0, 0.2, 1);
+        --close-transition: 200 opacity cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      :host(:focus) {
+        outline: none;
+      }
+      :host([opened]),
+      :host([animating]) {
+        display: flex;
+      }
+
+      #arrow {
+        position: fixed;
+        box-sizing: border-box;
+        content: "";
+      }
+      #arrow[data-align="top"],
+      #arrow[data-align="bottom"] {
+        width: var(--arrow-size);
+        height: calc(var(--arrow-size) * 0.6);
+        transform: translate(-50%, 0);
+      }
+      #arrow[data-align="left"],
+      #arrow[data-align="right"] {
+        width: calc(var(--arrow-size) * 0.6);
+        height: var(--arrow-size);
+        transform: translate(0, -50%);
+      }
+
+      #arrow path {
+        fill: pink;
+        vector-effect: non-scaling-stroke;
+        stroke-width: 1;
+      }
+    </style>
 
     <svg id="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
       <path id="arrow-path"></path>

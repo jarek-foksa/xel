@@ -6,7 +6,35 @@ import {html} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-throbber.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        width: 30px;
+        height: 30px;
+        box-sizing: border-box;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+      :host([type="ring"]) {
+        color: #4285f4;
+      }
+      :host([type="spin"]) {
+        color: #404040;
+      }
+
+      #main {
+        width: 100%;
+        height: 100%;
+      }
+
+      svg {
+        color: inherit;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+
     <main id="main"></main>
   </template>
 `;

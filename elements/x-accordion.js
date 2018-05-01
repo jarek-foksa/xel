@@ -9,7 +9,101 @@ let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-accordion.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        --arrow-width: 24px;
+        --arrow-height: 24px;
+        --arrow-color: currentColor;
+        --arrow-align: flex-end;
+        --arrow-d: path("M 29.0 31.4 L 50 52.3 L 70.9 31.4 L 78.5 40.0 L 50 68.5 L 21.2 40.3 L 29.0 31.4 Z");
+        --arrow-transform: rotate(0deg);
+        --focused-arrow-background: transparent;
+        --focused-arrow-outline: none;
+        --trigger-effect: none; /* ripple, none */
+        --ripple-background: currentColor;
+        --ripple-opacity: 0.05;
+      }
+      :host([expanded]) {
+        --arrow-transform: rotate(-180deg);
+      }
+      :host([animating]) {
+        overflow: hidden;
+      }
+
+      #main {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      /**
+       * Ripples
+       */
+
+      #ripples {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        border-radius: inherit;
+      }
+
+      #ripples .ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background: var(--ripple-background);
+        opacity: var(--ripple-opacity);
+        border-radius: 999px;
+        transform: none;
+        transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+        pointer-events: none;
+      }
+
+      /**
+       * Arrow
+       */
+
+      #arrow-container {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: var(--arrow-align);
+        pointer-events: none;
+      }
+
+      #arrow {
+        margin: 0 14px 0 0;
+        display: flex;
+        width: var(--arrow-width);
+        height: var(--arrow-height);
+        min-width: var(--arrow-width);
+        color: var(--arrow-color);
+        d: var(--arrow-d);
+        transform: var(--arrow-transform);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      #arrow:focus {
+        background: var(--focused-arrow-background);
+        outline: var(--focused-arrow-outline);
+      }
+
+      #arrow path {
+        fill: currentColor;
+        d: inherit;
+}
+    </style>
 
     <main id="main">
       <div id="ripples"></div>

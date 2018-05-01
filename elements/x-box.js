@@ -8,7 +8,20 @@ import {html} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-box.css" data-vulcanize>
+    <style>
+      :host {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+      :host([vertical]) {
+        flex-flow: column;
+        align-items: flex-start;
+        justify-content: center;
+      }
+    </style>
+
     <slot></slot>
   </template>
 `;

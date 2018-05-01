@@ -12,7 +12,55 @@ let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-radio.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        border: 3px solid black;
+        width: 20px;
+        height: 20px;
+        border-radius: 99px;
+        --dot-color: black;
+        --dot-transform: scale(0);
+        --dot-box-shadow: none;
+      }
+      :host([toggled]) {
+        --dot-transform: scale(0.6);
+      }
+      :host(:focus) {
+        outline: none;
+      }
+      :host([disabled]) {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+
+      #main {
+        border-radius: 99px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #dot {
+        width: 100%;
+        height: 100%;
+        background: var(--dot-color);
+        border-radius: 99px;
+        box-shadow: var(--dot-box-shadow);
+        transform: var(--dot-transform);
+        transition: all 0.15s ease-in-out;
+      }
+      :host([mixed][toggled]) #dot {
+        height: 33%;
+        border-radius: 0;
+      }
+    </style>
 
     <main id="main">
       <div id="dot"></div>

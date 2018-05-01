@@ -6,7 +6,43 @@ import {html} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-swatch.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        width: 22px;
+        height: 22px;
+        cursor: default;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      #main {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
+      #selected-icon {
+        display: none;
+        position: absolute;
+        left: calc(50% - 8px);
+        top: calc(50% - 8px);
+        width: 16px;
+        height: 16px;
+        color: white;
+      }
+      :host([showicon]:hover) #selected-icon {
+        display: block;
+        opacity: 0.6;
+      }
+      :host([showicon][selected]) #selected-icon {
+        display: block;
+        opacity: 1;
+      }
+      :host([showicon][value="#FFFFFF"]) #selected-icon {
+        fill: gray;
+      }
+    </style>
 
     <main id="main">
       <x-icon id="selected-icon" name="send"></x-icon>

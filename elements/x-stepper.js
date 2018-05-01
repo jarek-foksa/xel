@@ -7,7 +7,74 @@ import {sleep} from "../utils/time.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-stepper.css" data-vulcanize>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: fit-content;
+        --button-color: rgba(0, 0, 0, 0.6);
+        --button-border-left: none;
+        --pressed-button-color: white;
+        --pressed-button-background: rgba(0, 0, 0, 0.3);
+        --increment-arrow-width: 11px;
+        --increment-arrow-height: 11px;
+        --increment-arrow-path-d: path("M 24 69 L 50 43 L 76 69 L 69 76 L 50 58 L 31 76 L 24 69 Z" );
+        --decrement-arrow-width: 11px;
+        --decrement-arrow-height: 11px;
+        --decrement-arrow-path-d: path("M 24 32 L 50 58 L 76 32 L 69 25 L 50 44 L 31 25 L 24 32 Z" );
+      }
+      :host(:hover) {
+        cursor: default;
+      }
+
+      #increment-button,
+      #decrement-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        user-select: none;
+        box-sizing: border-box;
+        color: var(--button-color);
+        border-left: var(--button-border-left);
+      }
+      #increment-button[data-pressed],
+      #decrement-button[data-pressed] {
+        color: var(--pressed-button-color);
+        background: var(--pressed-button-background);
+      }
+      :host([disabled="increment"]) #increment-button,
+      :host([disabled="decrement"]) #decrement-button,
+      :host([disabled=""]) #increment-button,
+      :host([disabled=""]) #decrement-button {
+        opacity: 0.3;
+        pointer-events: none;
+      }
+
+      #increment-arrow {
+        width: var(--increment-arrow-width);
+        height: var(--increment-arrow-height);
+        pointer-events: none;
+      }
+      #decrement-arrow {
+        width: var(--decrement-arrow-width);
+        height: var(--decrement-arrow-height);
+        pointer-events: none;
+      }
+
+      #increment-arrow-path {
+        d: var(--increment-arrow-path-d);
+        fill: currentColor;
+      }
+      #decrement-arrow-path {
+        d: var(--decrement-arrow-path-d);
+        fill: currentColor;
+      }
+    </style>
 
     <div id="decrement-button" class="button">
       <svg id="decrement-arrow" viewBox="0 0 100 100" preserveAspectRatio="none">

@@ -10,7 +10,105 @@ let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-tab.css" data-vulcanize>
+    <style>
+      :host {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        box-sizing: border-box;
+        cursor: default;
+        user-select: none;
+        --menu-position: below; /* over, below */
+        --trigger-effect: none; /* ripple, none */
+        --ripple-background: currentColor;
+        --ripple-opacity: 0.2;
+        --arrow-width: 9px;
+        --arrow-height: 9px;
+        --arrow-margin: 1px 0 0 3px;
+        --arrow-d: path("M 11.7 19.9 L 49.8 57.9 L 87.9 19.9 L 99.7 31.6 L 49.8 81.4 L -0.01 31.6 Z");
+        --selection-indicator-height: 3px;
+        --selection-indicator-background: white;
+      }
+      :host(:focus) {
+        outline: none;
+      }
+
+      #content {
+        display: inherit;
+        flex-flow:inherit;
+        align-items: inherit;
+        z-index: 100;
+      }
+
+      /**
+       * Arrow
+       */
+
+      #arrow {
+        width: var(--arrow-width);
+        height: var(--arrow-height);
+        margin: var(--arrow-margin);
+        color: currentColor;
+        d: var(--arrow-d);
+      }
+
+      #arrow-path {
+        fill: currentColor;
+        d: inherit;
+      }
+
+      /**
+       * Ripples
+       */
+
+      #ripples {
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      #ripples .ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background: var(--ripple-background);
+        opacity: var(--ripple-opacity);
+        border-radius: 999px;
+        transform: none;
+        transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+        pointer-events: none;
+      }
+
+      /**
+       * Selection indicator
+       */
+
+      #selection-indicator {
+        display: none;
+        width: 100%;
+        height: var(--selection-indicator-height);
+        background: var(--selection-indicator-background);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+      :host([selected]) #selection-indicator {
+        display: block;
+      }
+      :host-context([animatingindicator]) #selection-indicator {
+        display: none;
+      }
+    </style>
 
     <div id="ripples"></div>
     <div id="selection-indicator"></div>

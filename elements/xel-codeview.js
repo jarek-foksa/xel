@@ -6,7 +6,32 @@ import {html} from "../utils/element.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/xel-codeview.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        background: white;
+        padding: 14px;
+        --selection-background: #B2D7FD;
+      }
+
+      ::selection {
+        background: var(--selection-background);
+      }
+
+      #code {
+        display: block;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 18px;
+        outline: none;
+        background: none;
+        padding: 0;
+      }
+    </style>
+
     <link id="prism-theme" rel="stylesheet">
     <code id="code" class="language-html"></code>
   </template>

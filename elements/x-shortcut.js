@@ -27,7 +27,15 @@ let modKeys = [
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-shortcut.css" data-vulcanize>
+    <style>
+      :host {
+        display: inline-block;
+        box-sizing: border-box;
+        font-size: 14px;
+        line-height: 1;
+      }
+    </style>
+
     <main id="main"></main>
   </template>
 `;

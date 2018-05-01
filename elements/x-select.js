@@ -12,7 +12,76 @@ let $oldTabIndex = Symbol()
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-select.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        width: fit-content;
+        height: fit-content;
+        max-width: 100%;
+        box-sizing: border-box;
+        outline: none;
+        font-size: 15px;
+        user-select: none;
+        --arrow-width: 13px;
+        --arrow-height: 13px;
+        --arrow-min-width: 13px;
+        --arrow-margin: 0 2px 0 11px;
+        --arrow-color: currentColor;
+        --arrow-d: path(
+          "M 25 41 L 50 16 L 75 41 L 83 34 L 50 1 L 17 34 Z M 17 66 L 50 100 L 83 66 L 75 59 L 50 84 L 25 59 Z"
+        );
+      }
+      :host([disabled]) {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+      :host(:hover) {
+        cursor: default;
+      }
+
+      #button {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: flex-start;
+        flex: 1;
+        width: 100%;
+        height: 100%;
+      }
+
+      :host([mixed]) #button > * {
+        opacity: 0.7;
+      }
+
+      #button > x-label {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      #button > #arrow-container {
+        margin: 0 0 0 auto;
+        z-index: 999;
+      }
+
+      #button > #arrow-container #arrow {
+        display: flex;
+        width: var(--arrow-width);
+        height: var(--arrow-height);
+        min-width: var(--arrow-min-width);
+        margin: var(--arrow-margin);
+        color: var(--arrow-color);
+        d: var(--arrow-d);
+      }
+
+      #button > #arrow-container #arrow path {
+        fill: currentColor;
+        d: inherit;
+      }
+    </style>
 
     <div id="button">
       <div id="arrow-container">

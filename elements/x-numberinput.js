@@ -13,7 +13,87 @@ let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-numberinput.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        width: 100px;
+        height: 24px;
+        box-sizing: border-box;
+        color: #000000;
+        --selection-color: currentColor;
+        --selection-background: #B2D7FD;
+        --inner-padding: 0;
+      }
+      :host(:hover) {
+        cursor: text;
+      }
+      :host([error]) {
+        --selection-color: white;
+        --selection-background: #d50000;
+      }
+      :host([mixed]) {
+        color: rgba(0, 0, 0, 0.7);
+      }
+      :host([disabled]) {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+
+      ::selection {
+        color: var(--selection-color);
+        background: var(--selection-background);
+      }
+
+      #main {
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
+      #editor-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        padding: var(--inner-padding);
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      #editor {
+        width: 100%;
+        overflow: auto;
+        color: inherit;
+        background: none;
+        border: none;
+        outline: none;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: 10;
+        white-space: nowrap;
+      }
+      #editor::-webkit-scrollbar {
+        display: none;
+      }
+      #editor::before {
+        content: attr(data-prefix);
+        pointer-events: none;
+      }
+      #editor::after {
+        content: attr(data-suffix);
+        pointer-events: none;
+      }
+      :host([empty]) #editor::before,
+      :host([empty]) #editor::after,
+      :host(:focus) #editor::before,
+      :host(:focus) #editor::after {
+        content: "";
+      }
+    </style>
 
     <main id="main">
       <div id="editor-container">

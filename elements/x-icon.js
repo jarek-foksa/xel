@@ -9,7 +9,33 @@ import {readFile} from "../utils/file.js";
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-icon.css" data-vulcanize>
+    <style>
+      :host {
+        display: block;
+        color: currentColor;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+      }
+      :host([disabled]) {
+        opacity: 0.5;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+
+      #svg {
+        width: 100%;
+        height: 100%;
+        fill: currentColor;
+        stroke: none;
+        /* @bugfix: pointerOverEvent.relatedTarget leaks shadow DOM of <x-icon> */
+        pointer-events: none;
+      }
+    </style>
+
     <svg id="svg" preserveAspectRatio="none" viewBox="0 0 100 100" width="0px" height="0px"></svg>
   </template>
 `;

@@ -13,7 +13,115 @@ let $oldTabIndex = Symbol();
 
 let shadowTemplate = html`
   <template>
-    <link rel="stylesheet" href="node_modules/xel/stylesheets/x-menuitem.css" data-vulcanize>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        position: relative;
+        box-sizing: border-box;
+        cursor: default;
+        user-select: none;
+        contain: layout style;
+        --trigger-effect: ripple; /* ripple, blink, none */
+        --ripple-background: currentColor;
+        --ripple-opacity: 0.1;
+        --checkmark-d: path("M 37.5 65 L 21 48.9 L 15.7 54.35 L 37.5 76.1 L 84.3 29.3 L 78.8 23.8 Z");
+        --checkmark-width: 24px;
+        --checkmark-height: 24px;
+        --checkmark-margin: 0 12px 0 0;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+      :host([disabled]) {
+        pointer-events: none;
+        opacity: 0.6;
+      }
+      :host(:focus) {
+        outline: none;
+      }
+      :host-context([debug]):host(:focus) {
+        outline: 2px solid red;
+      }
+
+      /**
+       * Ripples
+       */
+
+      #ripples {
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        contain: strict;
+        overflow: hidden;
+      }
+
+      #ripples .ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background: var(--ripple-background);
+        opacity: var(--ripple-opacity);
+        border-radius: 999px;
+        transform: none;
+        transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+        pointer-events: none;
+      }
+
+      /**
+       * Checkmark
+       */
+
+      #checkmark {
+        color: inherit;
+        display: none;
+        transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        align-self: center;
+        width: var(--checkmark-width);
+        height: var(--checkmark-height);
+        margin: var(--checkmark-margin);
+        d: var(--checkmark-d);
+      }
+      :host([togglable]) #checkmark {
+        display: flex;
+        transform: scale(0);
+        transform-origin: 50% 50%;
+      }
+      :host([toggled]) #checkmark {
+        display: flex;
+        transform: scale(1);
+      }
+
+      #checkmark path {
+        d: inherit;
+        fill: currentColor;
+      }
+
+      /**
+       * "Expand" arrow icon
+       */
+
+      #arrow-icon {
+        display: flex;
+        width: 16px;
+        height: 16px;
+        transform: scale(1.1);
+        align-self: center;
+        margin-left: 8px;
+        color: inherit;
+      }
+      #arrow-icon[hidden] {
+        display: none;
+      }
+    </style>
 
     <div id="ripples"></div>
 
