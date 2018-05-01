@@ -3,10 +3,8 @@
 .*
 !images/
 !images/*
-!stylesheets/
-!stylesheets/macos.theme.css
-!stylesheets/material.theme.css
-!stylesheets/vanilla.theme.css
+!themes/
+!themes/*
 !LICENSE.md
 !README.md
 !package.json
