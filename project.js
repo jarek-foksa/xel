@@ -3,7 +3,6 @@
 let Fs              = require("fs");
 let Fse             = require("fs-extra");
 let Path            = require("path");
-let Csso            = require("csso");
 let Rollup          = require("rollup");
 let childProcess    = require("child_process");
 
@@ -47,58 +46,11 @@ let build = () => {
     let result = await bundle.generate({format: "iife"});
 
     let xelMinJS = result.code;
-    xelMinJS = vulcanizeScript(xelMinJS);
     writeFile(`${__dirname}/xel.min.js`, xelMinJS);
 
     resolve();
   });
 };
-
-// @info
-//   Replaces any occourance of <link rel="stylesheet" data-vulcanize> element with corresponding <style> element.
-let vulcanizeScript = (scriptJS) => {
-  let result = "";
-  let parts = [""];
-
-  for (let i = 0; i < scriptJS.length; i += 1) {
-    let char = scriptJS[i];
-
-    if (char === "<" && scriptJS.substr(i, 6) === "<link ") {
-      parts.push(char);
-    }
-    else if (char === ">" && parts[parts.length - 1].startsWith("<link")) {
-      parts[parts.length - 1] += char;
-      parts.push("");
-    }
-    else {
-      parts[parts.length - 1] += char;
-    }
-  }
-
-  parts = parts.filter($0 => $0 !== "");
-
-  for (let part of parts) {
-    if (part.startsWith("<link ") && part.includes("data-vulcanize")) {
-      let hrefStartIndex = part.indexOf('href="') + 'href="'.length;
-      let hrefEndIndex = part.indexOf('"', hrefStartIndex);
-      let href = part.substring(hrefStartIndex, hrefEndIndex);
-
-      if (href.startsWith("node_modules/xel/")) {
-        href = href.substring("node_modules/xel/".length);
-      }
-
-      let styleCSS = readFile(`${__dirname}/${href}`);
-      let minifiedCSS = Csso.minify(styleCSS).css;
-
-      result += "<style>" + minifiedCSS + "</style>";
-    }
-    else {
-      result += part;
-    }
-  }
-
-  return result;
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -141,9 +93,9 @@ let publishFirebaseSite = () => {
         `xel.min.js`,
         `docs`,
         `images`,
-        `stylesheets/macos.theme.css`,
-        `stylesheets/material.theme.css`,
-        `stylesheets/vanilla.theme.css`,
+        `themes/macos.css`,
+        `themes/material.css`,
+        `themes/vanilla.css`,
         `node_modules/prismjs/prism.js`,
         `node_modules/prismjs/themes/prism-coy.css`,
         `node_modules/prismjs/themes/prism-tomorrow.css`

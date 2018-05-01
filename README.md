@@ -70,19 +70,19 @@ Add to the `<head>` one of the following:
 - MacOS theme
 
 ```html
-<link rel="stylesheet" href="node_modules/xel/stylesheets/macos.theme.css">
+<link rel="stylesheet" href="node_modules/xel/themes/macos.css">
 ```
 
 - Material theme
 
 ```html
-<link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css">
+<link rel="stylesheet" href="node_modules/xel/themes/material.css">
 ```
 
 - Vanilla theme
 
 ```html
-<link rel="stylesheet" href="node_modules/xel/stylesheets/vanilla.theme.css">
+<link rel="stylesheet" href="node_modules/xel/themes/vanilla.css">
 ```
 **3. Link Xel**
 

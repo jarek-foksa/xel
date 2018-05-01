@@ -7,8 +7,8 @@
 // @type
 //   (void) => string
 export let getThemePath = () => {
-  let themeStyleElement = document.querySelector(`link[href*=".theme.css"]`);
-  let themePath = "node_modules/xel/stylesheets/vanilla.theme.css";
+  let themeStyleElement = document.querySelector(`link[href*="/themes/"]`);
+  let themePath = "node_modules/xel/themes/vanilla.css";
 
   if (themeStyleElement) {
     themePath = themeStyleElement.getAttribute("href");
@@ -24,7 +24,7 @@ export let getThemePath = () => {
 export let getThemeName = () => {
   let path  = getThemePath();
   let startIndex = path.lastIndexOf("/") + 1;
-  let endIndex = path.length - 10;
+  let endIndex = path.length - 4;
   let theme = (endIndex > startIndex ? path.substring(startIndex, endIndex) : "vanilla");
   return theme;
 };

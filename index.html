@@ -38,7 +38,7 @@
       // Supported browser
       if (window.ShadowRoot && window.customElements && HTMLLinkElement.prototype.hasOwnProperty("import")) {
         let theme = sessionStorage.getItem("theme") || "material";
-        let themePath = `/node_modules/xel/stylesheets/${theme}.theme.css`;
+        let themePath = `/node_modules/xel/themes/${theme}.css`;
         document.querySelector("#theme-link").setAttribute("href", themePath);
         window.addEventListener("load", function(event) {window["splashscreen"].remove()});
       }

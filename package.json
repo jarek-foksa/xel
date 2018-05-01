@@ -1,6 +1,6 @@
 {
   "name": "xel",
-  "version": "0.0.131",
+  "version": "0.0.132",
   "description": "Widget toolkit for building native-like Electron, NW.js and Chrome apps",
   "repository": {
     "type": "git",
@@ -44,7 +44,6 @@
     "start": "./project.js serve"
   },
   "devDependencies": {
-    "csso": "^3.0.1",
     "firebase-tools": "^3.5.0",
     "fs-extra": ">=2.1.2",
     "prismjs": "^1.6.0",
