@@ -188,7 +188,7 @@ export class XNumberInputElement extends HTMLElement {
   get step() {
     return this.hasAttribute("step") ? parseFloat(this.getAttribute("step")) : 1;
   }
-  set step(value) {
+  set step(step) {
     this.setAttribute("step", step);
   }
 
