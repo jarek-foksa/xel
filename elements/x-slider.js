@@ -191,7 +191,7 @@ let shadowTemplate = html`
 //   changeend
 export class XSliderElement extends HTMLElement {
   static get observedAttributes() {
-    return ["value"];
+    return ["value", "min", "max"];
   }
 
   // @type
@@ -287,6 +287,12 @@ export class XSliderElement extends HTMLElement {
     else if (name === "value") {
       this._onValueAttributeChange();
     }
+    else if (name === "min") {
+      this._onMinAttributeChange();
+    }
+    else if (name === "max") {
+      this._onMaxAttributeChange();
+    }
   }
 
   connectedCallback() {
@@ -362,6 +368,18 @@ export class XSliderElement extends HTMLElement {
   _onValueAttributeChange() {
     this._updateTracks();
     this._updateThumbs();
+  }
+
+  _onMinAttributeChange() {
+    this._updateTracks();
+    this._updateThumbs();
+    this._updateTicks();
+  }
+
+  _onMaxAttributeChange() {
+    this._updateTracks();
+    this._updateThumbs();
+    this._updateTicks();
   }
 
   _onMutation(records) {
