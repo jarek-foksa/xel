@@ -230,15 +230,32 @@ if (window.ClientRect) {
     setPointerCapture.call(this, pointerId);
 
     let cursor = getComputedStyle(this).cursor;
+    let styleElements = [];
 
-    let styleElement = document.createElement("style");
-    styleElement.textContent = `body, * { cursor: ${cursor} !important; user-select: none !important; }`;
-    document.head.append(styleElement);
+    {
+      for (let node = this.parentNode || this.host; node && node !== document; node = node.parentNode || node.host) {
+        if (node.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
+          let styleElement = document.createElementNS(node.host.namespaceURI, "style");
+          styleElement.textContent = `* { cursor: ${cursor} !important; user-select: none !important; }`;
+          node.append(styleElement);
+          styleElements.push(styleElement);
+        }
+        else if (node.nodeType === document.DOCUMENT_NODE) {
+          let styleElement = document.createElement("style");
+          styleElement.textContent = `* { cursor: ${cursor} !important; user-select: none !important; }`;
+          node.head.append(styleElement);
+          styleElements.push(styleElement);
+        }
+      }
+    }
 
     let finish = () => {
       window.removeEventListener("pointerup", finish, true);
       this.removeEventListener("lostpointercapture", finish);
-      styleElement.remove();
+
+      for (let styleElement of styleElements) {
+        styleElement.remove();
+      }
     };
 
     window.addEventListener("pointerup", finish, true);
