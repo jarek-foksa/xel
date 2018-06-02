@@ -2,6 +2,7 @@
 import "./runtime.js";
 import "./elements/x-accordion.js";
 import "./elements/x-backdrop.js";
+import "./elements/x-barscolorpicker.js";
 import "./elements/x-box.js";
 import "./elements/x-button.js";
 import "./elements/x-buttons.js";

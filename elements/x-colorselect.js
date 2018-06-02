@@ -121,7 +121,7 @@ export class XColorSelectElement extends HTMLElement {
   }
 
   connectedCallback() {
-    let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker");
+    let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker, x-barscolorpicker");
 
     if (picker) {
       picker.setAttribute("value", formatColorString(this.value, "rgba"));

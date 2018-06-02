@@ -49,6 +49,22 @@
     <hr/>
 
     <section>
+      <h4>Bars color picker</h4>
+
+      <xel-demo>
+        <template>
+          <x-colorselect value="cornflowerblue">
+            <x-popover modal>
+              <x-barscolorpicker></x-barscolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </xel-demo>
+    </section>
+
+    <hr/>
+
+    <section>
       <h4>Alpha slider visible</h4>
 
       <xel-demo>
@@ -62,6 +78,12 @@
           <x-colorselect value="pink" style="margin-top: 10px;">
             <x-popover modal>
               <x-rectcolorpicker alphaslider></x-rectcolorpicker>
+            </x-popover>
+          </x-colorselect>
+
+          <x-colorselect value="cornflowerblue" style="margin-top: 10px;">
+            <x-popover modal>
+              <x-barscolorpicker alphaslider></x-barscolorpicker>
             </x-popover>
           </x-colorselect>
         </template>
