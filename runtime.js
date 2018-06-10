@@ -84,115 +84,122 @@ if (window.ClientRect) {
   let showModal = HTMLDialogElement.prototype.showModal;
   let close = HTMLDialogElement.prototype.close;
 
-  HTMLDialogElement.prototype.showModal = async function() {
-    showModal.apply(this, arguments);
+  HTMLDialogElement.prototype.showModal = function() {
+    return new Promise( async (resolve) => {
+      showModal.apply(this, arguments);
 
-    let dialogRect = this.getBoundingClientRect();
-    let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
-    let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
-    let animation;
+      let dialogRect = this.getBoundingClientRect();
+      let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
+      let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+      let animation;
 
-    // Animate from left
-    if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
-      animation = this.animate(
-        { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
-        { duration: transitionDuration, easing: transitionTimingFunction }
-      );
-    }
-    // Animate from right
-    else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
-      animation = this.animate(
-        { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
-        { duration: transitionDuration, easing: transitionTimingFunction }
-      );
-    }
-    // Animate from top
-    else {
-      animation = this.animate(
-        { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
-        { duration: transitionDuration, easing: transitionTimingFunction }
-      );
-    }
-
-    await animation.finished;
-
-    // Close the dialog when backdrop is clicked
-    {
-      let keyDownListener;
-      let pointerDownListener;
-      let clickListener;
-      let closeListener;
-      let closeOnClick = true;
-
-      let isPointerInsideDialog = (event) => {
-        let dialogRect = this.getBoundingClientRect();
-
-        return (
-          event.clientX >= dialogRect.x &&
-          event.clientX <= dialogRect.x + dialogRect.width &&
-          event.clientY >= dialogRect.y &&
-          event.clientY <= dialogRect.y + dialogRect.height
+      // Animate from left
+      if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
+        animation = this.animate(
+          { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
+          { duration: transitionDuration, easing: transitionTimingFunction }
         );
-      };
+      }
+      // Animate from right
+      else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
+        animation = this.animate(
+          { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
+          { duration: transitionDuration, easing: transitionTimingFunction }
+        );
+      }
+      // Animate from top
+      else {
+        animation = this.animate(
+          { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
+          { duration: transitionDuration, easing: transitionTimingFunction }
+        );
+      }
 
-      this.addEventListener("keydown", keyDownListener = (event) => {
-        event.stopPropagation();
-      });
+      // Close the dialog when backdrop is clicked
+      {
+        let keyDownListener;
+        let pointerDownListener;
+        let clickListener;
+        let closeListener;
+        let closeOnClick = true;
 
-      this.addEventListener("pointerdown", pointerDownListener = (event) => {
-        closeOnClick = (isPointerInsideDialog(event) === false);
-      });
+        let isPointerInsideDialog = (event) => {
+          let dialogRect = this.getBoundingClientRect();
 
-      this.addEventListener("click", clickListener = (event) => {
-        if (closeOnClick) {
-          if (isPointerInsideDialog(event) === false && this.hasAttribute("open")) {
-            this.close();
+          return (
+            event.clientX >= dialogRect.x &&
+            event.clientX <= dialogRect.x + dialogRect.width &&
+            event.clientY >= dialogRect.y &&
+            event.clientY <= dialogRect.y + dialogRect.height
+          );
+        };
+
+        this.addEventListener("keydown", keyDownListener = (event) => {
+          event.stopPropagation();
+        });
+
+        this.addEventListener("pointerdown", pointerDownListener = (event) => {
+          closeOnClick = (isPointerInsideDialog(event) === false);
+        });
+
+        this.addEventListener("click", clickListener = (event) => {
+          if (closeOnClick) {
+            if (isPointerInsideDialog(event) === false && this.hasAttribute("open")) {
+              this.close();
+            }
           }
-        }
-      });
+        });
 
-      this.addEventListener("close", closeListener = (event) => {
-        this.removeEventListener("keydown", keyDownListener);
-        this.removeEventListener("pointerdown", pointerDownListener);
-        this.removeEventListener("click", clickListener);
-        this.removeEventListener("close", closeListener);
-      });
-    }
+        this.addEventListener("close", closeListener = (event) => {
+          this.removeEventListener("keydown", keyDownListener);
+          this.removeEventListener("pointerdown", pointerDownListener);
+          this.removeEventListener("click", clickListener);
+          this.removeEventListener("close", closeListener);
+        });
+      }
+
+      await animation.finished;
+      resolve();
+    });
   };
 
-  HTMLDialogElement.prototype.close = async function() {
-    let dialogRect = this.getBoundingClientRect();
-    let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
-    let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
-    let animation;
+  HTMLDialogElement.prototype.close = function() {
+    return new Promise( async (resolve) => {
+      let dialogRect = this.getBoundingClientRect();
+      let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
+      let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+      let animation;
 
-    // Animate to left
-    if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
-      animation = this.animate(
-        { transform: ["translateX(0px)", `translateX(-${dialogRect.right}px)`]},
-        { duration: transitionDuration, easing: transitionTimingFunction }
-      );
-    }
-    // Animate to right
-    else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
-      animation = this.animate(
-        { transform: ["translateX(0px)", `translateX(${dialogRect.width}px)`]},
-        { duration: transitionDuration, easing: transitionTimingFunction }
-      );
-    }
-    // Animate to top
-    else {
-      animation = this.animate(
-        { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
-        { duration: transitionDuration, easing: transitionTimingFunction }
-      );
-    }
+      // Animate to left
+      if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
+        animation = this.animate(
+          { transform: ["translateX(0px)", `translateX(-${dialogRect.right}px)`]},
+          { duration: transitionDuration, easing: transitionTimingFunction }
+        );
+      }
+      // Animate to right
+      else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
+        animation = this.animate(
+          { transform: ["translateX(0px)", `translateX(${dialogRect.width}px)`]},
+          { duration: transitionDuration, easing: transitionTimingFunction }
+        );
+      }
+      // Animate to top
+      else {
+        animation = this.animate(
+          { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
+          { duration: transitionDuration, easing: transitionTimingFunction }
+        );
+      }
 
-    await animation.finished;
+      await animation.finished;
 
-    if (this.hasAttribute("open")) {
-      close.apply(this, arguments);
-    }
+      if (this.hasAttribute("open")) {
+        close.apply(this, arguments);
+      }
+
+      resolve();
+    });
   };
 
   Object.defineProperty(HTMLDialogElement.prototype, "open", {
