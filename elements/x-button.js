@@ -923,8 +923,18 @@ export class XButtonElement extends HTMLElement {
         this._openNotification();
       }
       else {
-        event.preventDefault();
-        this.click();
+        if (this.matches(":focus")) {
+          if (this._canClosePopover()) {
+            this._closePopover();
+          }
+          else if (this._canCloseMenu()) {
+            this._closeMenu();
+          }
+          else {
+            event.preventDefault();
+            this.click();
+          }
+        }
       }
     }
 
