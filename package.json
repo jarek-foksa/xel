@@ -44,9 +44,9 @@
     "start": "./project.js serve"
   },
   "devDependencies": {
-    "firebase-tools": "^3.5.0",
-    "fs-extra": ">=2.1.2",
-    "prismjs": "^1.6.0",
-    "rollup": "^0.49.2"
+    "firebase-tools": "3.18.6",
+    "fs-extra": "6.0.1",
+    "prismjs": "1.14.0",
+    "rollup": "0.60.7"
   }
 }
