@@ -172,6 +172,7 @@ dialog {
   padding: 0;
   box-sizing: border-box;
   transition: transform 300ms cubic-bezier(0.0, 0.0, 0.2, 1);
+  color: inherit;
   border: 1px solid #a9a9a9;
   border-top: none;
   background: #EFEFEF;
