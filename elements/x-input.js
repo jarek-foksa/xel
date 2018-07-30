@@ -73,6 +73,10 @@ let shadowTemplate = html`
         text-align: inherit;
         cursor: inherit;
       }
+      #input:-webkit-autofill {
+        /* Hide the placehodler text when the input is autofilled */
+        z-index: 1;
+      }
 
       /* Selection rect */
       :host(:not(:focus)) ::selection {
