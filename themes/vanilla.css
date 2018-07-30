@@ -63,6 +63,9 @@ a {
   color: inherit;
   text-decoration: none;
 }
+a:focus {
+  outline: 3px solid hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 15%));
+}
 p a,
 li a,
 dl a,
