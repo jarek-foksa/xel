@@ -91,7 +91,7 @@ export class XLabelElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onClick(event) {
-    if (this.for && this.disabled === false) {
+    if (this.for && this.disabled === false && event.target.closest("a") === null) {
       let target = this.getRootNode().querySelector("#" + CSS.escape(this.for));
 
       if (target) {
