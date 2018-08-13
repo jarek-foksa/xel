@@ -277,8 +277,10 @@ if (window.ClientRect) {
 //
 
 {
-  let Animation = document.createElement("div").animate({}).constructor;
-    Object.defineProperty(Animation.prototype, "finished", {
+  let animation = document.createElement("div").animate({});
+
+  if (animation.finished === undefined) {
+    Object.defineProperty(animation.constructor.prototype, "finished", {
       get() {
         return new Promise((resolve) => {
           this.playState === "finished" ? resolve() : this.addEventListener("finish", () => resolve(), {once: true});
@@ -286,6 +288,7 @@ if (window.ClientRect) {
       }
     });
   }
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
