@@ -73,16 +73,20 @@ let publishNpmPackage = () => {
 
 let publishFirebaseSite = () => {
   return new Promise((resolve) => {
+    let manifest = JSON.parse(readFile(`${__dirname}/firebase.json`));
+
     // Remove old files
     {
       removeDir(`${__dirname}/dist/firebase`);
     }
 
     // Rewrite temporarly firebase.json by changing "public" directory from "./" to "./dist/firebase"
+    // Also get rid of any redirect
     {
-      let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
-      manifeset.hosting.public = "./dist/firebase";
-      writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
+      let adjustedManifest = JSON.parse(JSON.stringify(manifest));
+      adjustedManifest.hosting.public = "./dist/firebase";
+      adjustedManifest.hosting.redirects = [];
+      writeFile(`${__dirname}/firebase.json`, JSON.stringify(adjustedManifest, null, 2));
     }
 
     // Copy over files to "dist/firebase/"
@@ -103,6 +107,7 @@ let publishFirebaseSite = () => {
 
       for (let path of paths) {
         Fse.copySync(`${__dirname}/${path}`, `${__dirname}/dist/firebase/${path}`);
+        Fse.copySync(`${__dirname}/${path}`, `${__dirname}/dist/firebase/node_modules/xel/${path}`);
       }
     }
 
@@ -127,9 +132,7 @@ let publishFirebaseSite = () => {
 
         // Restore firebase.json
         {
-          let manifeset = JSON.parse(readFile(`${__dirname}/firebase.json`));
-          manifeset.hosting.public = "./";
-          writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifeset, null, 2));
+          writeFile(`${__dirname}/firebase.json`, JSON.stringify(manifest, null, 2));
         }
 
         // Clean up
