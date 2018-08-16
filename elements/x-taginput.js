@@ -54,7 +54,7 @@ let shadowTemplate = html`
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start;
-        align-items: flex-start;
+        align-items: center;
         align-content: flex-start;
         cursor: text;
       }
