@@ -1274,6 +1274,7 @@ x-taginput {
   background: white;
   border: 1px solid #BFBFBF;
   font-size: 12.5px;
+  min-height: 28px;
   --selection-background: inherit;
 }
 x-taginput:focus {
