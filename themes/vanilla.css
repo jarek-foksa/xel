@@ -27,7 +27,7 @@ body {
   --accent-color-s: 86%;
   --accent-color-l: 57%;
   --text-color: rgba(0, 0, 0, 0.8);
-  --selection-background: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 35%));
+  --selection-background: hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 28%));
 }
 
 p:last-child {
