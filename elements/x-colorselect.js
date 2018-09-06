@@ -227,14 +227,16 @@ export class XColorSelectElement extends HTMLElement {
       this.dispatchEvent(new CustomEvent("changestart"))
     }
 
+    this.value = this["#input"].value;
     this.dispatchEvent(new CustomEvent("change"))
     this._onInputChangeDebouonced();
   }
 
   _onInputChangeDebouonced() {
     if (this._inputChangeStarted) {
-      this.value = this["#input"].value;
       this._inputChangeStarted = false;
+
+      this.value = this["#input"].value;
       this.dispatchEvent(new CustomEvent("changeend"))
     }
   }
