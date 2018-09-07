@@ -953,7 +953,7 @@ let tokenizeColor = (cssText) => {
         }
 
         else if (isHexColorString(char + scanner.peek(3))) {
-          text = char + scanner.read(3);
+          let text = char + scanner.read(3);
           tokens.push({type: "HEX", text: text});
           return;
         }
