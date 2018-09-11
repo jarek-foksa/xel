@@ -14,7 +14,6 @@ let shadowTemplate = html`
         align-items: center;
         width: 100%;
         height: fit-content;
-        overflow: auto;
         box-sizing: border-box;
       }
       :host([disabled]) {
