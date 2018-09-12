@@ -55,6 +55,7 @@ export class XBackdropElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   show(animate = true) {
+    this.title = "";
     this.style.top = "0px";
     this.style.left = "0px";
     this.ownerElement.before(this);
