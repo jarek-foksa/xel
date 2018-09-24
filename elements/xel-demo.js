@@ -66,105 +66,106 @@ export class XelDemoElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this["#code-view"].textContent = this._getDemoHTML();
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "name") {
-      this._update();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _getDemoHTML() {
-    let container = document.createElement("div");
     let template = this.querySelector("template");
 
     if (!template) {
       return "";
     }
 
-    let content = document.importNode(template.content, true);
+    let liveViewContent = document.importNode(template.content, true);
+    let codeViewContent = liveViewContent.cloneNode(true);
 
+    // Live view
     {
-      let liveViewContent = content.cloneNode(true);
-      window["shadowRoot" + counter] = this["#live-view"];
-      let script = liveViewContent.querySelector("script");
-
-      if (script) {
-        let textContent = replaceAll(script.textContent, "document", `window.shadowRoot${counter}`);
-        textContent = "{" + textContent + "}";
-        script.textContent = textContent;
-      }
-
-      counter += 1;
 
       this["#live-view"].append(liveViewContent);
-    }
 
-    for (let child of content.childNodes) {
-      container.append(child.cloneNode(true));
-    }
+      let scripts = this["#live-view"].querySelectorAll("script");
 
-    // Remove dynamically added attributes
-    for (let element of container.querySelectorAll("*")) {
-      if (element.localName.startsWith("x-")) {
-        for (let {name, value} of [...element.attributes]) {
-          if (name === "tabindex" || name === "role" || name.startsWith("aria")) {
-            element.removeAttribute(name);
-          }
+      if (scripts.length > 0) {
+        window["shadowRoot" + counter] = this["#live-view"];
+
+        for (let script of scripts) {
+          let scriptText = "{" + replaceAll(script.textContent, "document", `window.shadowRoot${counter}`) + "}";
+          eval(scriptText);
         }
+
+        counter += 1;
       }
     }
 
-    let textContent = container.innerHTML;
-
-    // Simplify boolean attributes
-    textContent = replaceAll(textContent, `=""`, "");
-    textContent = replaceAll(textContent, "demo", "document");
-
-    let lines = textContent.split("\n");
-
-    // Remove leading and trailing empty lines
+    // Code view
     {
-      if (isDOMWhitespace(lines[0])) {
-        lines.shift();
+      let container = document.createElement("div");
+
+      for (let child of codeViewContent.childNodes) {
+        container.append(child.cloneNode(true));
       }
 
-      if (isDOMWhitespace(lines[lines.length - 1])) {
-        lines.pop();
-      }
-    }
-
-    // Remove excesive indentation
-    {
-      let minIndent = Infinity;
-
-      for (let line of lines) {
-        if (isDOMWhitespace(line) === false) {
-          let indent = 0;
-
-          for (let char of line) {
-            if (char === " ") {
-              indent += 1;
+      // Remove dynamically added attributes
+      for (let element of container.querySelectorAll("*")) {
+        if (element.localName.startsWith("x-")) {
+          for (let {name, value} of [...element.attributes]) {
+            if (name === "tabindex" || name === "role" || name.startsWith("aria")) {
+              element.removeAttribute(name);
             }
-            else {
-              break;
-            }
-          }
-
-          if (indent < minIndent) {
-            minIndent = indent;
           }
         }
       }
 
-      lines = lines.map(line => line.substring(minIndent));
-    }
+      let textContent = container.innerHTML;
 
-    let innerHTML = lines.join("\n");
-    return innerHTML;
+      // Simplify boolean attributes
+      textContent = replaceAll(textContent, `=""`, "");
+      textContent = replaceAll(textContent, "demo", "document");
+
+      let lines = textContent.split("\n");
+
+      // Remove leading and trailing empty lines
+      {
+        if (isDOMWhitespace(lines[0])) {
+          lines.shift();
+        }
+
+        if (isDOMWhitespace(lines[lines.length - 1])) {
+          lines.pop();
+        }
+      }
+
+      // Remove excesive indentation
+      {
+        let minIndent = Infinity;
+
+        for (let line of lines) {
+          if (isDOMWhitespace(line) === false) {
+            let indent = 0;
+
+            for (let char of line) {
+              if (char === " ") {
+                indent += 1;
+              }
+              else {
+                break;
+              }
+            }
+
+            if (indent < minIndent) {
+              minIndent = indent;
+            }
+          }
+        }
+
+        lines = lines.map(line => line.substring(minIndent));
+      }
+
+      this["#code-view"].textContent = lines.join("\n");
+    }
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "name") {
+      this._update();
+    }
   }
 }
 
