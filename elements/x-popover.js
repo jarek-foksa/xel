@@ -141,7 +141,7 @@ export class XPopoverElement extends HTMLElement {
   //   Returns a promise that is resolved when the popover finishes animating.
   // @type
   //  (DOMPoint || DOMRect || Element) => void
-  open(context) {
+  open(context, animate = true) {
     return new Promise( async (resolve) => {
       let contextRect;
       let extraLeft = 0;        // Extra offset needed when popover has fixed-positioned ancestor(s)
@@ -356,7 +356,7 @@ export class XPopoverElement extends HTMLElement {
       }
 
       // Animate the popover
-      {
+      if (animate) {
         let transition = getComputedStyle(this).getPropertyValue("--open-transition");
         let [property, duration, easing] = this._parseTransistion(transition);
 
@@ -381,22 +381,25 @@ export class XPopoverElement extends HTMLElement {
   //   Returns a promise that is resolved when the popover finishes animating.
   // @type
   //   (boolean) => Promise
-  close() {
+  close(animate = true) {
     return new Promise(async (resolve) => {
       if (this.opened) {
         this.removeAttribute("opened");
-        this.setAttribute("animating", "");
         this["#backdrop"].hide();
         this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
 
-        let transition = getComputedStyle(this).getPropertyValue("--close-transition");
-        let [property, duration, easing] = this._parseTransistion(transition);
+        if (animate) {
+          let transition = getComputedStyle(this).getPropertyValue("--close-transition");
+          let [property, duration, easing] = this._parseTransistion(transition);
 
-        if (property === "opacity") {
-          await this.animate({ opacity: ["1", "0"] }, { duration, easing }).finished;
+          this.setAttribute("animating", "");
+
+          if (property === "opacity") {
+            await this.animate({ opacity: ["1", "0"] }, { duration, easing }).finished;
+          }
+
+          this.removeAttribute("animating");
         }
-
-        this.removeAttribute("animating");
       }
 
       resolve();
