@@ -193,6 +193,7 @@ nav hr {
  */
 
 dialog {
+  position: fixed;
   width: 70%;
   height: auto;
   min-height: 100px;
