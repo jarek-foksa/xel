@@ -15,6 +15,7 @@ body {
   font-family: "Roboto", "Noto Sans", sans-serif;
   font-size: 15px;
   line-height: 1.6;
+  overflow-y: overlay;
   --primary-color: #009788;
   --secondary-color:  #2196f3;
   --accent-color: #ecec26;

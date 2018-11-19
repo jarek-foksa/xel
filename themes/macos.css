@@ -31,6 +31,7 @@ body {
   font-family: BlinkMacSystemFont, "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
   font-size: 15px;
   line-height: 1.6;
+  overflow-y: overlay;
   --accent-color-h: 211;
   --accent-color-s: 97%;
   --accent-color-l: 53%;

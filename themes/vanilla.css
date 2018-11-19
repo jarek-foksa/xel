@@ -23,6 +23,7 @@ body {
   font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
   font-size: 15px;
   line-height: 1.6;
+  overflow-y: overlay;
   --accent-color-h: 211;
   --accent-color-s: 86%;
   --accent-color-l: 57%;

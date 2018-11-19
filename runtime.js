@@ -115,6 +115,15 @@ if (window.ClientRect) {
         );
       }
 
+      // Prevent the document from being scrolled when the dialog is open
+      {
+        document.body.style.overflow = "hidden";
+
+        this.addEventListener("close", (event) => {
+          document.body.style.overflow = null;
+        }, {once: true});
+      }
+
       // Close the dialog when backdrop is clicked
       {
         let keyDownListener;
