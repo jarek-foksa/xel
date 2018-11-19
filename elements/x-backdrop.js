@@ -76,13 +76,8 @@ export class XBackdropElement extends HTMLElement {
 
     // Prevent the document body from being scrolled
     {
-      if (this._wheelListener) {
-        document.body.removeEventListener("wheel", this._wheelListener);
-        this._wheelListener = null;
-      }
-
       if (document.body.scrollHeight > document.body.clientHeight) {
-        document.body.addEventListener("wheel", this._wheelListener = (event) => event.preventDefault());
+        document.body.style.overflow = "hidden";
       }
     }
 
@@ -124,22 +119,14 @@ export class XBackdropElement extends HTMLElement {
       );
 
       backdropAnimation.finished.then(() => {
-        if (this._wheelListener) {
-          document.body.removeEventListener("wheel", this._wheelListener);
-          this._wheelListener = null;
-        }
-
+        document.body.style.overflow = null;
         this.remove();
       });
 
       return backdropAnimation.finished;
     }
     else {
-      if (this._wheelListener) {
-        document.body.removeEventListener("wheel", this._wheelListener);
-        this._wheelListener = null;
-      }
-
+      document.body.style.overflow = null;
       this.remove();
     }
   }
