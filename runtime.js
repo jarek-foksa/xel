@@ -93,6 +93,9 @@ if (window.ClientRect) {
       let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
       let animation;
 
+      // Prevent the document from being scrolled when the dialog is open
+      document.body.style.overflow = "hidden";
+
       // Animate from left
       if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
         animation = this.animate(
@@ -113,15 +116,6 @@ if (window.ClientRect) {
           { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
           { duration: transitionDuration, easing: transitionTimingFunction }
         );
-      }
-
-      // Prevent the document from being scrolled when the dialog is open
-      {
-        document.body.style.overflow = "hidden";
-
-        this.addEventListener("close", (event) => {
-          document.body.style.overflow = null;
-        }, {once: true});
       }
 
       // Close the dialog when backdrop is clicked
@@ -205,6 +199,7 @@ if (window.ClientRect) {
 
       if (this.hasAttribute("open")) {
         close.apply(this, arguments);
+        document.body.style.overflow = null;
       }
 
       resolve();
