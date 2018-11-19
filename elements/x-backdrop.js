@@ -74,13 +74,6 @@ export class XBackdropElement extends HTMLElement {
       }
     }
 
-    // Prevent the document body from being scrolled
-    {
-      if (document.body.scrollHeight > document.body.clientHeight) {
-        document.body.style.overflow = "hidden";
-      }
-    }
-
     // Ensure the backdrop is stacked directly below the ref element
     {
       let zIndex = parseFloat(getComputedStyle(this.ownerElement).zIndex);
@@ -119,14 +112,12 @@ export class XBackdropElement extends HTMLElement {
       );
 
       backdropAnimation.finished.then(() => {
-        document.body.style.overflow = null;
         this.remove();
       });
 
       return backdropAnimation.finished;
     }
     else {
-      document.body.style.overflow = null;
       this.remove();
     }
   }
