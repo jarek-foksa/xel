@@ -118,6 +118,27 @@ if (window.ClientRect) {
         );
       }
 
+      // Close the dialog when "Esc" key is pressed
+      {
+        let keyDownListener;
+        let closeListener;
+
+        this.addEventListener("keydown", keyDownListener = (event) => {
+          if (event.key === "Escape") {
+            if (event.defaultPrevented === false) {
+              event.preventDefault();
+              event.stopPropagation();
+              this.close();
+            }
+          }
+        });
+
+        this.addEventListener("close", closeListener = (event) => {
+          this.removeEventListener("close", closeListener);
+          this.removeEventListener("keydown", keyDownListener);
+        });
+      }
+
       // Close the dialog when backdrop is clicked
       {
         let keyDownListener;
