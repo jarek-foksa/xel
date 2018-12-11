@@ -96,6 +96,19 @@ if (window.ClientRect) {
       // Prevent the document from being scrolled when the dialog is open
       document.body.style.overflow = "hidden";
 
+      // Focus either the dialog or an element inside the dialog that has "autofocus" attribute
+      // https://github.com/whatwg/html/issues/1929#issuecomment-272632190
+      {
+        let autofocusElement = this.querySelector("[autofocus]");
+
+        if (autofocusElement) {
+          autofocusElement.focus();
+        }
+        else {
+          this.focus();
+        }
+      }
+
       // Animate from left
       if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
         animation = this.animate(
