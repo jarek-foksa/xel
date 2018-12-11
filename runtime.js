@@ -99,6 +99,7 @@ if (window.ClientRect) {
         let closeListener;
 
         document.body.style.overflow = "hidden";
+        openDialogs.push(this);
 
         this.addEventListener("close", closeListener = (event) => {
           this.removeEventListener("close", closeListener);
