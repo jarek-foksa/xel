@@ -83,6 +83,7 @@ if (window.ClientRect) {
 {
   let showModal = HTMLDialogElement.prototype.showModal;
   let close = HTMLDialogElement.prototype.close;
+  let openDialogs = [];
 
   HTMLDialogElement.prototype.showModal = function() {
     return new Promise( async (resolve) => {
@@ -94,7 +95,21 @@ if (window.ClientRect) {
       let animation;
 
       // Prevent the document from being scrolled when the dialog is open
-      document.body.style.overflow = "hidden";
+      {
+        let closeListener;
+
+        document.body.style.overflow = "hidden";
+
+        this.addEventListener("close", closeListener = (event) => {
+          this.removeEventListener("close", closeListener);
+
+          openDialogs = openDialogs.filter(dialog => dialog !== this);
+
+          if (openDialogs.length === 0) {
+            document.body.style.overflow = null;
+          }
+        });
+      }
 
       // Focus either the dialog or an element inside the dialog that has "autofocus" attribute
       // https://github.com/whatwg/html/issues/1929#issuecomment-272632190
@@ -109,26 +124,29 @@ if (window.ClientRect) {
         }
       }
 
-      // Animate from left
-      if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
-        animation = this.animate(
-          { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
-          { duration: transitionDuration, easing: transitionTimingFunction }
-        );
-      }
-      // Animate from right
-      else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
-        animation = this.animate(
-          { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
-          { duration: transitionDuration, easing: transitionTimingFunction }
-        );
-      }
-      // Animate from top
-      else {
-        animation = this.animate(
-          { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
-          { duration: transitionDuration, easing: transitionTimingFunction }
-        );
+      // Animate the dialog
+      {
+        // Animate from left
+        if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
+          animation = this.animate(
+            { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
+            { duration: transitionDuration, easing: transitionTimingFunction }
+          );
+        }
+        // Animate from right
+        else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
+          animation = this.animate(
+            { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
+            { duration: transitionDuration, easing: transitionTimingFunction }
+          );
+        }
+        // Animate from top
+        else {
+          animation = this.animate(
+            { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
+            { duration: transitionDuration, easing: transitionTimingFunction }
+          );
+        }
       }
 
       // Close the dialog when "Esc" key is pressed
