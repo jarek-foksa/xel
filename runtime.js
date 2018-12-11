@@ -252,7 +252,6 @@ if (window.ClientRect) {
 
       if (this.hasAttribute("open")) {
         close.apply(this, arguments);
-        document.body.style.overflow = null;
       }
 
       resolve();
