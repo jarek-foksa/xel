@@ -204,10 +204,13 @@ if (window.ClientRect) {
         });
 
         this.addEventListener("click", clickListener = (event) => {
-          if (closeOnClick) {
-            if (isPointerInsideDialog(event) === false && this.hasAttribute("open")) {
-              this.close();
-            }
+          if (
+            event.isTrusted === true && // Click event was not triggered by keyboard
+            closeOnClick === true &&
+            isPointerInsideDialog(event) === false &&
+            this.hasAttribute("open") === true
+          ) {
+            this.close();
           }
         });
 
