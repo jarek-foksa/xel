@@ -160,19 +160,30 @@ if (window.ClientRect) {
       // Close the dialog when "Esc" key is pressed
       {
         let keyDownListener;
+        let documentKeyDownListener;
         let closeListener;
 
         this.addEventListener("keydown", keyDownListener = (event) => {
-          if (event.key === "Escape" && event.defaultPrevented === false) {
+          if (event.key === "Escape") {
+            if (event.defaultPrevented === false) {
+              event.preventDefault();
+              event.stopPropagation();
+              this.close();
+            }
+          }
+        });
+
+        document.addEventListener("keydown", documentKeyDownListener = (event) => {
+          if (event.key === "Escape" && event.target === document.body) {
+            // Don't close the dialog if focus is not inside of it
             event.preventDefault();
-            event.stopPropagation();
-            this.close();
           }
         });
 
         this.addEventListener("close", closeListener = (event) => {
           this.removeEventListener("close", closeListener);
           this.removeEventListener("keydown", keyDownListener);
+          document.removeEventListener("keydown", documentKeyDownListener);
         });
       }
 
