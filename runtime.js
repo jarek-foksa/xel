@@ -178,7 +178,6 @@ if (window.ClientRect) {
 
       // Close the dialog when backdrop is clicked
       {
-        let keyDownListener;
         let pointerDownListener;
         let clickListener;
         let closeListener;
@@ -194,10 +193,6 @@ if (window.ClientRect) {
             event.clientY <= dialogRect.y + dialogRect.height
           );
         };
-
-        this.addEventListener("keydown", keyDownListener = (event) => {
-          event.stopPropagation();
-        });
 
         this.addEventListener("pointerdown", pointerDownListener = (event) => {
           closeOnClick = (isPointerInsideDialog(event) === false);
@@ -215,7 +210,6 @@ if (window.ClientRect) {
         });
 
         this.addEventListener("close", closeListener = (event) => {
-          this.removeEventListener("keydown", keyDownListener);
           this.removeEventListener("pointerdown", pointerDownListener);
           this.removeEventListener("click", clickListener);
           this.removeEventListener("close", closeListener);
