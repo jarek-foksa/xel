@@ -107,8 +107,13 @@
               <x-label>Open</x-label>
               <dialog>
                 <main>
-                  <p>This dialog can't be closed by clicking the backdrop. Use ESC key to close it.</p>
+                  <p>This dialog can't be closed by clicking the backdrop, you must click the "Close" button.</p>
                 </main>
+                <footer>
+                  <x-button onclick="this.closest('dialog').close()">
+                    <x-label>Close</x-label>
+                  </x-button>
+                </footer>
               </dialog>
             </x-button>
 

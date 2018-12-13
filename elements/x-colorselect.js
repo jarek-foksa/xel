@@ -293,6 +293,7 @@ export class XColorSelectElement extends HTMLElement {
 
       if (popover) {
         if (this.hasAttribute("expanded")) {
+          event.preventDefault();
           this._collapse();
         }
       }

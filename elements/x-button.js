@@ -398,7 +398,6 @@ export class XButtonElement extends HTMLElement {
         this.setAttribute("expanded", "");
 
         await popover.open(this);
-        popover.focus();
       }
 
       resolve();
@@ -770,18 +769,16 @@ export class XButtonElement extends HTMLElement {
   async _onButtonClick(event) {
     let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
 
-    if (popup && popup.hasAttribute("closing")) {
-      return;
+    if (popup) {
+      if (popup.hasAttribute("closing")) {
+        return;
+      }
+      else {
+        popup.focus();
+      }
     }
 
-
-
-
-
-    if (this._canClosePopover()) {
-      // this._closePopover();
-    }
-    else {
+    if (this._canClosePopover() === false) {
       if (this._canOpenDialog()) {
         this._openDialog();
       }
@@ -789,27 +786,6 @@ export class XButtonElement extends HTMLElement {
         this._openNotification();
       }
     }
-
-
-
-
-
-    // Collapse  the button
-
-    /*
-    console.log(this.hasAttribute("opening"));
-    let popover = this.querySelector(":scope > x-popover");
-
-    if (popover) {
-      if (popover.opened) {
-        this.collapse();
-      }
-    }
-    */
-
-
-
-
 
     // Toggle the button
     if (this.togglable) {
@@ -905,78 +881,80 @@ export class XButtonElement extends HTMLElement {
   }
 
   _onKeyDown(event) {
-    if (event.code === "Enter" || event.code === "Space") {
-      if (this._canOpenMenu()) {
-        event.preventDefault();
-        this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
-      }
-      else if (this._canOpenPopover()) {
-        event.preventDefault();
-        this._openPopover();
-      }
-      else if (this._canOpenDialog()) {
-        event.preventDefault();
-        this._openDialog();
-      }
-      else if (this._canOpenNotification()) {
-        event.preventDefault();
-        this._openNotification();
-      }
-      else {
-        if (this.matches(":focus")) {
-          if (this._canClosePopover()) {
-            this._closePopover();
-          }
-          else if (this._canCloseMenu()) {
-            this._closeMenu();
-          }
-          else {
-            event.preventDefault();
-            this.click();
+    if (event.defaultPrevented === false) {
+      if (event.code === "Enter" || event.code === "Space") {
+        if (this._canOpenMenu()) {
+          event.preventDefault();
+          this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
+        }
+        else if (this._canOpenPopover()) {
+          event.preventDefault();
+          this._openPopover();
+        }
+        else if (this._canOpenDialog()) {
+          event.preventDefault();
+          this._openDialog();
+        }
+        else if (this._canOpenNotification()) {
+          event.preventDefault();
+          this._openNotification();
+        }
+        else {
+          if (this.matches(":focus")) {
+            if (this._canClosePopover()) {
+              this._closePopover();
+            }
+            else if (this._canCloseMenu()) {
+              this._closeMenu();
+            }
+            else {
+              event.preventDefault();
+              this.click();
+            }
           }
         }
       }
-    }
 
-    else if (event.code === "ArrowDown") {
-      if (this._canOpenMenu()) {
-        let menu = this.querySelector(":scope > x-menu");
-        event.preventDefault();
-        this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
+      else if (event.code === "ArrowDown") {
+        if (this._canOpenMenu()) {
+          let menu = this.querySelector(":scope > x-menu");
+          event.preventDefault();
+          this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
+        }
+        else if (this._canOpenPopover()) {
+          event.preventDefault();
+          this._openPopover();
+        }
+        else {
+          event.preventDefault();
+          this.click();
+        }
       }
-      else if (this._canOpenPopover()) {
-        event.preventDefault();
-        this._openPopover();
-      }
-      else {
-        event.preventDefault();
-        this.click();
-      }
-    }
 
-    else if (event.code === "ArrowUp") {
-      if (this._canOpenMenu()) {
-        event.preventDefault();
-        this._openMenu().then(() => this.querySelector(":scope > x-menu").focusLastMenuItem());
+      else if (event.code === "ArrowUp") {
+        if (this._canOpenMenu()) {
+          event.preventDefault();
+          this._openMenu().then(() => this.querySelector(":scope > x-menu").focusLastMenuItem());
+        }
+        else if (this._canOpenPopover()) {
+          event.preventDefault();
+          this._openPopover();
+        }
+        else {
+          event.preventDefault();
+          this.click();
+        }
       }
-      else if (this._canOpenPopover()) {
-        event.preventDefault();
-        this._openPopover();
-      }
-      else {
-        event.preventDefault();
-        this.click();
-      }
-    }
 
-    else if (event.code === "Escape") {
-      if (this._canCloseMenu()) {
-        event.preventDefault();
-        this.collapse();
-      }
-      else if (this._canClosePopover()) {
-        event.preventDefault();
-        this.collapse();
+      else if (event.code === "Escape") {
+        if (this._canCloseMenu()) {
+          event.preventDefault();
+          this.collapse();
+        }
+        else if (this._canClosePopover()) {
+          event.preventDefault();
+          this.collapse();
+        }
       }
     }
   }

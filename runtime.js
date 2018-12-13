@@ -157,7 +157,7 @@ if (window.ClientRect) {
         }
       }
 
-      // Close the dialog when "Esc" key is pressed
+      // Do not close the dialog with "Esc" key
       {
         let keyDownListener;
         let documentKeyDownListener;
@@ -165,17 +165,13 @@ if (window.ClientRect) {
 
         this.addEventListener("keydown", keyDownListener = (event) => {
           if (event.key === "Escape") {
-            if (event.defaultPrevented === false) {
-              event.preventDefault();
-              event.stopPropagation();
-              this.close();
-            }
+            event.preventDefault();
           }
         });
 
         document.addEventListener("keydown", documentKeyDownListener = (event) => {
           if (event.key === "Escape" && event.target === document.body) {
-            // Don't close the dialog if focus is not inside it
+            // Don't close the dialog if focus is outside the dialog
             event.preventDefault();
           }
         });

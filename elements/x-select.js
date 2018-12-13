@@ -455,19 +455,21 @@ export class XSelectElement extends HTMLElement {
   }
 
   _onKeyDown(event) {
-    let menu = this.querySelector(":scope > x-menu");
+    if (event.defaultPrevented === false) {
+      let menu = this.querySelector(":scope > x-menu");
 
-    if (event.key === "Enter" || event.key === "Space" || event.key === "ArrowUp" || event.key === "ArrowDown") {
-      if (this._canExpand()) {
-        event.preventDefault();
-        this._expand();
+      if (event.key === "Enter" || event.key === "Space" || event.key === "ArrowUp" || event.key === "ArrowDown") {
+        if (this._canExpand()) {
+          event.preventDefault();
+          this._expand();
+        }
       }
-    }
 
-    else if (event.key === "Escape") {
-      if (this._canCollapse()) {
-        event.preventDefault();
-        this._collapse();
+      else if (event.key === "Escape") {
+        if (this._canCollapse()) {
+          event.preventDefault();
+          this._collapse();
+        }
       }
     }
   }
