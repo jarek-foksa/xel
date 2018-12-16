@@ -97,10 +97,6 @@ if (window.ClientRect) {
 
       showModal.apply(this, arguments);
 
-      let dialogRect = this.getBoundingClientRect();
-      let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
-      let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
-
       // Prevent the document from being scrolled when the dialog is open
       {
         let closeListener;
@@ -134,26 +130,32 @@ if (window.ClientRect) {
 
       // Animate the dialog
       {
-        // Animate from left
-        if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
-          this._showAnimation = this.animate(
-            { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
-            { duration: transitionDuration, easing: transitionTimingFunction }
-          );
-        }
-        // Animate from right
-        else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
-          this._showAnimation = this.animate(
-            { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
-            { duration: transitionDuration, easing: transitionTimingFunction }
-          );
-        }
-        // Animate from top
-        else {
-          this._showAnimation = this.animate(
-            { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
-            { duration: transitionDuration, easing: transitionTimingFunction }
-          );
+        if (this.hasAttribute("hidden") === false) {
+          let dialogRect = this.getBoundingClientRect();
+          let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
+          let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+
+          // Animate from left
+          if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
+            this._showAnimation = this.animate(
+              { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
+              { duration: transitionDuration, easing: transitionTimingFunction }
+            );
+          }
+          // Animate from right
+          else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
+            this._showAnimation = this.animate(
+              { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
+              { duration: transitionDuration, easing: transitionTimingFunction }
+            );
+          }
+          // Animate from top
+          else {
+            this._showAnimation = this.animate(
+              { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
+              { duration: transitionDuration, easing: transitionTimingFunction }
+            );
+          }
         }
       }
 
@@ -223,50 +225,58 @@ if (window.ClientRect) {
         });
       }
 
-      await this._showAnimation.finished;
-      this._showAnimation = null;
+      if (this._showAnimation) {
+        await this._showAnimation.finished;
+        this._showAnimation = null;
+      }
+
       resolve();
     });
   };
 
   HTMLDialogElement.prototype.close = function() {
     return new Promise( async (resolve) => {
-      if (this._showAnimation) {
-        await this._showAnimation.finished;
-      }
+      // Animate the dialog
+      {
+        if (this._showAnimation) {
+          await this._showAnimation.finished;
+        }
 
-      if (this._closeAnimation) {
-        await this._closeAnimation.finished;
-      }
+        if (this._closeAnimation) {
+          await this._closeAnimation.finished;
+        }
 
-      let dialogRect = this.getBoundingClientRect();
-      let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
-      let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+        if (this.hasAttribute("hidden") === false) {
+          let dialogRect = this.getBoundingClientRect();
+          let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
+          let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
 
-      // Animate to left
-      if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
-        this._closeAnimation = this.animate(
-          { transform: ["translateX(0px)", `translateX(-${dialogRect.right}px)`]},
-          { duration: transitionDuration, easing: transitionTimingFunction }
-        );
-      }
-      // Animate to right
-      else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
-        this._closeAnimation = this.animate(
-          { transform: ["translateX(0px)", `translateX(${dialogRect.width}px)`]},
-          { duration: transitionDuration, easing: transitionTimingFunction }
-        );
-      }
-      // Animate to top
-      else {
-        this._closeAnimation = this.animate(
-          { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
-          { duration: transitionDuration, easing: transitionTimingFunction }
-        );
-      }
+          // Animate to left
+          if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
+            this._closeAnimation = this.animate(
+              { transform: ["translateX(0px)", `translateX(-${dialogRect.right}px)`]},
+              { duration: transitionDuration, easing: transitionTimingFunction }
+            );
+          }
+          // Animate to right
+          else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
+            this._closeAnimation = this.animate(
+              { transform: ["translateX(0px)", `translateX(${dialogRect.width}px)`]},
+              { duration: transitionDuration, easing: transitionTimingFunction }
+            );
+          }
+          // Animate to top
+          else {
+            this._closeAnimation = this.animate(
+              { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
+              { duration: transitionDuration, easing: transitionTimingFunction }
+            );
+          }
 
-      await this._closeAnimation.finished;
-      this._closeAnimation = null;
+          await this._closeAnimation.finished;
+          this._closeAnimation = null;
+        }
+      }
 
       if (this.hasAttribute("open")) {
         close.apply(this, arguments);
