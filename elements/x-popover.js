@@ -119,7 +119,11 @@ export class XPopoverElement extends HTMLElement {
     this["#backdrop"] = createElement("x-backdrop");
     this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
     this["#backdrop"].ownerElement = this;
-    this["#backdrop"].addEventListener("click", (event) => event.stopPropagation());
+
+    this["#backdrop"].addEventListener("click", (event) => {
+      // Don't close a <dialog> when user clicks <x-popover> backdrop inside it.
+      event.preventDefault();
+    });
   }
 
   connectedCallback() {
