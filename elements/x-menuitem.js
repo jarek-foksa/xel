@@ -22,7 +22,6 @@ let shadowTemplate = html`
         box-sizing: border-box;
         cursor: default;
         user-select: none;
-        contain: layout style;
         --trigger-effect: ripple; /* ripple, blink, none */
         --ripple-background: currentColor;
         --ripple-opacity: 0.1;
