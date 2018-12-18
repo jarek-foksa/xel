@@ -210,7 +210,7 @@ if (window.ClientRect) {
         this.addEventListener("click", clickListener = (event) => {
           if (
             event.isTrusted === true && // Click event was not triggered by keyboard
-            event.defaultPrvented === false &&
+            event.defaultPrevented === false &&
             closeOnClick === true &&
             isPointerInsideDialog(event) === false &&
             this.hasAttribute("open") === true
