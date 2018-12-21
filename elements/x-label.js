@@ -13,9 +13,6 @@ let shadowTemplate = html`
         user-select: none;
         box-sizing: border-box;
       }
-      :host(:hover) {
-        cursor: default;
-      }
       :host([disabled]) {
         opacity: 0.5;
       }
