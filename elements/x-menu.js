@@ -23,6 +23,7 @@ let shadowTemplate = html`
         background: white;
         cursor: default;
         -webkit-app-region: no-drag;
+        --align: start;
         --scrollbar-background: rgba(0, 0, 0, 0.2);
         --scrollbar-width: 6px;
         --open-transition: 100 transform cubic-bezier(0.4, 0, 0.2, 1);
@@ -281,6 +282,7 @@ export class XMenuElement extends HTMLElement {
         element.setAttribute("expanded", "");
       }
 
+      let align = getComputedStyle(this).getPropertyValue("--align").trim();
       let elementBounds = element.getBoundingClientRect();
       let menuBounds = this.getBoundingClientRect();
       let extraLeft = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
@@ -369,7 +371,7 @@ export class XMenuElement extends HTMLElement {
 
       else if (direction === "vertical") {
         this.style.top = (elementBounds.top + elementBounds.height + elementWhitespace + extraTop) + "px";
-        this.style.left = (elementBounds.left + extraLeft) + "px";
+        this.style.left = "0px";
 
         let side = "bottom";
 
@@ -422,21 +424,46 @@ export class XMenuElement extends HTMLElement {
           }
         }
 
-        // Float the menu to the right element edge if the menu overflows right screen edge
-        {
-          let menuBounds = this.getBoundingClientRect();
+        if (align === "start") {
+          this.style.left = (elementBounds.left + extraLeft) + "px";
 
-          if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
-            this.style.left = (elementBounds.left + elementBounds.width - menuBounds.width + extraLeft) + "px";
+          // Float the menu to the right element edge if the menu overflows right screen edge
+          {
+            let menuBounds = this.getBoundingClientRect();
+
+            if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
+              this.style.left = (elementBounds.left + elementBounds.width - menuBounds.width + extraLeft) + "px";
+            }
+          }
+
+          // Float the menu to the left screen edge if it overflows the left screen edge
+          {
+            let menuBounds = this.getBoundingClientRect();
+
+            if (menuBounds.left < windowWhitespace) {
+              this.style.left = (windowWhitespace + extraLeft) + "px";
+            }
           }
         }
+        else if (align === "end") {
+          this.style.left = (elementBounds.left + elementBounds.width - menuBounds.width + extraLeft) + "px";
 
-        // Float the menu to the left screen edge if it overflows the left screen edge
-        {
-          let menuBounds = this.getBoundingClientRect();
+          // Float the menu to the left element edge if the menu overflows left screen edge
+          {
+            let menuBounds = this.getBoundingClientRect();
 
-          if (menuBounds.left < windowWhitespace) {
-            this.style.left = (windowWhitespace + extraLeft) + "px";
+            if (menuBounds.left < windowWhitespace) {
+              this.style.left = (elementBounds.left + extraLeft) + "px";
+            }
+          }
+
+          // Float the menu to the right screen edge if it overflows the right screen edge
+          {
+            let menuBounds = this.getBoundingClientRect();
+
+            if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
+              this.style.left = (window.innerWidth - windowWhitespace + extraLeft) + "px";
+            }
           }
         }
 
