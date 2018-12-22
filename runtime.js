@@ -87,10 +87,13 @@ if (window.ClientRect) {
 
   HTMLDialogElement.prototype.showModal = function() {
     return new Promise( async (resolve) => {
+      if (this.isConnected === false) {
+        resolve();
+        return;
+      }
       if (this._showAnimation) {
         await this._showAnimation.finished;
       }
-
       if (this._closeAnimation) {
         await this._closeAnimation.finished;
       }
