@@ -252,8 +252,9 @@ if (window.ClientRect) {
 
         if (this.hasAttribute("hidden") === false) {
           let dialogRect = this.getBoundingClientRect();
-          let transitionDuration = parseFloat(getComputedStyle(this).getPropertyValue("transition-duration")) * 1000;
-          let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function");
+          let transitionDurationString = getComputedStyle(this).getPropertyValue("transition-duration") || "0s";
+          let transitionDuration = parseFloat(transitionDurationString) * 1000;
+          let transitionTimingFunction = getComputedStyle(this).getPropertyValue("transition-timing-function") || "ease";
 
           // Animate to left
           if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
