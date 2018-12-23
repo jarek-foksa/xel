@@ -80,7 +80,7 @@ if (window.ClientRect) {
 // HTML dialog polyfill
 //
 
-{
+if (window.HTMLDialogElement) {
   let showModal = HTMLDialogElement.prototype.showModal;
   let close = HTMLDialogElement.prototype.close;
   let openDialogs = [];
@@ -319,7 +319,7 @@ if (window.ClientRect) {
 }
 
 // Make setPointerCapture also capture the cursor image
-{
+if (Element.prototype.setPointerCapture) {
   let setPointerCapture = Element.prototype.setPointerCapture;
 
   Element.prototype.setPointerCapture = function(pointerId) {
