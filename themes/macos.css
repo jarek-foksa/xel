@@ -1329,6 +1329,9 @@ x-select[skin="textured"] {
   --arrow-color: currentColor;
   --arrow-margin: 0 5px 0 7px;
 }
+x-select[skin="textured"]:active {
+  background: linear-gradient(to bottom, #E5E5E5, #D6D4D6);
+}
 x-select[skin="textured"]::before {
   display: none;
 }
