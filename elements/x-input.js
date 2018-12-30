@@ -293,6 +293,7 @@ export class XInputElement extends HTMLElement {
 
     this["#input"].addEventListener("change", (event) => this._onInputChange(event));
     this["#input"].addEventListener("input", (event) => this._onInputInput(event));
+    this["#input"].addEventListener("search", (event) => this._onInputSearch(event));
   }
 
   connectedCallback() {
@@ -490,6 +491,12 @@ export class XInputElement extends HTMLElement {
   }
 
   _onInputChange() {
+    if (this.type !== "search") {
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+    }
+  }
+
+  _onInputSearch() {
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
   }
 }
