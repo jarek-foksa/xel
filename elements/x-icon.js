@@ -123,7 +123,8 @@ export class XIconElement extends HTMLElement {
       let symbol = await this._getSymbol(this.name, this.iconset);
 
       if (symbol) {
-        this["#svg"].innerHTML = `${symbol.outerHTML}<use href="#${this.name}" width="100%" height="100%"></use>`
+        this["#svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
+        this["#svg"].innerHTML = symbol.innerHTML;
       }
       else {
         this["#svg"].innerHTML = "";
