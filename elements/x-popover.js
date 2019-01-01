@@ -135,7 +135,12 @@ export class XPopoverElement extends HTMLElement {
       return;
     }
     else if (name === "modal") {
-      this._onModalAttributeChange();
+      if (this.modal && this.opened) {
+        this["#backdrop"].show();
+      }
+      else {
+        this["#backdrop"].hide();
+      }
     }
   }
 
@@ -148,235 +153,37 @@ export class XPopoverElement extends HTMLElement {
   //  (DOMPoint || DOMRect || Element) => void
   open(context, animate = true) {
     return new Promise( async (resolve) => {
-      let contextRect;
-      let extraLeft = 0;        // Extra offset needed when popover has fixed-positioned ancestor(s)
-      let extraTop = 0;         // Extra offset needed when popover has fixed-positioned ancestor(s)
-      let windowWhitespace = 8; // Minimal whitespace between popover and window bounds
-      let arrowWhitespace = 2;  // Minimal whitespace between popover and arrow
+      if (this.opened === false) {
+        if (this.modal) {
+          this["#backdrop"].show(false);
+        }
 
-      this.style.left = "0px";
-      this.style.top = "0px";
-      this.setAttribute("opened", "");
+        this.setAttribute("opened", "");
+        this._updateStyle();
+        this._updatePosition(context);
 
-      if (this.modal) {
-        this["#backdrop"].show(false);
+        document.body.addEventListener("scroll", this._scrollListener = () => {
+          this._updatePosition(context);
+        });
+
+        if (animate) {
+          let transition = getComputedStyle(this).getPropertyValue("--open-transition");
+          let [property, duration, easing] = this._parseTransistion(transition);
+
+          if (property === "transform") {
+            await this.animate(
+              {
+                transform: ["scale(1, 0)", "scale(1, 1)"],
+                transformOrigin: ["0 0", "0 0"]
+              },
+              { duration, easing }
+            ).finished;
+          }
+        }
+
+        this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
       }
 
-      let align = getComputedStyle(this).getPropertyValue("--align").trim();
-      let resolvedAlign = align;
-
-      // Make the arrow look consistentaly with the popover
-      {
-        let {backgroundColor, borderColor, borderWidth} = getComputedStyle(this);
-
-        this["#arrow"].setAttribute("data-align", align);
-        this["#arrow-path"].style.fill = backgroundColor;
-        this["#arrow-path"].style.stroke = borderColor;
-        this["#arrow-path"].style.strokeWidth = borderWidth;
-      }
-
-      let {width:popoverWidth, height:popoverHeight} = roundRect(this.getBoundingClientRect());
-      let {width:arrowWidth, height:arrowHeight} = roundRect(this["#arrow"].getBoundingClientRect());
-
-      // Determine the rect relative to which the x-popover should be positioned
-      {
-        if (context instanceof DOMPoint) {
-          contextRect = new DOMRect(context.x, context.y, 0, 0);
-        }
-        else if (context instanceof DOMRect) {
-          contextRect = context;
-        }
-        else if (context instanceof Element) {
-          contextRect = context.getBoundingClientRect();
-        }
-        else {
-          contextRect = new DOMRect();
-        }
-      }
-
-      // Determine extraLeft and extraTop which represent the extra offset when the popover is inside another
-      // fixed-positioned element.
-      {
-        let popoverBounds = roundRect(this.getBoundingClientRect());
-
-        if (popoverBounds.top !== 0 || popoverBounds.left !== 0) {
-          extraLeft = -popoverBounds.left;
-          extraTop = -popoverBounds.top;
-        }
-      }
-
-      // Position the popover
-      {
-        let positionBottom = () => {
-          this.style.top = (contextRect.top + contextRect.height + extraTop + arrowWhitespace + arrowHeight) + "px";
-          this.style.left = (contextRect.left + contextRect.width/2 + extraLeft - popoverWidth/2) + "px";
-          resolvedAlign = "bottom";
-        };
-
-        let positionTop = () => {
-          this.style.top = (contextRect.top + extraTop - arrowWhitespace - arrowHeight - popoverHeight) + "px";
-          this.style.left = (contextRect.left + contextRect.width/2 + extraLeft - popoverWidth/2) + "px";
-          resolvedAlign = "top";
-        }
-
-        let positionLeft = () => {
-          this.style.top = (contextRect.top + contextRect.height/2 - popoverHeight/2 + extraTop) + "px";
-          this.style.left = (contextRect.left - arrowWhitespace - arrowWidth - popoverWidth + extraLeft) + "px";
-          resolvedAlign = "left";
-        };
-
-        let positionRight = () => {
-          this.style.top = (contextRect.top + contextRect.height/2 - popoverHeight/2 + extraTop) + "px";
-          this.style.left = (contextRect.right + arrowWhitespace + arrowWidth + extraLeft) + "px";
-          resolvedAlign = "right";
-        };
-
-        let moveLeft = () => {
-          this.style.left = (window.innerWidth - windowWhitespace - popoverWidth + extraLeft) + "px";
-        };
-
-        let moveRight = () => {
-          this.style.left = (windowWhitespace + extraLeft) + "px";
-        };
-
-        let moveDown = () => {
-          this.style.top = (windowWhitespace + extraLeft) + "px";
-        };
-
-        let moveUp = () => {
-          this.style.top = (window.innerHeight - windowWhitespace - popoverHeight + extraLeft) + "px";
-        };
-
-        let isOverflowingViewportEdge = (edge = "bottom") => {
-          let popoverBounds = roundRect(this.getBoundingClientRect());
-
-          if (edge === "bottom") {
-            return popoverBounds.bottom + windowWhitespace > window.innerHeight;
-          }
-          else if (edge === "top") {
-            return popoverBounds.top < windowWhitespace;
-          }
-          else if (edge === "right") {
-            return popoverBounds.right + windowWhitespace > window.innerWidth;
-          }
-          else if (edge === "left") {
-            return popoverBounds.left < windowWhitespace;
-          }
-        };
-
-        if (align === "bottom") {
-          positionBottom();
-
-          if (isOverflowingViewportEdge("bottom")) {
-            positionTop();
-          }
-          if (isOverflowingViewportEdge("top")) {
-            positionBottom();
-          }
-          if (isOverflowingViewportEdge("right")) {
-            moveLeft();
-          }
-          if (isOverflowingViewportEdge("left")) {
-            moveRight();
-          }
-        }
-
-        else if (align === "top") {
-          positionTop();
-
-          if (isOverflowingViewportEdge("top")) {
-            positionBottom();
-          }
-          if (isOverflowingViewportEdge("bottom")) {
-            positionTop();
-          }
-          if (isOverflowingViewportEdge("right")) {
-            moveLeft();
-          }
-          if (isOverflowingViewportEdge("left")) {
-            moveRight();
-          }
-        }
-
-        else if (align === "left") {
-          positionLeft();
-
-          if (isOverflowingViewportEdge("left")) {
-            positionRight();
-          }
-          if (isOverflowingViewportEdge("right")) {
-            positionLeft();
-          }
-          if (isOverflowingViewportEdge("top")) {
-            moveDown();
-          }
-          if (isOverflowingViewportEdge("bottom")) {
-            moveUp();
-          }
-        }
-
-        else if (align === "right") {
-          positionRight();
-
-          if (isOverflowingViewportEdge("right")) {
-            positionLeft();
-          }
-          if (isOverflowingViewportEdge("left")) {
-            positionRight();
-          }
-          if (isOverflowingViewportEdge("bottom")) {
-            moveUp();
-          }
-          if (isOverflowingViewportEdge("top")) {
-            moveDown();
-          }
-        }
-      }
-
-      // Position the arrow
-      {
-        let borderWidth = parseInt(getComputedStyle(this).borderWidth);
-
-        this["#arrow"].setAttribute("data-align", resolvedAlign);
-
-        if (resolvedAlign === "bottom") {
-          this["#arrow"].style.top = (contextRect.top + contextRect.height + extraTop + arrowWhitespace + borderWidth) + "px";
-          this["#arrow"].style.left = (contextRect.left + contextRect.width/2 + extraLeft) + "px";
-        }
-
-        else if (resolvedAlign === "top") {
-          this["#arrow"].style.top = (contextRect.top +  extraTop - arrowWhitespace - borderWidth - arrowHeight) + "px";
-          this["#arrow"].style.left = (contextRect.left + contextRect.width/2 + extraLeft) + "px";
-        }
-
-        else if (resolvedAlign === "left") {
-          this["#arrow"].style.top = (contextRect.top + contextRect.height/2 + extraTop) + "px";
-          this["#arrow"].style.left = (contextRect.left - arrowWidth - arrowWhitespace - borderWidth + extraLeft) + "px";
-        }
-
-        else if (resolvedAlign === "right") {
-          this["#arrow"].style.top = (contextRect.top + contextRect.height/2 + extraTop) + "px";
-          this["#arrow"].style.left = (contextRect.right + arrowWhitespace + borderWidth + extraLeft) + "px";
-        }
-      }
-
-      // Animate the popover
-      if (animate) {
-        let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-        let [property, duration, easing] = this._parseTransistion(transition);
-
-        if (property === "transform") {
-          await this.animate(
-            {
-              transform: ["scale(1, 0)", "scale(1, 1)"],
-              transformOrigin: ["0 0", "0 0"]
-            },
-            { duration, easing }
-          ).finished;
-        }
-      }
-
-      this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
       resolve();
     });
   }
@@ -388,10 +195,11 @@ export class XPopoverElement extends HTMLElement {
   //   (boolean) => Promise
   close(animate = true) {
     return new Promise(async (resolve) => {
-      if (this.opened) {
+      if (this.opened === true) {
         this.removeAttribute("opened");
         this["#backdrop"].hide();
         this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
+        document.body.removeEventListener("scroll", this._scrollListener);
 
         if (animate) {
           let transition = getComputedStyle(this).getPropertyValue("--close-transition");
@@ -413,12 +221,197 @@ export class XPopoverElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onModalAttributeChange() {
-    if (this.modal && this.opened) {
-      this["#backdrop"].show();
+  _updatePosition(context) {
+    let extraLeft = 0;        // Extra offset needed when popover has fixed-positioned ancestor(s)
+    let extraTop = 0;         // Extra offset needed when popover has fixed-positioned ancestor(s)
+    let windowWhitespace = 8; // Minimal whitespace between popover and window bounds
+    let arrowWhitespace = 2;  // Minimal whitespace between popover and arrow
+
+    let {width:popoverWidth, height:popoverHeight} = roundRect(this.getBoundingClientRect());
+    let {width:arrowWidth,   height:arrowHeight} = roundRect(this["#arrow"].getBoundingClientRect());
+    let borderWidth = parseInt(getComputedStyle(this).borderWidth);
+    let align = getComputedStyle(this).getPropertyValue("--align").trim();
+    let contextRect;
+
+    this.style.left = "0px";
+    this.style.top = "0px";
+
+    // Determine DOMRect relative to which the popover should be positioned
+    {
+      if (context instanceof DOMPoint) {
+        contextRect = new DOMRect(context.x, context.y, 0, 0);
+      }
+      else if (context instanceof DOMRect) {
+        contextRect = context;
+      }
+      else if (context instanceof Element) {
+        contextRect = context.getBoundingClientRect();
+      }
+      else {
+        contextRect = new DOMRect();
+      }
     }
-    else {
-      this["#backdrop"].hide();
+
+    // Determine extraLeft and extraTop which represent the extra offset when the popover is inside another
+    // fixed-positioned element.
+    {
+      let popoverBounds = roundRect(this.getBoundingClientRect());
+
+      if (popoverBounds.top !== 0 || popoverBounds.left !== 0) {
+        extraLeft = -popoverBounds.left;
+        extraTop = -popoverBounds.top;
+      }
+    }
+
+    // Position the popover
+    {
+      let positionBottom = () => {
+        this["#arrow"].setAttribute("data-align", "bottom");
+        this["#arrow"].style.top = (contextRect.top + contextRect.height + extraTop + arrowWhitespace + borderWidth) + "px";
+        this["#arrow"].style.left = (contextRect.left + contextRect.width/2 + extraLeft) + "px";
+
+        this.style.top = (contextRect.top + contextRect.height + extraTop + arrowWhitespace + this["#arrow"].clientHeight) + "px";
+        this.style.left = (contextRect.left + contextRect.width/2 + extraLeft - popoverWidth/2) + "px";
+      };
+
+      let positionTop = () => {
+        this["#arrow"].setAttribute("data-align", "top");
+        this["#arrow"].style.top = (contextRect.top +  extraTop - arrowWhitespace - borderWidth - this["#arrow"].clientHeight) + "px";
+        this["#arrow"].style.left = (contextRect.left + contextRect.width/2 + extraLeft) + "px";
+
+        this.style.top = (contextRect.top + extraTop - arrowWhitespace - this["#arrow"].clientHeight - popoverHeight) + "px";
+        this.style.left = (contextRect.left + contextRect.width/2 + extraLeft - popoverWidth/2) + "px";
+      }
+
+      let positionLeft = () => {
+        this["#arrow"].setAttribute("data-align", "left");
+        this["#arrow"].style.top = (contextRect.top + contextRect.height/2 + extraTop) + "px";
+        this["#arrow"].style.left = (contextRect.left - this["#arrow"].clientWidth - arrowWhitespace - borderWidth + extraLeft) + "px";
+
+        this.style.top = (contextRect.top + contextRect.height/2 - popoverHeight/2 + extraTop) + "px";
+        this.style.left = (contextRect.left - arrowWhitespace - this["#arrow"].clientWidth - popoverWidth + extraLeft) + "px";
+      };
+
+      let positionRight = () => {
+        this["#arrow"].setAttribute("data-align", "right");
+        this["#arrow"].style.top = (contextRect.top + contextRect.height/2 + extraTop) + "px";
+        this["#arrow"].style.left = (contextRect.right + arrowWhitespace + borderWidth + extraLeft) + "px";
+
+        this.style.top = (contextRect.top + contextRect.height/2 - popoverHeight/2 + extraTop) + "px";
+        this.style.left = (contextRect.right + arrowWhitespace + this["#arrow"].clientWidth + extraLeft) + "px";
+      };
+
+      let moveLeft = () => {
+        this.style.left = (window.innerWidth - windowWhitespace - popoverWidth + extraLeft) + "px";
+      };
+
+      let moveRight = () => {
+        this.style.left = (windowWhitespace + extraLeft) + "px";
+      };
+
+      let moveDown = () => {
+        this.style.top = (windowWhitespace + extraLeft) + "px";
+      };
+
+      let moveUp = () => {
+        this.style.top = (window.innerHeight - windowWhitespace - popoverHeight + extraLeft) + "px";
+      };
+
+      let isOverflowingViewportEdge = (edge = "bottom") => {
+        let popoverBounds = roundRect(this.getBoundingClientRect());
+
+        if (edge === "bottom") {
+          return popoverBounds.bottom + windowWhitespace > window.innerHeight;
+        }
+        else if (edge === "top") {
+          return popoverBounds.top < windowWhitespace;
+        }
+        else if (edge === "right") {
+          return popoverBounds.right + windowWhitespace > window.innerWidth;
+        }
+        else if (edge === "left") {
+          return popoverBounds.left < windowWhitespace;
+        }
+      };
+
+      if (align === "bottom") {
+        positionBottom();
+
+        if (isOverflowingViewportEdge("bottom")) {
+          positionTop();
+        }
+        if (isOverflowingViewportEdge("top")) {
+          positionBottom();
+        }
+        if (isOverflowingViewportEdge("right")) {
+          moveLeft();
+        }
+        if (isOverflowingViewportEdge("left")) {
+          moveRight();
+        }
+      }
+
+      else if (align === "top") {
+        positionTop();
+
+        if (isOverflowingViewportEdge("top")) {
+          positionBottom();
+        }
+        if (isOverflowingViewportEdge("bottom")) {
+          positionTop();
+        }
+        if (isOverflowingViewportEdge("right")) {
+          moveLeft();
+        }
+        if (isOverflowingViewportEdge("left")) {
+          moveRight();
+        }
+      }
+
+      else if (align === "left") {
+        positionLeft();
+
+        if (isOverflowingViewportEdge("left")) {
+          positionRight();
+        }
+        if (isOverflowingViewportEdge("right")) {
+          positionLeft();
+        }
+        if (isOverflowingViewportEdge("top")) {
+          moveDown();
+        }
+        if (isOverflowingViewportEdge("bottom")) {
+          moveUp();
+        }
+      }
+
+      else if (align === "right") {
+        positionRight();
+
+        if (isOverflowingViewportEdge("right")) {
+          positionLeft();
+        }
+        if (isOverflowingViewportEdge("left")) {
+          positionRight();
+        }
+        if (isOverflowingViewportEdge("bottom")) {
+          moveUp();
+        }
+        if (isOverflowingViewportEdge("top")) {
+          moveDown();
+        }
+      }
+    }
+  }
+
+  _updateStyle() {
+    // Make the arrow look consistentaly with the popover
+    {
+      let {backgroundColor, borderColor, borderWidth} = getComputedStyle(this);
+
+      this["#arrow-path"].style.fill = backgroundColor;
+      this["#arrow-path"].style.stroke = borderColor;
+      this["#arrow-path"].style.strokeWidth = borderWidth;
     }
   }
 
