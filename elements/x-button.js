@@ -788,7 +788,7 @@ export class XButtonElement extends HTMLElement {
     }
 
     // Toggle the button
-    if (this.togglable) {
+    if (this.togglable && event.defaultPrevented === false) {
       this.removeAttribute("pressed");
       this.toggled = !this.toggled;
       this.dispatchEvent(new CustomEvent("toggle"));
