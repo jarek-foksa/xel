@@ -110,7 +110,7 @@ export class XMenuElement extends HTMLElement {
     this.addEventListener("pointerout", (event) => this._onPointerOut(event));
     this.addEventListener("pointermove", (event) => this._onPointerMove(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
-    this.addEventListener("wheel", (event) => this._onWheel(event), {passive: true});
+    this.addEventListener("wheel", (event) => this._onWheel(event), {passive: false});
     this["#main"].addEventListener("scroll", (event) => this._onScroll(event), {passive: true});
   }
 
@@ -948,6 +948,13 @@ export class XMenuElement extends HTMLElement {
 
   _onWheel(event) {
     if (event.target.closest("x-menu") === this) {
+      // @bugfix: Can't rely on the default wheel event behavior as it messes up the _onScroll handler on Windows.
+      // For details check https://github.com/jarek-foksa/xel/issues/75
+      {
+        event.preventDefault();
+        this["#main"].scrollTop = this["#main"].scrollTop + event.deltaY;
+      }
+
       this._isPointerOverMenuBlock = true;
     }
     else {
@@ -955,7 +962,7 @@ export class XMenuElement extends HTMLElement {
     }
   }
 
-  _onScroll(event) {
+  _onScroll() {
     if (this._expandWhenScrolled) {
       let delta = this["#main"].scrollTop - this._lastScrollTop;
       this._lastScrollTop = this["#main"].scrollTop;
@@ -968,22 +975,20 @@ export class XMenuElement extends HTMLElement {
             this.style.height = (menuRect.height + abs(delta)) + "px";
           }
           else {
-            this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
+            this.style.height = (window.innerHeight - (windowWhitespace*2)) + "px";
           }
         }
         else if (delta > 0) {
-          let {top, left, height} = getComputedStyle(this);
-
-          if (menuRect.top - abs(delta) >= windowWhitespace) {
-            this.style.top = (parseFloat(top) - abs(delta)) + "px";
-            this.style.height = (parseFloat(height) + abs(delta)) + "px";
+          if (menuRect.top - delta >= windowWhitespace) {
+            this.style.top = (menuRect.top - delta) + "px";
+            this.style.height = (menuRect.height + delta) + "px";
 
             this["#main"].scrollTop = 0;
             this._lastScrollTop = 0;
           }
           else {
             this.style.top = (windowWhitespace + this._extraTop) + "px";
-            this.style.height = (window.innerHeight - menuRect.top - windowWhitespace) + "px";
+            this.style.height = (window.innerHeight - (windowWhitespace*2)) + "px";
           }
         }
       }

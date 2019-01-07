@@ -669,7 +669,10 @@ export class XelAppElement extends HTMLElement {
     else {
       sleep(100).then(() => {
         selectedView = this["#views"].querySelector(".view[selected]");
-        selectedView.scrollTop = scrollTop
+
+        if (selectedView) {
+          selectedView.scrollTop = scrollTop;
+        }
       });
     }
   }
