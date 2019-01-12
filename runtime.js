@@ -162,7 +162,7 @@ if (window.HTMLDialogElement) {
         }
       }
 
-      // Do not close the dialog with "Esc" key
+      // Do not close the dialog with "Escape" key
       {
         let keyDownListener;
         let documentKeyDownListener;
@@ -219,6 +219,11 @@ if (window.HTMLDialogElement) {
             this.hasAttribute("open") === true
           ) {
             this.close();
+
+            // Provide a custom "userclose" event which is dispatched only when the dialog was closed by user
+            // clicking the backdrop. This event is unlike the standard "close" event which is dispatched even when
+            // the dialog was closed programmatically.
+            this.dispatchEvent(new CustomEvent("userclose"));
           }
         });
 
