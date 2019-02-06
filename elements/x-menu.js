@@ -963,7 +963,6 @@ export class XMenuElement extends HTMLElement {
   }
 
   _onScroll() {
-    // @todo
     if (this._expandWhenScrolled) {
       let delta = this["#main"].scrollTop - this._lastScrollTop;
       this._lastScrollTop = this["#main"].scrollTop;
