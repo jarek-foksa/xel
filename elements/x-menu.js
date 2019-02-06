@@ -963,6 +963,7 @@ export class XMenuElement extends HTMLElement {
   }
 
   _onScroll() {
+    // @todo
     if (this._expandWhenScrolled) {
       let delta = this["#main"].scrollTop - this._lastScrollTop;
       this._lastScrollTop = this["#main"].scrollTop;
@@ -980,7 +981,7 @@ export class XMenuElement extends HTMLElement {
         }
         else if (delta > 0) {
           if (menuRect.top - delta >= windowWhitespace) {
-            this.style.top = (menuRect.top - delta) + "px";
+            this.style.top = (this._extraTop + menuRect.top - delta) + "px";
             this.style.height = (menuRect.height + delta) + "px";
 
             this["#main"].scrollTop = 0;
