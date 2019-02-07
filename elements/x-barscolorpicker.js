@@ -147,14 +147,31 @@ let shadowHTML = `
       margin-top: 20px;
       margin-bottom: 8px;
       padding: 0 calc(var(--marker-width) / 2);
+      position: relative;
       box-sizing: border-box;
       border: 1px solid #cecece;
       border-radius: 2px;
       touch-action: pan-y;
       --marker-width: 18px;
+      /* Checkerboard pattern */
+      background-color: white;
+      background-size: 10px 10px;
+      background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+      background-image: linear-gradient(45deg, #d6d6d6 25%, transparent 25%),
+                        linear-gradient(-45deg, #d6d6d6 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #d6d6d6 75%),
+                        linear-gradient(-45deg, transparent 75%, #d6d6d6 75%);
     }
     :host([alphaslider]) #alpha-slider {
       display: block;
+    }
+
+    #alpha-slider-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
 
     #alpha-slider-track {
@@ -199,6 +216,7 @@ let shadowHTML = `
     </div>
 
     <div id="alpha-slider">
+      <div id="alpha-slider-gradient"></div>
       <div id="alpha-slider-track">
         <div id="alpha-slider-marker"></div>
       </div>
@@ -321,9 +339,8 @@ export class XBarsColorPickerElement extends HTMLElement {
     let s = this._s;
     let l = this._l
 
-    this["#alpha-slider"].style.background = `
-      linear-gradient(to right, hsla(${h}, ${s}%, ${l}%, 1), hsla(${h}, ${s}%, ${l}%, 0)),
-      url(node_modules/xel/images/checkboard.png) repeat 0 0
+    this["#alpha-slider-gradient"].style.background = `
+      linear-gradient(to right, hsla(${h}, ${s}%, ${l}%, 1), hsla(${h}, ${s}%, ${l}%, 0))
     `;
   }
 

@@ -97,6 +97,7 @@ let shadowHTML = `
      */
 
     #alpha-slider {
+      position: relative;
       display: none;
       width: 100%;
       height: 28px;
@@ -107,9 +108,25 @@ let shadowHTML = `
       border-radius: 2px;
       touch-action: pan-y;
       --marker-width: 18px;
+      /* Checkerboard pattern */
+      background-color: white;
+      background-size: 10px 10px;
+      background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+      background-image: linear-gradient(45deg, #d6d6d6 25%, transparent 25%),
+                        linear-gradient(-45deg, #d6d6d6 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #d6d6d6 75%),
+                        linear-gradient(-45deg, transparent 75%, #d6d6d6 75%);
     }
     :host([alphaslider]) #alpha-slider {
       display: block;
+    }
+
+    #alpha-slider-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
 
     #alpha-slider-track {
@@ -146,6 +163,7 @@ let shadowHTML = `
     </div>
 
     <div id="alpha-slider">
+      <div id="alpha-slider-gradient"></div>
       <div id="alpha-slider-track">
         <div id="alpha-slider-marker"></div>
       </div>
@@ -251,9 +269,10 @@ export class XRectColorPickerElement extends HTMLElement {
 
   _updateAlphaSliderBackground() {
     let [r, g, b] = hsvToRgb(this._h, this._s, this._v).map($0 => round($0, 0));
-    let backroundA = `url(node_modules/xel/images/checkboard.png) repeat 0 0`;
-    let background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))`;
-    this["#alpha-slider"].style.background = background + "," + backroundA;
+
+    this["#alpha-slider-gradient"].style.background = `
+      linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))
+    `;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

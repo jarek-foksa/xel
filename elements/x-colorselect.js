@@ -15,9 +15,16 @@ let shadowHTML = `
       height: 24px;
       width: 40px;
       box-sizing: border-box;
-      background: url(node_modules/xel/images/checkboard.png) repeat 0 0;
       border: 1px solid rgb(150, 150, 150);
       position: relative;
+      /* Checkerboard pattern */
+      background-color: white;
+      background-size: 10px 10px;
+      background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+      background-image: linear-gradient(45deg, #d6d6d6 25%, transparent 25%),
+                        linear-gradient(-45deg, #d6d6d6 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #d6d6d6 75%),
+                        linear-gradient(-45deg, transparent 75%, #d6d6d6 75%);
     }
     :host([hidden]) {
       display: none;
