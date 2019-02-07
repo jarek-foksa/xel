@@ -14,7 +14,7 @@ let materialIconsCategories = [
 ];
 
 // @info
-//   Generate the contents of images/icons.svg file (except for "xel" cetagory")
+//   Generate the contents of iconsets/default.svg file (except for "xel" cetagory")
 // @type
 //   () => Promise<string>
 export let generateMaterialIconsSVG = () => {

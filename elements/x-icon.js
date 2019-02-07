@@ -7,6 +7,8 @@
 import {html, svg} from "../utils/element.js";
 import {readFile} from "../utils/file.js";
 
+let cache = {};
+
 let shadowTemplate = html`
   <template>
     <style>
@@ -40,8 +42,6 @@ let shadowTemplate = html`
   </template>
 `;
 
-let cache = {};
-
 export class XIconElement extends HTMLElement {
   static get observedAttributes() {
     return ["name", "iconset"];
@@ -60,20 +60,25 @@ export class XIconElement extends HTMLElement {
   }
 
   // @type
-  //   string
+  //   string?
   // @default
-  //   "node_modules/xel/images/icons.svg"
+  //   null
   // @attribute
   get iconset() {
     if (this.hasAttribute("iconset") === false || this.getAttribute("iconset").trim() === "") {
-      return "node_modules/xel/images/icons.svg";
+      return null;
     }
     else {
       return this.getAttribute("iconset");
     }
   }
   set iconset(iconset) {
-    this.setAttribute("iconset", iconset);
+    if (iconset === null || iconset.trim() === "") {
+      this.removeAttribute("iconset");
+    }
+    else {
+      this.setAttribute("iconset", iconset);
+    }
   }
 
   // @type
@@ -134,7 +139,24 @@ export class XIconElement extends HTMLElement {
 
   _getSymbol(name, iconsetURL) {
     return new Promise(async (resolve) => {
-      let iconset = await this._getIconset(iconsetURL);
+      let iconset = null;
+
+      // Default iconset
+      if (iconsetURL === null) {
+        // Development - default iconset must be read from a file
+        if (XIconElement.DEFAULT_ICONSET === null) {
+          iconset = await this._getIconset("node_modules/xel/iconsets/default.svg");
+        }
+        // Production - default iconset is embedded into xel.min.js
+        else {
+          iconset = XIconElement.DEFAULT_ICONSET;
+        }
+      }
+      // Custom iconset
+      else {
+        iconset = await this._getIconset(iconsetURL);
+      }
+
       let symbol = null;
 
       if (iconset) {
@@ -178,5 +200,7 @@ export class XIconElement extends HTMLElement {
     });
   }
 }
+
+XIconElement.DEFAULT_ICONSET = null;
 
 customElements.define("x-icon", XIconElement);

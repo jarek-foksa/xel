@@ -46,6 +46,12 @@ let build = () => {
     let result = await bundle.generate({format: "iife"});
 
     let xelMinJS = result.code;
+
+    xelMinJS = xelMinJS.replace(
+      `XIconElement.DEFAULT_ICONSET = null;`,
+      "XIconElement.DEFAULT_ICONSET = svg`" + readFile(`${__dirname}/iconsets/default.svg`) + "`;"
+    );
+
     writeFile(`${__dirname}/xel.min.js`, xelMinJS);
 
     resolve();
@@ -96,10 +102,8 @@ let publishFirebaseSite = () => {
         `fallback.html`,
         `xel.min.js`,
         `docs`,
-        `images`,
-        `themes/macos.css`,
-        `themes/material.css`,
-        `themes/vanilla.css`,
+        `iconsets`,
+        `themes`,
         `node_modules/prismjs/prism.js`,
         `node_modules/prismjs/themes/prism-coy.css`,
         `node_modules/prismjs/themes/prism-tomorrow.css`
