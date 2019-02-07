@@ -43,140 +43,149 @@ let shadowTemplate = html`
 let cache = {};
 
 export class XIconElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["name", "iconset"];
-  }
-
-  // @type
-  //   string
-  // @default
-  //   ""
-  // @attribute
-  get name() {
-    return this.hasAttribute("name") ? this.getAttribute("name") : "";
-  }
-  set name(name) {
-    this.setAttribute("name", name);
-  }
-
-  // @type
-  //   string
-  // @default
-  //   "node_modules/xel/images/icons.svg"
-  // @attribute
-  get iconset() {
-    if (this.hasAttribute("iconset") === false || this.getAttribute("iconset").trim() === "") {
-      return "node_modules/xel/images/icons.svg";
+    static get observedAttributes() {
+        return ["name", "iconset"];
     }
-    else {
-      return this.getAttribute("iconset");
+
+    // @type
+    //   string
+    // @default
+    //   ""
+    // @attribute
+    get name() {
+        return this.hasAttribute("name") ? this.getAttribute("name") : "";
     }
-  }
-  set iconset(iconset) {
-    this.setAttribute("iconset", iconset);
-  }
-
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
-  get disabled() {
-    return this.hasAttribute("disabled");
-  }
-  set disabled(disabled) {
-    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  constructor() {
-    super();
-
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+    set name(name) {
+        this.setAttribute("name", name);
     }
-  }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "name") {
-      this._update();
-    }
-    else if (name === "iconset") {
-      this._update();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  async _update() {
-    if (this.name === "") {
-      this["#svg"].innerHTML = "";
-    }
-    else {
-      let symbol = await this._getSymbol(this.name, this.iconset);
-
-      if (symbol) {
-        this["#svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
-        this["#svg"].innerHTML = symbol.innerHTML;
-      }
-      else {
-        this["#svg"].innerHTML = "";
-      }
-    }
-  }
-
-  _getSymbol(name, iconsetURL) {
-    return new Promise(async (resolve) => {
-      let iconset = await this._getIconset(iconsetURL);
-      let symbol = null;
-
-      if (iconset) {
-        symbol = iconset.querySelector("#" + CSS.escape(name));
-      }
-
-      resolve(symbol);
-    });
-  }
-
-  _getIconset(iconsetURL) {
-    return new Promise(async (resolve) => {
-      if (cache[iconsetURL]) {
-        if (cache[iconsetURL].iconset) {
-          resolve(cache[iconsetURL].iconset);
+    // @type
+    //   string
+    // @default
+    //   "node_modules/xel/images/icons.svg"
+    // @attribute
+    get iconset() {
+        if (this.hasAttribute("iconset") === false || this.getAttribute("iconset").trim() === "") {
+            let userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.indexOf(' electron/') > -1) {
+                // electron specific code
+                const electron = require('electron');
+                // using logical OR to make sure it works with both main and renderer process
+                const app = electron.app || electron.remote.app;
+                return app.getAppPath() + "/node_modules/xel/images/icons.svg";
+            } else {
+                return "node_modules/xel/images/icons.svg";
+            }
         }
         else {
-          cache[iconsetURL].callbacks.push(resolve);
+            return this.getAttribute("iconset");
         }
-      }
-      else {
-        cache[iconsetURL] = {callbacks: [resolve], iconset: null};
+    }
+    set iconset(iconset) {
+        this.setAttribute("iconset", iconset);
+    }
 
-        let iconsetSVG = null;
+    // @type
+    //   boolean
+    // @default
+    //   false
+    // @attribute
+    get disabled() {
+        return this.hasAttribute("disabled");
+    }
+    set disabled(disabled) {
+        disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+    }
 
-        try {
-          iconsetSVG = await readFile(iconsetURL);
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    constructor() {
+        super();
+
+        this._shadowRoot = this.attachShadow({mode: "closed"});
+        this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+
+        for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+            this["#" + element.id] = element;
         }
-        catch (error) {
-          iconsetSVG = null;
-        }
+    }
 
-        if (iconsetSVG) {
-          cache[iconsetURL].iconset = svg`${iconsetSVG}`;
-
-          for (let callback of cache[iconsetURL].callbacks) {
-            callback(cache[iconsetURL].iconset);
-          }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) {
+            return;
         }
-      }
-    });
-  }
+        else if (name === "name") {
+            this._update();
+        }
+        else if (name === "iconset") {
+            this._update();
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    async _update() {
+        if (this.name === "") {
+            this["#svg"].innerHTML = "";
+        }
+        else {
+            let symbol = await this._getSymbol(this.name, this.iconset);
+
+            if (symbol) {
+                this["#svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
+                this["#svg"].innerHTML = symbol.innerHTML;
+            }
+            else {
+                this["#svg"].innerHTML = "";
+            }
+        }
+    }
+
+    _getSymbol(name, iconsetURL) {
+        return new Promise(async (resolve) => {
+            let iconset = await this._getIconset(iconsetURL);
+            let symbol = null;
+
+            if (iconset) {
+                symbol = iconset.querySelector("#" + CSS.escape(name));
+            }
+
+            resolve(symbol);
+        });
+    }
+
+    _getIconset(iconsetURL) {
+        return new Promise(async (resolve) => {
+            if (cache[iconsetURL]) {
+                if (cache[iconsetURL].iconset) {
+                    resolve(cache[iconsetURL].iconset);
+                }
+                else {
+                    cache[iconsetURL].callbacks.push(resolve);
+                }
+            }
+            else {
+                cache[iconsetURL] = {callbacks: [resolve], iconset: null};
+
+                let iconsetSVG = null;
+
+                try {
+                    iconsetSVG = await readFile(iconsetURL);
+                }
+                catch (error) {
+                    iconsetSVG = null;
+                }
+
+                if (iconsetSVG) {
+                    cache[iconsetURL].iconset = svg`${iconsetSVG}`;
+
+                    for (let callback of cache[iconsetURL].callbacks) {
+                        callback(cache[iconsetURL].iconset);
+                    }
+                }
+            }
+        });
+    }
 }
 
 customElements.define("x-icon", XIconElement);
