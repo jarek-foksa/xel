@@ -2,12 +2,15 @@
 // @copyright
 //   © 2016-2017 Jarosław Foksa
 
-import {parseColor, serializeColor, hsvToRgb} from "../utils/color.js";
+import {parseColor, serializeColor, hsvToRgb, getColorWheelImageURL} from "../utils/color.js";
 import {createElement} from "../utils/element.js";
 import {round, normalize, degToRad} from "../utils/math.js";
 
 let {PI, sqrt, atan2, sin, cos, pow} = Math;
 let debug = false;
+
+
+
 
 let shadowHTML = `
   <style>
@@ -152,7 +155,7 @@ let shadowHTML = `
 
   <x-box vertical>
     <div id="huesat-slider">
-      <img id="huesat-image" src="node_modules/xel/images/wheel-spectrum.png"></img>
+      <img id="huesat-image"></img>
       <div id="huesat-marker"></div>
     </div>
 
@@ -219,8 +222,12 @@ export class XWheelColorPickerElement extends HTMLElement {
     this["#alpha-slider"].addEventListener("pointerdown", (event) => this._onAlphaSliderPointerDown(event));
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this._update();
+
+    if (this["#huesat-image"].src === "") {
+      this["#huesat-image"].src = await getColorWheelImageURL();
+    }
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

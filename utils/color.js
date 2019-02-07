@@ -4,7 +4,7 @@
 
 import {normalize, round} from "./math.js";
 
-let {min, max, floor} = Math;
+let {min, max, floor, pow, atan2, PI, sqrt} = Math;
 let {parseFloat, parseInt} = Number;
 
 // @info
@@ -1055,37 +1055,57 @@ export let isValidColorString = (string) => {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // @info
-//   Creates HSV spectrum wheel image used by the color pickers.
-export let generateWheelSpectrumImage = (size) => {
-  let canvas = document.createElement("canvas");
-  let context = canvas.getContext("2d");
-  let imageData = context.createImageData(size, size);
-  let data = imageData.data;
-  let radius = size / 2;
-  let i = 0;
-
-  canvas.width = size;
-  canvas.height = size;
-
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      let rx = x - radius;
-      let ry = y - radius;
-      let d = pow(rx, 2) + pow(ry, 2);
-
-      let h = ((atan2(ry, rx) + PI) / (PI * 2)) * 360;
-      let s = (sqrt(d) / radius) * 100;
-
-      let [r, g, b] = hsvToRgb(h, s, 100);
-      let a = (d > pow(radius, 2)) ? 0 : 255;
-
-      data[i++] = r;
-      data[i++] = g;
-      data[i++] = b;
-      data[i++] = a;
+//   Get blob URL for color wheel image (HSV spectrum) used by the color pickers.
+export let getColorWheelImageURL = () => {
+  return new Promise((resolve) => {
+    if (getColorWheelImageURL.url) {
+      resolve(getColorWheelImageURL.url);
     }
-  }
+    else if (getColorWheelImageURL.callbacks) {
+      getColorWheelImageURL.callbacks.push(resolve);
+    }
+    else {
+      getColorWheelImageURL.callbacks = [resolve];
 
-  context.putImageData(imageData, 0, 0);
-  window.open(canvas.toDataURL("image/png"));
-};
+      let size = 300;
+      let canvas = document.createElement("canvas");
+      let context = canvas.getContext("2d");
+      let imageData = context.createImageData(size, size);
+      let data = imageData.data;
+      let radius = size / 2;
+      let i = 0;
+
+      canvas.width = size;
+      canvas.height = size;
+
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          let rx = x - radius;
+          let ry = y - radius;
+          let d = pow(rx, 2) + pow(ry, 2);
+
+          let h = ((atan2(ry, rx) + PI) / (PI * 2)) * 360;
+          let s = (sqrt(d) / radius) * 100;
+
+          let [r, g, b] = hsvToRgb(h, s, 100);
+          let a = (d > pow(radius, 2)) ? 0 : 255;
+
+          data[i++] = r;
+          data[i++] = g;
+          data[i++] = b;
+          data[i++] = a;
+        }
+      }
+
+      context.putImageData(imageData, 0, 0);
+
+      canvas.toBlob((blob) => {
+        getColorWheelImageURL.url = URL.createObjectURL(blob);
+
+        for (let callback of getColorWheelImageURL.callbacks) {
+          callback(getColorWheelImageURL.url);
+        }
+      });
+    }
+  });
+}
