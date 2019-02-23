@@ -35,7 +35,16 @@
 
     <script>
       // Supported browser
-      if (window.ShadowRoot && window.customElements && HTMLLinkElement.prototype.hasOwnProperty("import")) {
+      if (
+        window.customElements &&
+        window.customElements.define &&
+        window.DOMPoint &&
+        window.DOMRect &&
+        window.HTMLDialogElement &&
+        window.HTMLDialogElement.prototype.showModal &&
+        window.PointerEvent &&
+        window.ShadowRoot
+      ) {
         let theme = sessionStorage.getItem("theme") || "material";
         let themePath = `/node_modules/xel/themes/${theme}.css`;
         document.querySelector("#theme-link").setAttribute("href", themePath);
