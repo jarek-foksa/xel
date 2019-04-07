@@ -40,7 +40,6 @@
   },
   "homepage": "https://xel-toolkit.org/",
   "scripts": {
-    "prepare": "./build.js",
     "start": "firebase serve --only hosting"
   },
   "devDependencies": {
