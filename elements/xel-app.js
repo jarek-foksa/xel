@@ -973,4 +973,6 @@ export class XelAppElement extends HTMLElement {
   }
 }
 
-customElements.define("xel-app", XelAppElement);
+if (document.documentElement.id === "xel-home-page") {
+  customElements.define("xel-app", XelAppElement);
+}

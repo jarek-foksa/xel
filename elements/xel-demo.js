@@ -169,4 +169,6 @@ export class XelDemoElement extends HTMLElement {
   }
 }
 
-customElements.define("xel-demo", XelDemoElement);
+if (document.documentElement.id === "xel-home-page") {
+  customElements.define("xel-demo", XelDemoElement);
+}

@@ -83,4 +83,6 @@ export class XelCodeViewElement extends HTMLElement {
   }
 }
 
-customElements.define("xel-codeview", XelCodeViewElement);
+if (document.documentElement.id === "xel-home-page") {
+  customElements.define("xel-codeview", XelCodeViewElement);
+}

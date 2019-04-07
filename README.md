@@ -109,10 +109,16 @@ $ cd xel
 $ npm install
 ```
 
-**2. Launch the dev server**
+**2. Install Firebase Tools**
 
 ```bash
-$ ./project.js serve
+$ npm install -g firebase-tools
 ```
 
-**3. Open http://localhost:5000 in your browser**
+**3. Launch the dev server**
+
+```bash
+$ firebase serve --only hosting
+```
+
+**4. Open http://localhost:5000 in your browser**
