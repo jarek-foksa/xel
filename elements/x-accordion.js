@@ -205,9 +205,12 @@ export class XAccordionElement extends HTMLElement {
         let size = max(rect.width, rect.height) * 1.5;
         let top  = pointerDownEvent.clientY - rect.y - size/2;
         let left = pointerDownEvent.clientX - rect.x - size/2;
-        let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
 
-        this.setPointerCapture(pointerDownEvent.pointerId);
+        let whenLostPointerCapture = new Promise((r) => {
+          pointerDownEvent.target.addEventListener("lostpointercapture", r, {once: true})
+        });
+
+        pointerDownEvent.target.setPointerCapture(pointerDownEvent.pointerId);
 
         let ripple = html`<div></div>`;
         ripple.setAttribute("class", "ripple pointer-down-ripple");
