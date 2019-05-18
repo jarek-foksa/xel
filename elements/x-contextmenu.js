@@ -10,7 +10,8 @@ let shadowTemplate = html`
   <template>
     <style>
       :host {
-        display: fixed;
+        display: block;
+        position: fixed;
         width: 0px;
         height: 0px;
         z-index: 1001;
