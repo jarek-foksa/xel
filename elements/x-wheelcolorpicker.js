@@ -9,15 +9,13 @@ import {round, normalize, degToRad} from "../utils/math.js";
 let {PI, sqrt, atan2, sin, cos, pow} = Math;
 let debug = false;
 
-
-
-
 let shadowHTML = `
   <style>
     :host {
       display: block;
       width: 100%;
       user-select: none;
+      --wheel-max-width: none;
     }
     :host([hidden]) {
       display: none;
@@ -31,6 +29,8 @@ let shadowHTML = `
       display: flex;
       position: relative;
       width: 100%;
+      max-width: var(--wheel-max-width);
+      margin: 0 auto;
       height: auto;
       touch-action: pinch-zoom;
     }
