@@ -844,10 +844,64 @@ export class XMenuElement extends HTMLElement {
     if (event.target === this || event.target.localName === "hr") {
       event.stopPropagation();
     }
+
+    if (event.pointerType === "touch" && event.target.closest("x-menu") === this) {
+      if (this._isPointerOverMenuBlock === false) {
+        this._onMenuBlockPointerEnter();
+      }
+
+      // Focus and expand the menu item under pointer and collapse other items
+      {
+        let item = event.target.closest("x-menuitem");
+
+        if (item && item.disabled === false && item.closest("x-menu") === this) {
+          if (item.matches(":focus") === false) {
+            this._delay( async () => {
+              let otherItem = this.querySelector(":scope > x-menuitem:focus");
+
+              if (otherItem) {
+                let otherSubmenu = otherItem.querySelector("x-menu");
+
+                if (otherSubmenu) {
+                  // otherItem.removeAttribute("expanded");
+                  otherSubmenu.close();
+                }
+              }
+
+
+              let menu = item.closest("x-menu");
+              let submenu = item.querySelector("x-menu");
+              let otherItems = [...this.querySelectorAll(":scope > x-menuitem")].filter($0 => $0 !== item);
+
+              if (submenu) {
+                await sleep(60);
+
+                if (item.matches(":focus") && submenu.opened === false) {
+                  submenu.openNextToElement(item, "horizontal");
+                }
+              }
+
+              for (let otherItem of otherItems) {
+                let otherSubmenu = otherItem.querySelector("x-menu");
+
+                if (otherSubmenu) {
+                  otherSubmenu.close();
+                }
+              }
+            })
+          }
+        }
+        else {
+          this._delay(() => {
+            this.focus();
+          });
+        }
+      }
+    }
   }
 
   _onPointerOver(event) {
-    if (this._isClosing() || event.pointerType !== "mouse") {
+    if (this._isClosing() || event.pointerType === "touch") {
       return;
     }
 

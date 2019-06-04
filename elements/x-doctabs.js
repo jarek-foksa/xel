@@ -596,8 +596,15 @@ export class XDocTabsElement extends HTMLElement {
     let selectionIndicatorAnimation = this._animateSelectionIndicator(selectedTab, pointerDownTab);
     this.setPointerCapture(pointerDownEvent.pointerId);
 
+    let pointerDownPoint = new DOMPoint(pointerDownEvent.clientX, pointerDownEvent.clientY);
+    let prevPointerMovePoint = pointerDownPoint;
+
     this.addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.isPrimary && abs(pointerMoveEvent.clientX - pointerDownEvent.clientX) > 1) {
+      let pointerMovePoint = new DOMPoint(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
+      let deltaTime = pointerMoveEvent.timeStamp - pointerDownEvent.timeStamp;
+      let isIntentional = (getDistanceBetweenPoints(pointerDownPoint, pointerMovePoint) > 3 || deltaTime > 80);
+
+      if (pointerMoveEvent.isPrimary && isIntentional) {
         this.removeEventListener("pointermove", pointerMoveListener);
         this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
 

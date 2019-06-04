@@ -3,7 +3,7 @@
 //   © 2016-2017 Jarosław Foksa
 
 import {html, closest, createElement} from "../utils/element.js";
-import {sleep, throttle} from "../utils/time.js";
+import {throttle} from "../utils/time.js";
 
 let debug = false;
 let windowPadding = 7;

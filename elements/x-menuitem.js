@@ -281,6 +281,8 @@ export class XMenuItemElement extends HTMLElement {
   }
 
   async _onPointerDown(pointerDownEvent) {
+    this._wasFocused = this.matches(":focus");
+
     if (pointerDownEvent.buttons !== 1) {
       return false;
     }
@@ -291,7 +293,9 @@ export class XMenuItemElement extends HTMLElement {
       return;
     }
 
-    pointerDownEvent.stopPropagation();
+    if (pointerDownEvent.target.closest("x-menuitem") !== this) {
+      return;
+    }
 
     // Trigger effect
     {
@@ -356,7 +360,7 @@ export class XMenuItemElement extends HTMLElement {
     }
 
     // Trigger effect
-    {
+    if (!this.querySelector(":scope > x-menu")) {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
@@ -398,10 +402,18 @@ export class XMenuItemElement extends HTMLElement {
       else if (triggerEffect === "blink") {
         this._blinking = true;
 
-        this.parentElement.focus();
-        await sleep(150);
-        this.focus();
-        await sleep(150);
+        if (this._wasFocused) {
+          this.parentElement.focus();
+          await sleep(150);
+          this.focus();
+          await sleep(150);
+        }
+        else {
+          this.focus();
+          await sleep(150);
+          this.parentElement.focus();
+          await sleep(150);
+        }
 
         this._blinking = true;
 

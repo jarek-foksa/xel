@@ -5,7 +5,7 @@
 import {html} from "../utils/element.js";
 import {isNumeric} from "../utils/string.js";
 import {debounce, sleep} from "../utils/time.js";
-import {normalize, getPrecision} from "../utils/math.js";
+import {normalize, getPrecision, comparePoints, getDistanceBetweenPoints} from "../utils/math.js";
 
 let {isFinite} = Number;
 let numericKeys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
@@ -580,31 +580,35 @@ export class XNumberInputElement extends HTMLElement {
         pointerDownEvent.preventDefault();
 
         let initialValue = this.value;
-        let cachedClientX = null;
+        let cachedClientX = pointerDownEvent.clientX;
+        let pointerDownPoint = new DOMPoint(pointerDownEvent.clientX, pointerDownEvent.clientY);
         let pointerMoveListener, lostPointerCaptureListener;
 
         this.style.cursor = "col-resize";
         this["#editor"].setPointerCapture(pointerDownEvent.pointerId);
 
         this["#editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-          if (pointerMoveEvent.clientX === cachedClientX || pointerMoveEvent.isPrimary === false) {
-            return;
-          }
-
-          if (this._isDragging === false) {
-            this._isDragging = true;
-            this._isChangeStart = true;
-            this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-          }
-
+          let pointerMovePoint = new DOMPoint(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
+          let deltaTime = pointerMoveEvent.timeStamp - pointerDownEvent.timeStamp;
+          let isDistinct = pointerMoveEvent.clientX !== cachedClientX;
+          let isIntentional = (getDistanceBetweenPoints(pointerDownPoint, pointerMovePoint) > 3 || deltaTime > 80);
           cachedClientX = pointerMoveEvent.clientX;
 
-          let dragOffset = pointerMoveEvent.clientX - pointerDownEvent.clientX;
+          if (isDistinct && isIntentional && pointerMoveEvent.isPrimary) {
+            if (this._isDragging === false) {
+              this._isDragging = true;
+              this._isChangeStart = true;
+              this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+            }
 
-          let value = initialValue + (dragOffset * this.step);
-          value = normalize(value, this.min, this.max, getPrecision(this.step));
-          this.value = value;
-          this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+
+            let dragOffset = pointerMoveEvent.clientX - pointerDownEvent.clientX;
+            let value = initialValue + (dragOffset * this.step);
+
+            value = normalize(value, this.min, this.max, getPrecision(this.step));
+            this.value = value;
+            this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+          }
         });
 
         this["#editor"].addEventListener("lostpointercapture",  lostPointerCaptureListener = () => {

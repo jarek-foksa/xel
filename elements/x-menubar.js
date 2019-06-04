@@ -277,7 +277,7 @@ export class XMenuBarElement extends HTMLElement {
     let item = event.target.closest("x-menuitem");
 
     if (event.target.closest("x-menu") === null && item && item.parentElement === this) {
-      if (this._expanded && event.pointerType === "mouse") {
+      if (this._expanded && event.pointerType !== "touch") {
         if (item.hasAttribute("expanded") === false) {
           this._expandMenubarItem(item);
         }

@@ -97,3 +97,17 @@ export let degToRad = (degrees) => {
   let radians = (PI * degrees) / 180;
   return radians;
 };
+
+// @info
+//   Check if two points have same coordinates.
+// @type
+//   (DOMPoint, DOMPoint) => boolean
+export let comparePoints = (point1, point2, precision = null) => {
+  if (precision !== null) {
+    return round(point1.x, precision) === round(point2.x, precision) &&
+           round(point1.y, precision) === round(point2.y, precision);
+  }
+  else {
+    return point1.x === point2.x && point1.y === point2.y;
+  }
+};
