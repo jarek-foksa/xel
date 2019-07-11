@@ -20,6 +20,7 @@ let shadowTemplate = html`
         justify-content: center;
         width: 24px;
         height: 24px;
+        overflow: hidden;
       }
       :host([disabled]) {
         opacity: 0.5;
@@ -33,6 +34,7 @@ let shadowTemplate = html`
         height: 100%;
         fill: currentColor;
         stroke: none;
+        overflow: inherit;
         /* @bugfix: pointerOverEvent.relatedTarget leaks shadow DOM of <x-icon> */
         pointer-events: none;
       }
