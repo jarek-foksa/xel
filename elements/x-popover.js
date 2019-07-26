@@ -123,6 +123,13 @@ export class XPopoverElement extends HTMLElement {
       // Don't close a <dialog> when user clicks <x-popover> backdrop inside it.
       event.preventDefault();
     });
+
+    this["#backdrop"].addEventListener("pointerdown", (event) => {
+      // Catch all pointer events while the popover is opening or closing
+      if (this.hasAttribute("animating")) {
+        event.stopPropagation();
+      }
+    });
   }
 
   connectedCallback() {
