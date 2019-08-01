@@ -633,7 +633,7 @@ export class XButtonElement extends HTMLElement {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
 
-      this.addEventListener("lostpointercapture", async () => {
+      window.addEventListener("pointerup", async () => {
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
         let minPressedTime = 150;
