@@ -184,22 +184,26 @@ export class XButtonsElement extends HTMLElement {
     if (key === "ArrowRight") {
       let element = [...this.children].find(child => child.matches(":focus"));
 
-      if (element.nextElementSibling) {
-        element.nextElementSibling.focus();
-      }
-      else if (element !== element.parentElement.firstElementChild) {
-        element.parentElement.firstElementChild.focus();
+      if (element) {
+        if (element.nextElementSibling) {
+          element.nextElementSibling.focus();
+        }
+        else if (element !== element.parentElement.firstElementChild) {
+          element.parentElement.firstElementChild.focus();
+        }
       }
     }
 
     else if (key === "ArrowLeft") {
       let element = [...this.children].find(child => child.matches(":focus"));
 
-      if (element.previousElementSibling) {
-        element.previousElementSibling.focus();
-      }
-      else if (element !== element.parentElement.lastElementChild) {
-        element.parentElement.lastElementChild.focus();
+      if (element) {
+        if (element.previousElementSibling) {
+          element.previousElementSibling.focus();
+        }
+        else if (element !== element.parentElement.lastElementChild) {
+          element.parentElement.lastElementChild.focus();
+        }
       }
     }
   }
