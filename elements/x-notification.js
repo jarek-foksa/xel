@@ -104,7 +104,7 @@ export class XNotificationElement extends HTMLElement {
 
   _onOpen() {
     // Animate in
-    {
+    if (this.isConnected) {
       let fromBottom = (0 - this.getBoundingClientRect().height - 10) + "px";
       let toBottom = getComputedStyle(this).bottom;
 
@@ -112,8 +112,6 @@ export class XNotificationElement extends HTMLElement {
         { bottom: [fromBottom, toBottom]},
         { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
       );
-
-      // await inAnimation.finished;
     }
 
     // Automatically close the notification after given timeout
@@ -148,7 +146,7 @@ export class XNotificationElement extends HTMLElement {
     clearInterval(this._intervalID);
 
     // Animate out
-    {
+    if (this.isConnected) {
       this.setAttribute("animating", "");
       let fromBottom = getComputedStyle(this).bottom;
       let toBottom = (0 - this.getBoundingClientRect().height - 10) + "px";
