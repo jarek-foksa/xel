@@ -528,11 +528,11 @@ x-button[skin="recessed"]:hover {
 }
 x-button[skin="recessed"][toggled] {
   color: rgba(255, 255, 255, 0.95);
-  background: #5a5a5a;
+  background: rgba(0, 0, 0, 0.6);
 }
 x-button[skin="recessed"][pressed] {
   color: rgba(255, 255, 255, 0.95);
-  background: #2f2f2f;
+  background: rgba(0, 0, 0, 0.75);
 }
 
 x-button[skin="recessed"] x-label {
