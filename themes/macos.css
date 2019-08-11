@@ -668,7 +668,7 @@ x-button[skin="recessed"][pressed] {
   background: rgba(0, 0, 0, 0.6);
 }
 
-x-button[skin="recessed"] x-label {
+x-button[skin="recessed"] > x-label {
   font-size: 12px;
   font-weight: 700;
   text-align: center;
