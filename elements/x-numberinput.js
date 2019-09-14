@@ -370,7 +370,7 @@ export class XNumberInputElement extends HTMLElement {
     }
 
     this.validate();
-    this._updateState();
+    this._updateEmptyState();
   }
 
   _decrement(large = false) {
@@ -395,7 +395,7 @@ export class XNumberInputElement extends HTMLElement {
     }
 
     this.validate();
-    this._updateState();
+    this._updateEmptyState();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -435,7 +435,7 @@ export class XNumberInputElement extends HTMLElement {
     this.validate();
 
     this._updateEditorTextContent();
-    this._updateState();
+    this._updateEmptyState();
     this._updateStepper();
   }
 
@@ -448,8 +448,17 @@ export class XNumberInputElement extends HTMLElement {
     }
   }
 
-  _updateState() {
-    if (this.value === null) {
+  _updateEmptyState() {
+    let value = null;
+
+    if (this.matches(":focus")) {
+      value = this["#editor"].textContent.trim() === "" ? null : parseFloat(this["#editor"].textContent);
+    }
+    else {
+      value = this.value;
+    }
+
+    if (value === null) {
       this.setAttribute("empty", "");
     }
     else {
@@ -530,13 +539,15 @@ export class XNumberInputElement extends HTMLElement {
 
   _onFocusOut() {
     this._shadowRoot.getSelection().collapse(this["#main"]);
+    this["#editor"].scrollLeft = 0;
+
     this._commitEditorChanges();
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
   }
 
   _onEditorInput() {
     this.validate();
-    this._updateState();
+    this._updateEmptyState();
     this._updateStepper();
   }
 
