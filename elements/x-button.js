@@ -610,6 +610,11 @@ export class XButtonElement extends HTMLElement {
       return;
     }
 
+    // This check is needed in case a slotted element was hit
+    if (this.contains(pointerDownEvent.target) === false) {
+      return;
+    }
+
     this.setPointerCapture(pointerDownEvent.pointerId);
 
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element as soon as
