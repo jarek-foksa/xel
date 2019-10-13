@@ -19,6 +19,10 @@ let shadowTemplate = html`
       :host([hidden]) {
         display: none;
       }
+
+      slot {
+        text-decoration: inherit;
+      }
     </style>
 
     <slot></slot>
