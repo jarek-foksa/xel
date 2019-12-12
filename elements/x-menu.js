@@ -22,6 +22,8 @@ let shadowTemplate = html`
         box-sizing: border-box;
         background: white;
         cursor: default;
+        overflow: auto;
+        flex-direction: column;
         -webkit-app-region: no-drag;
         --align: start;
         --scrollbar-background: rgba(0, 0, 0, 0.2);
@@ -31,7 +33,7 @@ let shadowTemplate = html`
       }
       :host([opened]),
       :host([animating]) {
-        display: block;
+        display: flex;
       }
       :host(:focus) {
         outline: none;
@@ -40,13 +42,6 @@ let shadowTemplate = html`
         outline: 2px solid red;
       }
 
-      #main {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-      }
 
       ::-webkit-scrollbar {
         max-width: var(--scrollbar-width);
@@ -60,9 +55,7 @@ let shadowTemplate = html`
       }
     </style>
 
-    <main id="main" role="presentation">
-      <slot id="slot"></slot>
-    </main>
+    <slot id="slot"></slot>
   </template>
 `;
 
@@ -111,7 +104,7 @@ export class XMenuElement extends HTMLElement {
     this.addEventListener("pointermove", (event) => this._onPointerMove(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
     this.addEventListener("wheel", (event) => this._onWheel(event), {passive: false});
-    this["#main"].addEventListener("scroll", (event) => this._onScroll(event), {passive: true});
+    this.addEventListener("scroll", (event) => this._onScroll(event), {passive: true});
   }
 
   connectedCallback() {
@@ -184,7 +177,7 @@ export class XMenuElement extends HTMLElement {
           if (overflowTop > 0) {
             this.style.height = (menuBounds.bottom - windowWhitespace) + "px";
             this.style.top = (windowWhitespace + extraTop) + "px";
-            this["#main"].scrollTop = 9999;
+            this.scrollTop = 9999;
             menuBounds = this.getBoundingClientRect();
           }
         }
@@ -1006,7 +999,7 @@ export class XMenuElement extends HTMLElement {
       // For details check https://github.com/jarek-foksa/xel/issues/75
       {
         event.preventDefault();
-        this["#main"].scrollTop = this["#main"].scrollTop + event.deltaY;
+        this.scrollTop = this.scrollTop + event.deltaY;
       }
 
       this._isPointerOverMenuBlock = true;
@@ -1018,8 +1011,8 @@ export class XMenuElement extends HTMLElement {
 
   _onScroll() {
     if (this._expandWhenScrolled) {
-      let delta = this["#main"].scrollTop - this._lastScrollTop;
-      this._lastScrollTop = this["#main"].scrollTop;
+      let delta = this.scrollTop - this._lastScrollTop;
+      this._lastScrollTop = this.scrollTop;
 
       if (getTimeStamp() - this._openedTimestamp > 100) {
         let menuRect = this.getBoundingClientRect();
@@ -1037,7 +1030,7 @@ export class XMenuElement extends HTMLElement {
             this.style.top = (this._extraTop + menuRect.top - delta) + "px";
             this.style.height = (menuRect.height + delta) + "px";
 
-            this["#main"].scrollTop = 0;
+            this.scrollTop = 0;
             this._lastScrollTop = 0;
           }
           else {
