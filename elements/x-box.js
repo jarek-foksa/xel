@@ -20,6 +20,9 @@ let shadowTemplate = html`
         align-items: flex-start;
         justify-content: center;
       }
+      :host([hidden]) {
+        display: none;
+      }
     </style>
 
     <slot></slot>
