@@ -34,6 +34,7 @@ export class XButtonsElement extends HTMLElement {
   //   0 - Toggle the clicked button on/off and other buttons off
   //   1 - Toggle the clicked button on and other buttons off
   //   2 - Toggle the clicked button on/off
+  //   3 - Toggle the clicked button on/off, but toggle off only if there is at least one other button toggled on
   // @type
   //   number
   // @default
@@ -51,7 +52,7 @@ export class XButtonsElement extends HTMLElement {
   // @type
   //   string || Array || null
   get value() {
-    if (this.tracking === 2) {
+    if (this.tracking === 2 || this.tracking === 3) {
       let buttons = this._getButtons().filter(button => button.toggled);
       return buttons.map(button => button.value).filter(value => value != undefined);
     }
@@ -64,7 +65,7 @@ export class XButtonsElement extends HTMLElement {
     }
   }
   set value(value) {
-    if (this.tracking === 2) {
+    if (this.tracking === 2 || this.tracking === 3) {
       let buttons = this._getButtons();
 
       if (isArray(value)) {
@@ -174,6 +175,20 @@ export class XButtonsElement extends HTMLElement {
         }
 
         this.dispatchEvent(new CustomEvent("toggle", {bubbles: true, detail: clickedButton}));
+      }
+      else if (this.tracking === 3) {
+        let otherToggledButtons = otherButtons.filter(button => button.toggled === true);
+
+        if (clickedButton.toggled === false || otherToggledButtons.length > 0) {
+          if (clickedButton.mixed) {
+            clickedButton.mixed = false;
+          }
+          else {
+            clickedButton.toggled = !clickedButton.toggled;
+          }
+
+          this.dispatchEvent(new CustomEvent("toggle", {bubbles: true, detail: clickedButton}));
+        }
       }
     }
   }
