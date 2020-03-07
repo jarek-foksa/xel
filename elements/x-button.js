@@ -652,7 +652,7 @@ export class XButtonElement extends HTMLElement {
 
       (async () => {
         if (this.ownerButtons) {
-          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
+          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2 || this.ownerButtons.tracking === 3) {
             await sleep(10);
           }
           else if (this.ownerButtons.tracking === 1 && (this.toggled === false || this.mixed)) {
@@ -693,7 +693,7 @@ export class XButtonElement extends HTMLElement {
 
         if (this.expandable === false) {
           if (this.ownerButtons) {
-            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
+            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2 || this.ownerButtons.tracking === 3) {
               delay = false;
             }
             else if (this.ownerButtons.tracking === 1 && this.toggled === false) {
@@ -811,7 +811,7 @@ export class XButtonElement extends HTMLElement {
         let delay = true;
 
         if (this.ownerButtons) {
-          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
+          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2 || this.ownerButtons.tracking === 3) {
             delay = false;
           }
           else if (this.ownerButtons.tracking === 1 && this.toggled === true) {
