@@ -652,11 +652,19 @@ export class XButtonElement extends HTMLElement {
 
       (async () => {
         if (this.ownerButtons) {
-          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2 || this.ownerButtons.tracking === 3) {
+          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
             await sleep(10);
           }
           else if (this.ownerButtons.tracking === 1 && (this.toggled === false || this.mixed)) {
             await sleep(10);
+          }
+          else if (this.ownerButtons.tracking === 3) {
+            let buttons = [...this.ownerButtons.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
+            let toggledButtons = buttons.filter(button => button.toggled);
+
+            if (this.toggled === false || toggledButtons.length > 1 ) {
+              await sleep(10);
+            }
           }
         }
         else if (this.togglable) {
@@ -693,12 +701,21 @@ export class XButtonElement extends HTMLElement {
 
         if (this.expandable === false) {
           if (this.ownerButtons) {
-            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2 || this.ownerButtons.tracking === 3) {
+            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
               delay = false;
             }
             else if (this.ownerButtons.tracking === 1 && this.toggled === false) {
               delay = false;
             }
+            else if (this.ownerButtons.tracking === 3) {
+              let buttons = [...this.ownerButtons.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
+              let toggledButtons = buttons.filter(button => button.toggled);
+
+              if (this.toggled === false || toggledButtons.length > 1 ) {
+                delay = false;
+              }
+            }
+
           }
           else if (this.togglable) {
             delay = false;
