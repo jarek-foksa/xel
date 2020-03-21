@@ -42,6 +42,9 @@ let shadowTemplate = html`
         transition: width 0.4s ease-in-out;
         will-change: left, right;
       }
+      :host([value="-1"]) #determinate-bar {
+        visibility: hidden;
+      }
 
       #primary-indeterminate-bar {
         position: absolute;
@@ -165,7 +168,7 @@ export class XProgressbarElement extends HTMLElement {
     // Indeterminate bars
     {
       // Hide
-      if ((this.value !== null && this.value !== -1) || this.disabled) {
+      if (this.value !== null || this.disabled) {
         if (this._indeterminateAnimations) {
           for (let animation of this._indeterminateAnimations) {
             animation.cancel();
