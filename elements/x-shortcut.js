@@ -34,6 +34,9 @@ let shadowTemplate = html`
         font-size: 14px;
         line-height: 1;
       }
+      :host([hidden]) {
+        display: none;
+      }
     </style>
 
     <main id="main"></main>
