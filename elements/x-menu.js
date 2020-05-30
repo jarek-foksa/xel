@@ -25,6 +25,7 @@ let shadowTemplate = html`
         overflow: auto;
         flex-direction: column;
         -webkit-app-region: no-drag;
+        --v-target-align: bottom;
         --target-align: left;
         --align: start;
         --scrollbar-background: rgba(0, 0, 0, 0.2);
@@ -42,6 +43,7 @@ let shadowTemplate = html`
       :host-context([debug]):host(:focus) {
         outline: 2px solid red;
       }
+
 
       ::-webkit-scrollbar {
         max-width: var(--scrollbar-width);
@@ -277,6 +279,7 @@ export class XMenuElement extends HTMLElement {
 
       let align = getComputedStyle(this).getPropertyValue("--align").trim();
       let targetAlign = getComputedStyle(this).getPropertyValue("--target-align").trim();
+      let vTargetAlign = getComputedStyle(this).getPropertyValue("--v-target-align").trim();
       let elementBounds = element.getBoundingClientRect();
       let menuBounds = this.getBoundingClientRect();
       let extraLeft = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
@@ -464,6 +467,11 @@ export class XMenuElement extends HTMLElement {
         if (targetAlign === "right") {
           let left = elementBounds.right - menuBounds.width;
           this.style.left = left + "px";
+        }
+
+        if (vTargetAlign === "top") {
+          let top = elementBounds.top;
+          this.style.top = top + "px";
         }
 
         // Animate the menu
