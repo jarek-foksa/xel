@@ -42,7 +42,6 @@ let shadowTemplate = html`
         outline: 2px solid red;
       }
 
-
       ::-webkit-scrollbar {
         max-width: var(--scrollbar-width);
         background: none;
@@ -276,6 +275,7 @@ export class XMenuElement extends HTMLElement {
       }
 
       let align = getComputedStyle(this).getPropertyValue("--align").trim();
+      let targetAlign = getComputedStyle(this).getPropertyValue("--target-align").trim();
       let elementBounds = element.getBoundingClientRect();
       let menuBounds = this.getBoundingClientRect();
       let extraLeft = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
@@ -458,6 +458,11 @@ export class XMenuElement extends HTMLElement {
               this.style.left = (window.innerWidth - windowWhitespace + extraLeft) + "px";
             }
           }
+        }
+
+        if (targetAlign === "right") {
+          let left = elementBounds.right - menuBounds.width;
+          this.style.left = left + "px";
         }
 
         // Animate the menu
