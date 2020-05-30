@@ -217,7 +217,7 @@ export class XMenuItemElement extends HTMLElement {
     this._blinking = false;
     this._triggerEndCallbacks = [];
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));

@@ -20,7 +20,7 @@ let shadowTemplate = html`
         width: fit-content;
         z-index: 1001;
         box-sizing: border-box;
-        background: white;
+        background: --menu-background;
         cursor: default;
         overflow: auto;
         flex-direction: column;
@@ -91,7 +91,7 @@ export class XMenuElement extends HTMLElement {
     this._isPointerOverMenuBlock = false;
     this._expandWhenScrolled = false;
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
