@@ -26,10 +26,6 @@ let shadowTemplate = html`
         --trigger-effect: none; /* ripple, unbounded-ripple, none */
         --ripple-background: currentColor;
         --ripple-opacity: 0.2;
-        --arrow-width: 8px;
-        --arrow-height: 8px;
-        --arrow-margin: 0 0 0 3px;
-        --arrow-d: path("M 11.7 19.9 L 49.8 57.9 L 87.9 19.9 L 99.7 31.6 L 49.8 81.4 L -0.0 31.6 Z");
       }
       :host(:focus) {
         outline: none;
@@ -45,26 +41,6 @@ let shadowTemplate = html`
         display: none;
       }
 
-      /**
-       * Arrow
-       */
-
-      #arrow {
-        width: var(--arrow-width);
-        height: var(--arrow-height);
-        min-width: var(--arrow-width);
-        margin: var(--arrow-margin);
-        color: currentColor;
-        d: var(--arrow-d);
-      }
-
-      #arrow path {
-        fill: currentColor;
-        d: inherit;
-      }
-      #arrow[hidden] {
-        display: none;
-      }
 
       /**
        * Ripples
@@ -98,10 +74,6 @@ let shadowTemplate = html`
 
     <div id="ripples"></div>
     <slot></slot>
-
-    <svg id="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <path id="arrow-path"></path>
-    </svg>
   </template>
 `;
 
