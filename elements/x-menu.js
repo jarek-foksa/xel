@@ -25,6 +25,7 @@ let shadowTemplate = html`
         overflow: auto;
         flex-direction: column;
         -webkit-app-region: no-drag;
+        --target-align: left;
         --align: start;
         --scrollbar-background: rgba(0, 0, 0, 0.2);
         --scrollbar-width: 6px;
