@@ -123,7 +123,7 @@ export class XDocTabsElement extends HTMLElement {
     this._waitingForTabToClose = false;
     this._waitingForPointerMoveAfterClosingTab = false;
 
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this._shadowRoot = this.attachShadow({mode: "open", delegatesFocus: true});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {

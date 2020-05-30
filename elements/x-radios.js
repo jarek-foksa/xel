@@ -24,7 +24,7 @@ export class XRadiosElement extends HTMLElement {
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.innerHTML = `<slot></slot>`;
 
     this.addEventListener("click", (event) => this._onClick(event), true);

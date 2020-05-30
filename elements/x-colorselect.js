@@ -104,7 +104,7 @@ export class XColorSelectElement extends HTMLElement {
     this._inputChangeStarted = false;
     this._onInputChangeDebouonced = debounce(this._onInputChangeDebouonced, 400, this);
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.innerHTML = shadowHTML;
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {

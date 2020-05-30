@@ -153,7 +153,7 @@ export class XSelectElement extends HTMLElement {
     this._mutationObserver = new MutationObserver((args) => this._onMutation(args));
     this._resizeObserver = new ResizeObserver(() => this._updateButtonChildrenSize());
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {

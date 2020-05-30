@@ -260,7 +260,7 @@ export class XBarsColorPickerElement extends HTMLElement {
     this._isDraggingLightnessSliderMarker = false;
     this._isDraggingAlphaSliderMarker = false;
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.innerHTML = shadowHTML;
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {

@@ -42,7 +42,7 @@ export class XContextMenuElement extends HTMLElement {
 
     this._parentElement = null;
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
     this["#backdrop"] = createElement("x-backdrop");

@@ -210,7 +210,7 @@ export class XWheelColorPickerElement extends HTMLElement {
     this._isDraggingValueSliderMarker = false;
     this._isDraggingAlphaSliderMarker = false;
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.innerHTML = shadowHTML;
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {

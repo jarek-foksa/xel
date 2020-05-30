@@ -45,7 +45,7 @@ export class XBackdropElement extends HTMLElement {
     super();
 
     this._ownerElement = null;
-    this._shadowRoot = this.attachShadow({mode: "closed"});
+    this._shadowRoot = this.attachShadow({mode: "open"});
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
     this.addEventListener("wheel", (event) => event.preventDefault());
