@@ -487,7 +487,7 @@ export class XButtonElement extends HTMLElement {
 
   _updateArrowVisibility() {
     let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
-    this["#arrow"].style.display = (popup ? null : "none");
+    // this["#arrow"].style.display = (popup ? null : "none");
   }
 
   _updateAccessabilityAttributes() {
