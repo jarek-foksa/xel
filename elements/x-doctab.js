@@ -24,7 +24,6 @@ let shadowTemplate = html`
         transition-duration: 0.15s;
         transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         cursor: default;
-        padding: 0 4px 0 16px;
         user-select: none;
         touch-action: pan-y;
         box-sizing: border-box;
@@ -45,6 +44,7 @@ let shadowTemplate = html`
         --close-button-height: 18px;
         --close-button-margin: 0 0 0 auto;
         --close-button-opacity: 0.8;
+        --close-button-radius: 18px;
         --close-button-path-d: path(
           "M 74 31 L 69 26 L 50 45 L 31 26 L 26 31 L 45 50 L 26 69 L 31 74 L 50 55 L 69 74 L 74 69 L 55 50 Z"
         );
@@ -80,10 +80,13 @@ let shadowTemplate = html`
         left: var(--close-button-left);
         right: var(--close-button-right);
         width: var(--close-button-width);
+        min-width: var(--close-button-width);
         height: var(--close-button-height);
         margin: var(--close-button-margin);
         opacity: var(--close-button-opacity);
+        border-radius: var(--close-button-radius);
         padding: 1px;
+        overflow: hidden;
       }
       #close-button:hover {
         background: rgba(0, 0, 0, 0.08);
