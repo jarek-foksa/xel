@@ -84,7 +84,7 @@ export class XMenuBarElement extends HTMLElement {
 
     this.addEventListener("focusout", (event) => this._onFocusOut(event));
     this._shadowRoot.addEventListener("pointerover", (event) => this._onShadowRootPointerOver(event));
-    this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event));
+    this._shadowRoot.addEventListener("mousedown", (event) => this._onShadowRootClick(event));
     this._shadowRoot.addEventListener("wheel", (event) => this._onShadowRootWheel(event));
     this._shadowRoot.addEventListener("keydown", (event) => this._onShadowRootKeyDown(event));
   }
@@ -230,6 +230,7 @@ export class XMenuBarElement extends HTMLElement {
   }
 
   async _onShadowRootClick(event) {
+    event.preventDefault()
     if (this.hasAttribute("closing")) {
       return;
     }
