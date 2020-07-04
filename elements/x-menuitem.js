@@ -221,7 +221,7 @@ export class XMenuItemElement extends HTMLElement {
     this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("mousedown", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
@@ -341,6 +341,7 @@ export class XMenuItemElement extends HTMLElement {
   }
 
   async _onClick(event) {
+    event.preventDefault()
     if (
       event.button > 0 ||
       event.target.closest("x-menuitem") !== this ||
