@@ -547,6 +547,8 @@ export class XButtonElement extends HTMLElement {
     let openedDialog = this.querySelector(":scope > dialog[open]");
     let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
+    this._lastPointerDownEvent = event;
+
     if (event.target === this["#backdrop"]) {
       this._onBackdropPointerDown(event);
     }
@@ -682,10 +684,14 @@ export class XButtonElement extends HTMLElement {
     }
 
     if (this._canOpenMenu()) {
-      this._openMenu();
+      if (pointerDownEvent.pointerType !== "touch") {
+        this._openMenu();
+      }
     }
     else if (this._canOpenPopover()) {
-      this._openPopover();
+      if (pointerDownEvent.pointerType !== "touch") {
+        this._openPopover();
+      }
     }
     else if (this._canClosePopover()) {
       this._closePopover();
@@ -810,6 +816,15 @@ export class XButtonElement extends HTMLElement {
       }
       else if (this._canOpenNotification()) {
         this._openNotification();
+      }
+    }
+
+    if (this._lastPointerDownEvent && this._lastPointerDownEvent.pointerType === "touch") {
+      if (this._canOpenMenu()) {
+        this._openMenu();
+      }
+      else if (this._canOpenPopover()) {
+        this._openPopover();
       }
     }
 
