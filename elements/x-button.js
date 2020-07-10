@@ -642,10 +642,10 @@ export class XButtonElement extends HTMLElement {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
 
-      window.addEventListener("pointerup", async () => {
+      this.addEventListener("lostpointercapture", async () => {
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
-        let minPressedTime = 150;
+        let minPressedTime = (pointerDownEvent.pointerType === "touch") ? 600 : 150;
 
         if (pressedTime < minPressedTime) {
           await sleep(minPressedTime - pressedTime);
