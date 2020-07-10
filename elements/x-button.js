@@ -619,17 +619,21 @@ export class XButtonElement extends HTMLElement {
 
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element as soon as
     // the button is released.
-    if (this.matches(":focus") === false) {
-      let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
+    {
+      pointerDownEvent.preventDefault();
 
-      this.addEventListener("lostpointercapture", () => {
-        if (ancestorFocusableElement) {
-          ancestorFocusableElement.focus();
-        }
-        else {
-          this.blur();
-        }
-      }, {once: true});
+      if (this.matches(":focus") === false) {
+        let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
+
+        this.addEventListener("lostpointercapture", () => {
+          if (ancestorFocusableElement) {
+            ancestorFocusableElement.focus();
+          }
+          else {
+            this.blur();
+          }
+        }, {once: true});
+      }
     }
 
     // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
