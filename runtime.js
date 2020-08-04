@@ -371,17 +371,16 @@ if (Element.prototype.setPointerCapture) {
 //
 
 {
-  let animation = document.createElement("div").animate({});
-
-  if (animation.finished === undefined) {
-    Object.defineProperty(animation.constructor.prototype, "finished", {
-      get() {
-        return new Promise((resolve) => {
-          this.playState === "finished" ? resolve() : this.addEventListener("finish", () => resolve(), {once: true});
-        });
-      }
-    });
-  }
+  // Animation.prototype.finished is supported by Chromium >= 84, but we override it anyway due to a bug in the
+  // native implementation that causes flickering because the promise is resolved too late:
+  // https://bugs.chromium.org/p/chromium/issues/detail?id=771977
+  Object.defineProperty(Animation.prototype, "finished", {
+    get() {
+      return new Promise((resolve) => {
+        this.playState === "finished" ? resolve() : this.addEventListener("finish", () => resolve(), {once: true});
+      });
+    }
+  });
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
