@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "fs-extra": "7.0.1",
-    "prismjs": "1.16.0",
+    "prismjs": "1.21.0",
     "rollup": "1.9.0"
   }
 }
