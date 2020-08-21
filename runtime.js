@@ -108,12 +108,15 @@ if (window.HTMLDialogElement) {
         openDialogs.push(this);
 
         this.addEventListener("close", closeListener = (event) => {
-          this.removeEventListener("close", closeListener);
+          // Note that "close" event might also dispatched by e.g. <bx-menu> inside the dialog, so we must
+          // ensure that the event target is this dialog
+          if (event.target === this) {
+            this.removeEventListener("close", closeListener);
+            openDialogs = openDialogs.filter(dialog => dialog !== this);
 
-          openDialogs = openDialogs.filter(dialog => dialog !== this);
-
-          if (openDialogs.length === 0) {
-            document.body.style.overflow = null;
+            if (openDialogs.length === 0) {
+              document.body.style.overflow = null;
+            }
           }
         });
       }
@@ -182,9 +185,13 @@ if (window.HTMLDialogElement) {
         });
 
         this.addEventListener("close", closeListener = (event) => {
-          this.removeEventListener("close", closeListener);
-          this.removeEventListener("keydown", keyDownListener);
-          document.removeEventListener("keydown", documentKeyDownListener);
+          // Note that "close" event might also dispatched by e.g. <bx-menu> inside the dialog, so we must
+          // ensure that the event target is this dialog
+          if (event.target === this) {
+            this.removeEventListener("close", closeListener);
+            this.removeEventListener("keydown", keyDownListener);
+            document.removeEventListener("keydown", documentKeyDownListener);
+          }
         });
       }
 
@@ -228,9 +235,13 @@ if (window.HTMLDialogElement) {
         });
 
         this.addEventListener("close", closeListener = (event) => {
-          this.removeEventListener("pointerdown", pointerDownListener);
-          this.removeEventListener("click", clickListener);
-          this.removeEventListener("close", closeListener);
+          // Note that "close" event might also dispatched by e.g. <bx-menu> inside the dialog, so we must
+          // ensure that the event target is this dialog
+          if (event.target === this) {
+            this.removeEventListener("pointerdown", pointerDownListener);
+            this.removeEventListener("click", clickListener);
+            this.removeEventListener("close", closeListener);
+          }
         });
       }
 
