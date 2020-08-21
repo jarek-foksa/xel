@@ -116,14 +116,24 @@ export class XContextMenuElement extends HTMLElement {
   }
 
   _onBackdropContextMenu(event) {
-    event.preventDefault()
+    event.preventDefault();
     event.stopImmediatePropagation();
 
     this.close().then(() => {
-      let target = this.parentElement.getRootNode().elementFromPoint(event.clientX, event.clientY);
+      let target = this.parentNode.getRootNode().elementFromPoint(event.clientX, event.clientY);
 
-      if (target && this.parentElement.contains(target)) {
-        this.open(event.clientX, event.clientY);
+      if (target && this.parentNode.contains(target)) {
+        let targetEvent = document.createEvent("MouseEvents");
+
+        targetEvent.initMouseEvent(
+          "contextmenu",
+          event.bubbles, event.cancelable, document.defaultView, event.detail,
+          event.screenX, event.screenY, event.clientX, event.clientY,
+          event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
+          event.button, event.relatedTarget
+        );
+
+        target.dispatchEvent(targetEvent);
       }
     });
   }
@@ -131,6 +141,7 @@ export class XContextMenuElement extends HTMLElement {
   _onBackdropPointerDown(event) {
     if (event.buttons === 1) {
       event.preventDefault();
+      event.stopImmediatePropagation();
       this.close();
     }
   }
