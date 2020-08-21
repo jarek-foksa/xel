@@ -90,7 +90,42 @@ export let createElement = (name, is = null) => {
 };
 
 // @info
-//   Same as standard element.closest() method but can also walk shadow DOM.
+//   Same as the standard document.elementFromPoint() moethod, but can also walk the shadow DOM.
+// @type
+//   (number, number, boolea) => Element?
+let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
+  let element = document.elementFromPoint(clientX, clientY);
+
+  if (walkShadowDOM && element) {
+    while (true) {
+      let shadowRoot = (element.shadowRoot || element._shadowRoot);
+
+      if (shadowRoot) {
+        let descendantElement = shadowRoot.elementFromPoint(clientX, clientY);
+
+        // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=843215
+        if (descendantElement.getRootNode() !== shadowRoot) {
+          descendantElement = null;
+        }
+
+        if (descendantElement && descendantElement !== element) {
+          element = descendantElement;
+        }
+        else {
+          break;
+        }
+      }
+      else {
+        break;
+      }
+    }
+  }
+
+  return element;
+};
+
+// @info
+//   Same as the standard element.closest() method but can also walk the shadow DOM.
 // @type
 //   (Element, string, boolean) => Element?
 export let closest = (element, selector, walkShadowDOM = true) => {

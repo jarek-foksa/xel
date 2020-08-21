@@ -120,21 +120,9 @@ export class XContextMenuElement extends HTMLElement {
     event.stopImmediatePropagation();
 
     this.close().then(() => {
-      let target = this.parentNode.getRootNode().elementFromPoint(event.clientX, event.clientY);
-
-      if (target && this.parentNode.contains(target)) {
-        let targetEvent = document.createEvent("MouseEvents");
-
-        targetEvent.initMouseEvent(
-          "contextmenu",
-          event.bubbles, event.cancelable, document.defaultView, event.detail,
-          event.screenX, event.screenY, event.clientX, event.clientY,
-          event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
-          event.button, event.relatedTarget
-        );
-
-        target.dispatchEvent(targetEvent);
-      }
+      let target = elementFromPoint(event.clientX, event.clientY, true);
+      let clonedEvent = new MouseEvent(event.type, event);
+      target.dispatchEvent(clonedEvent);
     });
   }
 
