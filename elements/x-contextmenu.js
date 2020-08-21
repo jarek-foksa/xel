@@ -2,7 +2,7 @@
 // @copyright
 //   © 2016-2017 Jarosław Foksa
 
-import {createElement, closest, html} from "../utils/element.js";
+import {createElement, closest, elementFromPoint, html} from "../utils/element.js";
 
 let debug = true;
 

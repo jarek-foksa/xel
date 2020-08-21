@@ -93,7 +93,7 @@ export let createElement = (name, is = null) => {
 //   Same as the standard document.elementFromPoint() moethod, but can also walk the shadow DOM.
 // @type
 //   (number, number, boolea) => Element?
-let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
+export let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
   let element = document.elementFromPoint(clientX, clientY);
 
   if (walkShadowDOM && element) {
