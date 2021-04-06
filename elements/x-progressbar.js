@@ -1,93 +1,95 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
-import {normalize} from "../utils/math.js";
+import Xel from "../classes/xel.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        box-sizing: border-box;
-        height: 4px;
-        width: 100%;
-        position: relative;
-        contain: strict;
-        overflow: hidden;
-        background: #acece6;
-        cursor: default;
-        --bar-background: #3B99FB;
-        --bar-box-shadow: 0px 0px 0px 1px #3385DB;
-      }
-      :host([hidden]) {
-        display: none;
-      }
+import {html, css} from "../utils/template.js";
 
-      #indeterminate-bars {
-        width: 100%;
-        height: 100%;
-      }
+// @element x-progressbar
+// @part bar
+export default class XProgressbarElement extends HTMLElement {
+  static observedAttributes = ["value", "max", "disabled", "size"];
 
-      #determinate-bar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: 0%;
-        height: 100%;
-        background: var(--bar-background);
-        box-shadow: var(--bar-box-shadow);
-        transition: width 0.4s ease-in-out;
-        will-change: left, right;
-      }
-      :host([value="-1"]) #determinate-bar {
-        visibility: hidden;
-      }
+  static _shadowTemplate = html`
+    <template>
+      <div id="determinate-bar" part="bar"></div>
 
-      #primary-indeterminate-bar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        height: 100%;
-        background: var(--bar-background);
-        will-change: left, right;
-      }
+      <div id="indeterminate-bars">
+        <div id="primary-indeterminate-bar" part="bar"></div>
+        <div id="secondary-indeterminate-bar" part="bar"></div>
+      </div>
+    </template>
+  `;
 
-      #secondary-indeterminate-bar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        height: 100%;
-        background: var(--bar-background);
-        will-change: left, right;
-      }
-    </style>
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      box-sizing: border-box;
+      height: 8px;
+      width: 100%;
+      position: relative;
+      contain: strict;
+      overflow: hidden;
+      background: #acece6;
+      cursor: default;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
-    <div id="determinate-bar"></div>
+    #indeterminate-bars {
+      width: 100%;
+      height: 100%;
+    }
 
-    <div id="indeterminate-bars">
-      <div id="primary-indeterminate-bar"></div>
-      <div id="secondary-indeterminate-bar"></div>
-    </div>
-  </template>
-`;
+    #determinate-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      height: 100%;
+      background: #3B99FB;
+      box-shadow: 0px 0px 0px 1px #3385DB;
+      transition: width 0.4s ease-in-out;
+      will-change: left, right;
+    }
+    :host([value="-1"]) #determinate-bar {
+      visibility: hidden;
+    }
 
-export class XProgressbarElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["value", "max", "disabled"];
-  }
+    #primary-indeterminate-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100%;
+      background: #3B99FB;
+      will-change: left, right;
+    }
 
-  // @info
-  //   Current progress, in procentages.
-  // @type
-  //   number?
-  // @default
-  //   null
+    #secondary-indeterminate-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100%;
+      background: #3B99FB;
+      will-change: left, right;
+    }
+  `
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type number?
+  // @default null
+  //
+  // Current progress, in procentages.
   get value() {
     return this.hasAttribute("value") ? parseFloat(this.getAttribute("value")) : null;
   }
@@ -95,11 +97,10 @@ export class XProgressbarElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @type
-  //   number?
-  // @default
-  //   null
+  // @property
   // @attribute
+  // @type number
+  // @default 1
   get max() {
     return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : 1;
   }
@@ -107,13 +108,12 @@ export class XProgressbarElement extends HTMLElement {
     this.setAttribute("max", max);
   }
 
-  // @info
-  //   Whether this button is disabled.
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether this button is disabled.
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -121,21 +121,54 @@ export class XProgressbarElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _indeterminateAnimations = null;
+  _xelSizeChangeListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XProgressbarElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XProgressbarElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
   }
 
   connectedCallback() {
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+
     this._update();
+    this._updateComputedSizeAttriubte();
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -148,6 +181,9 @@ export class XProgressbarElement extends HTMLElement {
     else if (name === "disabled") {
       this._update();
     }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,11 +193,11 @@ export class XProgressbarElement extends HTMLElement {
     {
       // Hide
       if (this.value === null || this.value === -1 || this.disabled) {
-        this["#determinate-bar"].style.width = "0%";
+        this._elements["determinate-bar"].style.width = "0%";
       }
       // Show
       else {
-        this["#determinate-bar"].style.width = ((this.value / this.max) * 100) + "%";
+        this._elements["determinate-bar"].style.width = ((this.value / this.max) * 100) + "%";
       }
     }
 
@@ -181,7 +217,7 @@ export class XProgressbarElement extends HTMLElement {
       else {
         if (!this._indeterminateAnimations) {
           this._indeterminateAnimations = [
-            this["#primary-indeterminate-bar"].animate(
+            this._elements["primary-indeterminate-bar"].animate(
               [
                 { left: "-35%", right: "100%", offset: 0.0 },
                 { left: "100%", right: "-90%", offset: 0.6 },
@@ -193,7 +229,7 @@ export class XProgressbarElement extends HTMLElement {
                 iterations: Infinity
               }
             ),
-            this["#secondary-indeterminate-bar"].animate(
+            this._elements["secondary-indeterminate-bar"].animate(
               [
                 { left: "-100%", right: "100%", offset: 0.0 },
                 { left:  "110%", right: "-30%", offset: 0.8 },
@@ -209,6 +245,32 @@ export class XProgressbarElement extends HTMLElement {
           ];
         }
       }
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 }

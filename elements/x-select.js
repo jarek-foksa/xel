@@ -1,111 +1,110 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html, closest, createElement} from "../utils/element.js";
+import Xel from "../classes/xel.js";
+
+import {closest, createElement} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 import {throttle} from "../utils/time.js";
 
-let debug = false;
-let windowPadding = 7;
+const DEBUG = false;
+const WINDOW_PADDING = 7;
+
 let $itemChild = Symbol();
-let $oldTabIndex = Symbol()
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        width: fit-content;
-        height: fit-content;
-        max-width: 100%;
-        box-sizing: border-box;
-        outline: none;
-        font-size: 15px;
-        user-select: none;
-        --arrow-width: 13px;
-        --arrow-height: 13px;
-        --arrow-min-width: 13px;
-        --arrow-margin: 0 2px 0 11px;
-        --arrow-color: currentColor;
-        --arrow-d: path(
-          "M 25 41 L 50 16 L 75 41 L 83 34 L 50 1 L 17 34 Z M 17 66 L 50 100 L 83 66 L 75 59 L 50 84 L 25 59 Z"
-        );
-      }
-      :host([disabled]) {
-        pointer-events: none;
-        opacity: 0.5;
-      }
-      :host([hidden]) {
-        display: none;
-      }
-      :host(:hover) {
-        cursor: default;
-      }
+// @element x-select
+// @part arrow
+// @event ^change {oldValue:string?, newValue:string?}
+export default class XSelectElement extends HTMLElement {
+  static observedAttributes = ["disabled", "size"];
 
-      #button {
-        display: flex;
-        flex-flow: row;
-        align-items: center;
-        justify-content: flex-start;
-        flex: 1;
-        width: 100%;
-        height: 100%;
-      }
-
-      :host([mixed]) #button > * {
-        opacity: 0.7;
-      }
-
-      #button > x-label {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-
-      #button > #arrow-container {
-        margin: 0 0 0 auto;
-        z-index: 999;
-      }
-
-      #button > #arrow-container #arrow {
-        display: flex;
-        width: var(--arrow-width);
-        height: var(--arrow-height);
-        min-width: var(--arrow-min-width);
-        margin: var(--arrow-margin);
-        color: var(--arrow-color);
-        d: var(--arrow-d);
-      }
-
-      #button > #arrow-container #arrow path {
-        fill: currentColor;
-        d: inherit;
-      }
-    </style>
-
-    <div id="button">
-      <div id="arrow-container">
-        <svg id="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path></path>
-        </svg>
+  static _shadowTemplate = html`
+    <template>
+      <div id="button">
+        <div id="arrow-container">
+          <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path></path>
+          </svg>
+        </div>
       </div>
-    </div>
 
-    <slot></slot>
-  </template>
-`;
+      <slot></slot>
+    </template>
+  `;
 
-// @event
-//   change {oldValue: string?, newValue: string?}
-export class XSelectElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["disabled"];
-  }
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      width: fit-content;
+      height: 32px;
+      padding: 0 0 0 9px;
+      max-width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      outline: none;
+      font-size: 14px;
+      user-select: none;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    :host([hidden]) {
+      display: none;
+    }
+    :host(:hover) {
+      cursor: default;
+    }
 
-  // @type
-  //   string?
-  // @default
-  //   null
+    #button {
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      justify-content: flex-start;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+    }
+
+    :host([mixed]) #button > * {
+      opacity: 0.7;
+    }
+
+    #button > x-label {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    #button > #arrow-container {
+      margin: 0 0 0 auto;
+      z-index: 999;
+    }
+
+    #button > #arrow-container #arrow {
+      display: flex;
+      width: 13px;
+      height: 13px;
+      min-width: 13px;
+      margin: 0 2px 0 11px;
+      color: currentColor;
+      d: path("M 25 41 L 50 16 L 75 41 L 83 34 L 50 1 L 17 34 Z M 17 66 L 50 100 L 83 66 L 75 59 L 50 84 L 25 59 Z");
+    }
+
+    #button > #arrow-container #arrow path {
+      fill: currentColor;
+      d: inherit;
+    }
+  `
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
+  // @type string?
+  // @default null
   get value() {
     let item = this.querySelector(`x-menuitem[toggled]`);
     return item ? item.value : null;
@@ -116,13 +115,12 @@ export class XSelectElement extends HTMLElement {
     }
   }
 
-  // @info
-  //   Whether this select has "mixed" state.
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether this select has "mixed" state.
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -130,11 +128,10 @@ export class XSelectElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -142,34 +139,60 @@ export class XSelectElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _lastTabIndex = 0;
+  _wasFocusedBeforeExpanding = false;
+
+  _resizeListener = null;
+  _blurListener = null;
+  _xelSizeChangeListener = null;
+
+  _mutationObserver = new MutationObserver((args) => this._onMutation(args));
+  _resizeObserver = new ResizeObserver(() => this._onResize());
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._wasFocusedBeforeExpanding = false;
-    this._updateButtonTh300 = throttle(this._updateButton, 300, this);
-
-    this._mutationObserver = new MutationObserver((args) => this._onMutation(args));
-    this._resizeObserver = new ResizeObserver(() => this._updateButtonChildrenSize());
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XSelectElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XSelectElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
-    this["#backdrop"] = createElement("x-backdrop");
-    this["#backdrop"].style.opacity = "0";
-    this["#backdrop"].ownerElement = this;
-    this["#backdrop"].addEventListener("click", (event) => this._onBackdropClick(event));
+    this._elements["backdrop"] = createElement("x-backdrop");
+    this._elements["backdrop"].style.opacity = "0";
+    this._elements["backdrop"].ownerElement = this;
+    this._elements["backdrop"].addEventListener("click", (event) => this._onBackdropClick(event));
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("toggle", (event) => this._onMenuItemToggle(event));
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
-
   }
 
   connectedCallback() {
@@ -178,20 +201,28 @@ export class XSelectElement extends HTMLElement {
 
     this._updateButton();
     this._updateAccessabilityAttributes();
+    this._updateComputedSizeAttriubte();
 
-    if (debug) {
+    if (DEBUG) {
       this.setAttribute("debug", "");
     }
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
     this._mutationObserver.disconnect();
     this._resizeObserver.disconnect();
+
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "disabled") {
-      this._onDisabledAttributeChange();
+      this._updateAccessabilityAttributes();
+    }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
     }
   }
 
@@ -203,15 +234,14 @@ export class XSelectElement extends HTMLElement {
     }
 
     this._wasFocusedBeforeExpanding = this.matches(":focus");
-
-    this["#backdrop"].show(false);
+    this._elements["backdrop"].show(false);
 
     window.addEventListener("resize", this._resizeListener = () => {
       this._collapse();
     });
 
     window.addEventListener("blur", this._blurListener = () => {
-      if (debug === false) {
+      if (DEBUG === false) {
         this._collapse()
       }
     });
@@ -241,21 +271,22 @@ export class XSelectElement extends HTMLElement {
       let toggledItem = menu.querySelector(`x-menuitem[toggled]`);
 
       if (toggledItem) {
-        let buttonChild = this["#button"].querySelector("x-label") || this["#button"].firstElementChild;
+        let buttonChild = this._elements["button"].querySelector("x-label") ||
+                          this._elements["button"].firstElementChild;
         let itemChild = buttonChild[$itemChild];
 
         menu.openOverElement(buttonChild, itemChild);
       }
       else {
         let item = menu.querySelector("x-menuitem").firstElementChild;
-        menu.openOverElement(this["#button"], item);
+        menu.openOverElement(this._elements["button"], item);
       }
     }
 
     // Increase menu width if it is narrower than the button
     {
       let menuBounds = menu.getBoundingClientRect();
-      let buttonBounds = this["#button"].getBoundingClientRect();
+      let buttonBounds = this._elements["button"].getBoundingClientRect();
       let hostPaddingRight = parseFloat(getComputedStyle(this).paddingRight);
 
       if (menuBounds.right - hostPaddingRight < buttonBounds.right) {
@@ -267,8 +298,8 @@ export class XSelectElement extends HTMLElement {
     {
       let menuBounds = this.getBoundingClientRect();
 
-      if (menuBounds.right + windowPadding > window.innerWidth) {
-        this.style.maxWidth = (window.innerWidth - menuBounds.left - windowPadding) + "px";
+      if (menuBounds.right + WINDOW_PADDING > window.innerWidth) {
+        this.style.maxWidth = (window.innerWidth - menuBounds.left - WINDOW_PADDING) + "px";
       }
     }
   }
@@ -281,7 +312,7 @@ export class XSelectElement extends HTMLElement {
     let menu = this.querySelector(":scope > x-menu");
     menu.setAttribute("closing", "");
     await whenTriggerEnd;
-    this["#backdrop"].hide(false);
+    this._elements["backdrop"].hide(false);
 
     if (this._wasFocusedBeforeExpanding) {
       this.focus();
@@ -327,7 +358,7 @@ export class XSelectElement extends HTMLElement {
 
   _updateButton() {
     let toggledItem = this.querySelector(`:scope > x-menu x-menuitem[toggled]`);
-    this["#button"].innerHTML = "";
+    this._elements["button"].innerHTML = "";
 
     if (toggledItem) {
       for (let itemChild of toggledItem.children) {
@@ -335,24 +366,27 @@ export class XSelectElement extends HTMLElement {
         buttonChild[$itemChild] = itemChild;
         buttonChild.removeAttribute("id");
         buttonChild.removeAttribute("style");
-        this["#button"].append(buttonChild);
+        this._elements["button"].append(buttonChild);
       }
 
       this._updateButtonChildrenSize();
     }
 
-    this["#button"].append(this["#arrow-container"]);
+    this._elements["button"].append(this._elements["arrow-container"]);
   }
 
+  _updateButtonThrottled = throttle(this._updateButton, 300, this);
+
   _updateButtonChildrenSize() {
-    for (let buttonChild of this["#button"].children) {
-      if (buttonChild !== this["#arrow-container"]) {
-        let {width, height, margin, padding, border} = getComputedStyle(buttonChild[$itemChild]);
+    for (let buttonChild of this._elements["button"].children) {
+      if (buttonChild !== this._elements["arrow-container"]) {
+        let {width, height, margin, padding, border, borderRadius} = getComputedStyle(buttonChild[$itemChild]);
 
         if (["x-icon", "x-swatch", "img", "svg"].includes(buttonChild[$itemChild].localName)) {
           buttonChild.style.width = width;
           buttonChild.style.height = height;
           buttonChild.style.minWidth = width;
+          buttonChild.style.borderRadius = borderRadius;
         }
 
         buttonChild.style.margin = margin;
@@ -368,15 +402,15 @@ export class XSelectElement extends HTMLElement {
     // Update "tabindex" attribute
     {
       if (this.disabled) {
-        this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+        this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
         this.tabIndex = -1;
       }
       else {
         if (this.tabIndex < 0) {
-          this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+          this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
         }
 
-        delete this[$oldTabIndex];
+        this._lastTabIndex = 0;
       }
     }
 
@@ -395,18 +429,48 @@ export class XSelectElement extends HTMLElement {
     }
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
 
-  _onDisabledAttributeChange() {
-    this._updateAccessabilityAttributes();
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
+    }
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onMutation(records) {
     for (let record of records) {
-      if (record.type === "attributes" && record.target.localName === "x-menuitem" && record.attributeName === "toggled") {
-        this._updateButtonTh300();
+      if (
+        record.type === "attributes" &&
+        record.target.localName === "x-menuitem" &&
+        record.attributeName === "toggled"
+      ) {
+        this._updateButtonThrottled();
       }
     }
+  }
+
+  _onResize() {
+    this._updateButtonChildrenSize();
   }
 
   _onPointerDown(event) {
@@ -416,7 +480,7 @@ export class XSelectElement extends HTMLElement {
     }
   }
 
-  _onClick(event) {
+  async _onClick(event) {
     if (event.button !== 0) {
       return;
     }
@@ -435,12 +499,12 @@ export class XSelectElement extends HTMLElement {
           item.toggled = (item === clickedItem);
         }
 
+        await this._collapse(clickedItem.whenTriggerEnd);
+
         if (oldValue !== newValue || this.mixed) {
           this.mixed = false;
           this.dispatchEvent(new CustomEvent("change", {bubbles: true, detail: {oldValue, newValue}}));
         }
-
-        this._collapse(clickedItem.whenTriggerEnd);
       }
     }
   }

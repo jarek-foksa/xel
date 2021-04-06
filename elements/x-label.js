@@ -1,46 +1,45 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html, generateUniqueID} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        line-height: 1.2;
-        user-select: none;
-        box-sizing: border-box;
-      }
-      :host([disabled]) {
-        opacity: 0.5;
-      }
-      :host([hidden]) {
-        display: none;
-      }
+// @element x-label
+export default class XLabelElement extends HTMLElement {
+  static _shadowTemplate = html`
+    <template>
+      <slot></slot>
+    </template>
+  `;
 
-      slot {
-        text-decoration: inherit;
-      }
-    </style>
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      line-height: 1.2;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    :host([disabled]) {
+      opacity: 0.5;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
-    <slot></slot>
-  </template>
-`;
+    slot {
+      text-decoration: inherit;
+    }
+  `
 
-export class XLabelElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["for"];
-  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @info
-  //   Values associated with this label.
-  // @type
-  //   string
-  // @default
-  //   ""
   // @attribute
+  // @type string
+  // @default ""
+  //
+  // Value associated with this label.
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -48,23 +47,9 @@ export class XLabelElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @info
-  //   Source of the icon to show.
-  // @type
-  //   string
   // @attribute
-  get for() {
-    return this.getAttribute("for");
-  }
-  set for(value) {
-    this.setAttribute("for", value);
-  }
-
-  // @type
-  //   boolean
-  // @default
-  //   false
-  // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -72,46 +57,16 @@ export class XLabelElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  _shadowRoot = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    this.addEventListener("click", (event) => this._onClick(event));
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "for") {
-      this._onForAttributeChange();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _onClick(event) {
-    if (this.for && this.disabled === false && event.target.closest("a") === null) {
-      let target = this.getRootNode().querySelector("#" + CSS.escape(this.for));
-
-      if (target) {
-        target.click();
-      }
-    }
-  }
-
-  _onForAttributeChange() {
-    let rootNode = this.getRootNode();
-    let target = rootNode.querySelector("#" + CSS.escape(this.for));
-
-    if  (target) {
-      if (!this.id) {
-        this.id = generateUniqueID(rootNode, "label-");
-      }
-
-      target.setAttribute("aria-labelledby", this.id);
-    }
+    this._shadowRoot.adoptedStyleSheets = [XLabelElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XLabelElement._shadowTemplate.content, true));
   }
 }
 

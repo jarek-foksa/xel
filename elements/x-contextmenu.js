@@ -1,33 +1,37 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {createElement, closest, elementFromPoint, html} from "../utils/element.js";
+import {createElement, closest, elementFromPoint} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 
-let debug = true;
+// @element x-contextmenu
+export default class XContextMenuElement extends HTMLElement {
+  static _shadowTemplate = html`
+    <template>
+      <slot></slot>
+    </template>
+  `;
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        position: fixed;
-        width: 0px;
-        height: 0px;
-        z-index: 1001;
-      }
-    </style>
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      position: fixed;
+      width: 0px;
+      height: 0px;
+      z-index: 1001;
+    }
+  `
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    <slot></slot>
-  </template>
-`;
-
-export class XContextMenuElement extends HTMLElement {
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether the context menu should open when user right-clicks its parent container.
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -35,23 +39,28 @@ export class XContextMenuElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  _shadowRoot = null;
+  _elements = {};
+  _parentElement = null;
+
+  _windowBlurListener = null;
+  _parentContextMenuListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._parentElement = null;
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XContextMenuElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XContextMenuElement._shadowTemplate.content, true));
 
-    this["#backdrop"] = createElement("x-backdrop");
-    this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
-    this["#backdrop"].addEventListener("contextmenu", (event) => this._onBackdropContextMenu(event));
-    this["#backdrop"].addEventListener("pointerdown", (event) => this._onBackdropPointerDown(event));
+    this._elements["backdrop"] = createElement("x-backdrop");
+    this._elements["backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+    this._elements["backdrop"].addEventListener("contextmenu", (event) => this._onBackdropContextMenu(event));
+    this._elements["backdrop"].addEventListener("pointerdown", (event) => this._onBackdropPointerDown(event));
 
-    window.addEventListener("blur", (event) => this._onBlur(event));
-    this.addEventListener("blur", (event) => this._onBlur(event));
+    this.addEventListener("blur", (event) => this._onBlur());
     this.addEventListener("keydown", (event) => this._onKeyDown(event), true);
     this.addEventListener("click", (event) => this._onClick(event));
   }
@@ -59,41 +68,58 @@ export class XContextMenuElement extends HTMLElement {
   connectedCallback() {
     this._parentElement = this.parentElement || this.parentNode.host;
 
+    window.addEventListener("blur", this._windowBlurListener = () => {
+      this._onBlur();
+    });
+
     this._parentElement.addEventListener("contextmenu", this._parentContextMenuListener = (event) => {
       this._onParentContextMenu(event);
     });
   }
 
   disconnectedCallback() {
+    window.removeEventListener("blur", this._windowBlurListener);
     this._parentElement.removeEventListener("contextmenu", this._parentContextMenuListener);
+
     this._parentElement = null;
   }
 
   ///////////////////////////////////'/////////////////////////////////////////////////////////////////////////////
 
+  // @method
+  // @type (number, number) => void
+  //
+  // Open the context menu at given point.
   open(clientX, clientY) {
     let menu = this.querySelector("x-menu");
 
     if (menu.opened === false) {
       menu.openAtPoint(clientX, clientY);
 
-      this["#backdrop"].ownerElement = menu;
-      this["#backdrop"].show(false);
+      this._elements["backdrop"].ownerElement = menu;
+      this._elements["backdrop"].show(false);
 
       menu.focus();
     }
   }
 
+  // @method
+  // @type () => void
+  //
+  // Close the context menu.
   close() {
     return new Promise(async (resolve) => {
       let menu = this.querySelector("x-menu");
-      await menu.close();
-      this["#backdrop"].hide(false);
 
-      let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+      if (menu && menu.opened === true) {
+        await menu.close();
+        this._elements["backdrop"].hide(false);
 
-      if (ancestorFocusableElement) {
-        ancestorFocusableElement.focus();
+        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+        if (ancestorFocusableElement) {
+          ancestorFocusableElement.focus();
+        }
       }
 
       resolve();
@@ -103,9 +129,7 @@ export class XContextMenuElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onBlur() {
-    if (debug === false) {
-      this.close();
-    }
+    this.close();
   }
 
   _onParentContextMenu(event) {

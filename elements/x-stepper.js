@@ -1,111 +1,111 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: flex;
-        flex-flow: row;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        width: fit-content;
-        --button-color: rgba(0, 0, 0, 0.6);
-        --button-border-left: none;
-        --pressed-button-color: white;
-        --pressed-button-background: rgba(0, 0, 0, 0.3);
-        --increment-arrow-width: 11px;
-        --increment-arrow-height: 11px;
-        --increment-arrow-path-d: path("M 24 69 L 50 43 L 76 69 L 69 76 L 50 58 L 31 76 L 24 69 Z" );
-        --decrement-arrow-width: 11px;
-        --decrement-arrow-height: 11px;
-        --decrement-arrow-path-d: path("M 24 32 L 50 58 L 76 32 L 69 25 L 50 44 L 31 25 L 24 32 Z" );
-      }
-      :host(:hover) {
-        cursor: default;
-      }
+// @element x-stepper
+// @part increment-button - Increment button.
+// @part decrement-button - Decrement button.
+// @part increment-arrow - SVG arrow image belonging to the increment button.
+// @part decrement-arrow - SVG arrow image belonging to the decrement button.
+// @event ^increment - Fired every 100ms while user is holding down the increment button.
+// @event ^decrement - Fired every 100ms while user is holding down the decrement button.
+// @event ^incrementstart - User pressed the increment button.
+// @event ^decrementstart - User pressed the decrement button.
+// @event ^incrementend - User released the increment button.
+// @event ^decrementend - User released the decrement button.
+export default class XStepperElement extends HTMLElement {
+  static observedAttributes = ["disabled"];
 
-      #increment-button,
-      #decrement-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        user-select: none;
-        box-sizing: border-box;
-        color: var(--button-color);
-        border-left: var(--button-border-left);
-      }
-      #increment-button[data-pressed],
-      #decrement-button[data-pressed] {
-        color: var(--pressed-button-color);
-        background: var(--pressed-button-background);
-      }
-      :host([disabled="increment"]) #increment-button,
-      :host([disabled="decrement"]) #decrement-button,
-      :host([disabled=""]) #increment-button,
-      :host([disabled=""]) #decrement-button {
-        opacity: 0.3;
-        pointer-events: none;
-      }
+  static _shadowTemplate = html`
+    <template>
+      <div id="decrement-button" part="decrement-button" class="button">
+        <svg id="decrement-arrow" part="decrement-arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path id="decrement-arrow-path"></path>
+        </svg>
+      </div>
 
-      #increment-arrow {
-        width: var(--increment-arrow-width);
-        height: var(--increment-arrow-height);
-        pointer-events: none;
-      }
-      #decrement-arrow {
-        width: var(--decrement-arrow-width);
-        height: var(--decrement-arrow-height);
-        pointer-events: none;
-      }
+      <div id="increment-button" part="increment-button" class="button">
+        <svg id="increment-arrow" part="increment-arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path id="increment-arrow-path"></path>
+        </svg>
+      </div>
+    </template>
+  `;
 
-      #increment-arrow-path {
-        d: var(--increment-arrow-path-d);
-        fill: currentColor;
-      }
-      #decrement-arrow-path {
-        d: var(--decrement-arrow-path-d);
-        fill: currentColor;
-      }
-    </style>
+  static _shadowStyleSheet = css`
+    :host {
+      display: flex;
+      flex-flow: column-reverse;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      height: 100%;
+      width: fit-content;
+      color: rgba(0, 0, 0, 0.6);
+    }
+    :host(:hover) {
+      cursor: default;
+    }
+    :host([disabled=""]) {
+      opacity: 0.5;
+      pointer-events: none;
+    }
 
-    <div id="decrement-button" class="button">
-      <svg id="decrement-arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path id="decrement-arrow-path"></path>
-      </svg>
-    </div>
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      box-sizing: border-box;
+      color: inherit;
+      border-left: none;
+    }
+    .button[data-pressed] {
+      color: white;
+      background: rgba(0, 0, 0, 0.3);
+    }
+    :host([disabled="increment"]) #increment-button,
+    :host([disabled="decrement"]) #decrement-button {
+      opacity: 0.3;
+      pointer-events: none;
+    }
 
-    <div id="increment-button" class="button">
-      <svg id="increment-arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path id="increment-arrow-path"></path>
-      </svg>
-    </div>
-  </template>
-`;
+    #increment-arrow {
+      width: 11px;
+      height: 11px;
+      pointer-events: none;
+      d: path("M 24 69 L 50 43 L 76 69 L 69 76 L 50 58 L 31 76 L 24 69 Z" );
+    }
+    #decrement-arrow {
+      width: 11px;
+      height: 11px;
+      pointer-events: none;
+      d: path("M 24 32 L 50 58 L 76 32 L 69 25 L 50 44 L 31 25 L 24 32 Z" );
+    }
 
-// @events
-//   increment
-//   incrementstart
-//   incrementend
-//   decrement
-//   decrementstart
-//   decrementend
-export class XStepperElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["disabled"];
-  }
+    #increment-arrow-path,
+    #decrement-arrow-path {
+      d: inherit;
+      fill: currentColor;
+    }
+  `
 
-  // @type
-  //   true || false || "increment" || "decrement"
-  // @default
-  //   "false"
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
+  // @attribute
+  // @type true || false || "increment" || "decrement"
+  // @default false
+  //
+  // Set to <code>true</code> or <code>false</code> to disable both buttons. Set to <code>"increment"</code> or
+  // <code>"decrement"</code> to disable only a single button.
   get disabled() {
     if (this.hasAttribute("disabled")) {
       if (this.getAttribute("disabled") === "increment") {
@@ -134,19 +134,41 @@ export class XStepperElement extends HTMLElement {
     }
   }
 
+  _shadowRoot = null;
+  _elements = {};
+  _parentInput = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XStepperElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XStepperElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this._shadowRoot.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+  }
+
+  connectedCallback() {
+    if (this.parentElement.localName === "x-numberinput") {
+      this._parentInput = this.parentElement;
+      this._parentInput.setAttribute("hasstepper", "");
+    }
+  }
+
+  disconnectedCallback() {
+    if (this._parentInput) {
+      if (this._parentInput.querySelector(":scope > x-stepper") === null) {
+        this._parentInput.removeAttribute("hasstepper", "");
+      }
+
+      this._parentInput = null;
+    }
   }
 
   attributeChangedCallback(name) {
@@ -159,19 +181,20 @@ export class XStepperElement extends HTMLElement {
 
   _onDisabledAttributeChange() {
     if (this.hasAttribute("disabled")) {
-      this["#increment-button"].removeAttribute("data-pressed");
-      this["#decrement-button"].removeAttribute("data-pressed");
+      this.removeAttribute("pressed");
+      this._elements["increment-button"].removeAttribute("data-pressed");
+      this._elements["decrement-button"].removeAttribute("data-pressed");
     }
   }
 
-  async _onPointerDown(pointerDownEvent) {
+  _onPointerDown(pointerDownEvent) {
     let button = pointerDownEvent.target.closest(".button");
     let action = null;
 
-    if (button === this["#increment-button"]) {
+    if (button === this._elements["increment-button"]) {
       action = "increment";
     }
-    else if (button === this["#decrement-button"]) {
+    else if (button === this._elements["decrement-button"]) {
       action = "decrement";
     }
 
@@ -185,6 +208,7 @@ export class XStepperElement extends HTMLElement {
       let pointerDownTimeStamp = Date.now();
 
       button.setAttribute("data-pressed", "");
+      this.setAttribute("pressed", action);
       this.setPointerCapture(pointerDownEvent.pointerId);
 
       this.addEventListener("lostpointercapture", async (event) => {
@@ -196,6 +220,7 @@ export class XStepperElement extends HTMLElement {
         }
 
         button.removeAttribute("data-pressed");
+        this.removeAttribute("pressed");
       }, {once: true});
     }
 
@@ -208,7 +233,7 @@ export class XStepperElement extends HTMLElement {
       this.dispatchEvent(new CustomEvent(action + "start", {bubbles: true}));
       this.dispatchEvent(new CustomEvent(action, {bubbles: true, detail: {shiftKey}}));
 
-      this.addEventListener("lostpointercapture", async (event) => {
+      this.addEventListener("lostpointercapture", (event) => {
         clearInterval(intervalID);
         this.dispatchEvent(new CustomEvent(action + "end", {bubbles: true}));
       }, {once: true});

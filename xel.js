@@ -1,5 +1,13 @@
 
-import "./runtime.js";
+// @copyright
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
+
+import Xel from "./classes/xel.js";
+
+import "./polyfills.js";
+import "./elements/dialog.js";
 import "./elements/x-accordion.js";
 import "./elements/x-backdrop.js";
 import "./elements/x-barscolorpicker.js";
@@ -10,7 +18,6 @@ import "./elements/x-card.js";
 import "./elements/x-checkbox.js";
 import "./elements/x-colorselect.js";
 import "./elements/x-contextmenu.js";
-import "./elements/x-dateselect.js";
 import "./elements/x-doctab.js";
 import "./elements/x-doctabs.js";
 import "./elements/x-icon.js";
@@ -34,10 +41,11 @@ import "./elements/x-swatch.js";
 import "./elements/x-switch.js";
 import "./elements/x-tab.js";
 import "./elements/x-tabs.js";
-import "./elements/x-taginput.js";
-import "./elements/x-textarea.js";
+import "./elements/x-tag.js";
+import "./elements/x-tags.js";
+import "./elements/x-tagsinput.js";
+import "./elements/x-texteditor.js";
 import "./elements/x-throbber.js";
 import "./elements/x-wheelcolorpicker.js";
-import "./elements/xel-app.js";
-import "./elements/xel-codeview.js";
-import "./elements/xel-demo.js";
+
+export default Xel;

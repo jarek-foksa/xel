@@ -1,126 +1,137 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
+
 import {isNumeric} from "../utils/string.js";
+import {html, css} from "../utils/template.js";
 import {debounce, sleep} from "../utils/time.js";
-import {normalize, getPrecision, comparePoints, getDistanceBetweenPoints} from "../utils/math.js";
+import {normalize, getPrecision, getDistanceBetweenPoints} from "../utils/math.js";
 
 let {isFinite} = Number;
-let numericKeys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
-let $oldTabIndex = Symbol();
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        position: relative;
-        width: 100px;
-        height: 24px;
-        box-sizing: border-box;
-        color: #000000;
-        --selection-color: currentColor;
-        --selection-background: #B2D7FD;
-        --inner-padding: 0;
-      }
-      :host(:hover) {
-        cursor: text;
-      }
-      :host([error]) {
-        --selection-color: white;
-        --selection-background: #d50000;
-      }
-      :host([mixed]) {
-        color: rgba(0, 0, 0, 0.7);
-      }
-      :host([disabled]) {
-        pointer-events: none;
-        opacity: 0.5;
-      }
-      :host([hidden]) {
-        display: none;
-      }
+const NUMERIC_KEYS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
 
-      ::selection {
-        color: var(--selection-color);
-        background: var(--selection-background);
-      }
+// @element x-numberinput
+// @event ^change
+// @event ^changestart
+// @event ^changeend
+// @event ^textinputmodestart
+// @event ^textinputmodeend
+export default class XNumberInputElement extends HTMLElement {
+  static observedAttributes = ["value", "min", "max", "prefix", "suffix", "disabled", "size"];
 
-      #main {
-        display: flex;
-        align-items: center;
-        height: 100%;
-      }
+  static _shadowTemplate = html`
+    <template>
+      <main id="main">
+        <div id="editor-container">
+          <div id="editor" contenteditable="plaintext-only" spellcheck="false"></div>
+        </div>
+        <slot></slot>
+      </main>
+    </template>
+  `;
 
-      #editor-container {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        padding: var(--inner-padding);
-        box-sizing: border-box;
-        overflow: hidden;
-      }
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      position: relative;
+      max-width: 160px;
+      height: 32px;
+      box-sizing: border-box;
+      font-size: 12.5px;
+    }
+    :host(:hover) {
+      cursor: text;
+    }
+    :host([mixed]) {
+      color: rgba(0, 0, 0, 0.7);
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
-      #editor {
-        width: 100%;
-        overflow: auto;
-        color: inherit;
-        background: none;
-        border: none;
-        outline: none;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: 10;
-        white-space: nowrap;
-      }
-      #editor::-webkit-scrollbar {
-        display: none;
-      }
-      #editor::before {
-        content: attr(data-prefix);
-        pointer-events: none;
-      }
-      #editor::after {
-        content: attr(data-suffix);
-        pointer-events: none;
-      }
-      :host([empty]) #editor::before,
-      :host([empty]) #editor::after,
-      :host(:focus) #editor::before,
-      :host(:focus) #editor::after {
-        content: "";
-      }
-    </style>
+    ::selection {
+      color: var(--selection-color);
+      background-color: var(--selection-background-color);
+    }
+    :host([error]) ::selection {
+      color: white;
+      background-color: #d50000;
+    }
 
-    <main id="main">
-      <div id="editor-container">
-        <div id="editor" contenteditable="plaintext-only" spellcheck="false"></div>
-      </div>
+    #main {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
 
-      <slot></slot>
-    </main>
-  </template>
-`;
+    #editor-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 0 6px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
 
-// @events
-//   change
-//   changestart
-//   changeend
-//   textinputmodestart
-//   textinputmodeend
-export class XNumberInputElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["value", "min", "max", "prefix", "suffix", "disabled"];
-  }
+    #editor {
+      width: 100%;
+      overflow: auto;
+      color: inherit;
+      background: none;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: 10;
+      white-space: nowrap;
+    }
+    #editor::-webkit-scrollbar {
+      display: none;
+    }
+    #editor::before {
+      content: attr(data-prefix);
+      pointer-events: none;
+    }
+    #editor::after {
+      content: attr(data-suffix);
+      pointer-events: none;
+    }
+    :host([empty]) #editor::before,
+    :host([empty]) #editor::after,
+    :host(:focus) #editor::before,
+    :host(:focus) #editor::after {
+      content: "";
+    }
 
-  // @type
-  //   number?
-  // @default
-  //   null
+    /* Error message */
+    :host([error])::before {
+      position: absolute;
+      left: 0;
+      top: 35px;
+      white-space: pre;
+      content: attr(error);
+      font-size: 11px;
+      line-height: 1.2;
+      pointer-events: none;
+    }
+  `
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type number?
+  // @default null
   get value() {
     return this.hasAttribute("value") ? parseFloat(this.getAttribute("value")) : null;
   }
@@ -128,11 +139,10 @@ export class XNumberInputElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @type
-  //   number
-  // @default
-  //   -Infinity
+  // @property
   // @attribute
+  // @type number
+  // @default Infinity
   get min() {
     return this.hasAttribute("min") ? parseFloat(this.getAttribute("min")) : -Infinity;
   }
@@ -140,11 +150,10 @@ export class XNumberInputElement extends HTMLElement {
     isFinite(min) ? this.setAttribute("min", min) : this.removeAttribute("min");
   }
 
-  // @type
-  //   number
-  // @default
-  //   Infinity
+  // @property
   // @attribute
+  // @type number
+  // @default Infinity
   get max() {
     return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : Infinity;
   }
@@ -152,11 +161,10 @@ export class XNumberInputElement extends HTMLElement {
     isFinite(max) ? this.setAttribute("max", max) : this.removeAttribute("max");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -164,13 +172,12 @@ export class XNumberInputElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @info
-  //   Maximal number of digits to be shown after the dot. This setting affects only the display value.
-  // @type
-  //   number
-  // @default
-  //   20
+  // @property
   // @attribute
+  // @type number
+  // @default 20
+  //
+  // Maximal number of digits to be shown after the dot. This setting affects only the display value.
   get precision() {
     return this.hasAttribute("precision") ? parseFloat(this.getAttribute("precision")) : 20;
   }
@@ -178,13 +185,12 @@ export class XNumberInputElement extends HTMLElement {
     this.setAttribute("precision", value);
   }
 
-  // @info
-  //   Number by which value should be incremented or decremented when up or down arrow key is pressed.
-  // @type
-  //   number
-  // @default
-  //   1
+  // @property
   // @attribute
+  // @type number
+  // @default 1
+  //
+  // Number by which value should be incremented or decremented when up or down arrow key is pressed.
   get step() {
     return this.hasAttribute("step") ? parseFloat(this.getAttribute("step")) : 1;
   }
@@ -192,11 +198,10 @@ export class XNumberInputElement extends HTMLElement {
     this.setAttribute("step", step);
   }
 
-  // @type
-  //   string
-  // @default
-  //   ""
+  // @property
   // @attribute
+  // @type string
+  // @default ""
   get prefix() {
     return this.hasAttribute("prefix") ? this.getAttribute("prefix") : "";
   }
@@ -204,11 +209,10 @@ export class XNumberInputElement extends HTMLElement {
     this.setAttribute("prefix", prefix);
   }
 
-  // @type
-  //   string
-  // @default
-  //   ""
+  // @property
   // @attribute
+  // @type string
+  // @default ""
   get suffix() {
     return this.hasAttribute("suffix") ? this.getAttribute("suffix") : "";
   }
@@ -216,11 +220,10 @@ export class XNumberInputElement extends HTMLElement {
     this.setAttribute("suffix", suffix);
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get required() {
     return this.hasAttribute("required");
   }
@@ -228,13 +231,12 @@ export class XNumberInputElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @info
-  //   Whether this input has "mixed" state.
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether this input has "mixed" state.
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -242,11 +244,10 @@ export class XNumberInputElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -254,11 +255,23 @@ export class XNumberInputElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @type
-  //   string?
-  // @default
-  //   null
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether the input should take less horizontal space.
+  get condensed() {
+    return this.hasAttribute("condensed");
+  }
+  set condensed(condensed) {
+    condensed ? this.setAttribute("condensed", "") : this.removeAttribute("condensed");
+  }
+
+  // @property
+  // @attribute
+  // @type string?
+  // @default null
   get error() {
     return this.getAttribute("error");
   }
@@ -266,30 +279,55 @@ export class XNumberInputElement extends HTMLElement {
     error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _lastTabIndex = 0;
+  _xelSizeChangeListener = null;
+
+  _isDragging = false;
+  _isChangeStart = false;
+  _isArrowKeyDown = false;
+  _isBackspaceKeyDown = false;
+  _isStepperButtonDown = false;
+  _visited = false;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._isDragging = false;
-    this._isChangeStart = false;
-    this._isArrowKeyDown = false;
-    this._isBackspaceKeyDown = false;
-    this._isStepperButtonDown = false;
-
-    this._maybeDispatchChangeEndEvent = debounce(this._maybeDispatchChangeEndEvent, 500, this);
-
     this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XNumberInputElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XNumberInputElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
     this._shadowRoot.addEventListener("wheel", (event) => this._onWheel(event));
-    this["#editor"].addEventListener("paste", (event) => this._onPaste(event));
-    this["#editor"].addEventListener("input", (event) => this._onEditorInput(event));
+    this._elements["editor"].addEventListener("paste", (event) => this._onPaste(event));
+    this._elements["editor"].addEventListener("input", (event) => this._onEditorInput(event));
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
     this.addEventListener("keyup", (event) => this._onKeyUp(event));
@@ -302,8 +340,14 @@ export class XNumberInputElement extends HTMLElement {
 
   connectedCallback() {
     this._updateAccessabilityAttributes();
-
+    this._updateComputedSizeAttriubte();
     this._update();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -325,12 +369,15 @@ export class XNumberInputElement extends HTMLElement {
     else if (name === "disabled") {
       this._onDisabledAttributeChange();
     }
+    else if (name === "size") {
+      this._onSizeAttributeChange();
+    }
   }
 
-  // @info
-  //   Override this method to validate the input value manually.
-  // @type
-  //   () => void
+  // @method
+  // @type () => void
+  //
+  // Override this method to validate the input value manually.
   validate() {
     if (this.value < this.min) {
       this.error = "Value is too low";
@@ -407,15 +454,16 @@ export class XNumberInputElement extends HTMLElement {
     }
   }
 
-  _maybeDispatchChangeEndEvent() {
+  _maybeDispatchChangeEndEvent = debounce(() => {
     if (this._isChangeStart && !this._isArrowKeyDown && !this._isBackspaceKeyDown && !this._isStepperButtonDown) {
       this._isChangeStart = false;
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
     }
-  }
+  }, 500);
 
   _commitEditorChanges() {
-    let editorValue = this["#editor"].textContent.trim() === "" ? null : parseFloat(this["#editor"].textContent);
+    let editorTextContent = this._elements["editor"].textContent;
+    let editorValue = editorTextContent.trim() === "" ? null : parseFloat(editorTextContent);
     let normalizedEditorValue = normalize(editorValue, this.min, this.max);
 
     if (normalizedEditorValue !== this.value) {
@@ -427,12 +475,16 @@ export class XNumberInputElement extends HTMLElement {
     else if (editorValue !== this.value) {
       this.value = normalizedEditorValue;
     }
+
+    this.validate();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _update() {
-    this.validate();
+    if (this._visited) {
+      this.validate();
+    }
 
     this._updateEditorTextContent();
     this._updateEmptyState();
@@ -441,10 +493,10 @@ export class XNumberInputElement extends HTMLElement {
 
   _updateEditorTextContent() {
     if (this.hasAttribute("value")) {
-      this["#editor"].textContent = this.getAttribute("value").trim();
+      this._elements["editor"].textContent = this.getAttribute("value").trim();
     }
     else {
-      this["#editor"].textContent = "";
+      this._elements["editor"].textContent = "";
     }
   }
 
@@ -452,7 +504,8 @@ export class XNumberInputElement extends HTMLElement {
     let value = null;
 
     if (this.matches(":focus")) {
-      value = this["#editor"].textContent.trim() === "" ? null : parseFloat(this["#editor"].textContent);
+      let textContent = this._elements["editor"].textContent;
+      value = textContent.trim() === "" ? null : parseFloat(textContent);
     }
     else {
       value = this.value;
@@ -493,15 +546,41 @@ export class XNumberInputElement extends HTMLElement {
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
       }
 
-      delete this[$oldTabIndex];
+      this._lastTabIndex = 0;
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 
@@ -520,33 +599,38 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   _onPrefixAttributeChange() {
-    this["#editor"].setAttribute("data-prefix", this.prefix);
+    this._elements["editor"].setAttribute("data-prefix", this.prefix);
   }
 
   _onSuffixAttributeChange() {
-    this["#editor"].setAttribute("data-suffix", this.suffix);
+    this._elements["editor"].setAttribute("data-suffix", this.suffix);
   }
 
   _onDisabledAttributeChange() {
-    this["#editor"].disabled = this.disabled;
+    this._elements["editor"].disabled = this.disabled;
     this._updateAccessabilityAttributes();
   }
 
+  _onSizeAttributeChange() {
+    this._updateComputedSizeAttriubte();
+  }
+
   _onFocusIn() {
+    this._visited = true;
     document.execCommand("selectAll");
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
 
   _onFocusOut() {
-    this._shadowRoot.getSelection().collapse(this["#main"]);
-    this["#editor"].scrollLeft = 0;
+    this._shadowRoot.getSelection().collapse(this._elements["main"]);
+    this._elements["editor"].scrollLeft = 0;
 
     this._commitEditorChanges();
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
   }
 
   _onEditorInput() {
-    this.validate();
+    this.error = null;
     this._updateEmptyState();
     this._updateStepper();
   }
@@ -586,8 +670,8 @@ export class XNumberInputElement extends HTMLElement {
       return;
     }
 
-    if (pointerDownEvent.target === this["#editor"]) {
-      if (this["#editor"].matches(":focus") === false) {
+    if (pointerDownEvent.target === this._elements["editor"]) {
+      if (this._elements["editor"].matches(":focus") === false) {
         pointerDownEvent.preventDefault();
 
         let initialValue = this.value;
@@ -596,9 +680,9 @@ export class XNumberInputElement extends HTMLElement {
         let pointerMoveListener, lostPointerCaptureListener;
 
         this.style.cursor = "col-resize";
-        this["#editor"].setPointerCapture(pointerDownEvent.pointerId);
+        this._elements["editor"].setPointerCapture(pointerDownEvent.pointerId);
 
-        this["#editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+        this._elements["editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
           let pointerMovePoint = new DOMPoint(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
           let deltaTime = pointerMoveEvent.timeStamp - pointerDownEvent.timeStamp;
           let isDistinct = pointerMoveEvent.clientX !== cachedClientX;
@@ -622,9 +706,9 @@ export class XNumberInputElement extends HTMLElement {
           }
         });
 
-        this["#editor"].addEventListener("lostpointercapture",  lostPointerCaptureListener = () => {
-          this["#editor"].removeEventListener("pointermove", pointerMoveListener);
-          this["#editor"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+        this._elements["editor"].addEventListener("lostpointercapture",  lostPointerCaptureListener = () => {
+          this._elements["editor"].removeEventListener("pointermove", pointerMoveListener);
+          this._elements["editor"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
 
           this.style.cursor = null;
 
@@ -634,7 +718,7 @@ export class XNumberInputElement extends HTMLElement {
             this.dispatchEvent(new CustomEvent("changeend", {detail: this.value !== initialValue, bubbles: true}));
           }
           else {
-            this["#editor"].focus();
+            this._elements["editor"].focus();
             document.execCommand("selectAll");
           }
         });
@@ -735,7 +819,7 @@ export class XNumberInputElement extends HTMLElement {
   }
 
   _onKeyPress(event) {
-    if (numericKeys.includes(event.key) === false) {
+    if (NUMERIC_KEYS.includes(event.key) === false) {
       event.preventDefault();
     }
   }

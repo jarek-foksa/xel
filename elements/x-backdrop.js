@@ -1,37 +1,37 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import {css} from "../utils/template.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        position: fixed;
-        z-index: 1000;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        touch-action: none;
-        will-change: opacity;
-        cursor: default;
-        background: rgba(0, 0, 0, 0.5);
-      }
-      :host([hidden]) {
-        display: none;
-      }
-    </style>
-  </template>
-`;
+// @element x-backdrop
+export default class XBackdropElement extends HTMLElement {
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1000;
+      touch-action: none;
+      will-change: opacity;
+      cursor: default;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    :host([hidden]) {
+      display: none;
+    }
+  `
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export class XBackdropElement extends HTMLElement {
-  // @info
-  //   Element below which the backdrop should be placed.
-  // @type
-  //   HTMLElement
+  // @property
+  // @type HTMLElement
+  //
+  // Element below which the backdrop should be placed.
   get ownerElement() {
     return this._ownerElement ? this._ownerElement : document.body.firstElementChild;
   }
@@ -39,21 +39,32 @@ export class XBackdropElement extends HTMLElement {
     this._ownerElement = ownerElement;
   }
 
+  _shadowRoot = null;
+  _ownerElement = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._ownerElement = null;
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XBackdropElement._shadowStyleSheet];
 
-    this.addEventListener("wheel", (event) => event.preventDefault());
     this.addEventListener("pointerdown", (event) => event.preventDefault()); // Don't steal the focus
+  }
+
+  connectedCallback() {
+    this.addEventListener("wheel", this._wheelListener = (event) => event.preventDefault());
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener("wheel", this._wheelListener);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // @method
+  // @type (boolean) => Promise
   show(animate = true) {
     this.title = "";
     this.style.top = "0px";
@@ -99,6 +110,8 @@ export class XBackdropElement extends HTMLElement {
     }
   }
 
+  // @method
+  // @type (boolean) => Promise
   hide(animate = true) {
     if (animate) {
       let backdropAnimation = this.animate(

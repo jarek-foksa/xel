@@ -1,20 +1,20 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
 let {max, pow, sqrt, PI} = Math;
 
-// @info
-//   Round given number to the fixed number of decimal places.
-// @type
-//   (number, number) => number
+// @type (number, number) => number
+//
+// Round given number to the fixed number of decimal places.
 export let round = (number, precision = 0) => {
   let coefficient = pow(10, precision);
   return Math.round(number * coefficient) / coefficient;
 };
 
-// @type
-//   (DOMRect, number) => DOMRect
+// @type (DOMRect, number) => DOMRect
 export let roundRect = (rect, precision = 0) => {
   return new DOMRect(
     round(rect.x, precision),
@@ -24,8 +24,7 @@ export let roundRect = (rect, precision = 0) => {
   );
 };
 
-// @type
-//   (number, number, number, number?) => number
+// @type (number, number, number, number?) => number
 export let normalize = (number, min, max = Infinity, precision = null) => {
   if (precision !== null) {
     number = round(number, precision);
@@ -41,8 +40,7 @@ export let normalize = (number, min, max = Infinity, precision = null) => {
   return number;
 };
 
-// @type
-//   (number) => number
+// @type (number) => number
 export let getPrecision = (number) => {
   if (!isFinite(number)) {
     return 0;
@@ -60,10 +58,9 @@ export let getPrecision = (number) => {
   }
 };
 
-// @info
-//   Get distance between two points.
-// @type
-//   (DOMPoint, DOMPoint) => number
+// @type (DOMPoint, DOMPoint) => number
+//
+// Get distance between two points.
 export let getDistanceBetweenPoints = (point1, point2) => {
   let x = point2.x - point1.x;
   x = x * x;
@@ -75,8 +72,7 @@ export let getDistanceBetweenPoints = (point1, point2) => {
   return distance;
 };
 
-// @type
-//   (DOMRect, DOMPoint) => boolean
+// @type (DOMRect, DOMPoint) => boolean
 export let rectContainsPoint = (rect, point) => {
   if (
     point.x >= rect.x &&
@@ -91,17 +87,15 @@ export let rectContainsPoint = (rect, point) => {
   }
 };
 
-// @type
-//   (number) => number
+// @type (number) => number
 export let degToRad = (degrees) => {
   let radians = (PI * degrees) / 180;
   return radians;
 };
 
-// @info
-//   Check if two points have same coordinates.
-// @type
-//   (DOMPoint, DOMPoint) => boolean
+// @type (DOMPoint, DOMPoint) => boolean
+//
+// Check if two points have same coordinates.
 export let comparePoints = (point1, point2, precision = null) => {
   if (precision !== null) {
     return round(point1.x, precision) === round(point2.x, precision) &&

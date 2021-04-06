@@ -1,152 +1,160 @@
 
-// @doc
-//   http://w3c.github.io/aria/aria/aria.html#menuitem
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html, createElement} from "../utils/element.js";
+import Xel from "../classes/xel.js";;
+
+import {createElement} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
 let {max} = Math;
-let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
-let $oldTabIndex = Symbol();
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: flex;
-        flex-flow: row;
-        align-items: center;
-        position: relative;
-        box-sizing: border-box;
-        cursor: default;
-        user-select: none;
-        --trigger-effect: ripple; /* ripple, blink, none */
-        --ripple-background: currentColor;
-        --ripple-opacity: 0.1;
-        --checkmark-d: path("M 37.5 65 L 21 48.9 L 15.7 54.35 L 37.5 76.1 L 84.3 29.3 L 78.8 23.8 Z");
-        --checkmark-width: 24px;
-        --checkmark-height: 24px;
-        --checkmark-margin: 0 12px 0 0;
-      }
-      :host([hidden]) {
-        display: none;
-      }
-      :host([disabled]) {
-        pointer-events: none;
-        opacity: 0.6;
-      }
-      :host(:focus) {
-        outline: none;
-      }
-      :host-context([debug]):host(:focus) {
-        outline: 2px solid red;
-      }
+// @element x-menuitem
+// @event ^toggle - User toggled on or off the menu item.
+// @part checkmark - Checkmark icon shown when the menu item is toggled.
+// @part arrow - Arrow icon shown when the menu item contains a submenu.
+export default class XMenuItemElement extends HTMLElement {
+  static observedAttributes = ["disabled", "size"];
 
-      /**
-       * Ripples
-       */
+  static _shadowTemplate = html`
+    <template>
+      <div id="ripples"></div>
 
-      #ripples {
-        position: absolute;
-        z-index: 0;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        contain: strict;
-        overflow: hidden;
-      }
+      <svg id="checkmark" part="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path></path>
+      </svg>
 
-      #ripples .ripple {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 200px;
-        height: 200px;
-        background: var(--ripple-background);
-        opacity: var(--ripple-opacity);
-        border-radius: 999px;
-        transform: none;
-        transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: opacity, transform;
-        pointer-events: none;
-      }
+      <slot></slot>
 
-      /**
-       * Checkmark
-       */
+      <svg id="arrow" part="arrow" viewBox="0 0 100 100" hidden>
+        <path></path>
+      </svg>
+    </template>
+  `;
 
-      #checkmark {
-        color: inherit;
-        display: none;
-        transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
-        align-self: center;
-        width: var(--checkmark-width);
-        height: var(--checkmark-height);
-        margin: var(--checkmark-margin);
-        d: var(--checkmark-d);
-      }
-      :host([togglable]) #checkmark {
-        display: flex;
-        transform: scale(0);
-        transform-origin: 50% 50%;
-      }
-      :host([toggled]) #checkmark {
-        display: flex;
-        transform: scale(1);
-      }
+  static _shadowStyleSheet = css`
+    :host {
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      position: relative;
+      padding: 0 12px 0 23px;
+      min-height: 28px;
+      box-sizing: border-box;
+      cursor: default;
+      user-select: none;
+      --trigger-effect: blink; /* ripple, blink, none */
+    }
+    :host([hidden]) {
+      display: none;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    :host(:focus) {
+      outline: none;
+    }
+    :host-context([debug]):host(:focus) {
+      outline: 2px solid red;
+    }
 
-      #checkmark path {
-        d: inherit;
-        fill: currentColor;
-      }
+    /**
+     * Ripples
+     */
 
-      /**
-       * "Expand" arrow icon
-       */
+    #ripples {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      contain: strict;
+      overflow: hidden;
+    }
 
-      #arrow-icon {
-        display: flex;
-        width: 16px;
-        height: 16px;
-        transform: scale(1.1);
-        align-self: center;
-        margin-left: 8px;
-        color: inherit;
-      }
-      #arrow-icon[hidden] {
-        display: none;
-      }
-    </style>
+    #ripples .ripple {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 200px;
+      background: currentColor;
+      opacity: 0.1;
+      border-radius: 999px;
+      transform: none;
+      transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: opacity, transform;
+      pointer-events: none;
+    }
 
-    <div id="ripples"></div>
+    /**
+     * Checkmark
+     */
 
-    <svg id="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <path></path>
-    </svg>
+    #checkmark {
+      display: none;
+      transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+      align-self: center;
+      width: 18px;
+      height: 18px;
+      margin: 0 2px 0 -20px;
+      d: path("M 44 61 L 29 47 L 21 55 L 46 79 L 79 27 L 70 21 L 44 61 Z");
+      color: inherit;
+    }
+    :host([togglable]) #checkmark {
+      display: flex;
+      transform: scale(0);
+      transform-origin: 50% 50%;
+    }
+    :host([toggled]) #checkmark {
+      display: flex;
+      transform: scale(1);
+    }
 
-    <slot></slot>
-    <x-icon id="arrow-icon" name="play-arrow" hidden></x-icon>
-  </template>
-`;
+    #checkmark path {
+      d: inherit;
+      fill: currentColor;
+    }
 
-// @events
-//   toggle
-export class XMenuItemElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["disabled"];
-  }
+    /**
+     * Arrow
+     */
 
-  // @info
-  //   Value associated with this menu item (usually the command name).
-  // @type
-  //   string?
-  // @default
-  //   null
+    #arrow {
+      display: flex;
+      width: 16px;
+      height: 16px;
+      transform: scale(1.1);
+      align-self: center;
+      margin-left: 8px;
+      d: path("M 26 20 L 26 80 L 74 50 Z");
+      opacity: 1;
+      color: inherit;
+    }
+    #arrow[hidden] {
+      display: none;
+    }
+
+    #arrow path {
+      d: inherit;
+      fill: currentColor;
+    }
+  `
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type string?
+  // @default null
+  //
+  // Value associated with this menu item (usually the command name).
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -156,11 +164,10 @@ export class XMenuItemElement extends HTMLElement {
     }
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -168,11 +175,10 @@ export class XMenuItemElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get togglable() {
     return this.hasAttribute("togglable");
   }
@@ -180,11 +186,10 @@ export class XMenuItemElement extends HTMLElement {
     togglable ? this.setAttribute("togglable", "") : this.removeAttribute("togglable");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -192,13 +197,33 @@ export class XMenuItemElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @info
-  //   Promise that is resolved when any trigger effects (such ripples or blinking) are finished.
-  // @type
-  //   Promise
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  // @property
+  // @type Promise
+  //
+  // Promise that is resolved when any trigger effects (such ripples or blinking) are finished.
   get whenTriggerEnd() {
     return new Promise((resolve) => {
-      if (this["#ripples"].childElementCount === 0 && this._blinking === false) {
+      if (this._elements["ripples"].childElementCount === 0 && this._triggering === false) {
         resolve();
       }
       else {
@@ -207,41 +232,53 @@ export class XMenuItemElement extends HTMLElement {
     });
   }
 
+  _shadowRoot = null;
+  _elements = {};
+  _lastTabIndex = 0;
+  _triggering = false;
+  _triggerEndCallbacks = [];
+  _wasFocused = false;
+  _xelSizeChangeListener = null;
+  _observer = new MutationObserver(() => this._updateArrowIconVisibility());
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._observer = new MutationObserver(() => this._updateArrowIconVisibility());
-
-    this._blinking = false;
-    this._triggerEndCallbacks = [];
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XMenuItemElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XMenuItemElement._shadowTemplate.content, true));
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
   }
 
   connectedCallback() {
-    this._observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
     this._updateArrowIconVisibility();
     this._updateAccessabilityAttributes();
+    this._updateComputedSizeAttriubte();
+
+    this._observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
     this._observer.disconnect();
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "disabled") {
-      this._onDisabledAttributeChange();
+      this._updateAccessabilityAttributes();
+    }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
     }
   }
 
@@ -249,11 +286,17 @@ export class XMenuItemElement extends HTMLElement {
 
   _updateArrowIconVisibility() {
     if (this.parentElement.localName === "x-menubar") {
-      this["#arrow-icon"].hidden = true;
+      this._elements["arrow"].setAttribute("hidden", "");
     }
     else {
       let menu = this.querySelector("x-menu");
-      this["#arrow-icon"].hidden = menu ? false : true;
+
+      if (menu) {
+        this._elements["arrow"].removeAttribute("hidden");
+      }
+      else {
+        this._elements["arrow"].setAttribute("hidden", "");
+      }
     }
   }
 
@@ -262,23 +305,45 @@ export class XMenuItemElement extends HTMLElement {
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
       }
 
-      delete this[$oldTabIndex];
+      this._lastTabIndex = 0;
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _onDisabledAttributeChange() {
-    this._updateAccessabilityAttributes();
-  }
 
   async _onPointerDown(pointerDownEvent) {
     this._wasFocused = this.matches(":focus");
@@ -297,27 +362,53 @@ export class XMenuItemElement extends HTMLElement {
       return;
     }
 
+    this.setPointerCapture(pointerDownEvent.pointerId);
+
+    // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
+    // to last at least 150ms.
+    {
+      let pointerDownTimeStamp = Date.now();
+      let isDown = true;
+
+      this.addEventListener("lostpointercapture", async () => {
+        isDown = false;
+        let pressedTime = Date.now() - pointerDownTimeStamp;
+        let minPressedTime = (pointerDownEvent.pointerType === "touch") ? 600 : 150;
+
+        if (pressedTime < minPressedTime) {
+          await sleep(minPressedTime - pressedTime);
+        }
+
+        this.removeAttribute("pressed");
+      }, {once: true});
+
+      if (isDown) {
+        this.setAttribute("pressed", "");
+      }
+    }
+
     // Trigger effect
     {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let rect = this["#ripples"].getBoundingClientRect();
+        let rect = this._elements["ripples"].getBoundingClientRect();
         let size = max(rect.width, rect.height) * 1.5;
         let top  = pointerDownEvent.clientY - rect.y - size/2;
         let left = pointerDownEvent.clientX - rect.x - size/2;
         let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
 
         let ripple = createElement("div");
+        ripple.setAttribute("part", "ripple");
         ripple.setAttribute("class", "ripple pointer-down-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this["#ripples"].append(ripple);
+        this._elements["ripples"].append(ripple);
 
         this.setPointerCapture(pointerDownEvent.pointerId);
 
         let inAnimation = ripple.animate(
           { transform: ["scale3d(0, 0, 0)", "none"]},
-          { duration: 300, easing }
+          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         );
 
         await whenLostPointerCapture;
@@ -325,13 +416,13 @@ export class XMenuItemElement extends HTMLElement {
 
         let outAnimation = ripple.animate(
           { opacity: [getComputedStyle(ripple).opacity, "0"]},
-          { duration: 300, easing }
+          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         );
 
         await outAnimation.finished;
         ripple.remove();
 
-        if (this["#ripples"].childElementCount === 0) {
+        if (this._elements["ripples"].childElementCount === 0) {
           for (let callback of this._triggerEndCallbacks) {
             callback();
           }
@@ -364,43 +455,46 @@ export class XMenuItemElement extends HTMLElement {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        if (this["#ripples"].querySelector(".pointer-down-ripple") === null) {
-          let rect = this["#ripples"].getBoundingClientRect();
+        if (this._elements["ripples"].querySelector(".pointer-down-ripple") === null) {
+          let rect = this._elements["ripples"].getBoundingClientRect();
           let size = max(rect.width, rect.height) * 1.5;
           let top  = (rect.y + rect.height/2) - rect.y - size/2;
           let left = (rect.x + rect.width/2) - rect.x - size/2;
 
           let ripple = createElement("div");
+          ripple.setAttribute("part", "ripple");
           ripple.setAttribute("class", "ripple click-ripple");
           ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-          this["#ripples"].append(ripple);
+          this._elements["ripples"].append(ripple);
 
           let inAnimation = ripple.animate(
             { transform: ["scale3d(0, 0, 0)", "none"]},
-            { duration: 300, easing }
+            { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
           );
 
           await inAnimation.finished;
 
           let outAnimation = ripple.animate(
             { opacity: [getComputedStyle(ripple).opacity, "0"] },
-            { duration: 300, easing }
+            { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
           );
 
           await outAnimation.finished;
 
           ripple.remove();
 
-          if (this["#ripples"].childElementCount === 0) {
+          if (this._elements["ripples"].childElementCount === 0) {
             for (let callback of this._triggerEndCallbacks) {
               callback();
             }
+
+            this._triggerEndCallbacks = [];
           }
         }
       }
 
       else if (triggerEffect === "blink") {
-        this._blinking = true;
+        this._triggering = true;
 
         if (this._wasFocused) {
           this.parentElement.focus();
@@ -415,11 +509,24 @@ export class XMenuItemElement extends HTMLElement {
           await sleep(150);
         }
 
-        this._blinking = true;
+        for (let callback of this._triggerEndCallbacks) {
+          callback();
+        }
+
+        this._triggerEndCallbacks = [];
+        this._triggering = false;
+      }
+
+      else if (triggerEffect === "none") {
+        this._triggering = true;
+        await sleep(150);
 
         for (let callback of this._triggerEndCallbacks) {
           callback();
         }
+
+        this._triggerEndCallbacks = [];
+        this._triggering = false;
       }
     }
   }

@@ -1,59 +1,58 @@
 
-// @doc
-//   https://material.google.com/style/icons.html#icons-system-icons
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html, svg} from "../utils/element.js";
-import {readFile} from "../utils/file.js";
+import Xel from "../classes/xel.js";
 
-let cache = {};
+import {getIconset} from "../utils/icon.js";
+import {html, css} from "../utils/template.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        color: currentColor;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        overflow: hidden;
-      }
-      :host([disabled]) {
-        opacity: 0.5;
-      }
-      :host([hidden]) {
-        display: none;
-      }
+// @element x-icon
+export default class XIconElement extends HTMLElement {
+  static observedAttributes = ["name", "iconset", "size"];
 
-      #svg {
-        width: 100%;
-        height: 100%;
-        fill: currentColor;
-        stroke: none;
-        overflow: inherit;
-        /* @bugfix: pointerOverEvent.relatedTarget leaks shadow DOM of <x-icon> */
-        pointer-events: none;
-      }
-    </style>
+  static _shadowTemplate = html`
+    <template>
+      <svg id="svg" preserveAspectRatio="none" viewBox="0 0 100 100" width="0px" height="0px"></svg>
+    </template>
+  `;
 
-    <svg id="svg" preserveAspectRatio="none" viewBox="0 0 100 100" width="0px" height="0px"></svg>
-  </template>
-`;
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      color: currentColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+    }
+    :host([disabled]) {
+      opacity: 0.5;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
-export class XIconElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["name", "iconset"];
-  }
+    #svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+      stroke: none;
+      overflow: inherit;
+      /* @bugfix: pointerOverEvent.relatedTarget leaks shadow DOM of <x-icon> */
+      pointer-events: none;
+    }
+  `
 
-  // @type
-  //   string
-  // @default
-  //   ""
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type string
+  // @default ""
   get name() {
     return this.hasAttribute("name") ? this.getAttribute("name") : "";
   }
@@ -61,11 +60,10 @@ export class XIconElement extends HTMLElement {
     this.setAttribute("name", name);
   }
 
-  // @type
-  //   string?
-  // @default
-  //   null
+  // @property
   // @attribute
+  // @type string?
+  // @default null
   get iconset() {
     if (this.hasAttribute("iconset") === false || this.getAttribute("iconset").trim() === "") {
       return null;
@@ -83,11 +81,10 @@ export class XIconElement extends HTMLElement {
     }
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -95,17 +92,61 @@ export class XIconElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _defaultIconsetChangeListener = null;
+  _xelSizeChangeListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XIconElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XIconElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
+  }
+
+  connectedCallback() {
+    Xel.addEventListener("iconsetchange", this._defaultIconsetChangeListener = () => {
+      this._update();
+    });
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => {
+      this._updateComputedSizeAttriubte();
+    });
+
+    this._update();
+    this._updateComputedSizeAttriubte();
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("iconsetchange", this._defaultIconsetChangeListener);
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -118,91 +159,69 @@ export class XIconElement extends HTMLElement {
     else if (name === "iconset") {
       this._update();
     }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async _update() {
     if (this.name === "") {
-      this["#svg"].innerHTML = "";
+      this._elements["svg"].innerHTML = "";
     }
     else {
-      let symbol = await this._getSymbol(this.name, this.iconset);
+      let symbol = null;
+
+      // Custom iconset
+      if (this.iconset) {
+        let iconsetElement = await getIconset(this.iconset);
+
+        if (iconsetElement) {
+          symbol = iconsetElement.querySelector("#" + CSS.escape(this.name));
+        }
+      }
+      // Default iconset
+      else {
+        await Xel.whenIconsetReady;
+        symbol = Xel.iconsetElement.querySelector("#" + CSS.escape(this.name));
+      }
 
       if (symbol) {
-        this["#svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
-        this["#svg"].innerHTML = symbol.innerHTML;
+        this._elements["svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
+        this._elements["svg"].innerHTML = symbol.innerHTML;
       }
       else {
-        this["#svg"].innerHTML = "";
+        this._elements["svg"].innerHTML = "";
       }
     }
   }
 
-  _getSymbol(name, iconsetURL) {
-    return new Promise(async (resolve) => {
-      let iconset = null;
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
 
-      // Default iconset
-      if (iconsetURL === null) {
-        // Development - default iconset must be read from a file
-        if (XIconElement.DEFAULT_ICONSET === null) {
-          iconset = await this._getIconset("node_modules/xel/iconsets/default.svg");
-        }
-        // Production - default iconset is embedded into xel.min.js
-        else {
-          iconset = XIconElement.DEFAULT_ICONSET;
-        }
-      }
-      // Custom iconset
-      else {
-        iconset = await this._getIconset(iconsetURL);
-      }
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
 
-      let symbol = null;
-
-      if (iconset) {
-        symbol = iconset.querySelector("#" + CSS.escape(name));
-      }
-
-      resolve(symbol);
-    });
-  }
-
-  _getIconset(iconsetURL) {
-    return new Promise(async (resolve) => {
-      if (cache[iconsetURL]) {
-        if (cache[iconsetURL].iconset) {
-          resolve(cache[iconsetURL].iconset);
-        }
-        else {
-          cache[iconsetURL].callbacks.push(resolve);
-        }
-      }
-      else {
-        cache[iconsetURL] = {callbacks: [resolve], iconset: null};
-
-        let iconsetSVG = null;
-
-        try {
-          iconsetSVG = await readFile(iconsetURL);
-        }
-        catch (error) {
-          iconsetSVG = null;
-        }
-
-        if (iconsetSVG) {
-          cache[iconsetURL].iconset = svg`${iconsetSVG}`;
-
-          for (let callback of cache[iconsetURL].callbacks) {
-            callback(cache[iconsetURL].iconset);
-          }
-        }
-      }
-    });
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
+    }
   }
 }
-
-XIconElement.DEFAULT_ICONSET = null;
 
 customElements.define("x-icon", XIconElement);

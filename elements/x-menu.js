@@ -1,101 +1,106 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
-// @doc
-//   http://w3c.github.io/aria-practices/#menu
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
+import {closest} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 import {sleep, getTimeStamp} from "../utils/time.js";
-import {html, closest} from "../utils/element.js";
 
 let {abs} = Math;
-let windowWhitespace = 7;
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: none;
-        top: 0;
-        left: 0;
-        width: fit-content;
-        z-index: 1001;
-        box-sizing: border-box;
-        background: white;
-        cursor: default;
-        overflow: auto;
-        flex-direction: column;
-        -webkit-app-region: no-drag;
-        --align: start;
-        --scrollbar-background: rgba(0, 0, 0, 0.2);
-        --scrollbar-width: 6px;
-        --open-transition: 100 transform cubic-bezier(0.4, 0, 0.2, 1);
-        --close-transition: 200 opacity cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      :host([opened]),
-      :host([animating]) {
-        display: flex;
-      }
-      :host(:focus) {
-        outline: none;
-      }
-      :host-context([debug]):host(:focus) {
-        outline: 2px solid red;
-      }
+const WINDOW_PADDING = 7;
 
+// @element x-menu
+// @event ^open - The menu was opened by the suer
+// @event ^close - The menu was closed by the user
+export default class XMenuElement extends HTMLElement {
+  static observedAttributes = ["opened"];
 
-      ::-webkit-scrollbar {
-        max-width: var(--scrollbar-width);
-        background: none;
-      }
-      ::-webkit-scrollbar-thumb {
-        background-color: var(--scrollbar-background);
-      }
-      ::-webkit-scrollbar-corner {
-        display: none
-      }
-    </style>
+  static _shadowTemplate = html`
+    <template>
+      <slot id="slot"></slot>
+    </template>
+  `;
 
-    <slot id="slot"></slot>
-  </template>
-`;
+  static _shadowStyleSheet = css`
+    :host {
+      display: none;
+      top: 0;
+      left: 0;
+      width: fit-content;
+      padding: 4px 0;
+      z-index: 1001;
+      box-sizing: border-box;
+      background: white;
+      cursor: default;
+      overflow: auto;
+      flex-direction: column;
+      -webkit-app-region: no-drag;
+      --align: start;
+      --scrollbar-background: rgba(0, 0, 0, 0.2);
+      --scrollbar-width: 6px;
+      --open-transition: 100 transform cubic-bezier(0.4, 0, 0.2, 1);
+      --close-transition: 200 opacity cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    :host([opened]),
+    :host([animating]) {
+      display: flex;
+    }
+    :host(:focus) {
+      outline: none;
+    }
+    :host-context([debug]):host(:focus) {
+      outline: 2px solid red;
+    }
 
-// @events
-//   open XMenu
-//   close XMenu
-export class XMenuElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["opened"];
-  }
+    ::-webkit-scrollbar {
+      max-width: var(--scrollbar-width);
+      background: none;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-background);
+    }
+    ::-webkit-scrollbar-corner {
+      display: none
+    }
+  `
 
-  // @info
-  //   Whether the menu is shown on screen.
-  // @type
-  //   boolean
-  // @readonly
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type boolean
+  // @readOnly
+  //
+  // Whether the menu is shown on screen.
   get opened() {
     return this.hasAttribute("opened");
   }
+
+  _shadowRoot = null;
+  _elements = {};
+  _delayPoints = [];
+  _delayTimeoutID = null;
+  _lastDelayPoint = null;
+  _lastScrollTop = 0;
+  _extraTop = 0;
+  _expandWhenScrolled = false;
+  _isPointerOverMenuBlock = false;
+  _openedTimestamp = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._delayPoints = [];
-    this._delayTimeoutID = null;
-    this._lastDelayPoint = null;
-
-    this._extraTop = 0;
-    this._lastScrollTop = 0;
-    this._isPointerOverMenuBlock = false;
-    this._expandWhenScrolled = false;
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XMenuElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XMenuElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
@@ -121,11 +126,12 @@ export class XMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @info
-  //   Open the menu so that overElement (belonging to the menu) is positioned directly over underElement.
-  //   Returns a promise that is resolved when the menu finishes animating.
-  // @type
-  //   (HTMLElement, HTMLElement) => Promise<>
+  // @method
+  // @type (HTMLElement, HTMLElement) => Promise
+  //
+  // Open the menu so that <em>overElement</em> (belonging to the menu) is positioned directly over
+  // <em>underElement</em>.<br/>
+  // Returns a promise that is resolved when the menu finishes animating.
   openOverElement(underElement, overElement) {
     return new Promise( async (resolve) => {
       let items = this.querySelectorAll(":scope > x-menuitem");
@@ -164,19 +170,19 @@ export class XMenuElement extends HTMLElement {
 
         // Move the menu right if it overflows the left client bound
         {
-          if (menuBounds.left < windowWhitespace) {
-            this.style.left = (windowWhitespace + extraLeft) + "px";
+          if (menuBounds.left < WINDOW_PADDING) {
+            this.style.left = (WINDOW_PADDING + extraLeft) + "px";
             menuBounds = this.getBoundingClientRect();
           }
         }
 
         // Reduce the menu height if it overflows the top client bound
         {
-          let overflowTop = windowWhitespace - menuBounds.top;
+          let overflowTop = WINDOW_PADDING - menuBounds.top;
 
           if (overflowTop > 0) {
-            this.style.height = (menuBounds.bottom - windowWhitespace) + "px";
-            this.style.top = (windowWhitespace + extraTop) + "px";
+            this.style.height = (menuBounds.bottom - WINDOW_PADDING) + "px";
+            this.style.top = (WINDOW_PADDING + extraTop) + "px";
             this.scrollTop = 9999;
             menuBounds = this.getBoundingClientRect();
           }
@@ -185,15 +191,15 @@ export class XMenuElement extends HTMLElement {
         // Reduce menu height if it overflows the bottom client bound
         // Reduce menu width if it overflows the right client bound
         {
-          if (menuBounds.bottom + windowWhitespace > window.innerHeight) {
+          if (menuBounds.bottom + WINDOW_PADDING > window.innerHeight) {
             let overflow = menuBounds.bottom - window.innerHeight;
-            let height = menuBounds.height - overflow - windowWhitespace;
+            let height = menuBounds.height - overflow - WINDOW_PADDING;
             this.style.height = height + "px";
           }
 
-          if (menuBounds.right + windowWhitespace > window.innerWidth) {
+          if (menuBounds.right + WINDOW_PADDING > window.innerWidth) {
             let overflow = menuBounds.right - window.innerWidth;
-            let width = menuBounds.width - overflow - windowWhitespace;
+            let width = menuBounds.width - overflow - WINDOW_PADDING;
             this.style.width = `${width}px`;
           }
         }
@@ -225,11 +231,11 @@ export class XMenuElement extends HTMLElement {
     });
   }
 
-  // @info
-  //   Open the menu over the given <x-label> element.
-  //   Returns a promise that is resolved when the menu finishes animating.
-  // @type
-  //   (XMenuItem) => Promise<>
+  // @method
+  // @type (XLabelElement) => Promise
+  //
+  // Open the menu over the given <em>underLabel</em> element.<br/>
+  // Returns a promise that is resolved when the menu finishes animating.
   openOverLabel(underLabel) {
     return new Promise( async (resolve) => {
       let items = this.querySelectorAll(":scope > x-menuitem");
@@ -257,11 +263,11 @@ export class XMenuElement extends HTMLElement {
     });
   }
 
-  // @info
-  //   Open the menu next the given menu item.
-  //   Returns a promise that is resolved when the menu finishes animating.
-  // @type
-  //   (XMenuItem, string) => Promise
+  // @method
+  // @type (HTMLElement, "horizontal" || "vertical", number) => Promise
+  //
+  // Open the menu next the given element.<br/>
+  // Returns a promise that is resolved when the menu finishes animating.
   openNextToElement(element, direction = "horizontal", elementWhitespace = 0) {
     return new Promise(async (resolve) => {
       this._expandWhenScrolled = false;
@@ -313,9 +319,9 @@ export class XMenuElement extends HTMLElement {
         {
           let menuBounds = this.getBoundingClientRect();
 
-          if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
+          if (menuBounds.left + menuBounds.width + WINDOW_PADDING > window.innerWidth) {
             // Move menu to the left side of the element if there is enough space to fit it in
-            if (elementBounds.left > menuBounds.width + windowWhitespace) {
+            if (elementBounds.left > menuBounds.width + WINDOW_PADDING) {
               this.style.left = (elementBounds.left - menuBounds.width + extraLeft) + "px";
               side = "left";
             }
@@ -323,12 +329,12 @@ export class XMenuElement extends HTMLElement {
             else {
               // Move menu to the left screen edge
               if (elementBounds.left > window.innerWidth - (elementBounds.left + elementBounds.width)) {
-                this.style.left = (windowWhitespace + extraLeft) + "px";
+                this.style.left = (WINDOW_PADDING + extraLeft) + "px";
                 side = "left";
               }
               // Move menu to the right screen edge
               else {
-                this.style.left = (window.innerWidth - menuBounds.width - windowWhitespace + extraLeft) + "px";
+                this.style.left = (window.innerWidth - menuBounds.width - WINDOW_PADDING + extraLeft) + "px";
                 side = "right";
               }
             }
@@ -339,8 +345,8 @@ export class XMenuElement extends HTMLElement {
         {
           let menuBounds = this.getBoundingClientRect();
 
-          if (menuBounds.top + menuBounds.height + windowWhitespace > window.innerHeight) {
-            let bottomOverflow = (menuBounds.top + menuBounds.height + windowWhitespace) - window.innerHeight;
+          if (menuBounds.top + menuBounds.height + WINDOW_PADDING > window.innerHeight) {
+            let bottomOverflow = (menuBounds.top + menuBounds.height + WINDOW_PADDING) - window.innerHeight;
             this.style.top = (menuBounds.top - bottomOverflow + extraTop) + "px";
           }
         }
@@ -385,7 +391,7 @@ export class XMenuElement extends HTMLElement {
           let menuBounds = this.getBoundingClientRect();
 
           // Reduce menu height if it overflows bottom screen edge
-          if (menuBounds.top + menuBounds.height + windowWhitespace > window.innerHeight) {
+          if (menuBounds.top + menuBounds.height + WINDOW_PADDING > window.innerHeight) {
             this.style.height = (window.innerHeight - (elementBounds.top + elementBounds.height) - 10) + "px";
           }
         }
@@ -394,9 +400,9 @@ export class XMenuElement extends HTMLElement {
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.top + menuBounds.height + windowWhitespace > window.innerHeight) {
+            if (menuBounds.top + menuBounds.height + WINDOW_PADDING > window.innerHeight) {
               // Move menu to the top side of the element if there is enough space to fit it in
-              if (elementBounds.top > menuBounds.height + windowWhitespace) {
+              if (elementBounds.top > menuBounds.height + WINDOW_PADDING) {
                 this.style.top = (elementBounds.top - menuBounds.height - elementWhitespace + extraTop) + "px";
                 side = "top";
               }
@@ -404,12 +410,12 @@ export class XMenuElement extends HTMLElement {
               else {
                 // Move menu to the top screen edge
                 if (elementBounds.top > window.innerHeight - (elementBounds.top + elementBounds.height)) {
-                  this.style.top = (windowWhitespace + extraTop) + "px";
+                  this.style.top = (WINDOW_PADDING + extraTop) + "px";
                   side = "top";
                 }
                 // Move menu to the bottom screen edge
                 else {
-                  this.style.top = (window.innerHeight - menuBounds.height - windowWhitespace + extraTop) + "px";
+                  this.style.top = (window.innerHeight - menuBounds.height - WINDOW_PADDING + extraTop) + "px";
                   side = "bottom";
                 }
               }
@@ -424,7 +430,7 @@ export class XMenuElement extends HTMLElement {
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
+            if (menuBounds.left + menuBounds.width + WINDOW_PADDING > window.innerWidth) {
               this.style.left = (elementBounds.left + elementBounds.width - menuBounds.width + extraLeft) + "px";
             }
           }
@@ -433,8 +439,8 @@ export class XMenuElement extends HTMLElement {
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.left < windowWhitespace) {
-              this.style.left = (windowWhitespace + extraLeft) + "px";
+            if (menuBounds.left < WINDOW_PADDING) {
+              this.style.left = (WINDOW_PADDING + extraLeft) + "px";
             }
           }
         }
@@ -445,7 +451,7 @@ export class XMenuElement extends HTMLElement {
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.left < windowWhitespace) {
+            if (menuBounds.left < WINDOW_PADDING) {
               this.style.left = (elementBounds.left + extraLeft) + "px";
             }
           }
@@ -454,8 +460,8 @@ export class XMenuElement extends HTMLElement {
           {
             let menuBounds = this.getBoundingClientRect();
 
-            if (menuBounds.left + menuBounds.width + windowWhitespace > window.innerWidth) {
-              this.style.left = (window.innerWidth - windowWhitespace + extraLeft) + "px";
+            if (menuBounds.left + menuBounds.width + WINDOW_PADDING > window.innerWidth) {
+              this.style.left = (window.innerWidth - WINDOW_PADDING + extraLeft) + "px";
             }
           }
         }
@@ -482,11 +488,11 @@ export class XMenuElement extends HTMLElement {
     });
   }
 
-  // @info
-  //   Open the menu at given client point.
-  //   Returns a promise that is resolved when the menu finishes animating.
-  // @type
-  //   (number, number) => Promise
+  // @method
+  // @type (number, number) => Promise
+  //
+  // Open the menu at given client point.<br/>
+  // Returns a promise that is resolved when the menu finishes animating.
   openAtPoint(left, top) {
     return new Promise( async (resolve) => {
       this._expandWhenScrolled = false;
@@ -517,24 +523,24 @@ export class XMenuElement extends HTMLElement {
       }
 
       // If menu overflows right screen border then move it to the opposite side
-      if (menuBounds.right + windowWhitespace > window.innerWidth) {
+      if (menuBounds.right + WINDOW_PADDING > window.innerWidth) {
         left = left - menuBounds.width;
         this.style.left = (left + extraLeft) + "px";
         menuBounds = this.getBoundingClientRect();
       }
 
       // If menu overflows bottom screen border then move it up
-      if (menuBounds.bottom + windowWhitespace > window.innerHeight) {
-        top = top + window.innerHeight - (menuBounds.top + menuBounds.height) - windowWhitespace;
+      if (menuBounds.bottom + WINDOW_PADDING > window.innerHeight) {
+        top = top + window.innerHeight - (menuBounds.top + menuBounds.height) - WINDOW_PADDING;
         this.style.top = (top + extraTop) + "px";
         menuBounds = this.getBoundingClientRect();
 
         // If menu now overflows top screen border then make it stretch to the whole available vertical space
 
-        if (menuBounds.top < windowWhitespace) {
-          top = windowWhitespace;
+        if (menuBounds.top < WINDOW_PADDING) {
+          top = WINDOW_PADDING;
           this.style.top = (top + extraTop) + "px";
-          this.style.height = (window.innerHeight - windowWhitespace - windowWhitespace) + "px";
+          this.style.height = (window.innerHeight - WINDOW_PADDING - WINDOW_PADDING) + "px";
         }
       }
 
@@ -562,11 +568,11 @@ export class XMenuElement extends HTMLElement {
     });
   }
 
-  // @info
-  //   Close the menu.
-  //   Returns a promise that is resolved when the menu finishes animating.
-  // @type
-  //   (boolean) => Promise
+  // @method
+  // @type (boolean) => Promise
+  //
+  // Close the menu.<br/>
+  // Returns a promise that is resolved when the menu finishes animating.
   close(animate = true) {
     return new Promise(async (resolve) => {
       if (this.opened) {
@@ -607,6 +613,8 @@ export class XMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // @method
+  // @type () => void
   focusNextMenuItem() {
     let refItem = this.querySelector(":scope > x-menuitem:focus, :scope > x-menuitem[expanded]");
 
@@ -644,6 +652,8 @@ export class XMenuElement extends HTMLElement {
     }
   }
 
+  // @method
+  // @type () => void
   focusPreviousMenuItem() {
     let refItem = this.querySelector(":scope > x-menuitem:focus, :scope > x-menuitem[expanded]");
 
@@ -681,6 +691,8 @@ export class XMenuElement extends HTMLElement {
     }
   }
 
+  // @method
+  // @type () => void
   focusFirstMenuItem() {
     let items = this.querySelectorAll("x-menuitem:not([disabled]):not([hidden])");
     let firstItem = items[0] || null;
@@ -690,6 +702,8 @@ export class XMenuElement extends HTMLElement {
     }
   }
 
+  // @method
+  // @type () => void
   focusLastMenuItem() {
     let items = this.querySelectorAll("x-menuitem:not([disabled]):not([hidden])");
     let lastItem = (items.length > 0) ? items[items.length-1] : null;
@@ -808,18 +822,16 @@ export class XMenuElement extends HTMLElement {
     this.style.maxWidth = null;
   }
 
-  // @info
-  //   Whether this or any ancestor menu is closing
-  // @type
-  //   Boolean
+  // @type () => boolean
+  //
+  // Whether this or any ancestor menu is closing
   _isClosing() {
     return this.matches("*[closing], *[closing] x-menu");
   }
 
-  // @info
-  //   Parse the value of CSS transition property.
-  // @type
-  //   (string) => [string, number, string]
+  // @type (string) => [string, number, string]
+  //
+  // Parse the value of CSS transition property.
   _parseTransistion(string) {
     let [rawDuration, property, ...rest] = string.trim().split(" ");
     let duration = parseFloat(rawDuration);
@@ -1018,15 +1030,15 @@ export class XMenuElement extends HTMLElement {
         let menuRect = this.getBoundingClientRect();
 
         if (delta < 0) {
-          if (menuRect.bottom + abs(delta) <= window.innerHeight - windowWhitespace) {
+          if (menuRect.bottom + abs(delta) <= window.innerHeight - WINDOW_PADDING) {
             this.style.height = (menuRect.height + abs(delta)) + "px";
           }
           else {
-            this.style.height = (window.innerHeight - (windowWhitespace*2)) + "px";
+            this.style.height = (window.innerHeight - (WINDOW_PADDING*2)) + "px";
           }
         }
         else if (delta > 0) {
-          if (menuRect.top - delta >= windowWhitespace) {
+          if (menuRect.top - delta >= WINDOW_PADDING) {
             this.style.top = (this._extraTop + menuRect.top - delta) + "px";
             this.style.height = (menuRect.height + delta) + "px";
 
@@ -1034,8 +1046,8 @@ export class XMenuElement extends HTMLElement {
             this._lastScrollTop = 0;
           }
           else {
-            this.style.top = (windowWhitespace + this._extraTop) + "px";
-            this.style.height = (window.innerHeight - (windowWhitespace*2)) + "px";
+            this.style.top = (WINDOW_PADDING + this._extraTop) + "px";
+            this.style.height = (window.innerHeight - (WINDOW_PADDING*2)) + "px";
           }
         }
       }

@@ -1,45 +1,49 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 
 let {isArray} = Array;
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: flex;
-        flex-flow: row;
-        align-items: center;
-        justify-content: flex-start;
-        box-sizing: border-box;
-        width: fit-content;
-      }
-      :host([hidden]) {
-        display: none;
-      }
-    </style>
-    <slot></slot>
-  </template>
-`;
+// @element x-buttons
+// @event ^toggle - User toggled a button on or off.
+export default class XButtonsElement extends HTMLElement {
+  static _shadowTemplate = html`
+    <template>
+      <slot></slot>
+    </template>
+  `;
 
-// @events
-//   toggle
-export class XButtonsElement extends HTMLElement {
-  // @info
-  //  Specifies what should happen when user clicks a button:
-  //  -1 - Do not toggle any buttons
-  //   0 - Toggle the clicked button on/off and other buttons off
-  //   1 - Toggle the clicked button on and other buttons off
-  //   2 - Toggle the clicked button on/off
-  //   3 - Toggle the clicked button on/off, but toggle off only if there is at least one other button toggled on
-  // @type
-  //   number
-  // @default
-  //   -1
+  static _shadowStyleSheet = css`
+    :host {
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      justify-content: flex-start;
+      box-sizing: border-box;
+      width: fit-content;
+    }
+    :host([hidden]) {
+      display: none;
+    }
+  `
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type number
+  // @default -1
+  //
+  // Specifies what should happen when user clicks a button:<br/>
+  // <code>-1</code> - Do not toggle any buttons<br/>
+  // <code>0</code> - Toggle the clicked button on/off and other buttons off<br/>
+  // <code>1</code> - Toggle the clicked button on and other buttons off<br/>
+  // <code>2</code> - Toggle the clicked button on/off<br/>
+  // <code>3</code> - Toggle the clicked button on/off, but toggle off only if there is at least one other button
+  // toggled on<br/>
   get tracking() {
     return this.hasAttribute("tracking") ? parseInt(this.getAttribute("tracking")) : -1;
   }
@@ -47,10 +51,23 @@ export class XButtonsElement extends HTMLElement {
     this.setAttribute("tracking", tracking);
   }
 
-  // @info
-  //   Get/set the buttons that should have toggled state.
-  // @type
-  //   string || Array || null
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether to use vertical (rahter than horizontal) layout.
+  get vertical() {
+    return this.hasAttribute("vertical");
+  }
+  set vertical(vertical) {
+    vertical === true ? this.setAttribute("vertical", "") : this.removeAttribute("vertical");
+  }
+
+  // @property
+  // @type string || Array || null
+  //
+  // Get/set the buttons that should have toggled state.
   get value() {
     if (this.tracking === 2 || this.tracking === 3) {
       let buttons = this._getButtons().filter(button => button.toggled);
@@ -89,13 +106,16 @@ export class XButtonsElement extends HTMLElement {
     }
   }
 
+  _shadowRoot = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XButtonsElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XButtonsElement._shadowTemplate.content, true));
 
     this.addEventListener("click", (event) => this._onClick(event), true);
     this.addEventListener("keydown", (event) => this._onKeyDown(event));

@@ -1,69 +1,12 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-let templateElement = document.createElement("template");
-
-// @info
-//   Template string tag used to parse HTML strings.
-// @type
-//   () => HTMLElement || DocumentFragment
-export let html = (strings, ...expressions) => {
-  let parts = [];
-
-  for (let i = 0; i < strings.length; i += 1) {
-    parts.push(strings[i]);
-    if (expressions[i] !== undefined) parts.push(expressions[i]);
-  }
-
-  let innerHTML = parts.join("");
-  templateElement.innerHTML = innerHTML;
-  let fragment = document.importNode(templateElement.content, true);
-
-  if (fragment.children.length === 1) {
-    return fragment.firstElementChild;
-  }
-  else {
-    return fragment;
-  }
-}
-
-// @info
-//   Template string tag used to parse SVG strings.
-// @type
-//   () => SVGElement || DocumentFragment
-export let svg = (strings, ...expressions) => {
-  let parts = [];
-
-  for (let i = 0; i < strings.length; i += 1) {
-    parts.push(strings[i]);
-    if (expressions[i] !== undefined) parts.push(expressions[i]);
-  }
-
-  let innerHTML = `<svg id="x-stub" xmlns="http://www.w3.org/2000/svg">${parts.join("")}</svg>`;
-
-  templateElement.innerHTML = innerHTML;
-
-  let fragment = document.importNode(templateElement.content, true);
-  let stub = fragment.querySelector("svg#x-stub");
-
-  if (stub.children.length === 1) {
-    return stub.firstElementChild;
-  }
-  else {
-    for (let child of [...stub.childNodes]) {
-      fragment.appendChild(child);
-    }
-
-    stub.remove();
-    return fragment;
-  }
-}
-
-// @info
-//   Same as document.createElement(), but you can also create SVG elements.
-// @type
-//   (string) => Element?
+// @type (string) => Element?
+//
+// Same as document.createElement(), but you can also create SVG elements.
 export let createElement = (name, is = null) => {
   let parts = name.split(":");
   let element = null;
@@ -89,10 +32,9 @@ export let createElement = (name, is = null) => {
   return element;
 };
 
-// @info
-//   Same as the standard document.elementFromPoint() moethod, but can also walk the shadow DOM.
-// @type
-//   (number, number, boolea) => Element?
+// @type (number, number, boolea) => Element?
+//
+// Same as the standard document.elementFromPoint() moethod, but can also walk the shadow DOM.
 export let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
   let element = document.elementFromPoint(clientX, clientY);
 
@@ -124,10 +66,9 @@ export let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
   return element;
 };
 
-// @info
-//   Same as the standard element.closest() method but can also walk the shadow DOM.
-// @type
-//   (Element, string, boolean) => Element?
+// @type (Element, string, boolean) => Element?
+//
+// Same as the standard element.closest() method but can also walk the shadow DOM.
 export let closest = (element, selector, walkShadowDOM = true) => {
   let matched = element.closest(selector);
 
@@ -139,21 +80,31 @@ export let closest = (element, selector, walkShadowDOM = true) => {
   }
 };
 
-// @info
-//   Generate element ID that is unique in the given document fragment.
-// @type
-//   (DocumentFragment, string) => string
-export let generateUniqueID = (fragment, prefix = "") => {
-  let counter = 1;
+// @type (Element) => Element?
+//
+// Get closest ancestor elements that can be scrolled horizontally or vertically.
+export let getClosestScrollableAncestor = (element) => {
+  let isScrollable = (currentElement) => {
+    let computedStyle = getComputedStyle(currentElement, null);
 
-  while (true) {
-    let id = prefix + counter;
+    return /(auto|scroll)/.test(
+      computedStyle.getPropertyValue("overflow") +
+      computedStyle.getPropertyValue("overflow-y") +
+      computedStyle.getPropertyValue("overflow-x")
+    );
+  }
 
-    if (fragment.querySelector("#" + CSS.escape(id)) === null) {
-      return id;
+  let walk = (currentElement) => {
+    if (!currentElement || currentElement === document.body) {
+      return document.body;
+    }
+    else if (isScrollable(currentElement)) {
+      return currentElement;
     }
     else {
-      counter += 1;
+      return walk(currentElement.parentElement || currentElement.parentNode.host);
     }
-  }
+  };
+
+  return walk(element);
 };

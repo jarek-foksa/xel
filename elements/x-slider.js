@@ -1,204 +1,261 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
-// @doc
-//   Material Design - https://material.google.com/components/sliders.html
-//   MacOS - https://goo.gl/KBmOG3
-//   Windows - https://metroui.org.ua/sliders.html
-//   HTML - http://thenewcode.com/757/Playing-With-The-HTML5-range-Slider-Input
-//   ARIA - http://w3c.github.io/aria-practices/#slider, http://w3c.github.io/aria-practices/#slidertwothumb
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html, closest} from "../utils/element.js";
-import {normalize, round, getPrecision} from "../utils/math.js";
+import Xel from "../classes/xel.js";
+
+import {compareArrays} from "../utils/array.js";
+import {closest} from "../utils/element.js";
+import {normalize, round, getDistanceBetweenPoints, getPrecision} from "../utils/math.js";
+import {html, css} from "../utils/template.js";
 import {throttle} from "../utils/time.js";
 
 let getClosestMultiple = (number, step) => round(round(number / step) * step, getPrecision(step));
-let $oldTabIndex = Symbol()
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        width: 100%;
-        position: relative;
-        box-sizing: border-box;
-        touch-action: pan-y;
-        --focus-ring-color: currentColor;
-        --focus-ring-opacity: 1;
-        --focus-ring-width: 10px;
-        --focus-ring-transition-duration: 0.15s;
-        --thumb-width: 20px;
-        --thumb-height: 20px;
-        --thumb-d: path("M 50 50 m -50 0 a 50 50 0 1 0 100 0 a 50 50 0 1 0 -100 0");
-        --thumb-transform: none;
-        --thumb-color: gray;
-        --thumb-border-width: 1px;
-        --thumb-border-color: rgba(0, 0, 0, 0.2);
-        --tick-color: rgba(0, 0, 0, 0.4);
-        --track-height: 2px;
-        --track-color: gray;
-        --track-tint-color: black;
-      }
-      :host(:focus) {
-        outline: none;
-      }
-      :host(:hover) {
-        cursor: default;
-      }
-      :host([disabled]) {
-        pointer-events: none;
-        opacity: 0.4;
-      }
+// @element x-slider
+// @event ^change
+// @event ^changestart
+// @event ^changeend
+// @part thumb
+// @part start-thumb
+// @part end-thumb
+// @part track
+// @part groove-track
+// @part buffer-track
+// @part range-track
+// @part tick
+export default class XSliderElement extends HTMLElement {
+  static observedAttributes = ["value", "buffer", "min", "max", "size"];
 
-      /**
-       * Tracks
-       */
+  static _shadowTemplate = html`
+    <template>
+      <main id="main">
+        <div id="tracks-and-thumbs">
+          <div id="groove-track" part="track groove-track"></div>
+          <div id="buffer-track" part="track buffer-track"></div>
+          <div id="range-track" part="track range-track"></div>
+          <div id="thumbs">
+            <div id="start-thumb" class="thumb" part="thumb start-thumb" data-value="start" tabindex="0"></div>
+            <div id="end-thumb" class="thumb" part="thumb end-thumb" data-value="end" tabindex="0"></div>
+          </div>
+        </div>
 
-      #tracks {
-        position: absolute;
-        width: 100%;
-        height: var(--track-height);
-        top: calc((var(--thumb-height) / 2) - var(--track-height)/2);
-      }
+        <div id="ticks"></div>
 
-      #tracks #normal-track {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: var(--track-color);
-        border-radius: 10px;
-      }
+        <div id="labels">
+          <slot></slot>
+        </div>
+      </main>
+    </template>
+  `;
 
-      #tracks #tint-track {
-        position: absolute;
-        width: 0%;
-        height: 100%;
-        background: var(--track-tint-color);
-      }
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      width: 100%;
+      position: relative;
+      box-sizing: border-box;
+      touch-action: pan-y;
+    }
+    :host(:focus) {
+      outline: none;
+    }
+    :host(:hover) {
+      cursor: default;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    :host([vertical]) {
+      width: fit-content;
+      height: 200px;
+    }
 
-      /**
-       * Thumbs
-       */
+    #main {
+      display: flex;
+      flex-flow: column;
+      width: 100%;
+      height: 100%;
+    }
+    :host([vertical]) #main {
+      flex-flow: row;
+    }
 
-      #thumbs {
-        position: relative;
-        width: calc(100% - var(--thumb-width));
-        height: 100%;
-      }
+    #tracks-and-thumbs {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
 
-      #thumbs .thumb {
-        position: relative;
-        left: 0;
-        width: var(--thumb-width);
-        height: var(--thumb-height);
-        display: block;
-        box-sizing: border-box;
-        overflow: visible;
-        transform: var(--thumb-transform);
-        transition: transform 0.2s ease-in-out;
-        will-change: transform;
-        d: var(--thumb-d);
-      }
+    /**
+     * Tracks
+     */
 
-      #thumbs .thumb .shape {
-        d: inherit;
-        fill: var(--thumb-color);
-        stroke: var(--thumb-border-color);
-        stroke-width: var(--thumb-border-width);
-        vector-effect: non-scaling-stroke;
-      }
+    #range-track {
+      position: absolute;
+      width: 0%;
+      height: 3px;
+      background: black;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    :host([vertical]) #range-track {
+      width: 3px;
+      height: 0%;
+      top: initial;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-      #thumbs .thumb .focus-ring {
-        d: inherit;
-        fill: none;
-        stroke: var(--focus-ring-color);
-        stroke-width: 0;
-        opacity: var(--focus-ring-opacity);
-        vector-effect: non-scaling-stroke;
-        transition: stroke-width var(--focus-ring-transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      :host(:focus) #thumbs .thumb .focus-ring {
-        stroke-width: var(--focus-ring-width);
-      }
+    #groove-track {
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      background: gray;
+      border-radius: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    :host([vertical]) #groove-track {
+      width: 3px;
+      height: 100%;
+      top: initial;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-      /**
-       * Ticks
-       */
+    #buffer-track {
+      position: absolute;
+      width: 0%;
+      height: 3px;
+      background: red;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    :host([vertical]) #buffer-track {
+      width: 3px;
+      height: 0%;
+      top: initial;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-      #ticks {
-        width: calc(100% - var(--thumb-width));
-        height: 5px;
-        margin: 0 0 3px 0;
-        position: relative;
-        margin-left: calc(var(--thumb-width) / 2);
-      }
-      #ticks:empty {
-        display: none;
-      }
+    /**
+     * Thumbs
+     */
 
-      #ticks .tick {
-        position: absolute;
-        width: 1px;
-        height: 100%;
-        background: var(--tick-color);
-      }
+    #thumbs {
+      position: relative;
+      width: calc(100% - var(--computed-thumb-width));
+      height: 100%;
+      margin: 0 auto;
+    }
+    :host([vertical]) #thumbs {
+      height: calc(100% - var(--computed-thumb-height));
+      width: 100%;
+      margin: auto 0;
+    }
 
-      /**
-       * Labels
-       */
+    #thumbs .thumb {
+      position: absolute;
+      top: 0;
+      left: 0%;
+      width: 20px;
+      height: 20px;
+      margin-left: calc(var(--computed-thumb-width) / -2);
+      box-sizing: border-box;
+      background: gray;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    :host([vertical]) #thumbs .thumb {
+      margin-left: 0;
+    }
+    #thumbs .thumb:first-child {
+      position: relative;
+    }
+    #thumbs .thumb:focus {
+      outline: none;
+      z-index: 2;
+    }
 
-      #labels {
-        position: relative;
-        width: calc(100% - var(--thumb-width));
-        height: 14px;
-        margin-left: calc(var(--thumb-width) / 2);
-        font-size: 12px;
-      }
-      :host(:empty) #labels {
-        display: none;
-      }
+    /**
+     * Ticks
+     */
 
-      ::slotted(x-label) {
-        position: absolute;
-        transform: translateX(-50%);
-      }
-    </style>
+    #ticks {
+      position: relative;
+      width: calc(100% - var(--computed-thumb-width));
+      margin: 0px calc(var(--computed-thumb-width) / 2);
+    }
+    :host([vertical]) #ticks {
+      width: initial;
+      height: calc(100% - var(--computed-thumb-height));
+      margin: calc(var(--computed-thumb-height) / 2) 0px;
+    }
+    #ticks:empty {
+      display: none;
+    }
 
-    <div id="tracks">
-      <div id="normal-track"></div>
-      <div id="tint-track"></div>
-    </div>
+    #ticks .tick {
+      position: absolute;
+      left: 0%;
+      top: 0;
+      width: 1px;
+      height: 5px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    :host([vertical]) #ticks .tick {
+      width: 5px;
+      height: 1px;
+      left: 0;
+      top: 0%;
+    }
+    #ticks .tick:first-child {
+      position: relative;
+    }
 
-    <div id="thumbs">
-      <svg id="start-thumb" class="thumb" viewBox="0 0 100 100" preserveAspectRatio="none" style="left: 0%;">
-        <path class="focus-ring"></path>
-        <path class="shape"></path>
-      </svg>
-    </div>
+    /**
+     * Labels
+     */
 
-    <div id="ticks"></div>
+    #labels {
+      position: relative;
+      width: calc(100% - var(--computed-thumb-width));
+      margin: 0px calc(var(--computed-thumb-width) / 2);
+    }
+    :host([vertical]) #labels {
+      width: initial;
+      height: calc(100% - var(--computed-thumb-height));
+      margin: calc(var(--computed-thumb-height) / 2) 0px;
+    }
+    :host(:empty) #labels {
+      display: none;
+    }
 
-    <div id="labels">
-      <slot></slot>
-    </div>
-  </template>
-`;
+    ::slotted(x-label) {
+      display: inline-block;
+      top: 0;
+      position: absolute;
+      vertical-align: top;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    :host([vertical]) ::slotted(x-label) {
+      top: initial;
+      left: 4px;
+      transform: translateY(-50%);
+    }
+  `
 
-// @events
-//   change
-//   changestart
-//   changeend
-export class XSliderElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["value", "min", "max"];
-  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type
-  //   number
-  // @default
-  //   0
+  // @property
   // @attribute
+  // @type number
+  // @default 0
   get min() {
     return this.hasAttribute("min") ? parseFloat(this.getAttribute("min")) : 0;
   }
@@ -206,11 +263,10 @@ export class XSliderElement extends HTMLElement {
     this.setAttribute("min", min);
   }
 
-  // @type
-  //   number
-  // @default
-  //   100
+  // @property
   // @attribute
+  // @type number
+  // @default 100
   get max() {
     return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : 100;
   }
@@ -218,27 +274,66 @@ export class XSliderElement extends HTMLElement {
     this.setAttribute("max", max);
   }
 
-  // @type
-  //   number
+  // @property
   // @attribute
+  // @type number || Array<number, number>
+  // @default 0
   get value() {
     if (this.hasAttribute("value")) {
-      return parseFloat(this.getAttribute("value"));
+      let parts = this.getAttribute("value").split(/[ ,]+/)
+
+      if (parts.length >= 2) {
+        return parts.map(part => parseFloat(part)).slice(0, 2);
+      }
+      else {
+        return parseFloat(parts[0]);
+      }
     }
     else {
       return this.max >= this.min ? this.min + (this.max - this.min) / 2 : this.min;
     }
   }
   set value(value) {
-    value = normalize(value, this.min, this.max);
-    this.setAttribute("value", value);
+    if (Array.isArray(value)) {
+      value = value.map($0 => normalize($0, this.min, this.max));
+      value.length = 2;
+      this.setAttribute("value", value.join(" "));
+    }
+    else {
+      value = normalize(value, this.min, this.max);
+      this.setAttribute("value", value);
+    }
   }
 
-  // @type
-  //   number
-  // @default
-  //   1
+  // @property
   // @attribute
+  // @type Array<number, number>
+  // @default [0, 0]
+  get buffer() {
+    if (this.hasAttribute("buffer")) {
+      let parts = this.getAttribute("buffer").split(/[ ,]+/)
+
+      if (parts.length >= 2) {
+        return parts.map(part => parseFloat(part)).slice(0, 2);
+      }
+      else {
+        return [0, parseFloat(parts[0])];
+      }
+    }
+    else {
+      return [0, 0];
+    }
+  }
+  set buffer(buffer) {
+    buffer = buffer.map($0 => normalize($0, this.min, this.max));
+    buffer.length = 2;
+    this.setAttribute("buffer", buffer.join(" "));
+  }
+
+  // @property
+  // @attribute
+  // @type number
+  // @default 1
   get step() {
     return this.hasAttribute("step") ? parseFloat(this.getAttribute("step")) : 1;
   }
@@ -246,13 +341,21 @@ export class XSliderElement extends HTMLElement {
     this.setAttribute("step", step);
   }
 
-  // @info
-  //   Whether this button is disabled.
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
+  get vertical() {
+    return this.hasAttribute("vertical");
+  }
+  set vertical(vertical) {
+    vertical ? this.setAttribute("vertical", "") : this.removeAttribute("vertical");
+  }
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -260,19 +363,56 @@ export class XSliderElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "start" || "end" || null
+  // @default null
+  // @readOnly
+  //
+  // Whether the start or end grippie is being dragged by the user.
+  get dragging() {
+    return this.getAttribute("dragging");
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _lastTabIndex = 0;
+
+  _xelSizeChangeListener = null;
+  _mutationObserver = new MutationObserver((args) => this._onMutation(args));
+  _thumbResizeObserver = new ResizeObserver(() => this._onThumbResize());
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    this._observer = new MutationObserver((args) => this._onMutation(args));
-    this._updateTicks500ms = throttle(this._updateTicks, 500, this);
+    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this._shadowRoot.adoptedStyleSheets = [XSliderElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XSliderElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
@@ -280,25 +420,13 @@ export class XSliderElement extends HTMLElement {
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "value") {
-      this._onValueAttributeChange();
-    }
-    else if (name === "min") {
-      this._onMinAttributeChange();
-    }
-    else if (name === "max") {
-      this._onMaxAttributeChange();
-    }
-  }
-
   connectedCallback() {
     this.setAttribute("value", this.value);
 
-    this._observer.observe(this, {
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    this._thumbResizeObserver.observe(this._elements["start-thumb"]);
+
+    this._mutationObserver.observe(this, {
       childList: true,
       subtree: true,
       attributes: true,
@@ -308,58 +436,35 @@ export class XSliderElement extends HTMLElement {
 
     this._updateTracks();
     this._updateThumbs();
-    this._updateTicks();
+    this._updateLabelsAndTicks();
     this._updateAccessabilityAttributes();
+    this._updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
-    this._observer.disconnect();
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    this._thumbResizeObserver.unobserve(this._elements["start-thumb"]);
+    this._mutationObserver.disconnect();
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateTracks() {
-    let left = (((this.value - this.min) / (this.max - this.min)) * 100);
-    let originLeft = (((this.min > 0 ? this.min : 0) - this.min) / (this.max - this.min)) * 100;
-
-    if (left >= originLeft) {
-      this["#tint-track"].style.left = `${originLeft}%`;
-      this["#tint-track"].style.width = (left - originLeft) + "%";
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
     }
-    else {
-      this["#tint-track"].style.left = `${left}%`;
-      this["#tint-track"].style.width = `${originLeft - left}%`;
+    else if (name === "value") {
+      this._onValueAttributeChange();
     }
-  }
-
-  _updateThumbs(animate) {
-    this["#start-thumb"].style.left = (((this.value - this.min) / (this.max - this.min)) * 100) + "%";
-  }
-
-  async _updateTicks() {
-    await customElements.whenDefined("x-label");
-
-    this["#ticks"].innerHTML = "";
-
-    for (let label of this.querySelectorAll(":scope > x-label")) {
-      label.style.left = (((label.value - this.min) / (this.max - this.min)) * 100) + "%";
-      this["#ticks"].insertAdjacentHTML("beforeend", `<div class="tick" style="left: ${label.style.left}"></div>`);
+    else if (name === "buffer") {
+      this._onBufferAttributeChange();
     }
-  }
-
-  _updateAccessabilityAttributes() {
-    this.setAttribute("aria-disabled", this.disabled);
-
-    if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
-      this.tabIndex = -1;
+    else if (name === "min") {
+      this._onMinAttributeChange();
     }
-    else {
-      if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
-      }
-
-      delete this[$oldTabIndex];
+    else if (name === "max") {
+      this._onMaxAttributeChange();
+    }
+    else if (name === "size") {
+      this._onSizeAttributeChange();
     }
   }
 
@@ -370,16 +475,24 @@ export class XSliderElement extends HTMLElement {
     this._updateThumbs();
   }
 
+  _onBufferAttributeChange() {
+    this._updateTracks();
+  }
+
   _onMinAttributeChange() {
     this._updateTracks();
     this._updateThumbs();
-    this._updateTicks();
+    this._updateLabelsAndTicks();
   }
 
   _onMaxAttributeChange() {
     this._updateTracks();
     this._updateThumbs();
-    this._updateTicks();
+    this._updateLabelsAndTicks();
+  }
+
+  _onSizeAttributeChange() {
+    this._updateComputedSizeAttriubte();
   }
 
   _onMutation(records) {
@@ -388,9 +501,15 @@ export class XSliderElement extends HTMLElement {
         return;
       }
       else {
-        this._updateTicks500ms();
+        this._updateLabelsTicksThrottled();
       }
     }
+  }
+
+  _onThumbResize() {
+    let thumbRect = this._elements["start-thumb"].getBoundingClientRect();
+    this._elements["main"].style.setProperty("--computed-thumb-width", thumbRect.width + "px");
+    this._elements["main"].style.setProperty("--computed-thumb-height", thumbRect.height + "px");
   }
 
   _onPointerDown(event) {
@@ -411,46 +530,129 @@ export class XSliderElement extends HTMLElement {
       return;
     }
 
-    let containerBounds = this["#thumbs"].getBoundingClientRect();
-    let thumb = this["#start-thumb"];
-    let thumbBounds = thumb.getBoundingClientRect();
+    let draggedThumb = null;
+    let {width: thumbWidth, height: thumbHeight} = this._elements["start-thumb"].getBoundingClientRect();
+    let containerBounds = this._elements["main"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
     let changeStarted = false;
 
-    this.setPointerCapture(pointerDownEvent.pointerId);
+    // Determine the thumb to be dragged
+    {
+      if (pointerDownEvent.target.matches(".thumb")) {
+        draggedThumb = pointerDownEvent.target;
+      }
+      else {
+        if (this._elements["end-thumb"].hidden === true) {
+          draggedThumb = this._elements["start-thumb"];
+        }
+        else {
+          let startBounds = this._elements["start-thumb"].getBoundingClientRect();
+          let endBounds = this._elements["end-thumb"].getBoundingClientRect();
 
-    let updateValue = (clientX, animate) => {
-      let x = clientX - containerBounds.x - thumbBounds.width/2;
-      x = normalize(x, 0, containerBounds.width);
+          let startPoint = new DOMPoint(startBounds.x + startBounds.width / 2, startBounds.y + startBounds.height / 2);
+          let endPoint = new DOMPoint(endBounds.x + endBounds.width / 2, endBounds.y + endBounds.height / 2);
+          let pointerPoint = new DOMPoint(pointerDownEvent.clientX, pointerDownEvent.clientY);
 
-      let value = (x / containerBounds.width) * (this.max - this.min) + this.min;
+          let startDistance = getDistanceBetweenPoints(pointerPoint, startPoint);
+          let endDistance = getDistanceBetweenPoints(pointerPoint, endPoint);
+
+          if (startDistance <= endDistance) {
+            draggedThumb = this._elements["start-thumb"];
+          }
+          else {
+            draggedThumb = this._elements["end-thumb"];
+          }
+        }
+      }
+    }
+
+    let updateValue = (clientX, clientY) => {
+      let value = 0;
+
+      if (this.vertical) {
+        let y = containerBounds.y + containerBounds.height - thumbHeight/2 - clientY;
+        y = normalize(y, 0, containerBounds.height - thumbHeight);
+
+        value = ((y / (containerBounds.height - thumbHeight)) * (this.max - this.min)) + this.min;
+      }
+      else {
+        let x = clientX - (containerBounds.x + thumbWidth/2);
+        x = normalize(x, 0, containerBounds.width - thumbWidth);
+
+        value = (x / (containerBounds.width - thumbWidth)) * (this.max - this.min) + this.min;
+      }
+
       value = getClosestMultiple(value, this.step);
 
-      if (this.value !== value) {
-        this.value = value;
+      if (Array.isArray(this.value)) {
+        let [startValue, endValue] = this.value;
 
-        if (changeStarted === false) {
-          changeStarted = true;
-          this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+        if (draggedThumb === this._elements["start-thumb"]) {
+          if (value >= endValue) {
+            value = endValue;
+          }
+
+          if (value !== startValue) {
+            this.value = [value, endValue];
+
+            if (changeStarted === false) {
+              changeStarted = true;
+              this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+            }
+
+            this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+          }
         }
+        else if (draggedThumb === this._elements["end-thumb"]) {
+          if (value <= startValue) {
+            value = startValue;
+          }
 
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+          if (value !== endValue) {
+            this.value = [startValue, value];
+
+            if (changeStarted === false) {
+              changeStarted = true;
+              this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+            }
+
+            this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+          }
+        }
+      }
+      else {
+        if (this.value !== value) {
+          this.value = value;
+
+          if (changeStarted === false) {
+            changeStarted = true;
+            this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+          }
+
+          this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        }
       }
     };
 
-    if (pointerDownEvent.target.closest(".thumb") !== thumb) {
-      updateValue(pointerDownEvent.clientX, true);
+    draggedThumb.setPointerCapture(pointerDownEvent.pointerId);
+    this.setAttribute("dragging", draggedThumb.dataset.value);
+
+    updateValue(pointerDownEvent.clientX, pointerDownEvent.clientY);
+
+    for (let thumb of this._elements["thumbs"].children) {
+      thumb.style.zIndex = (thumb === draggedThumb) ? "1" : "0";
     }
 
-    this.addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    draggedThumb.addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       if (pointerMoveEvent.isPrimary) {
-        updateValue(pointerMoveEvent.clientX, false);
+        updateValue(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
       }
     });
 
-    this.addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
-      this.removeEventListener("pointermove", pointerMoveListener);
-      this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    draggedThumb.addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+      draggedThumb.removeEventListener("pointermove", pointerMoveListener);
+      draggedThumb.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.removeAttribute("dragging");
 
       if (changeStarted) {
         this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
@@ -465,37 +667,286 @@ export class XSliderElement extends HTMLElement {
 
       let oldValue = this.value
 
-      if (event.shiftKey) {
-        this.value -= this.step * 10;
+      if (Array.isArray(this.value)) {
+        let [startValue, endValue] = this.value;
+
+        if (this._shadowRoot.activeElement === this._elements["start-thumb"]) {
+          if (event.shiftKey) {
+            startValue -= this.step * 10;
+          }
+          else {
+            startValue -= this.step;
+          }
+        }
+        else if (this._shadowRoot.activeElement === this._elements["end-thumb"]) {
+          if (event.shiftKey) {
+            endValue -= this.step * 10;
+          }
+          else {
+            endValue -= this.step;
+          }
+
+          if (endValue <= startValue) {
+            endValue = startValue;
+          }
+        }
+
+        this.value = [startValue, endValue];
+
+        if (compareArrays(oldValue, this.value) === false) {
+          this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        }
       }
       else {
-        this.value -= this.step;
-      }
+        if (event.shiftKey) {
+          this.value -= this.step * 10;
+        }
+        else {
+          this.value -= this.step;
+        }
 
-      if (oldValue !== this.value) {
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        if (oldValue !== this.value) {
+          this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        }
       }
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
     }
+
     else if (event.code === "ArrowRight" || event.code === "ArrowUp") {
       event.preventDefault();
       this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
       let oldValue = this.value
 
-      if (event.shiftKey) {
-        this.value += this.step * 10;
+      if (Array.isArray(this.value)) {
+        let [startValue, endValue] = this.value;
+
+        if (this._shadowRoot.activeElement === this._elements["start-thumb"]) {
+          if (event.shiftKey) {
+            startValue += this.step * 10;
+          }
+          else {
+            startValue += this.step;
+          }
+
+          if (startValue>= endValue) {
+            startValue = endValue;
+          }
+        }
+        else if (this._shadowRoot.activeElement === this._elements["end-thumb"]) {
+          if (event.shiftKey) {
+            endValue += this.step * 10;
+          }
+          else {
+            endValue += this.step;
+          }
+        }
+
+        this.value = [startValue, endValue];
+
+        if (compareArrays(oldValue, this.value) === false) {
+          this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        }
       }
       else {
-        this.value += this.step;
-      }
+        if (event.shiftKey) {
+          this.value += this.step * 10;
+        }
+        else {
+          this.value += this.step;
+        }
 
-      if (oldValue !== this.value) {
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        if (oldValue !== this.value) {
+          this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        }
       }
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateThumbs() {
+    if (Array.isArray(this.value)) {
+      let [startValue, endValue] = this.value;
+
+      {
+        let offset = (((startValue - this.min) / (this.max - this.min)) * 100);
+
+        if (this.vertical) {
+          this._elements["start-thumb"].style.top = (100 - offset) + "%"
+          this._elements["start-thumb"].hidden = false;
+        }
+        else {
+          this._elements["start-thumb"].style.left = offset + "%";
+          this._elements["start-thumb"].hidden = false;
+        }
+      }
+
+      {
+        let offset = (((endValue - this.min) / (this.max - this.min)) * 100);
+
+        if (this.vertical) {
+          this._elements["end-thumb"].style.top = (100 - offset) + "%";
+          this._elements["end-thumb"].hidden = false;
+        }
+        else {
+          this._elements["end-thumb"].style.left = offset + "%";
+          this._elements["end-thumb"].hidden = false;
+        }
+      }
+    }
+    else {
+      let offset = (((this.value - this.min) / (this.max - this.min)) * 100);
+
+      if (this.vertical) {
+        this._elements["start-thumb"].style.top = (100 - offset) + "%"
+        this._elements["start-thumb"].hidden = false;
+        this._elements["end-thumb"].hidden = true;
+      }
+      else {
+        this._elements["start-thumb"].style.left = offset + "%";
+        this._elements["start-thumb"].hidden = false;
+        this._elements["end-thumb"].hidden = true;
+      }
+    }
+  }
+
+  _updateTracks() {
+    // Range track
+    if (Array.isArray(this.value)) {
+      let [startValue, endValue] = this.value;
+      let startOffset = (((startValue - this.min) / (this.max - this.min)) * 100);
+      let endOffset = (((endValue - this.min) / (this.max - this.min)) * 100);
+
+      if (this.vertical) {
+        this._elements["range-track"].style.bottom = `${startOffset}%`;
+        this._elements["range-track"].style.height = (endOffset - startOffset) + "%";
+      }
+      else {
+        this._elements["range-track"].style.left = `${startOffset}%`;
+        this._elements["range-track"].style.width = (endOffset - startOffset) + "%";
+      }
+    }
+    else {
+      let offset = (((this.value - this.min) / (this.max - this.min)) * 100);
+      let originOffset = (((this.min > 0 ? this.min : 0) - this.min) / (this.max - this.min)) * 100;
+
+      if (this.vertical) {
+        if (offset >= originOffset) {
+          this._elements["range-track"].style.bottom = `${originOffset}%`;
+          this._elements["range-track"].style.height = (offset - originOffset) + "%";
+        }
+        else {
+          this._elements["range-track"].style.bottom = `${offset}%`;
+          this._elements["range-track"].style.height = `${originOffset - offset}%`;
+        }
+      }
+      else {
+        if (offset >= originOffset) {
+          this._elements["range-track"].style.left = `${originOffset}%`;
+          this._elements["range-track"].style.width = (offset - originOffset) + "%";
+        }
+        else {
+          this._elements["range-track"].style.left = `${offset}%`;
+          this._elements["range-track"].style.width = `${originOffset - offset}%`;
+        }
+      }
+    }
+
+    // Buffer track
+    {
+      let [startValue, endValue] = this.buffer;
+      let startOffset = (((startValue - this.min) / (this.max - this.min)) * 100);
+      let endOffset = (((endValue - this.min) / (this.max - this.min)) * 100);
+
+      if (this.vertical) {
+        this._elements["buffer-track"].style.bottom = startOffset + "%"
+        this._elements["buffer-track"].style.height = (endOffset - startOffset) + "%"
+      }
+      else {
+        this._elements["buffer-track"].style.left = startOffset + "%";
+        this._elements["buffer-track"].style.width = (endOffset - startOffset) + "%"
+      }
+    }
+  }
+
+  async _updateLabelsAndTicks() {
+    await customElements.whenDefined("x-label");
+
+    this._elements["ticks"].innerHTML = "";
+
+    for (let label of this.querySelectorAll(":scope > x-label")) {
+      if (this.vertical) {
+        label.style.top = (100 - ((label.value - this.min) / (this.max - this.min)) * 100) + "%";
+      }
+      else {
+        label.style.left = (((label.value - this.min) / (this.max - this.min)) * 100) + "%";
+      }
+
+      if (label === this.firstElementChild) {
+        label.style.position = "relative";
+      }
+      else {
+        label.style.position = null;
+      }
+
+      if (this.vertical) {
+        this._elements["ticks"].insertAdjacentHTML(
+          "beforeend", `<div class="tick" part="tick" style="top: ${label.style.top}"></div>`
+        );
+      }
+      else {
+        this._elements["ticks"].insertAdjacentHTML(
+          "beforeend", `<div class="tick" part="tick" style="left: ${label.style.left}"></div>`
+        );
+      }
+    }
+  }
+
+  _updateLabelsTicksThrottled = throttle(this._updateLabelsAndTicks, 500, this);
+
+  _updateAccessabilityAttributes() {
+    this.setAttribute("aria-disabled", this.disabled);
+
+    if (this.disabled) {
+      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
+    }
+    else {
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+      }
+
+      this._lastTabIndex = 0;
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 }

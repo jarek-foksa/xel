@@ -1,22 +1,39 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {createElement, closest, html} from "../utils/element.js";
-import {formatColorString, parseColor, serializeColor} from "../utils/color.js";
+import Xel from "../classes/xel.js";
+import ColorParser from "../classes/color-parser.js";
+
+import {formatColorString, serializeColor} from "../utils/color.js";
+import {closest} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 import {debounce} from "../utils/time.js";
 
-let $oldTabIndex = Symbol();
+// @element x-colorselect
+// @event change
+// @event changestart
+// @event changeend
+export default class XColorSelectElement extends HTMLElement {
+  static observedAttributes = ["value", "disabled", "size"];
 
-let shadowHTML = `
-  <style>
+  static _shadowTemplate = html`
+    <template>
+      <input tabindex="-1" id="input" type="color" value="#ffffff">
+      <slot></slot>
+    </template>
+  `;
+
+  static _shadowStyleSheet = css`
     :host {
       display: block;
-      height: 24px;
-      width: 40px;
+      width: 32px;
+      height: 32px;
       box-sizing: border-box;
-      border: 1px solid rgb(150, 150, 150);
       position: relative;
+      overflow: hidden;
       /* Checkerboard pattern */
       background-color: white;
       background-size: 10px 10px;
@@ -57,26 +74,13 @@ let shadowHTML = `
     #input::-webkit-color-swatch {
       border: none;
     }
-  </style>
+  `
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  <input tabindex="-1" id="input" type="color" value="#ffffff">
-  <slot></slot>
-`;
-
-// @events
-//   change
-//   changestart
-//   changeend
-export class XColorSelectElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["value", "disabled"];
-  }
-
-  // @type
-  //   string
-  // @default
-  //   #000000
+  // @property
   // @attribute
+  // @type string
+  // @default "#000000"
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "#ffffff";
   }
@@ -84,11 +88,10 @@ export class XColorSelectElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -96,35 +99,51 @@ export class XColorSelectElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _inputChangeStarted = false;
+  _wasFocusedBeforeExpanding = false;
+  _xelSizeChangeListener = null;
+  _lastTabIndex = 0;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._inputChangeStarted = false;
-    this._onInputChangeDebouonced = debounce(this._onInputChangeDebouonced, 400, this);
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.innerHTML = shadowHTML;
+    this._shadowRoot.adoptedStyleSheets = [XColorSelectElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XColorSelectElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this.addEventListener("click", (event) => this._onClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
     this.addEventListener("change", (event) => this._onChange(event));
-    this["#input"].addEventListener("change", (event) => this._onInputChange(event));
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "value") {
-      this._onValueAttributeChange();
-    }
-    else if (name === "disabled") {
-      this._onDisabledAttributeChange();
-    }
+    this._elements["input"].addEventListener("change", (event) => this._onInputChange(event));
   }
 
   connectedCallback() {
@@ -135,7 +154,26 @@ export class XColorSelectElement extends HTMLElement {
     }
 
     this._updateAccessabilityAttributes();
+    this._updateComputedSizeAttriubte();
     this._updateInput();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+  }
+
+  attributeChangedCallback(name) {
+    if (name === "value") {
+      this._onValueAttributeChange();
+    }
+    else if (name === "disabled") {
+      this._onDisabledAttributeChange();
+    }
+    else if (name === "size") {
+      this._onSizeAttributeChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,24 +220,50 @@ export class XColorSelectElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _updateInput() {
-    let [r, g, b, a] = parseColor(this.value, "rgba");
-    this["#input"].value = serializeColor([r, g, b, a], "rgba", "hex");
-    this["#input"].style.opacity = a;
+    let [r, g, b, a] = new ColorParser().parse(this.value, "rgba");
+    this._elements["input"].value = serializeColor([r, g, b, a], "rgba", "hex");
+    this._elements["input"].style.opacity = a;
   }
 
   _updateAccessabilityAttributes() {
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
       }
 
-      delete this[$oldTabIndex];
+      this._lastTabIndex = 0;
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 
@@ -221,6 +285,10 @@ export class XColorSelectElement extends HTMLElement {
     this._updateAccessabilityAttributes();
   }
 
+  _onSizeAttributeChange() {
+    this._updateComputedSizeAttriubte();
+  }
+
   _onChange(event) {
     if (event.target !== this) {
       this.value = formatColorString(event.target.value, "rgba");
@@ -234,19 +302,19 @@ export class XColorSelectElement extends HTMLElement {
       this.dispatchEvent(new CustomEvent("changestart"))
     }
 
-    this.value = this["#input"].value;
+    this.value = this._elements["input"].value;
     this.dispatchEvent(new CustomEvent("change"))
-    this._onInputChangeDebouonced();
+    this._onInputChangeDebounced();
   }
 
-  _onInputChangeDebouonced() {
+  _onInputChangeDebounced = debounce(() => {
     if (this._inputChangeStarted) {
       this._inputChangeStarted = false;
 
-      this.value = this["#input"].value;
+      this.value = this._elements["input"].value;
       this.dispatchEvent(new CustomEvent("changeend"))
     }
-  }
+  }, 400);
 
   _onPointerDown(event) {
     if (event.target === this) {
@@ -291,7 +359,7 @@ export class XColorSelectElement extends HTMLElement {
         }
       }
       else {
-        this["#input"].click();
+        this._elements["input"].click();
       }
     }
 

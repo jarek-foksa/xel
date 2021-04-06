@@ -1,14 +1,15 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
-// @doc
-//   https://www.youtube.com/watch?v=uCIC2LNt0bk
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-export class XRadiosElement extends HTMLElement {
-  // @type
-  //   string?
-  // @default
-  //   null
+// @element x-radios
+export default class XRadiosElement extends HTMLElement {
+  // @property
+  // @attribute
+  // @type string?
+  // @default null
   get value() {
     let radio = this.querySelector(`x-radio[toggled]`);
     return radio ? radio.value : null;
@@ -18,6 +19,8 @@ export class XRadiosElement extends HTMLElement {
       radio.toggled = (radio.value === value && value !== null);
     }
   }
+
+  _shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +49,7 @@ export class XRadiosElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   _onClick(event) {
-    let clickedRadio = event.target.localName === "x-radio" ? event.target : null;
+    let clickedRadio = event.target.closest("x-radio");
 
     if (clickedRadio && !clickedRadio.toggled && !clickedRadio.disabled && event.button === 0) {
       let radios = [...this.querySelectorAll("x-radio")];

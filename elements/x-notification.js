@@ -1,55 +1,60 @@
 
-// @doc
-//   https://material.io/guidelines/components/snackbars-toasts.html#
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
+
 import {rectContainsPoint} from "../utils/math.js";
+import {html, css} from "../utils/template.js";
 import {getTimeStamp} from "../utils/time.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: none;
-        position: fixed;
-        min-width: 15px;
-        min-height: 15px;
-        bottom: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 5px 12px;
-        box-sizing: border-box;
-        color: rgba(255, 255, 255, 0.9);
-        background: #434343;
-        z-index: 9999;
-        font-size: 12px;
-        user-select: text;
-        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      :host([opened]),
-      :host([animating]) {
-        display: block;
-      }
-      :host(:focus) {
-        outline: none;
-      }
-    </style>
+// @element x-notification
+export default class XNotificationElement extends HTMLElement {
+  static observedAttributes = ["opened", "size"];
 
-    <slot></slot>
-  </template>
-`;
+  static _shadowTemplate = html`
+    <template>
+      <slot></slot>
+    </template>
+  `;
 
-export class XNotificationElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["opened"];
-  }
+  static _shadowStyleSheet = css`
+    :host {
+      display: none;
+      position: fixed;
+      min-width: 15px;
+      min-height: 15px;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 12px;
+      box-sizing: border-box;
+      color: rgba(255, 255, 255, 0.9);
+      background: #434343;
+      z-index: 9999;
+      font-size: 12px;
+      user-select: text;
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    :host([opened]),
+    :host([animating]) {
+      display: block;
+    }
+    :host(:focus) {
+      outline: none;
+    }
+  `
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether the notification is currently open.
   get opened() {
     return this.hasAttribute("opened");
   }
@@ -58,13 +63,13 @@ export class XNotificationElement extends HTMLElement {
     this._time = 0;
   }
 
-  // @info
-  //   Time (in miliseconds) after which this notification should disappear.
-  //   Set to 0 to disable the timeout.
-  // @type
-  //   number
-  // @default
-  //   0
+  // @property
+  // @attribute
+  // @type number
+  // @default 0
+  //
+  // Time (in miliseconds) after which this notification should disappear.<br/>
+  // Set to 0 to disable the timeout.
   get timeout() {
     return this.hasAttribute("timeout") ? parseFloat(this.getAttribute("timeout")) : 0;
   }
@@ -72,23 +77,51 @@ export class XNotificationElement extends HTMLElement {
     this.setAttribute("timeout", timeout);
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _time = 0;
+  _intervalID = null;
+  _xelSizeChangeListener = null;
+  _windowPointerDownListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._time = 0;
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
-
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
-    }
+    this._shadowRoot.adoptedStyleSheets = [XNotificationElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XNotificationElement._shadowTemplate.content, true));
   }
 
   connectedCallback() {
     this.setAttribute("tabindex", "0");
+    this._updateComputedSizeAttriubte();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -97,6 +130,37 @@ export class XNotificationElement extends HTMLElement {
     }
     else if (name === "opened") {
       this.opened ? this._onOpen() : this._onClose();
+    }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 

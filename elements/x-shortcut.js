@@ -1,16 +1,15 @@
 
-// @info
-//   Element responsible for displaying a platform-agnostic keyboard shortcut.
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 
-let isAppleDevice = navigator.platform.startsWith("Mac") || ["iPhone", "iPad"].includes(navigator.platform);
+const APPLE_DEVICE = navigator.platform.startsWith("Mac") || ["iPhone", "iPad"].includes(navigator.platform);
 
-// @doc
-//   https://www.w3.org/TR/uievents-key/#keys-modifier
-let modKeys = [
+// @doc https://www.w3.org/TR/uievents-key/#keys-modifier
+const MOD_KEYS = [
   "Alt",
   "AltGraph",
   "CapsLock",
@@ -25,34 +24,42 @@ let modKeys = [
   "SymbolLock"
 ];
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: inline-block;
-        box-sizing: border-box;
-        font-size: 14px;
-        line-height: 1;
-      }
-      :host([hidden]) {
-        display: none;
-      }
-    </style>
+// @element x-shortcut
+export default class XShortcutElement extends HTMLElement {
+  static observedAttributes = ["value"];
 
-    <main id="main"></main>
-  </template>
-`;
+  static _shadowTemplate = html`
+    <template>
+      <main id="main"></main>
+    </template>
+  `;
 
-export class XShortcutElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["value"];
-  }
+  static _shadowStyleSheet = css`
+    :host {
+      display: inline-block;
+      box-sizing: border-box;
+      font-size: 14px;
+      line-height: 1;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
-  // @type
-  //   Array<string>
-  // @default
-  //   []
+    ::selection {
+      color: var(--selection-color);
+      background-color: var(--selection-background-color);
+    }
+  `
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type Array<string>
+  // @default []
+  //
+  // The keyboard shortcut in form of an array of <a href="https://www.w3.org/TR/uievents-key/">DOM key names</a>.
+  // The attribute value keys should be separated by a "+" sign.
   get value() {
     let value = [];
 
@@ -68,18 +75,29 @@ export class XShortcutElement extends HTMLElement {
     this.setAttribute("value", value.join("+"));
   }
 
-  // @type
-  //   Array<string>
+  // @property
+  // @type Array<string>
+  // @default []
+  // @readOnly
+  //
+  // <a href="https://www.w3.org/TR/uievents-key/#keys-modifier">Modifier key names</a> contained by <code>value</code>.
   get modKeys() {
-    return this.value.filter(key => modKeys.includes(key));
+    return this.value.filter(key => MOD_KEYS.includes(key));
   }
 
-  // @type
-  //   String?
+  // @property
+  // @type String?
+  // @default null
+  // @readOnly
+  //
+  // Non-modifier key name contained by <code>value</code>.
   get normalKey() {
-    let key = this.value.find(key => modKeys.includes(key) === false);
+    let key = this.value.find(key => MOD_KEYS.includes(key) === false);
     return key === undefined ? null : key;
   }
+
+  _shadowRoot = null;
+  _elements = {};
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -87,10 +105,11 @@ export class XShortcutElement extends HTMLElement {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XShortcutElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XShortcutElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
   }
 
@@ -104,12 +123,11 @@ export class XShortcutElement extends HTMLElement {
 
   _update() {
     let displayValue = "";
-
     let keys = this.value;
     let modKeys = this.modKeys;
     let normalKey = this.normalKey;
 
-    if (isAppleDevice) {
+    if (APPLE_DEVICE) {
       if (modKeys.includes("Meta")) {
         displayValue += "^";
       }
@@ -171,7 +189,7 @@ export class XShortcutElement extends HTMLElement {
       displayValue = parts.join("+");
     }
 
-    this["#main"].textContent = displayValue;
+    this._elements["main"].textContent = displayValue;
   }
 }
 

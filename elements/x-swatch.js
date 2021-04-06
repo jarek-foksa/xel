@@ -1,67 +1,48 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        width: 22px;
-        height: 22px;
-        cursor: default;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
+import {html, css} from "../utils/template.js";
 
-      #main {
-        width: 100%;
-        height: 100%;
-        position: relative;
-      }
+// @element x-swatch
+export default class XSwatchElement extends HTMLElement {
+  static observedAttributes = ["value", "size"];
 
-      #selected-icon {
-        display: none;
-        position: absolute;
-        left: calc(50% - 8px);
-        top: calc(50% - 8px);
-        width: 16px;
-        height: 16px;
-        color: white;
-      }
-      :host([showicon]:hover) #selected-icon {
-        display: block;
-        opacity: 0.6;
-      }
-      :host([showicon][selected]) #selected-icon {
-        display: block;
-        opacity: 1;
-      }
-      :host([showicon][value="#FFFFFF"]) #selected-icon {
-        fill: gray;
-      }
-    </style>
+  static _shadowTemplate = html`
+    <template>
+      <div id="preview"></div>
+    </template>
+  `;
 
-    <main id="main">
-      <x-icon id="selected-icon" name="send"></x-icon>
-    </main>
-  </template>
-`;
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      width: 18px;
+      height: 18px;
+      cursor: default;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
 
-export class XSwatchElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["disabled"];
-  }
+    #preview {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+  `
 
-  // @info
-  //   Value associated with this button.
-  // @type
-  //   string
-  // @default
-  //   "white"
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type string
+  // @default "white"
+  //
+  // Color value following the <a href="https://www.w3.org/TR/css-color-3/#colorunits">CSS syntax</a>.
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "white";
   }
@@ -69,31 +50,33 @@ export class XSwatchElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
-  get selected() {
-    return this.hasAttribute("selected");
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  //
+  // Custom widget size.
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
   }
-  set selected(selected) {
-    selected ? this.setAttribute("selected", "") : this.removeAttribute("selected");
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
   }
 
-  // @info
-  //   Whether to show selection icon on hover and when the swatch is selected.
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
-  get showicon() {
-    return this.hasAttribute("showicon");
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  //
+  // Resolved widget size, used for theming purposes.
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
-  set showicon(showicon) {
-    showicon ? this.setAttribute("showicon", "") : this.removeAttribute("showicon");
-  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -101,27 +84,64 @@ export class XSwatchElement extends HTMLElement {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XSwatchElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XSwatchElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
   }
 
   connectedCallback() {
-    this._update();
+    this._updatePreview();
+    this._updateComputedSizeAttriubte();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "value") {
-      this._update();
+      this._updatePreview();
+    }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
-    this["#main"].style.background = this.value;
+  _updatePreview() {
+    this._elements["preview"].style.background = this.value;
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
+    }
   }
 }
 

@@ -1,129 +1,96 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
 
-let {max} = Math;
-let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
+import {html, css} from "../utils/template.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        width: 100%;
-        box-sizing: border-box;
-        --arrow-width: 24px;
-        --arrow-height: 24px;
-        --arrow-color: currentColor;
-        --arrow-align: flex-end;
-        --arrow-d: path("M 29.0 31.4 L 50 52.3 L 70.9 31.4 L 78.5 40.0 L 50 68.5 L 21.2 40.3 L 29.0 31.4 Z");
-        --arrow-transform: rotate(0deg);
-        --focused-arrow-background: transparent;
-        --focused-arrow-outline: none;
-        --trigger-effect: none; /* ripple, none */
-        --ripple-background: currentColor;
-        --ripple-opacity: 0.05;
-      }
-      :host([expanded]) {
-        --arrow-transform: rotate(-180deg);
-      }
-      :host([animating]) {
-        overflow: hidden;
-      }
+// @element x-accordion
+// @part arrow - Arrow icon indicating whether the accordion is expanded or collapsed.
+// @event expand - User expanded the accordion by clicking the arrow icon.
+// @event collapse - User collapsed the accordion by clicking the arrow icon.
+export default class XAccordionElement extends HTMLElement {
+  static observedAttributes = ["expanded", "size"];
 
-      #main {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
+  static _shadowTemplate = html`
+    <template>
+      <main id="main">
+        <div id="arrow-container">
+          <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none" tabindex="1">
+            <path></path>
+          </svg>
+        </div>
 
-      /**
-       * Ripples
-       */
+        <slot></slot>
+      </main>
+    </template>
+  `;
 
-      #ripples {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        border-radius: inherit;
-      }
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    :host([animating]) {
+      overflow: hidden;
+    }
 
-      #ripples .ripple {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 200px;
-        height: 200px;
-        background: var(--ripple-background);
-        opacity: var(--ripple-opacity);
-        border-radius: 999px;
-        transform: none;
-        transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: opacity, transform;
-        pointer-events: none;
-      }
+    #main {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
 
-      /**
-       * Arrow
-       */
+    /**
+     * Arrow
+     */
 
-      #arrow-container {
-        position: absolute;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: var(--arrow-align);
-        pointer-events: none;
-      }
+    #arrow-container {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      pointer-events: none;
+    }
 
-      #arrow {
-        margin: 0 14px 0 0;
-        display: flex;
-        width: var(--arrow-width);
-        height: var(--arrow-height);
-        min-width: var(--arrow-width);
-        color: var(--arrow-color);
-        d: var(--arrow-d);
-        transform: var(--arrow-transform);
-        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      #arrow:focus {
-        background: var(--focused-arrow-background);
-        outline: var(--focused-arrow-outline);
-      }
+    #arrow {
+      display: flex;
+      width: 16px;
+      height: 16px;
+      d: path("M 26 20 L 26 80 L 74 50 Z");
+      transform: rotate(0deg);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      color: currentColor;
+    }
+    #arrow:focus {
+      background: transparent;
+      outline: none;
+    }
+    :host([expanded]) #arrow{
+      transform: rotate(90deg);
+    }
 
-      #arrow path {
-        fill: currentColor;
-        d: inherit;
-}
-    </style>
+    #arrow path {
+      fill: currentColor;
+      d: inherit;
+    }
+  `
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    <main id="main">
-      <div id="ripples"></div>
-
-      <div id="arrow-container">
-        <svg id="arrow" viewBox="0 0 100 100" preserveAspectRatio="none" tabindex="1">
-          <path></path>
-        </svg>
-      </div>
-
-      <slot></slot>
-    </main>
-  </template>
-`;
-
-export class XAccordionElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["expanded"];
-  }
-
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether the accordion is expanded.
   get expanded() {
     return this.hasAttribute("expanded");
   }
@@ -131,23 +98,65 @@ export class XAccordionElement extends HTMLElement {
     expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  //
+  // Custom widget size.
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  //
+  // Resolved widget size, used for theming purposes.
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _elements = {};
+  _shadowRoot = null;
+  _resizeObserver = null;
+  _xelSizeChangeListener = null;
+  _currentAnimation = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XAccordionElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XAccordionElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this._resizeObserver = new ResizeObserver(() => this._updateArrowPosition());
 
     this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this["#arrow"].addEventListener("keydown", (event) => this._onArrowKeyDown(event));
+    this._elements["arrow"].addEventListener("keydown", (event) => this._onArrowKeyDown(event));
+  }
+
+  connectedCallback() {
+    this._updateComputedSizeAttriubte();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    this._resizeObserver.observe(this);
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    this._resizeObserver.unobserve(this);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -157,129 +166,24 @@ export class XAccordionElement extends HTMLElement {
     else if (name === "expanded") {
       this._updateArrowPosition();
     }
-  }
-
-  connectedCallback() {
-    this._resizeObserver.observe(this);
-  }
-
-  disconnectedCallback() {
-    this._resizeObserver.unobserve(this);
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  _updateArrowPosition() {
-    let header = this.querySelector(":scope > header");
-
-    if (header) {
-      this["#arrow-container"].style.height = header.getBoundingClientRect().height + "px";
-    }
-    else {
-      this["#arrow-container"].style.height = null;
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onArrowKeyDown(event) {
-    if (event.key === "Enter") {
-      this.querySelector("header").click();
-    }
-  }
-
-  async _onPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
-      return;
-    }
-
-    let header = this.querySelector("header");
-    let closestFocusableElement = pointerDownEvent.target.closest("[tabindex]");
-
-    if (header.contains(pointerDownEvent.target) && this.contains(closestFocusableElement) === false) {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      // Ripple
-      if (triggerEffect === "ripple") {
-        let rect = this["#ripples"].getBoundingClientRect();
-        let size = max(rect.width, rect.height) * 1.5;
-        let top  = pointerDownEvent.clientY - rect.y - size/2;
-        let left = pointerDownEvent.clientX - rect.x - size/2;
-
-        let whenLostPointerCapture = new Promise((r) => {
-          pointerDownEvent.target.addEventListener("lostpointercapture", r, {once: true})
-        });
-
-        pointerDownEvent.target.setPointerCapture(pointerDownEvent.pointerId);
-
-        let ripple = html`<div></div>`;
-        ripple.setAttribute("class", "ripple pointer-down-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this["#ripples"].append(ripple);
-        this["#ripples"].style.contain = "strict";
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale3d(0, 0, 0)", "none"]},
-          { duration: 300, easing }
-        );
-
-        await whenLostPointerCapture;
-        await inAnimation.finished;
-
-        let outAnimation = ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity, "0"]},
-          { duration: 300, easing }
-        );
-
-        await outAnimation.finished;
-        ripple.remove();
-      }
-    }
-  }
-
-  async _onClick(event) {
-    let header = this.querySelector("header");
-    let closestFocusableElement = event.target.closest("[tabindex]");
-
-    if (header.contains(event.target) && this.contains(closestFocusableElement) === false) {
-      // Collapse
-      if (this.expanded) {
+  // @method
+  // @type () => Promise
+  //
+  // Expand the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+  expand() {
+    return new Promise(async (resolve) => {
+      if (this.expanded === false) {
         let startBBox = this.getBoundingClientRect();
 
-        if (this._animation) {
-          this._animation.finish();
-        }
-
-        this.expanded = false;
-        this.removeAttribute("animating");
-        let endBBox = this.getBoundingClientRect();
-        this.setAttribute("animating", "");
-
-        let animation = this.animate(
-          {
-            height: [startBBox.height + "px", endBBox.height + "px"],
-          },
-          {
-            duration: 300,
-            easing
-          }
-        );
-
-        this._animation = animation;
-        await animation.finished;
-
-        if (this._animation === animation) {
-          this.removeAttribute("animating");
-        }
-      }
-
-      // Expand
-      else {
-        let startBBox = this.getBoundingClientRect();
-
-        if (this._animation) {
-          this._animation.finish();
+        if (this._currentAnimation) {
+          this._currentAnimation.finish();
         }
 
         this.expanded = true;
@@ -293,16 +197,121 @@ export class XAccordionElement extends HTMLElement {
           },
           {
             duration: 300,
-            easing
+            easing: "cubic-bezier(0.4, 0, 0.2, 1)"
           }
         );
 
-        this._animation = animation;
+        this._currentAnimation = animation;
         await animation.finished;
 
-        if (this._animation === animation) {
+        if (this._currentAnimation === animation) {
           this.removeAttribute("animating");
         }
+      }
+
+      resolve();
+    });
+  }
+
+  // @method
+  // @type () => Promise
+  //
+  // Collapse the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+  collapse() {
+    return new Promise(async (resolve) => {
+      if (this.expanded === true) {
+        let startBBox = this.getBoundingClientRect();
+
+        if (this._currentAnimation) {
+          this._currentAnimation.finish();
+        }
+
+        this.expanded = false;
+        this.removeAttribute("animating");
+        let endBBox = this.getBoundingClientRect();
+        this.setAttribute("animating", "");
+
+        let animation = this.animate(
+          {
+            height: [startBBox.height + "px", endBBox.height + "px"],
+          },
+          {
+            duration: 300,
+            easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+          }
+        );
+
+        this._currentAnimation = animation;
+        await animation.finished;
+
+        if (this._currentAnimation === animation) {
+          this.removeAttribute("animating");
+        }
+      }
+
+      resolve();
+    });
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateArrowPosition() {
+    let header = this.querySelector(":scope > header");
+
+    if (header) {
+      this._elements["arrow-container"].style.height = header.getBoundingClientRect().height + "px";
+    }
+    else {
+      this._elements["arrow-container"].style.height = null;
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _onArrowKeyDown(event) {
+    if (event.key === "Enter") {
+      this.querySelector("header").click();
+    }
+  }
+
+  _onClick(event) {
+    let header = this.querySelector("header");
+    let closestFocusableElement = event.target.closest("[tabindex]");
+
+    if (header.contains(event.target) && this.contains(closestFocusableElement) === false) {
+      if (this.expanded) {
+        this.collapse();
+        this.dispatchEvent(new CustomEvent("collapse"));
+      }
+      else {
+        this.expand();
+        this.dispatchEvent(new CustomEvent("expand"));
       }
     }
   }

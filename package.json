@@ -1,14 +1,12 @@
 {
   "name": "xel",
-  "version": "0.0.230",
-  "description": "Widget toolkit for building native-like Electron, NW.js and Chrome apps",
+  "version": "0.9.0",
+  "description": "Widget toolkit for building native-like Web, Electron and Hybrid apps",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jarek-foksa/xel.git"
   },
   "keywords": [
-    "material",
-    "design",
     "widget",
     "toolkit",
     "electron",
@@ -34,17 +32,9 @@
     "throbber"
   ],
   "author": "Jarosław Foksa",
-  "license": "MIT",
+  "license": "GPLv3",
   "bugs": {
-    "url": "https://github.com/jarek-foksa/xel/issues"
+    "url": "https://xel-toolkit.org/issues"
   },
-  "homepage": "https://xel-toolkit.org/",
-  "scripts": {
-    "start": "firebase serve --only hosting"
-  },
-  "devDependencies": {
-    "fs-extra": "9.0.1",
-    "prismjs": "1.21.0",
-    "rollup": "2.23.1"
-  }
+  "homepage": "https://xel-toolkit.org/"
 }

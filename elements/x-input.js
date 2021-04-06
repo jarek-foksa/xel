@@ -1,126 +1,126 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
+
 import {isValidColorString} from "../utils/color.js";
+import {html, css} from "../utils/template.js";
 
-let $oldTabIndex = Symbol();
+// @element x-input
+// @event ^input
+// @event ^change
+// @event ^textinputmodestart
+// @event ^textinputmodeend
+// @part input
+export default class XInputElement extends HTMLElement {
+  static observedAttributes = [
+    "type", "value", "spellcheck", "maxlength", "readonly", "disabled", "validation", "size"
+  ];
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        position: relative;
-        max-width: 140px;
-        height: 24px;
-        box-sizing: border-box;
-        color: #000000;
-        background: white;
-        --selection-color: currentColor;
-        --selection-background: #B2D7FD;
-        --inner-padding: 0;
-      }
-      :host(:focus) {
-        z-index: 10;
-      }
-      :host(:hover) {
-        cursor: text;
-      }
-      :host([error]) {
-        --selection-color: white;
-        --selection-background: #d50000;
-      }
-      :host([readonly]) {
-        color: rgba(0, 0, 0, 0.75);
-      }
-      :host([mixed]) {
-        color: rgba(0, 0, 0, 0.7);
-      }
-      :host([disabled]) {
-        pointer-events: none;
-        opacity: 0.5;
-      }
-      :host([hidden]) {
-        display: none;
-      }
+  static _shadowTemplate = html`
+    <template>
+      <main id="main">
+        <slot></slot>
+        <input id="input" spellcheck="false" part="input"></input>
+      </main>
+    </template>
+  `;
 
-      ::selection {
-        color: var(--selection-color);
-        background: var(--selection-background);
-      }
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      position: relative;
+      max-width: 160px;
+      height: 32px;
+      box-sizing: border-box;
+      background: white;
+      font-size: 12.5px;
+    }
+    :host(:focus) {
+      z-index: 10;
+    }
+    :host(:hover) {
+      cursor: text;
+    }
+    :host([mixed]) {
+      color: rgba(0, 0, 0, 0.7);
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
-      #main {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-      }
+    ::selection {
+      color: var(--selection-color);
+      background-color: var(--selection-background-color);
+    }
+    :host([error]) ::selection {
+      color: white;
+      background-color: #d50000;
+    }
 
-      #input {
-        width: 100%;
-        height: 100%;
-        padding: var(--inner-padding);
-        box-sizing: border-box;
-        color: inherit;
-        background: none;
-        border: none;
-        outline: none;
-        font-family: inherit;
-        font-size: inherit;
-        font-weight: inherit;
-        text-align: inherit;
-        cursor: inherit;
-      }
-      #input:-webkit-autofill {
-        /* Hide the placehodler text when the input is autofilled */
-        z-index: 1;
-      }
+    #main {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
 
-      /* Selection rect */
-      :host(:not(:focus)) ::selection {
-        color: inherit;
-        background: transparent;
-      }
+    #input {
+      width: 100%;
+      height: 100%;
+      padding: 0 6px;
+      box-sizing: border-box;
+      color: inherit;
+      background: none;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      text-align: inherit;
+      cursor: inherit;
+    }
+    #input:-webkit-autofill {
+      /* Hide the placeholder text when the input is autofilled */
+      z-index: 1;
+    }
+    #input:-internal-autofill-previewed,
+    #input:-internal-autofill-selected {
+      -webkit-box-shadow: var(--autofill-background-color) 0px 0px 0px 30px inset;
+    }
 
-      /* Error */
-      :host([error])::before {
-        position: absolute;
-        left: 0;
-        top: 26px;
-        box-sizing: border-box;
-        color: #d50000;
-        font-family: inherit;
-        font-size: 11px;
-        line-height: 1.2;
-        white-space: pre;
-        content: attr(error);
-      }
-    </style>
+    /* Selection rect */
+    :host(:not(:focus)) ::selection {
+      color: inherit;
+      background: transparent;
+    }
 
-    <main id="main">
-      <slot></slot>
-      <input id="input" spellcheck="false"></input>
-    </main>
-  </template>
-`;
+    /* Error message */
+    :host([error])::before {
+      position: absolute;
+      left: 0;
+      top: 35px;
+      white-space: pre;
+      content: attr(error);
+      font-size: 11px;
+      line-height: 1.2;
+      pointer-events: none;
+    }
+  `
 
-// @events
-//   input
-//   change
-//   textinputmodestart
-//   textinputmodeend
-export class XInputElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["type", "value", "spellcheck", "maxlength", "readonly", "disabled", "validation"];
-  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type
-  //   "text" || "email" || "password" || "url" || "color"
-  // @default
-  //   "text"
+  // @property
   // @attribute
+  // @type "text" || "email" || "password" || "url" || "color"
+  // @default "text"
   get type() {
     return this.hasAttribute("type") ? this.getAttribute("type") : "text";
   }
@@ -128,25 +128,23 @@ export class XInputElement extends HTMLElement {
     this.setAttribute("type", type);
   }
 
-  // @type
-  //   string
-  // @default
-  //   ""
-  // @attribute
-  //   partial
+  // @property
+  // @attribute partial
+  // @type string
+  // @default ""
   get value() {
-    return this["#input"].value;
+    return this._elements["input"].value;
   }
   set value(value) {
-    if (this["#input"].value !== value) {
+    if (this._elements["input"].value !== value) {
       if (this.matches(":focus")) {
         // https://goo.gl/s1UnHh
-        this["#input"].selectionStart = 0;
-        this["#input"].selectionEnd = this["#input"].value.length;
+        this._elements["input"].selectionStart = 0;
+        this._elements["input"].selectionEnd = this._elements["input"].value.length;
         document.execCommand("insertText", false, value);
       }
       else {
-        this["#input"].value = value;
+        this._elements["input"].value = value;
       }
 
       if (this.validation === "instant") {
@@ -162,11 +160,10 @@ export class XInputElement extends HTMLElement {
     }
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get spellcheck() {
     return this.hasAttribute("spellcheck");
   }
@@ -174,11 +171,10 @@ export class XInputElement extends HTMLElement {
     spellcheck ? this.setAttribute("spellcheck", "") : this.removeAttribute("spellcheck");
   }
 
-  // @type
-  //   number
-  // @default
-  //   0
+  // @property
   // @attribute
+  // @type number
+  // @default 0
   get minLength() {
     return this.hasAttribute("minlength") ? parseInt(this.getAttribute("minlength")) : 0;
   }
@@ -186,11 +182,10 @@ export class XInputElement extends HTMLElement {
     this.setAttribute("minlength", minLength);
   }
 
-  // @type
-  //   number || Infinity
-  // @default
-  //   0
+  // @property
   // @attribute
+  // @type number || Infinity
+  // @default 0
   get maxLength() {
     return this.hasAttribute("maxlength") ? parseInt(this.getAttribute("maxlength")) : Infinity;
   }
@@ -198,11 +193,10 @@ export class XInputElement extends HTMLElement {
     this.setAttribute("maxlength", maxLength);
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get required() {
     return this.hasAttribute("required");
   }
@@ -210,11 +204,10 @@ export class XInputElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @atrribute
+  // @type boolean
+  // @default false
   get readOnly() {
     return this.hasAttribute("readonly");
   }
@@ -222,13 +215,12 @@ export class XInputElement extends HTMLElement {
     readOnly === true ? this.setAttribute("readonly", readOnly) : this.removeAttribute("readonly");
   }
 
-  // @info
-  //   Whether this input has "mixed" state.
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether this input has "mixed" state.
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -236,11 +228,10 @@ export class XInputElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -248,14 +239,13 @@ export class XInputElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @info
-  //   "auto"    - validate() is called when input loses focus and when user presses "Enter"
-  //   "instant" - validate() is called on each key press
-  //   "manual"  - you will call validate() manually when user submits the form
-  // @type
-  //   "auto" || "instant" || "manual"
-  // @default
-  //   "auto"
+  // @property
+  // @type "auto" || "instant" || "manual"
+  // @default "auto"
+  //
+  // - <em>"auto"</em> - validate() is called when input loses focus and when user presses "Enter"<br/>
+  // - <em>"instant"</em> - validate() is called on each key press<br/>
+  // - <em>"manual"</em>  - you will call validate() manually when user submits the form<br/>
   get validation() {
     return this.hasAttribute("validation") ? this.getAttribute("validation") : "auto";
   }
@@ -263,11 +253,10 @@ export class XInputElement extends HTMLElement {
     this.setAttribute("validation", validation);
   }
 
-  // @type
-  //   string?
-  // @default
-  //   null
+  // @property
   // @attribute
+  // @type string?
+  // @default null
   get error() {
     return this.getAttribute("error");
   }
@@ -275,29 +264,56 @@ export class XInputElement extends HTMLElement {
     error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _lastTabIndex = 0;
+  _xelSizeChangeListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XInputElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XInputElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this.addEventListener("focusin", (event) => this._onFocusIn(event));
     this.addEventListener("focusout", (event) => this._onFocusOut(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
 
-    this["#input"].addEventListener("change", (event) => this._onInputChange(event));
-    this["#input"].addEventListener("input", (event) => this._onInputInput(event));
-    this["#input"].addEventListener("search", (event) => this._onInputSearch(event));
+    this._elements["input"].addEventListener("change", (event) => this._onInputChange(event));
+    this._elements["input"].addEventListener("input", (event) => this._onInputInput(event));
+    this._elements["input"].addEventListener("search", (event) => this._onInputSearch(event));
   }
 
   connectedCallback() {
     this._updateAccessabilityAttributes();
+    this._updateComputedSizeAttriubte();
     this._updateEmptyState();
 
     if (this.validation === "instant") {
@@ -308,6 +324,12 @@ export class XInputElement extends HTMLElement {
         this.validate();
       }
     }
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -332,12 +354,15 @@ export class XInputElement extends HTMLElement {
     else if (name === "validation") {
       this._onValidationAttributeChnage();
     }
+    else if (name === "size") {
+      this._onSizeAttriubteChange();
+    }
   }
 
-  // @info
-  //   Override this method to validate the input value manually.
-  // @type
-  //   () => void
+  // @method
+  // @type () => void
+  //
+  // Override this method to validate the input value manually.
   validate() {
     if (this.value.length < this.minLength) {
       this.error = "Entered text is too short";
@@ -348,13 +373,13 @@ export class XInputElement extends HTMLElement {
     else if (this.required && this.value.length === 0) {
       this.error = "This field is required";
     }
-    else if (this.type === "email" && this["#input"].validity.valid === false) {
+    else if (this.type === "email" && this._elements["input"].validity.valid === false) {
       this.error = "Invalid e-mail address";
     }
-    else if (this.type === "url" && this["#input"].validity.valid === false) {
+    else if (this.type === "url" && this._elements["input"].validity.valid === false) {
       this.error = "Invalid URL";
     }
-    else if (this.type === "color" && isValidColorString(this["#input"].value) === false) {
+    else if (this.type === "color" && isValidColorString(this._elements["input"].value) === false) {
       this.error = "Invalid color";
     }
     else {
@@ -362,10 +387,14 @@ export class XInputElement extends HTMLElement {
     }
   }
 
+  // @method
+  // @type () => void
   selectAll() {
-    this["#input"].select();
+    this._elements["input"].select();
   }
 
+  // @method
+  // @type () => void
   clear() {
     this.value = "";
     this.error = null;
@@ -388,15 +417,41 @@ export class XInputElement extends HTMLElement {
     this.setAttribute("aria-readonly", this.readOnly);
 
     if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
       }
 
-      delete this[$oldTabIndex];
+      this._lastTabIndex = 0;
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 
@@ -404,10 +459,10 @@ export class XInputElement extends HTMLElement {
 
   _onTypeAttributeChange() {
     if (this.type === "color") {
-      this["#input"].type = "text";
+      this._elements["input"].type = "text";
     }
     else {
-      this["#input"].type = this.type;
+      this._elements["input"].type = this.type;
     }
   }
 
@@ -420,20 +475,20 @@ export class XInputElement extends HTMLElement {
   }
 
   _onSpellcheckAttributeChange() {
-    this["#input"].spellcheck = this.spellcheck;
+    this._elements["input"].spellcheck = this.spellcheck;
   }
 
   _onMaxLengthAttributeChange() {
-    this["#input"].maxLength = this.maxLength;
+    this._elements["input"].maxLength = this.maxLength;
   }
 
   _onReadOnlyAttributeChnage() {
-    this["#input"].readOnly = this.readOnly;
+    this._elements["input"].readOnly = this.readOnly;
     this._updateAccessabilityAttributes();
   }
 
   _onDisabledAttributeChange() {
-    this["#input"].disabled = this.disabled;
+    this._elements["input"].disabled = this.disabled;
     this._updateAccessabilityAttributes();
   }
 
@@ -446,6 +501,10 @@ export class XInputElement extends HTMLElement {
         this.validate();
       }
     }
+  }
+
+  _onSizeAttriubteChange() {
+    this._updateComputedSizeAttriubte();
   }
 
   _onFocusIn() {

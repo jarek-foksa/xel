@@ -1,66 +1,73 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
+import {html, css} from "../utils/template.js";
 
-let debug = false;
+const DEBUG = false;
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: fit-content;
-        box-sizing: border-box;
-      }
-      :host([disabled]) {
-        pointer-events: none;
-        opacity: 0.6;
-      }
+// @element x-menubar
+export default class XMenuBarElement extends HTMLElement {
+  static observedAttributes = ["disabled", "size"];
 
-      #backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-        pointer-events: none;
-        touch-action: none;
-      }
-      #backdrop[hidden] {
-        display: none;
-      }
+  static _shadowTemplate = html`
+    <template>
+      <svg id="backdrop" hidden>
+        <path id="backdrop-path"></path>
+      </svg>
 
-      #backdrop path {
-        fill: red;
-        fill-rule: evenodd;
-        opacity: 0;
-        pointer-events: all;
-      }
-    </style>
+      <slot></slot>
+    </template>
+  `;
 
-    <svg id="backdrop" hidden>
-      <path id="backdrop-path"></path>
-    </svg>
+  static _shadowStyleSheet = css`
+    :host {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 30px;
+      padding: 0 6px;
+      box-sizing: border-box;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
-    <slot></slot>
-  </template>
-`;
+    #backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      pointer-events: none;
+      touch-action: none;
+    }
+    #backdrop[hidden] {
+      display: none;
+    }
 
-export class XMenuBarElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["disabled"];
-  }
+    #backdrop path {
+      fill: red;
+      fill-rule: evenodd;
+      opacity: 0;
+      pointer-events: all;
+    }
+  `
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -68,18 +75,43 @@ export class XMenuBarElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _expanded = false;
+  _orientationChangeListener = null;
+  _xelSizeChangeListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._expanded = false;
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XMenuBarElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XMenuBarElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this.addEventListener("focusout", (event) => this._onFocusOut(event));
@@ -93,12 +125,19 @@ export class XMenuBarElement extends HTMLElement {
     this.setAttribute("role", "menubar");
     this.setAttribute("aria-disabled", this.disabled);
 
+    this._updateComputedSizeAttriubte();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => {
+      this._updateComputedSizeAttriubte();
+    });
+
     window.addEventListener("orientationchange", this._orientationChangeListener = () => {
       this._onOrientationChange();
     });
   }
 
   disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
     window.removeEventListener("orientationchange", this._orientationChangeListener);
   }
 
@@ -106,9 +145,38 @@ export class XMenuBarElement extends HTMLElement {
     if (name === "disabled") {
       this._onDisabledAttributeChange();
     }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
+    }
+  }
 
   _expandMenubarItem(item) {
     let menu = item.querySelector(":scope > x-menu");
@@ -136,7 +204,7 @@ export class XMenuBarElement extends HTMLElement {
       {
         let {x, y, width, height} = this.getBoundingClientRect();
 
-        this["#backdrop-path"].setAttribute("d", `
+        this._elements["backdrop-path"].setAttribute("d", `
           M 0 0
           L ${window.innerWidth} 0
           L ${window.innerWidth} ${window.innerHeight}
@@ -148,7 +216,7 @@ export class XMenuBarElement extends HTMLElement {
           L ${x} ${y + height}
         `);
 
-        this["#backdrop"].removeAttribute("hidden");
+        this._elements["backdrop"].removeAttribute("hidden");
       }
     }
   }
@@ -160,8 +228,8 @@ export class XMenuBarElement extends HTMLElement {
 
       // Hide the backdrop
       {
-        this["#backdrop"].setAttribute("hidden", "");
-        this["#backdrop-path"].setAttribute("d", "");
+        this._elements["backdrop"].setAttribute("hidden", "");
+        this._elements["backdrop-path"].setAttribute("d", "");
       }
 
       // Close all opened menus
@@ -212,7 +280,7 @@ export class XMenuBarElement extends HTMLElement {
   }
 
   _onFocusOut(event) {
-    if ((event.relatedTarget === null || this.contains(event.relatedTarget) === false) && debug === false) {
+    if ((event.relatedTarget === null || this.contains(event.relatedTarget) === false) && DEBUG === false) {
       this._collapseMenubarItems();
     }
   }
@@ -262,7 +330,7 @@ export class XMenuBarElement extends HTMLElement {
       }
     }
 
-    else if (event.target === this["#backdrop-path"]) {
+    else if (event.target === this._elements["backdrop-path"]) {
       this._collapseMenubarItems();
       event.preventDefault();
       event.stopPropagation();

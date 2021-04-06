@@ -1,99 +1,78 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
+
 import {getDistanceBetweenPoints} from "../utils/math.js";
+import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
 let {abs} = Math;
 let {parseInt} = Number;
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        position: relative;
-        --open-button-width: 24px;
-        --open-button-height: 24px;
-        --open-button-margin: 0 10px;
-        --open-button-path-d: path(
-          "M 79 54 L 54 54 L 54 79 L 46 79 L 46 54 L 21 54 L 21 46 L 46 46 L 46 21 L 54 21 L 54 46 L 79 46 L 79 54 Z"
-        );
-      }
-      :host(:focus) {
-        outline: none;
-      }
-      :host([disabled]) {
-        opacity: 0.5;
-        pointer-events: none;
-      }
+// @element x-doctabs
+// @part open-button
+// @event open
+// @event close
+// @event select
+// @event rearrange
+export default class XDocTabsElement extends HTMLElement {
+  static observedAttributes = ["size"];
 
-      #open-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: var(--open-button-width);
-        height: var(--open-button-height);
-        margin: var(--open-button-margin);
-        order: 9999;
-        opacity: 0.7;
-        color: inherit;
-        -webkit-app-region: no-drag;
-      }
-      #open-button:hover {
-        opacity: 1;
-      }
+  static _shadowTemplate = html`
+    <template>
+      <slot></slot>
 
-      #open-button-path {
-        d: var(--open-button-path-d);
-        fill: currentColor;
-      }
+      <svg id="open-button" part="open-button" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path id="open-button-path"></path>
+      </svg>
+    </template>
+  `;
 
-      #selection-indicator-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        pointer-events: none;
-      }
+  static _shadowStyleSheet = css`
+    :host {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 32px;
+      position: relative;
+    }
+    :host(:focus) {
+      outline: none;
+    }
+    :host([disabled]) {
+      opacity: 0.5;
+      pointer-events: none;
+    }
 
-      #selection-indicator {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-        left: 0;
-      }
-    </style>
+    #open-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      margin: 0 4px;
+      order: 9999;
+      color: inherit;
+      d: path("M 79 54 L 54 54 L 54 79 L 46 79 L 46 54 L 21 54 L 21 46 L 46 46 L 46 21 L 54 21 L 54 46 L 79 46 L 79 54 Z");
+      -webkit-app-region: no-drag;
+    }
 
-    <slot></slot>
+    #open-button-path {
+      d: inherit;
+      fill: currentColor;
+    }
+  `
 
-    <div id="selection-indicator-container">
-      <div id="selection-indicator" hidden></div>
-    </div>
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    <svg id="open-button" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <path id="open-button-path"></path>
-    </svg>
-  </template>
-`;
-
-// @events
-//   open
-//   close
-//   select
-//   rearrange
-export class XDocTabsElement extends HTMLElement {
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -101,13 +80,12 @@ export class XDocTabsElement extends HTMLElement {
     disabled === true ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @info
-  //   Maximal number of tambs that can be opened
-  // @type
-  //   number
-  // @default
-  //   20
+  // @property
   // @attribute
+  // @type number
+  // @default 20
+  //
+  // Maximal number of tambs that can be opened.
   get maxTabs() {
     return this.hasAttribute("maxtabs") ? parseInt(this.getAttribute("maxtabs")) : 20;
   }
@@ -115,28 +93,102 @@ export class XDocTabsElement extends HTMLElement {
     this.setAttribute("maxtabs", maxTabs);
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _xelSizeChangeListener = null;
+
+  _waitingForTabToClose = false;
+  _waitingForPointerMoveAfterClosingTab = false;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._waitingForTabToClose = false;
-    this._waitingForPointerMoveAfterClosingTab = false;
-
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: false});
+    this._shadowRoot.adoptedStyleSheets = [XDocTabsElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XDocTabsElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this["#open-button"].addEventListener("click", (event) => this._onOpenButtonClick(event));
     this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this._elements["open-button"].addEventListener("click", (event) => this._onOpenButtonClick(event));
+  }
+
+  connectedCallback() {
+    this._updateComputedSizeAttriubte();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @method
+  // @type (XDocTabElement, boolean) => Promise
   openTab(tab, animate = true) {
     return new Promise( async (resolve, reject) => {
       let tabs = this.querySelectorAll("x-doctab");
@@ -162,7 +214,6 @@ export class XDocTabsElement extends HTMLElement {
           tab.style.padding = null;
 
           this.append(tab);
-          tab.focus();
           resolve(tab);
         }
         else if (animate === true) {
@@ -181,12 +232,13 @@ export class XDocTabsElement extends HTMLElement {
 
           tab.style.maxWidth = null;
           tab.style.padding = null;
-          tab.focus();
         }
       }
     });
   }
 
+  // @method
+  // @type (XDocTabElement, boolean) => Promise
   closeTab(tab, animate = true) {
     return new Promise( async (resolve) => {
       let tabs = this.getTabsByScreenIndex().filter(tab => tab.hasAttribute("closing") === false);
@@ -268,6 +320,8 @@ export class XDocTabsElement extends HTMLElement {
     });
   }
 
+  // @method
+  // @type () => void
   selectPreviousTab() {
     let tabs = this.getTabsByScreenIndex();
     let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab");
@@ -282,6 +336,8 @@ export class XDocTabsElement extends HTMLElement {
     return null;
   }
 
+  // @method
+  // @type () => void
   selectNextTab() {
     let tabs = this.getTabsByScreenIndex();
     let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab:last-of-type");
@@ -296,6 +352,8 @@ export class XDocTabsElement extends HTMLElement {
     return null;
   }
 
+  // @method
+  // @type (XDocTabElement) => void
   selectTab(nextTab) {
     let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab:last-of-type");
 
@@ -308,6 +366,8 @@ export class XDocTabsElement extends HTMLElement {
     nextTab.selected = true;
   }
 
+  // @method
+  // @type () => void
   moveSelectedTabLeft() {
     let selectedTab = this.querySelector("x-doctab[selected]");
     let selectedTabScreenIndex = this._getTabScreenIndex(selectedTab);
@@ -333,6 +393,8 @@ export class XDocTabsElement extends HTMLElement {
     }
   }
 
+  // @method
+  // @type () => void
   moveSelectedTabRight() {
     let selectedTab = this.querySelector("x-doctab[selected]");
     let selectedTabScreenIndex = this._getTabScreenIndex(selectedTab);
@@ -360,10 +422,9 @@ export class XDocTabsElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @info
-  //   Returns a promise that is resolved when the pointer is moved by at least the given distance.
-  // @type
-  //   (number) => Promise
+  // @type (number) => Promise
+  //
+  // Returns a promise that is resolved when the pointer is moved by at least the given distance.
   _whenPointerMoved(distance = 3) {
     return new Promise((resolve) => {
       let pointerMoveListener, pointerOutListener, blurListener;
@@ -401,53 +462,6 @@ export class XDocTabsElement extends HTMLElement {
         resolve();
       });
     });
-  }
-
-  _animateSelectionIndicator(fromTab, toTab) {
-    let mainBBox = this.getBoundingClientRect();
-    let startBBox = fromTab ? fromTab.getBoundingClientRect() : null;
-    let endBBox = toTab.getBoundingClientRect();
-    let computedStyle = getComputedStyle(toTab);
-
-    if (startBBox === null) {
-      startBBox = DOMRect.fromRect(endBBox);
-      startBBox.x += startBBox.width / 2;
-      startBBox.width = 0;
-    }
-
-    this["#selection-indicator"].style.height = computedStyle.getPropertyValue("--selection-indicator-height");
-    this["#selection-indicator"].style.background = computedStyle.getPropertyValue("--selection-indicator-color");
-    this["#selection-indicator"].hidden = false;
-
-    this.setAttribute("animatingindicator", "");
-
-    let animation = this["#selection-indicator"].animate(
-      [
-        {
-          bottom: (startBBox.bottom - mainBBox.bottom) + "px",
-          left: (startBBox.left - mainBBox.left) + "px",
-          width: startBBox.width + "px",
-        },
-        {
-          bottom: (endBBox.bottom - mainBBox.bottom) + "px",
-          left: (endBBox.left - mainBBox.left) + "px",
-          width: endBBox.width + "px",
-        }
-      ],
-      {
-        duration: 200,
-        iterations: 1,
-        delay: 0,
-        easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
-      }
-    );
-
-    animation.finished.then(() => {
-      this["#selection-indicator"].hidden = true;
-      this.removeAttribute("animatingindicator");
-    });
-
-    return animation;
   }
 
   getTabsByScreenIndex() {
@@ -533,8 +547,6 @@ export class XDocTabsElement extends HTMLElement {
     return previousTab;
   }
 
-  // @info
-  //   Get previous tab on screen.
   _getNextTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
     let tabs = this.getTabsByScreenIndex();
     let tabScreenIndex = tabs.indexOf(tab);
@@ -579,7 +591,7 @@ export class XDocTabsElement extends HTMLElement {
     }
   }
 
-  _onTabPointerDown(pointerDownEvent) {
+  async _onTabPointerDown(pointerDownEvent) {
     if (pointerDownEvent.isPrimary === false) {
       return;
     }
@@ -588,12 +600,19 @@ export class XDocTabsElement extends HTMLElement {
     let pointerDownTab = pointerDownEvent.target.closest("x-doctab");
     let selectedTab = this.querySelector("x-doctab[selected]");
 
-    this.selectTab(pointerDownTab);
-    if (selectedTab != pointerDownTab) {
-      this.dispatchEvent(new CustomEvent("select", {detail: pointerDownTab}));
+    if (selectedTab !== pointerDownTab) {
+      if (selectedTab) {
+        selectedTab.animateSelectionIndicator(pointerDownTab).then(() => {
+          this.selectTab(pointerDownTab);
+          this.dispatchEvent(new CustomEvent("select", {detail: pointerDownTab}));
+        });
+      }
+      else {
+        this.selectTab(pointerDownTab);
+        this.dispatchEvent(new CustomEvent("select", {detail: pointerDownTab}));
+      }
     }
 
-    let selectionIndicatorAnimation = this._animateSelectionIndicator(selectedTab, pointerDownTab);
     this.setPointerCapture(pointerDownEvent.pointerId);
 
     let pointerDownPoint = new DOMPoint(pointerDownEvent.clientX, pointerDownEvent.clientY);
@@ -608,7 +627,6 @@ export class XDocTabsElement extends HTMLElement {
         this.removeEventListener("pointermove", pointerMoveListener);
         this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
 
-        selectionIndicatorAnimation.finish();
         this._onTabDragStart(pointerDownEvent, pointerDownTab);
       }
     });
@@ -628,7 +646,7 @@ export class XDocTabsElement extends HTMLElement {
     let $flexOffset = Symbol();
 
     draggedTab.style.zIndex = 999;
-    this["#open-button"].style.opacity = "0";
+    this._elements["open-button"].style.setProperty("opacity", "0", "important");
 
     for (let tab of this.children) {
       let screenIndex = this._getTabScreenIndex(tab);
@@ -720,7 +738,7 @@ export class XDocTabsElement extends HTMLElement {
       await sleep(150);
 
       draggedTab.style.zIndex = null;
-      this["#open-button"].style.opacity = null;
+      this._elements["open-button"].style.opacity = null;
 
       for (let tab of this.children) {
         tab.style.transition = "none";
@@ -761,8 +779,17 @@ export class XDocTabsElement extends HTMLElement {
       currentTab.click();
 
       if (currentTab !== selectedTab) {
-        this.selectTab(currentTab);
-        this._animateSelectionIndicator(selectedTab, currentTab);
+
+        if (selectedTab) {
+          selectedTab.animateSelectionIndicator(currentTab).then(() => {
+            this.selectTab(currentTab);
+            this.dispatchEvent(new CustomEvent("select", {detail: currentTab}));
+          });
+        }
+        else {
+          this.selectTab(currentTab);
+          this.dispatchEvent(new CustomEvent("select", {detail: currentTab}));
+        }
       }
     }
 

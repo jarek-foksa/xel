@@ -1,15 +1,59 @@
 
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {parseColor, serializeColor} from "../utils/color.js";
-import {createElement} from "../utils/element.js";
+import Xel from "../classes/xel.js";
+import ColorParser from "../classes/color-parser.js";
+
+import {serializeColor} from "../utils/color.js";
 import {normalize} from "../utils/math.js";
+import {html, css} from "../utils/template.js";
 
-let debug = false;
+const DEBUG = false;
 
-let shadowHTML = `
-  <style>
+// @element x-barscolorpicker
+// @event ^change
+// @event ^changestart
+// @event ^changeend
+// @part slider
+// @part marker
+export default class XBarsColorPickerElement extends HTMLElement {
+  static observedAttributes = ["value", "size"];
+
+  static _shadowTemplate = html`
+    <template>
+      <x-box vertical>
+        <div id="hue-slider" part="slider">
+          <div id="hue-slider-track">
+            <div id="hue-slider-marker" part="marker"></div>
+          </div>
+        </div>
+
+        <div id="saturation-slider" part="slider">
+          <div id="saturation-slider-track">
+            <div id="saturation-slider-marker" part="marker"></div>
+          </div>
+        </div>
+
+        <div id="lightness-slider" part="slider">
+          <div id="lightness-slider-track">
+            <div id="lightness-slider-marker" part="marker"></div>
+          </div>
+        </div>
+
+        <div id="alpha-slider" part="slider">
+          <div id="alpha-slider-gradient"></div>
+          <div id="alpha-slider-track">
+            <div id="alpha-slider-marker" part="marker"></div>
+          </div>
+        </div>
+      </x-box>
+    </template>
+  `;
+
+  static _shadowStyleSheet = css`
     :host {
       display: block;
       width: 100%;
@@ -25,13 +69,19 @@ let shadowHTML = `
 
     #hue-slider {
       width: 100%;
-      height: 28px;
+      height: 30px;
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
       touch-action: pan-y;
       background: red;
       --marker-width: 18px;
+    }
+    :host([computedsize="small"]) #hue-slider {
+      height: 24px;
+    }
+    :host([computedsize="large"]) #hue-slider {
+      height: 35px;
     }
 
     #hue-slider-track {
@@ -60,7 +110,7 @@ let shadowHTML = `
       transform: translateX(calc((var(--marker-width) / 2) * -1));
       border: 3px solid white;
       width: var(--marker-width);
-      height: 32px;
+      height: calc(100% + 6px);
       position: absolute;
     }
 
@@ -70,13 +120,19 @@ let shadowHTML = `
 
     #saturation-slider {
       width: 100%;
-      height: 28px;
+      height: 30px;
       margin-top: 20px;
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
       touch-action: pan-y;
       --marker-width: 18px;
+    }
+    :host([computedsize="small"]) #saturation-slider {
+      height: 24px;
+    }
+    :host([computedsize="large"]) #saturation-slider {
+      height: 35px;
     }
 
     #saturation-slider-track {
@@ -96,7 +152,7 @@ let shadowHTML = `
       transform: translateX(calc((var(--marker-width) / 2) * -1));
       border: 3px solid white;
       width: var(--marker-width);
-      height: 32px;
+      height: calc(100% + 6px);
       position: absolute;
     }
 
@@ -106,13 +162,19 @@ let shadowHTML = `
 
     #lightness-slider {
       width: 100%;
-      height: 28px;
+      height: 30px;
       margin-top: 20px;
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
       touch-action: pan-y;
       --marker-width: 18px;
+    }
+    :host([computedsize="small"]) #lightness-slider {
+      height: 24px;
+    }
+    :host([computedsize="large"]) #lightness-slider {
+      height: 35px;
     }
 
     #lightness-slider-track {
@@ -132,7 +194,7 @@ let shadowHTML = `
       transform: translateX(calc((var(--marker-width) / 2) * -1));
       border: 3px solid white;
       width: var(--marker-width);
-      height: 32px;
+      height: calc(100% + 6px);
       position: absolute;
     }
 
@@ -143,18 +205,16 @@ let shadowHTML = `
     #alpha-slider {
       display: none;
       width: 100%;
-      height: 28px;
+      height: 30px;
       margin-top: 20px;
       margin-bottom: 8px;
       padding: 0 calc(var(--marker-width) / 2);
       position: relative;
       box-sizing: border-box;
-      border: 1px solid #cecece;
       border-radius: 2px;
       touch-action: pan-y;
       --marker-width: 18px;
       /* Checkerboard pattern */
-      background-color: white;
       background-size: 10px 10px;
       background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
       background-image: linear-gradient(45deg, #d6d6d6 25%, transparent 25%),
@@ -164,6 +224,12 @@ let shadowHTML = `
     }
     :host([alphaslider]) #alpha-slider {
       display: block;
+    }
+    :host([computedsize="small"]) #alpha-slider {
+      height: 24px;
+    }
+    :host([computedsize="large"]) #alpha-slider {
+      height: 35px;
     }
 
     #alpha-slider-gradient {
@@ -191,53 +257,18 @@ let shadowHTML = `
       transform: translateX(calc((var(--marker-width) / 2) * -1));
       border: 3px solid white;
       width: var(--marker-width);
-      height: 32px;
+      height: calc(100% + 6px);
       position: absolute;
     }
-  </style>
+  `
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  <x-box vertical>
-    <div id="hue-slider">
-      <div id="hue-slider-track">
-        <div id="hue-slider-marker"></div>
-      </div>
-    </div>
-
-    <div id="saturation-slider">
-      <div id="saturation-slider-track">
-        <div id="saturation-slider-marker"></div>
-      </div>
-    </div>
-
-    <div id="lightness-slider">
-      <div id="lightness-slider-track">
-        <div id="lightness-slider-marker"></div>
-      </div>
-    </div>
-
-    <div id="alpha-slider">
-      <div id="alpha-slider-gradient"></div>
-      <div id="alpha-slider-track">
-        <div id="alpha-slider-marker"></div>
-      </div>
-    </div>
-  </x-box>
-`;
-
-// @events
-//   change
-//   changestart
-//   changeend
-export class XBarsColorPickerElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["value"];
-  }
-
-  // @type
-  //   string
-  // @default
-  //   "hsla(0, 0%, 100%, 1)"
+  // @property
   // @attribute
+  // @type string
+  // @default "hsla(0, 0%, 100%, 1)"
+  //
+  // Color value, must be a valid CSS color string.
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "hsla(0, 0%, 100%, 1)";
   }
@@ -245,36 +276,83 @@ export class XBarsColorPickerElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  //
+  // Custom widget size.
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  //
+  // Resolved widget size, used for theming purposes.
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _h = 0;  // Hue (0 ~ 360)
+  _s = 0;  // Saturation (0 ~ 100)
+  _l = 80; // Lightness (0 ~ 100)
+  _a = 1;  // Alpha (0 ~ 1)
+
+  _shadowRoot = null;
+  _elements = {};
+  _xelSizeChangeListener = null;
+
+  _isDraggingHueSliderMarker = false;
+  _isDraggingSaturationSliderMarker = false;
+  _isDraggingLightnessSliderMarker = false;
+  _isDraggingAlphaSliderMarker = false;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._h = 0;  // Hue (0 ~ 360)
-    this._s = 0;  // Saturation (0 ~ 100)
-    this._l = 80; // Lightness (0 ~ 100)
-    this._a = 1;  // Alpha (0 ~ 1)
-
-    this._isDraggingHueSliderMarker = false;
-    this._isDraggingSaturationSliderMarker = false;
-    this._isDraggingLightnessSliderMarker = false;
-    this._isDraggingAlphaSliderMarker = false;
-
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.innerHTML = shadowHTML;
+    this._shadowRoot.adoptedStyleSheets = [XBarsColorPickerElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XBarsColorPickerElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
-    this["#hue-slider"].addEventListener("pointerdown", (event) => this._onHueSliderPointerDown(event));
-    this["#saturation-slider"].addEventListener("pointerdown", (event) => this._onSaturationSliderPointerDown(event));
-    this["#lightness-slider"].addEventListener("pointerdown", (event) => this._onLightnessSliderPointerDown(event));
-    this["#alpha-slider"].addEventListener("pointerdown", (event) => this._onAlphaSliderPointerDown(event));
+    this._elements["hue-slider"].addEventListener("pointerdown", (event) => {
+      this._onHueSliderPointerDown(event);
+    });
+
+    this._elements["saturation-slider"].addEventListener("pointerdown", (event) => {
+      this._onSaturationSliderPointerDown(event);
+    });
+
+    this._elements["lightness-slider"].addEventListener("pointerdown", (event) => {
+      this._onLightnessSliderPointerDown(event);
+    });
+
+    this._elements["alpha-slider"].addEventListener("pointerdown", (event) => {
+      this._onAlphaSliderPointerDown(event);
+    });
   }
 
   connectedCallback() {
     this._update();
+    this._updateComputedSizeAttriubte();
+
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -284,6 +362,9 @@ export class XBarsColorPickerElement extends HTMLElement {
     else if (name === "value") {
       this._onValueAttributeChange();
     }
+    else if (name === "size") {
+      this._onSizeAttributeChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,45 +372,45 @@ export class XBarsColorPickerElement extends HTMLElement {
   _update() {
     this._updateHueSliderMarker();
 
-    this._udpateSaturationSliderMarker();
-    this._udpateSaturationSliderBackground();
+    this._updateSaturationSliderMarker();
+    this._updateSaturationSliderBackground();
 
-    this._udpateLightnessSliderMarker();
-    this._udpateLightnessSliderBackground();
+    this._updateLightnessSliderMarker();
+    this._updateLightnessSliderBackground();
 
     this._updateAlphaSliderMarker();
     this._updateAlphaSliderBackground();
   }
 
   _updateHueSliderMarker() {
-    this["#hue-slider-marker"].style.left = ((normalize(this._h, 0, 360, 0) / 360) * 100) + "%";
+    this._elements["hue-slider-marker"].style.left = ((normalize(this._h, 0, 360, 0) / 360) * 100) + "%";
   }
 
-  _udpateSaturationSliderMarker() {
-    this["#saturation-slider-marker"].style.left = normalize(this._s, 0, 100, 2) + "%";
+  _updateSaturationSliderMarker() {
+    this._elements["saturation-slider-marker"].style.left = normalize(this._s, 0, 100, 2) + "%";
   }
 
-  _udpateLightnessSliderMarker() {
-    this["#lightness-slider-marker"].style.left = normalize(this._l, 0, 100, 2) + "%";
+  _updateLightnessSliderMarker() {
+    this._elements["lightness-slider-marker"].style.left = normalize(this._l, 0, 100, 2) + "%";
   }
 
   _updateAlphaSliderMarker() {
-    this["#alpha-slider-marker"].style.left = normalize((1 - this._a) * 100, 0, 100, 2) + "%";
+    this._elements["alpha-slider-marker"].style.left = normalize((1 - this._a) * 100, 0, 100, 2) + "%";
   }
 
-  _udpateSaturationSliderBackground() {
+  _updateSaturationSliderBackground() {
     let h = this._h;
 
-    this["#saturation-slider"].style.background = `linear-gradient(
+    this._elements["saturation-slider"].style.background = `linear-gradient(
       to right, hsl(${h}, 0%, 50%), hsl(${h}, 100%, 50%)
     )`;
   }
 
-  _udpateLightnessSliderBackground() {
+  _updateLightnessSliderBackground() {
     let h = this._h;
     let s = this._s;
 
-    this["#lightness-slider"].style.background = `linear-gradient(
+    this._elements["lightness-slider"].style.background = `linear-gradient(
       to right, hsl(${h}, ${s}%, 0%), hsl(${h}, ${s}%, 50%), hsl(${h}, ${s}%, 100%)
     )`;
   }
@@ -339,9 +420,35 @@ export class XBarsColorPickerElement extends HTMLElement {
     let s = this._s;
     let l = this._l
 
-    this["#alpha-slider-gradient"].style.background = `
+    this._elements["alpha-slider-gradient"].style.background = `
       linear-gradient(to right, hsla(${h}, ${s}%, ${l}%, 1), hsla(${h}, ${s}%, ${l}%, 0))
     `;
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -353,7 +460,7 @@ export class XBarsColorPickerElement extends HTMLElement {
       this._isDraggingLightnessSliderMarker === false &&
       this._isDraggingAlphaSliderMarker === false
     ) {
-      let [h, s, l, a] = parseColor(this.value, "hsla");
+      let [h, s, l, a] = new ColorParser().parse(this.value, "hsla");
 
       this._h = h;
       this._s = s;
@@ -363,9 +470,13 @@ export class XBarsColorPickerElement extends HTMLElement {
       this._update();
     }
 
-    if (debug) {
+    if (DEBUG) {
       console.log(`%c ${this.value}`, `background: ${this.value};`);
     }
+  }
+
+  _onSizeAttributeChange() {
+    this._updateComputedSizeAttriubte();
   }
 
   _onHueSliderPointerDown(pointerDownEvent) {
@@ -373,11 +484,11 @@ export class XBarsColorPickerElement extends HTMLElement {
       return;
     }
 
-    let trackBounds = this["#hue-slider-track"].getBoundingClientRect();
+    let trackBounds = this._elements["hue-slider-track"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
 
     this._isDraggingHueSliderMarker = true;
-    this["#hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this._elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
     let onPointerMove = (clientX) => {
@@ -389,8 +500,8 @@ export class XBarsColorPickerElement extends HTMLElement {
         this.value = serializeColor([this._h, this._s, this._l, this._a], "hsla", "hsla");
 
         this._updateHueSliderMarker();
-        this._udpateSaturationSliderBackground();
-        this._udpateLightnessSliderBackground();
+        this._updateSaturationSliderBackground();
+        this._updateLightnessSliderBackground();
         this._updateAlphaSliderBackground();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
@@ -399,13 +510,13 @@ export class XBarsColorPickerElement extends HTMLElement {
 
     onPointerMove(pointerDownEvent.clientX);
 
-    this["#hue-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    this._elements["hue-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this["#hue-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
-      this["#hue-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#hue-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    this._elements["hue-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+      this._elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this._elements["hue-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this._isDraggingHueSliderMarker = false;
@@ -417,11 +528,11 @@ export class XBarsColorPickerElement extends HTMLElement {
       return;
     }
 
-    let trackBounds = this["#saturation-slider-track"].getBoundingClientRect();
+    let trackBounds = this._elements["saturation-slider-track"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
 
     this._isDraggingSaturationSliderMarker = true;
-    this["#saturation-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this._elements["saturation-slider"].setPointerCapture(pointerDownEvent.pointerId);
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
     let onPointerMove = (clientX) => {
@@ -432,9 +543,9 @@ export class XBarsColorPickerElement extends HTMLElement {
         this._s = s;
         this.value = serializeColor([this._h, this._s, this._l, this._a], "hsla", "hsla");
 
-        this._udpateSaturationSliderMarker();
-        this._udpateSaturationSliderBackground();
-        this._udpateLightnessSliderBackground();
+        this._updateSaturationSliderMarker();
+        this._updateSaturationSliderBackground();
+        this._updateLightnessSliderBackground();
         this._updateAlphaSliderBackground();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
@@ -443,13 +554,13 @@ export class XBarsColorPickerElement extends HTMLElement {
 
     onPointerMove(pointerDownEvent.clientX);
 
-    this["#saturation-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    this._elements["saturation-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this["#saturation-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
-      this["#saturation-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#saturation-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    this._elements["saturation-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+      this._elements["saturation-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this._elements["saturation-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this._isDraggingSaturationSliderMarker = false;
@@ -461,11 +572,11 @@ export class XBarsColorPickerElement extends HTMLElement {
       return;
     }
 
-    let trackBounds = this["#lightness-slider-track"].getBoundingClientRect();
+    let trackBounds = this._elements["lightness-slider-track"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
 
     this._isDraggingLightnessSliderMarker = true;
-    this["#lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this._elements["lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
     let onPointerMove = (clientX) => {
@@ -476,9 +587,9 @@ export class XBarsColorPickerElement extends HTMLElement {
         this._l = l;
         this.value = serializeColor([this._h, this._s, this._l, this._a], "hsla", "hsla");
 
-        this._udpateLightnessSliderMarker();
-        this._udpateSaturationSliderBackground();
-        this._udpateLightnessSliderBackground();
+        this._updateLightnessSliderMarker();
+        this._updateSaturationSliderBackground();
+        this._updateLightnessSliderBackground();
         this._updateAlphaSliderBackground();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
@@ -487,13 +598,13 @@ export class XBarsColorPickerElement extends HTMLElement {
 
     onPointerMove(pointerDownEvent.clientX);
 
-    this["#lightness-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    this._elements["lightness-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this["#lightness-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
-      this["#lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#lightness-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    this._elements["lightness-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+      this._elements["lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this._elements["lightness-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this._isDraggingLightnessSliderMarker = false;
@@ -505,11 +616,11 @@ export class XBarsColorPickerElement extends HTMLElement {
       return;
     }
 
-    let trackBounds = this["#alpha-slider-track"].getBoundingClientRect();
+    let trackBounds = this._elements["alpha-slider-track"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
 
     this._isDraggingAlphaSliderMarker = true;
-    this["#alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this._elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
     let onPointerMove = (clientX) => {
@@ -526,13 +637,13 @@ export class XBarsColorPickerElement extends HTMLElement {
 
     onPointerMove(pointerDownEvent.clientX);
 
-    this["#alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    this._elements["alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this["#alpha-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
-      this["#alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#alpha-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    this._elements["alpha-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+      this._elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this._elements["alpha-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this._isDraggingAlphaSliderMarker = false;

@@ -1,127 +1,144 @@
 
-// @info
-//   Checkbox widget.
-// @doc
-//   http://w3c.github.io/aria-practices/#checkbox
 // @copyright
-//   © 2016-2017 Jarosław Foksa
+//   © 2016-2021 Jarosław Foksa
+// @license
+//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
 
-import {createElement, closest, html} from "../utils/element.js";
+import Xel from "../classes/xel.js";
 
-let easing = "cubic-bezier(0.4, 0, 0.2, 1)";
-let $oldTabIndex = Symbol();
+import {createElement, closest} from "../utils/element.js";
+import {html, css} from "../utils/template.js";
 
-let shadowTemplate = html`
-  <template>
-    <style>
-      :host {
-        display: block;
-        position: relative;
-        margin: 0 8px 0 0;
-        width: 24px;
-        height: 24px;
-        box-sizing: border-box;
-        border: 2px solid currentColor;
-        --checkmark-width: 100%;
-        --checkmark-height: 100%;
-        --checkmark-opacity: 0;
-        --checkmark-d: path(
-          "M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 95 23 L 86 13 L 37 66 L 13.6 41 L 4.5 51 L 37 85 L 95 23 Z"
-        );
-        --ripple-type: none; /* unbounded, none */
-        --ripple-background: currentColor;
-        --ripple-opacity: 0.15;
-      }
-      :host([toggled]) {
-        --checkmark-opacity: 1;
-      }
-      :host([mixed]) {
-        --checkmark-opacity: 1;
-        --checkmark-d: path("M 0 0 L 100 0 L 100 100 L 0 100 Z M 87 42.6 L 13 42.6 L 13 57.4 L 87 57.4 Z");
-      }
-      :host([disabled]) {
-        opacity: 0.4;
-        pointer-events: none;
-      }
-      :host([hidden]) {
-        display: none;
-      }
-      :host(:focus) {
-        outline: none;
-      }
+// @element x-checkbox
+// @part indicator
+// @event toggle
+export default class XCheckboxElement extends HTMLElement {
+  static observedAttributes = ["toggled", "disabled", "size"];
 
-      /**
-       * Icons
-       */
+  static _shadowTemplate = html`
+    <template>
+      <main id="main">
+        <div id="indicator" part="indicator">
+          <div id="ripples"></div>
 
-      #checkmark {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: var(--checkmark-width);
-        height: var(--checkmark-height);
-        opacity: var(--checkmark-opacity);
-        d: var(--checkmark-d);
-        transition-property: opacity;
-        transition-timing-function: inherit;
-        transition-duration: inherit;
-      }
+          <svg id="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path></path>
+          </svg>
+        </div>
 
-      #checkmark path {
-        fill: currentColor;
-        d: inherit;
-      }
+        <div id="description">
+          <slot></slot>
+        </div>
+      </main>
+    </template>
+  `;
 
-      /**
-       * Ripples
-       */
+  static _shadowStyleSheet = css`
+    :host {
+      display: block;
+      width: fit-content;
+      --trigger-effect: none; /* none, ripple */
+    }
+    :host([disabled]) {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    :host([hidden]) {
+      display: none;
+    }
+    :host(:focus) {
+      outline: none;
+    }
 
-      #ripples {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-      }
+    #main {
+      display: flex;
+      align-items: center;
+    }
 
-      #ripples .ripple {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: var(--ripple-background);
-        opacity: var(--ripple-opacity);
-        z-index: -1;
-        will-change: opacity, transform;
-        border-radius: 999px;
-        transform: scale(2.6);
-      }
-    </style>
+    /**
+     * Indicator
+     */
 
-    <div id="ripples"></div>
+    #indicator {
+      position: relative;
+      width: 19px;
+      height: 19px;
+      box-sizing: border-box;
+      border: 2px solid currentColor;
+      d: path("M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 95 23 L 86 13 L 37 66 L 13.6 41 L 4.5 51 L 37 85 L 95 23 Z");
+    }
+    :host([mixed]) #indicator {
+      d: path("M 0 0 L 100 0 L 100 100 L 0 100 Z M 87 42.6 L 13 42.6 L 13 57.4 L 87 57.4 Z");
+    }
 
-    <svg id="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <path></path>
-    </svg>
-  </template>
-`;
+    /* Checkmark icon */
 
-// @events
-//   toggle
-export class XCheckboxElement extends HTMLElement {
-  static get observedAttributes() {
-    return ["toggled", "disabled"];
-  }
+    #checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      d: inherit;
+      transition-property: opacity;
+      transition-timing-function: inherit;
+      transition-duration: inherit;
+    }
+    :host([mixed]) #checkmark {
+      opacity: 1;
+    }
+    :host([toggled]) #checkmark {
+      opacity: 1;
+    }
 
-  // @info
-  //   Values associated with this checkbox.
-  // @type
-  //   string
-  // @default
-  //   null
+    #checkmark path {
+      fill: currentColor;
+      d: inherit;
+    }
+
+    /* Ripples */
+
+    #ripples {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #ripples .ripple {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: currentColor;
+      opacity: 0.15;
+      z-index: -1;
+      will-change: opacity, transform;
+      border-radius: 999px;
+      transform: scale(2.6);
+    }
+
+    /**
+     * Description
+     */
+
+    #description {
+      flex: 1;
+    }
+  `
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
   // @attribute
+  // @type string
+  // @default null
+  //
+  // Value associated with this checkbox.
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -129,11 +146,10 @@ export class XCheckboxElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -141,11 +157,10 @@ export class XCheckboxElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -153,11 +168,10 @@ export class XCheckboxElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @type
-  //   boolean
-  // @default
-  //   false
+  // @property
   // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -165,16 +179,42 @@ export class XCheckboxElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  // @property
+  // @attribute
+  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @default null
+  get size() {
+    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+  }
+  set size(size) {
+    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+  }
+
+  // @property readOnly
+  // @attribute
+  // @type "small" || "medium" || "large"
+  // @default "medium"
+  // @readOnly
+  get computedSize() {
+    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  _shadowRoot = null;
+  _elements = {};
+  _lastTabIndex = 0;
+  _xelSizeChangeListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
     this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.append(document.importNode(shadowTemplate.content, true));
+    this._shadowRoot.adoptedStyleSheets = [XCheckboxElement._shadowStyleSheet];
+    this._shadowRoot.append(document.importNode(XCheckboxElement._shadowTemplate.content, true));
 
     for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this["#" + element.id] = element;
+      this._elements[element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
@@ -183,7 +223,14 @@ export class XCheckboxElement extends HTMLElement {
   }
 
   connectedCallback() {
+    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+
     this._updateAccessabilityAttributes();
+    this._updateComputedSizeAttriubte();
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -192,6 +239,9 @@ export class XCheckboxElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this._onDisabledAttributeChange();
+    }
+    else if (name === "size") {
+      this._updateComputedSizeAttriubte();
     }
   }
 
@@ -203,15 +253,41 @@ export class XCheckboxElement extends HTMLElement {
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this[$oldTabIndex] = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this[$oldTabIndex] > 0) ? this[$oldTabIndex] : 0;
+        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
       }
 
-      delete this[$oldTabIndex];
+      this._lastTabIndex = 0;
+    }
+  }
+
+  _updateComputedSizeAttriubte() {
+    let defaultSize = Xel.size;
+    let customSize = this.size;
+    let computedSize = "medium";
+
+    if (customSize === null) {
+      computedSize = defaultSize;
+    }
+    else if (customSize === "smaller") {
+      computedSize = (defaultSize === "large") ? "medium" : "small";
+    }
+    else if (customSize === "larger") {
+      computedSize = (defaultSize === "small") ? "medium" : "large";
+    }
+    else {
+      computedSize = customSize;
+    }
+
+    if (computedSize === "medium") {
+      this.removeAttribute("computedsize");
+    }
+    else {
+      this.setAttribute("computedsize", computedSize);
     }
   }
 
@@ -244,16 +320,16 @@ export class XCheckboxElement extends HTMLElement {
 
     // Ripple
     {
-      let rippleType = getComputedStyle(this).getPropertyValue("--ripple-type").trim();
+      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
-      if (rippleType === "unbounded") {
+      if (triggerEffect === "ripple") {
         let ripple = createElement("div");
         ripple.setAttribute("class", "ripple pointer-down-ripple");
-        this["#ripples"].append(ripple);
+        this._elements["ripples"].append(ripple);
 
         let transformAnimation = ripple.animate(
           { transform: ["scale(0)", "scale(2.6)"] },
-          { duration: 200, easing }
+          { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         );
 
         this.setPointerCapture(event.pointerId);
@@ -263,7 +339,7 @@ export class XCheckboxElement extends HTMLElement {
 
           let opacityAnimation = ripple.animate(
             { opacity: [getComputedStyle(ripple).opacity, "0"] },
-            { duration: 200, easing }
+            { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
           );
 
           await opacityAnimation.finished;
@@ -288,22 +364,22 @@ export class XCheckboxElement extends HTMLElement {
     }
 
     // Ripple
-    if (this["#ripples"].querySelector(".pointer-down-ripple") === null) {
-      let rippleType = getComputedStyle(this).getPropertyValue("--ripple-type").trim();
+    if (this._elements["ripples"].querySelector(".pointer-down-ripple") === null) {
+      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
-      if (rippleType === "unbounded") {
+      if (triggerEffect === "ripple") {
         let ripple = createElement("div");
         ripple.setAttribute("class", "ripple");
-        this["#ripples"].append(ripple);
+        this._elements["ripples"].append(ripple);
 
         await ripple.animate(
           { transform: ["scale(0)", "scale(2.6)"] },
-          { duration: 300, easing }
+          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         ).finished;
 
         await ripple.animate(
           { opacity: [getComputedStyle(ripple).opacity, "0"] },
-          { duration: 300, easing }
+          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         ).finished;
 
         ripple.remove();
