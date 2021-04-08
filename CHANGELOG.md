@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.3 (2021-04-08)
+
+- [Portal] [Bugfix] Admin can't close issues
+
 ## 0.9.2 (2021-04-08)
 
 - [Portal] [Bugfix] Tags are not rendered correctly in the HTML version of the changelog
