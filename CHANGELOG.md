@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.2 (2021-04-08)
+
+- [Portal] [Bugfix] Tags are not rendered correctly in the HTML version of the changelog
+
 ## 0.9.1 (2021-04-08)
 
 - [Bugfix] `<x-numberinput>` value is not set properly when changing focus to `<x-stepper>`
