@@ -13,8 +13,8 @@ under the Material Iconset License v1.
 Fluent iconset files (fluent.svg and fluent-outlined.svg) are made available under
 the Fluent Iconset License v1.
 
-All other files included in tthe Xel NPM package are dual-licensed under the GNU
-General Public License v3 and Xel Commercial License v1.
+All other files included in the NPM package and the GitHub source code repository are
+dual-licensed under the GNU General Public License v3 and Xel Commercial License v1.
 
 The full text of each license is provided below.
 

@@ -729,6 +729,10 @@ export default class XNumberInputElement extends HTMLElement {
   _onStepperIncrementStart(event) {
     let incrementListener, incrementEndListener;
 
+    if (this.matches(":focus")) {
+      this._commitEditorChanges();
+    }
+
     this._isStepperButtonDown = true;
 
     this.addEventListener("increment", incrementListener = (event) => {
@@ -748,6 +752,10 @@ export default class XNumberInputElement extends HTMLElement {
 
   _onStepperDecrementStart(event) {
     let decrementListener, decrementEndListener;
+
+    if (this.matches(":focus")) {
+      this._commitEditorChanges();
+    }
 
     this._isStepperButtonDown = true;
 
