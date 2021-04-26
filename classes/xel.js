@@ -342,12 +342,29 @@ export default new class Xel extends EventEmitter {
 
       if (importStartIndex > -1) {
         let importEndIndex = themeText.indexOf(";", importStartIndex);
-        let urlStartIndex = themeText.indexOf(`/`, importStartIndex);
-        let urlEndIndex = themeText.indexOf(".css", urlStartIndex) + ".css".length;
-        let path = themeText.substring(urlStartIndex, urlEndIndex);
+        let pathStartIndex = 0;
+        let pathEndIndex = themeText.indexOf(".css", importStartIndex) + ".css".length;
+        let quoteIndex = themeText.indexOf(`'`, importStartIndex);
+        let dblquoteIndex = themeText.indexOf(`"`, importStartIndex);
+
+        if (quoteIndex > importStartIndex && quoteIndex < importEndIndex) {
+          pathStartIndex = quoteIndex + 1;
+        }
+        else if (dblquoteIndex > importStartIndex && dblquoteIndex < importEndIndex) {
+          pathStartIndex = dblquoteIndex + 1;
+        }
+        else {
+          let urlStartIndex = themeText.indexOf("url(", importStartIndex);
+
+          if (urlStartIndex > importStartIndex && urlStartIndex < importEndIndex) {
+            pathStartIndex = urlStartIndex + "url(".length;
+          }
+        }
+
+        let path = themeText.substring(pathStartIndex, pathEndIndex);
 
         output.push([path, themeText.substring(importStartIndex, importEndIndex+1)]);
-        currentIndex = urlEndIndex;
+        currentIndex = pathEndIndex;
       }
       else {
         break;

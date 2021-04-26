@@ -1,6 +1,14 @@
 
 # CHANGELOG
 
+## 0.9.5 (2021-04-26)
+
+- [Bugfix] Themes with relative URL fail to load
+
+## 0.9.4 (2021-04-26)
+
+- [Portal] [Bugfix] Issue descriptions containing template strings fail to render
+
 ## 0.9.3 (2021-04-08)
 
 - [Portal] [Bugfix] Admin can't close issues
