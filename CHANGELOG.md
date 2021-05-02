@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.6 (2021-05-02)
+
+- [Bugfix] base.css fails to load in some edge cases
+
 ## 0.9.5 (2021-04-26)
 
 - [Bugfix] Themes with relative URL fail to load
