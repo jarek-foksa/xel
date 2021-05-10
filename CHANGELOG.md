@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.7 (2021-05-10)
+
+- Update the commercial license to allow the usage of beta Xel versions for free
+
 ## 0.9.6 (2021-05-02)
 
 - [Bugfix] base.css fails to load in some edge cases

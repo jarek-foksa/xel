@@ -60,7 +60,8 @@ The full text of each license is provided below.
     Payment: Licensee shall pay Licensor a fee which Licensor may deem adequate.
     Failure to perform payment shall constitute as material breach of this
     Agreement and will result in the termination of Licensee’s rights to use the
-    Software.
+    Software. The payment is not required while the Licensee is using a beta
+    version of Xel (denoted by a version number 0.y.z).
 
     Indemnification: Licensee hereby warrants to hold Licensor harmless and
     indemnify Licensor for any lawsuit brought against it in regards to
