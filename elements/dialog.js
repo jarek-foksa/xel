@@ -164,6 +164,7 @@ let DialogElementMixin = {
 
         this.addEventListener("click", clickListener = (event) => {
           if (
+            event.target === this &&
             event.isTrusted === true && // Click event was not triggered by keyboard
             event.defaultPrevented === false &&
             closeOnClick === true &&

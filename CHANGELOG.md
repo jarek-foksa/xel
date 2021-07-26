@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.8 (2021-07-26)
+
+- [Bugfix] Do not close the dialog when user clicks the backdrop area of a popover
+
 ## 0.9.7 (2021-05-10)
 
 - Update the commercial license to allow the usage of beta Xel versions for free
