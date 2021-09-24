@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.9 (2021-09-24)
+
+- [Bugfix] `<x-texteditor>` scrollbars do not inherit default stylings
+
 ## 0.9.8 (2021-07-26)
 
 - [Bugfix] Do not close the dialog when user clicks the backdrop area of a popover

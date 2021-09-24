@@ -34,6 +34,7 @@ export default class XTextEditorElement extends HTMLElement {
       box-sizing: border-box;
       background: white;
       font-size: 12.5px;
+      overflow: auto;
     }
     :host(:hover) {
       cursor: text;
@@ -77,10 +78,8 @@ export default class XTextEditorElement extends HTMLElement {
     #main {
       display: flex;
       flex-flow: column;
-      height: 100%;
-      min-height: inherit;
-      max-height: inherit;
-      overflow-y: auto;
+      width: 100%;
+      min-height: 100%;
     }
 
     #editor {
@@ -93,7 +92,6 @@ export default class XTextEditorElement extends HTMLElement {
       outline: none;
       font-family: inherit;
       font-size: inherit;
-      overflow: auto;
     }
 
     /* Error message */
