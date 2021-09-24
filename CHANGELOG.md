@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.10 (2021-09-24)
+
+- [Bugfix] Horizontal scrollbars are misaligned in the Fluent theme
+
 ## 0.9.9 (2021-09-24)
 
 - [Bugfix] `<x-texteditor>` scrollbars do not inherit default stylings
