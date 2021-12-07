@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.11 (2021-12-07)
+
+- [Bugfix] Incorrect size of `<x-stepper>` inside condensed `<x-numberinput>`
+
 ## 0.9.10 (2021-09-24)
 
 - [Bugfix] Horizontal scrollbars are misaligned in the Fluent theme

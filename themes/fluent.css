@@ -226,7 +226,8 @@ x-accordion > header > x-label {
  */
 
 x-stepper {
-  width: 14px;
+  width: 16px;
+  min-width: 16px;
   border: 1px solid var(--border-color);
   background: white;
   color: rgba(0, 0, 0, 0.8);
@@ -1070,8 +1071,6 @@ x-numberinput[condensed] > x-stepper {
   border: none;
   border-radius: 0;
   margin: 0;
-  width: 18px;
-  min-width: 18px;
   height: 100%;
   display: flex;
 }

@@ -208,6 +208,7 @@ x-accordion > header > x-label {
 
 x-stepper {
   width: 14px;
+  min-width: 14px;
   border: 1px solid var(--border-color);
   background: white;
   color: rgba(0, 0, 0, 0.8);
