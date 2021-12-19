@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.9.12 (2021-12-19)
+
+- [Bugfix] NPM bundle contains unused files
+
 ## 0.9.11 (2021-12-07)
 
 - [Bugfix] Incorrect size of `<x-stepper>` inside condensed `<x-numberinput>`
