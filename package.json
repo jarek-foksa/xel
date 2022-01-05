@@ -1,10 +1,18 @@
 {
   "name": "xel",
-  "version": "0.9.12",
+  "version": "0.0.0",
+  "type": "module",
+  "browser": "xel.js",
   "description": "Widget toolkit for building native-like Web, Electron and Hybrid apps",
+  "author": "Jarosław Foksa",
+  "license": "MIT",
+  "homepage": "https://xel-toolkit.org/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jarek-foksa/xel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jarek-foksa/xel/issues"
   },
   "keywords": [
     "widget",
@@ -31,10 +39,15 @@
     "slider",
     "throbber"
   ],
-  "author": "Jarosław Foksa",
-  "license": "GPLv3",
-  "bugs": {
-    "url": "https://xel-toolkit.org/issues"
-  },
-  "homepage": "https://xel-toolkit.org/"
+  "devDependencies": {
+    "clean-css": "5.2.2",
+    "fs-extra": "10.0.0",
+    "glob": "7.2.0",
+    "html-minifier-terser": "6.1.0",
+    "marked": "4.0.8",
+    "prismjs": "1.25.0",
+    "rollup": "2.63.0",
+    "semver": "7.3.5",
+    "terser": "5.10.0"
+  }
 }

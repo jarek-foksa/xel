@@ -1,15 +1,14 @@
 
 // @copyright
-//   © 2016-2021 Jarosław Foksa
+//   © 2016-2022 Jarosław Foksa
 // @license
-//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
+//   MIT License (check LICENSE.md for details)
 
-import {round} from "/utils/math.js";
+import {round} from "./math.js";
 
-// @info
-//   Generate random number.
-// @type
-//   (number, number, number) => number
+// @type (number, number, number) => number
+//
+// Generate random number.
 export let getRandomNumber = (min = 0, max = 100, precision = 0) => {
   let number = min + (Math.random() * (max-min));
   return round(number, precision);

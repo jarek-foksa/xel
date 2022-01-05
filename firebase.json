@@ -1,0 +1,50 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "**/.*"
+    ],
+    "rewrites": [
+      {
+        "source": "/fallback",
+        "destination": "/portal-fallback.html"
+      },
+      {
+        "source": "**",
+        "destination": "/portal.html"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/node_modules/xel/:where*",
+        "destination": "/:where*",
+        "type": 308
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "sameorigin"
+          }
+        ]
+      }
+    ]
+  },
+  "emulators": {
+    "hosting": {
+      "host": "localhost",
+      "port": "4000"
+    },
+    "hub": {
+      "host": "localhost",
+      "port": "4001"
+    }
+  }
+}

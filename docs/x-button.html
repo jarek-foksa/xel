@@ -1,0 +1,462 @@
+<article>
+  <section id="intro-section">
+    <h2>Button</h2>
+
+    <p><strong>&lt;x-button&gt;</strong> has the same purpose as the standard HTML <strong>&lt;button&gt;</strong>
+    element, but can be easily composited with other Xel elements.</p>
+
+    <x-button>
+      <x-icon name="home"></x-icon>
+      <x-label>Button</x-label>
+    </x-button>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-button.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-label>Button</x-label>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Icon</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon name="home"></x-icon>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Icon and label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label and icon</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-label>Button</x-label>
+            <x-icon name="home"></x-icon>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Link</h4>
+
+      <pt-demoblock>
+        <template>
+          <a href="https://developers.google.com/web/" target="_blank">
+            <x-button>
+              <x-icon name="open"></x-icon>
+              <x-label>Button</x-label>
+            </x-button>
+          </a>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Ellipsis</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-label>More options</x-label>
+          </x-button>
+
+          <style>
+            x-button {
+              width: 73px;
+            }
+          </style>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Menu</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon name="settings"></x-icon>
+
+            <x-menu>
+              <x-menuitem>
+                <x-icon name="history-undo"></x-icon>
+                <x-label>Undo</x-label>
+                <x-shortcut value="Control+Z"></x-shortcut>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-icon name="history-redo"></x-icon>
+                <x-label>Redo</x-label>
+                <x-shortcut value="Control+Shift+Z"></x-shortcut>
+              </x-menuitem>
+
+              <hr/>
+
+              <x-menuitem>
+                <x-icon name="cut"></x-icon>
+                <x-label>Cut</x-label>
+                <x-shortcut value="Control+X"></x-shortcut>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-icon name="copy"></x-icon>
+                <x-label>Copy</x-label>
+                <x-shortcut value="Control+C"></x-shortcut>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-icon name="paste"></x-icon>
+                <x-label>Paste</x-label>
+                <x-shortcut value="Control+V"></x-shortcut>
+              </x-menuitem>
+
+              <hr/>
+
+              <x-menuitem>
+                <x-icon></x-icon>
+                <x-label>Refresh</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Popover</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon name="settings"></x-icon>
+
+            <x-popover modal>
+              <main>
+                <x-label>Popover</x-label>
+              </main>
+            </x-popover>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Dialog</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon name="settings"></x-icon>
+
+            <dialog>
+              <main>
+                <h3>Use Google's location service?</h3>
+                <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
+              </main>
+
+              <footer>
+                <x-button id="agree-button">
+                  <x-label>Disagree</x-label>
+                </x-button>
+                <x-button toggled autofocus id="disagree-button">
+                  <x-label>Agree</x-label>
+                </x-button>
+              </footer>
+            </dialog>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Notification</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-label>Button</x-label>
+            <x-notification>You clicked the button.</x-notification>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button disabled>
+            <x-icon name="delete"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button toggled>
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled, togglable</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button toggled togglable>
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled, disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button toggled disabled>
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Condensed</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button condensed>
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"flat"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button skin="flat">
+            <x-icon name="home"></x-icon>
+          </x-button>
+
+          <x-button skin="flat" toggled togglable>
+            <x-icon name="home"></x-icon>
+          </x-button>
+
+          <x-button skin="flat" disabled>
+            <x-icon name="home"></x-icon>
+          </x-button>
+
+          <x-button skin="flat">
+            <x-icon name="settings"></x-icon>
+            <x-menu>
+              <x-menuitem>
+                <x-label>Menu item</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-button>
+
+          <style>
+            x-button + x-button {
+              margin-top: 10px;
+            }
+          </style>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"recessed"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button skin="recessed">
+            <x-label>Button</x-label>
+          </x-button>
+
+          <x-button skin="recessed" toggled togglable>
+            <x-label>Button</x-label>
+          </x-button>
+
+          <x-button skin="recessed" disabled>
+            <x-label>Button</x-label>
+          </x-button>
+
+          <style>
+            x-button + x-button {
+              margin-top: 10px;
+            }
+          </style>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"nav"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button skin="nav">
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+
+          <x-button skin="nav" toggled togglable>
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+
+          <x-button skin="nav" disabled>
+            <x-icon name="home"></x-icon>
+            <x-label>Button</x-label>
+          </x-button>
+
+          <style>
+            x-button + x-button {
+              margin-top: 10px;
+            }
+          </style>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"dock"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button skin="dock">
+            <x-icon name="home"></x-icon>
+          </x-button>
+
+          <x-button skin="dock" toggled togglable>
+            <x-icon name="home"></x-icon>
+          </x-button>
+
+          <x-button skin="dock" disabled>
+            <x-icon name="home"></x-icon>
+          </x-button>
+
+          <style>
+            x-button + x-button {
+              margin-top: 10px;
+            }
+          </style>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"circular"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button skin="circular">
+            <x-icon name="question"></x-icon>
+          </x-button>
+
+          <x-button skin="circular" disabled>
+            <x-icon name="question"></x-icon>
+          </x-button>
+
+          <style>
+            x-button + x-button {
+              margin-top: 10px;
+            }
+          </style>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

@@ -1,0 +1,361 @@
+<article>
+  <section id="intro-section">
+    <h2>Buttons</h2>
+
+    <p><strong>&lt;x-buttons&gt;</strong> is used to groups several related buttons together.</p>
+    <p>When <strong>"tracking"</strong> attribute is set, it will also automatically toggle buttons on/off when clicked.</p>
+
+    <x-buttons tracking="1">
+      <x-button toggled>
+        <x-icon name="home"></x-icon>
+        <x-label>Button 1</x-label>
+      </x-button>
+
+      <x-button>
+        <x-icon name="flag"></x-icon>
+        <x-label>Button 2</x-label>
+      </x-button>
+
+      <x-button>
+        <x-icon name="earth"></x-icon>
+        <x-label>Button 3</x-label>
+      </x-button>
+    </x-buttons>
+
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-buttons.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Tracking "-1" (default)</h4>
+      <p>Does not toggle automatically any buttons.</p>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="-1">
+            <x-button>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="mail"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Tracking "0"</h4>
+      <p>Toggles the clicked button on/off and other buttons off.</p>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="0">
+            <x-button toggled>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="mail"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Tracking "1"</h4>
+      <p>Toggles the clicked button on and other buttons off.</p>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="1">
+            <x-button toggled>
+              <x-icon name="text-align-left"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="text-align-center"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="text-align-right"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Tracking "2"</h4>
+      <p>Toggles the clicked button on/off.</p>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="2">
+            <x-button toggled>
+              <x-icon name="text-bold"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="text-underline"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="text-italic"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Tracking "3"</h4>
+      <p>Toggles the clicked button on/off, but toggles off only if there is at least one other button toggled on.</p>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="3">
+            <x-button toggled>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="mail"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Vertical</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="1" vertical>
+            <x-button toggled>
+              <x-icon name="home"></x-icon>
+              <x-label>Home</x-label>
+            </x-button>
+
+            <x-button>
+              <x-icon name="mail"></x-icon>
+              <x-label>Mail</x-label>
+            </x-button>
+
+            <x-button>
+              <x-icon name="settings"></x-icon>
+              <x-label>Settings</x-label>
+            </x-button>
+          </x-buttons>
+
+          <x-buttons tracking="1" vertical style="margin-top: 10px">
+            <x-button toggled>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="mail"></x-icon>
+            </x-button>
+
+            <x-button>
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"flat"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="1">
+            <x-button skin="flat" toggled>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button skin="flat">
+              <x-icon name="mail"></x-icon>
+            </x-button>
+
+            <x-button skin="flat">
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttons>
+
+          <x-buttons tracking="1" vertical style="margin-top: 20px;">
+            <x-button skin="flat" toggled>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button skin="flat">
+              <x-icon name="mail"></x-icon>
+            </x-button>
+
+            <x-button skin="flat">
+              <x-icon name="settings"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"recessed"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="1">
+            <x-button skin="recessed" toggled>
+              <x-label>Inbox</x-label>
+            </x-button>
+
+            <x-button skin="recessed">
+              <x-label>Sent</x-label>
+            </x-button>
+
+            <x-button skin="recessed">
+              <x-label>Drafts</x-label>
+            </x-button>
+          </x-buttons>
+
+          <x-buttons tracking="1" vertical style="margin-top: 20px;">
+            <x-button skin="recessed" toggled>
+              <x-label>Inbox</x-label>
+            </x-button>
+
+            <x-button skin="recessed">
+              <x-label>Sent</x-label>
+            </x-button>
+
+            <x-button skin="recessed">
+              <x-label>Drafts</x-label>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"nav"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="1">
+            <x-button skin="nav">
+              <x-icon name="home"></x-icon>
+              <x-label>Home</x-label>
+            </x-button>
+
+            <x-button skin="nav" toggled>
+              <x-icon name="settings"></x-icon>
+              <x-label>Settings</x-label>
+            </x-button>
+
+            <x-button skin="nav">
+              <x-icon name="bookmark"></x-icon>
+              <x-label>Bookmarks</x-label>
+            </x-button>
+          </x-buttons>
+
+          <x-buttons tracking="1" vertical style="margin-top: 20px;">
+            <x-button skin="nav">
+              <x-icon name="home"></x-icon>
+              <x-label>Home</x-label>
+            </x-button>
+
+            <x-button skin="nav" toggled>
+              <x-icon name="settings"></x-icon>
+              <x-label>Settings</x-label>
+            </x-button>
+
+            <x-button skin="nav">
+              <x-icon name="bookmark"></x-icon>
+              <x-label>Bookmarks</x-label>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Skin <em>"dock"</em></h4>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="1">
+            <x-button skin="dock" toggled>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button skin="dock">
+              <x-icon name="wrench"></x-icon>
+            </x-button>
+
+            <x-button skin="dock">
+              <x-icon name="bookmark"></x-icon>
+            </x-button>
+          </x-buttons>
+
+          <x-buttons tracking="1" vertical style="margin-top: 10px;">
+            <x-button skin="dock" toggled>
+              <x-icon name="home"></x-icon>
+            </x-button>
+
+            <x-button skin="dock">
+              <x-icon name="wrench"></x-icon>
+            </x-button>
+
+            <x-button skin="dock">
+              <x-icon name="bookmark"></x-icon>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

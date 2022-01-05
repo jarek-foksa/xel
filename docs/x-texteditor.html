@@ -1,0 +1,96 @@
+<article>
+  <section id="intro-section">
+    <h2>Text editor</h2>
+
+    <p><strong>&lt;x-texteditor&gt;</strong> allows user to enter a multiline text.</p>
+
+    <x-texteditor value="Sample text"></x-texteditor>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-texteditor.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-texteditor></x-texteditor>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Value</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-texteditor value="Sample text"></x-texteditor>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-texteditor>
+            <x-label>Name</x-label>
+          </x-texteditor>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Spellcheck</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-texteditor value="There is a typo heree" spellcheck></x-texteditor>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-texteditor value="Sample value" disabled></x-texteditor>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Required</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-texteditor required>
+            <x-label>Last name</x-label>
+          </x-texteditor>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

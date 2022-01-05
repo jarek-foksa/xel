@@ -1,0 +1,113 @@
+<article>
+  <section id="intro-section">
+    <h2>Switch</h2>
+
+    <p><strong>&lt;x-switch&gt;</strong> is a widget that allows user to perform a binary choice in a simillar
+      fashion to <strong>&lt;x-checkbox&gt;</strong>.</p>
+
+    <x-switch toggled>
+      <x-label>Switch</x-label>
+    </x-switch>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-switch.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-switch></x-switch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-switch toggled></x-switch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Mixed</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-switch mixed></x-switch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled, mixed</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-switch toggled mixed></x-switch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-switch disabled></x-switch>
+          <x-switch toggled disabled></x-switch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-switch>
+            <x-label>Switch</x-label>
+          </x-switch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Multiline label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-switch>
+            <x-label><strong>Switch</strong></x-label>
+            <x-label>Description with a <a href="#">link</a></x-label>
+          </x-switch>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

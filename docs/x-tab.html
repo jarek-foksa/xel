@@ -1,0 +1,75 @@
+<article>
+  <section id="intro-section">
+    <h2>Tab</h2>
+
+    <p><strong>&lt;x-tab&gt;</strong> is not meant to be used as a stand-alone widget, instead it should be
+    always placed inside <strong>&lt;x-tabs&gt;</strong>.</p>
+
+    <x-tabs>
+      <x-tab selected>
+        <x-icon name="home"></x-icon>
+        <x-label>Tab</x-label>
+      </x-tab>
+    </x-tabs>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-tab.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Icon and label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tabs>
+            <x-tab selected>
+              <x-icon name="mail"></x-icon>
+              <x-label>Item one</x-label>
+            </x-tab>
+          </x-tabs>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only icon</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tabs>
+            <x-tab selected>
+              <x-icon name="mail"></x-icon>
+            </x-tab>
+          </x-tabs>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tabs>
+            <x-tab selected>
+              <x-label>Item one</x-label>
+            </x-tab>
+          </x-tabs>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

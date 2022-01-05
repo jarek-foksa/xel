@@ -1,0 +1,111 @@
+<article>
+  <section id="intro-section">
+    <h2>Checkbox</h2>
+
+    <p><strong>&lt;x-checkbox&gt;</strong> is a widget that allows user to perform a binary choice.</p>
+
+    <x-checkbox toggled>
+      <x-label>Checkbox</x-label>
+    </x-checkbox>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-checkbox.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-checkbox></x-checkbox>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-checkbox toggled></x-checkbox>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Mixed</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-checkbox mixed></x-checkbox>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled, mixed</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-checkbox toggled mixed></x-checkbox>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-checkbox toggled disabled></x-checkbox>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-checkbox>
+            <x-label>This is sample description</x-label>
+          </x-checkbox>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Multiline label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-checkbox>
+            <x-label><strong>Option</strong></x-label>
+            <x-label>Description with a <a href="#">link</a>.</x-label>
+          </x-checkbox>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

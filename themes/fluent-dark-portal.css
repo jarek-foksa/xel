@@ -1,0 +1,108 @@
+
+/*
+ * @copyright
+ *   © 2016-2022 Jarosław Foksa
+ * @license
+ *   MIT License (check LICENSE.md for details)
+ */
+
+@import url("/node_modules/xel/themes/fluent-dark.css");
+
+body {
+  --green-status-color: #38ca65;
+  --red-status-color: #ff6471;
+}
+
+/******************************************************************************************************************
+ * PAGES
+ *****************************************************************************************************************/
+
+/**
+ * About
+ */
+
+pt-aboutpage {
+  background: var(--accent-color);
+}
+
+/**
+ * Privacy, Terms
+ */
+
+pt-privacypage::part(card-footer),
+pt-termspage::part(card-footer) {
+  background: var(--dark-background-color);
+  border-color: var(--dark-border-color);
+}
+
+/******************************************************************************************************************
+ * WIDGETS
+ *****************************************************************************************************************/
+
+/**
+ * Tag
+ */
+
+/* @skin colored */
+
+x-tag[skin="colored"] {
+  height: 18px;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+x-tag[skin="colored"]:not([scoped]) {
+  color: #fff;
+}
+x-tag[skin="colored"]::part(scope) {
+  background: none;
+  color: #fff;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+/**
+ * Code
+ */
+
+pt-code {
+  background: var(--dark-background-color);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/******************************************************************************************************************
+ * SIDEBAR
+ *****************************************************************************************************************/
+
+#sidebar {
+  border-right: 1px solid var(--dark-border-color);
+}
+
+#sidebar #header {
+  background: var(--dark-background-color);
+}
+
+#nav {
+  box-sizing: border-box;
+  padding: 0 30px;
+}
+
+#nav > section {
+  margin: 15px 0;
+}
+
+#nav > section h3 {
+  opacity: 0.4;
+  margin: 12px 0 6px 0;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+  user-select: none;
+  cursor: default;
+}
+
+#nav > hr {
+  margin: 0 0 0 -30px;
+  width: calc(100% + 60px);
+}
+
+#nav x-icon[name="open"] {
+  color: var(--light-accent-color);
+}

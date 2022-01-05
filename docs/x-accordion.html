@@ -1,0 +1,126 @@
+<article>
+  <section id="intro-section">
+    <h2>Accordion</h2>
+
+    <p><strong>&lt;x-accordion&gt;</strong> is a container element that can be expanded to reveal its content.</p>
+
+    <x-accordion>
+      <header>
+        <x-label>Accordion</x-label>
+      </header>
+
+      <main>
+        <x-label>Main content</x-label>
+      </main>
+    </x-accordion>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-accordion.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-accordion>
+            <header>
+              <x-label>Header</x-label>
+            </header>
+
+            <main>
+              <x-label>Main content</x-label>
+            </main>
+          </x-accordion>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Expanded</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-accordion expanded>
+            <header>
+              <x-label>Header</x-label>
+            </header>
+
+            <main>
+              <x-label>Main content</x-label>
+            </main>
+          </x-accordion>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Complex</h4>
+
+      <pt-demoblock>
+        <template>
+          <div style="width: 180px;">
+            <x-accordion>
+              <header>
+                <x-label>Fill</x-label>
+                <x-colorselect value="#a8cfff" style="width: 40px; height: 20px;">
+                  <x-popover modal>
+                    <x-wheelcolorpicker value="#bada55"></x-wheelcolorpicker>
+                  </x-popover>
+                </x-colorselect>
+              </header>
+
+              <main>
+                <x-select style="width: 100%;">
+                  <x-menu>
+                    <x-menuitem toggled><x-label>Solid</x-label></x-menuitem>
+                    <x-menuitem><x-label>Linear Gradient</x-label></x-menuitem>
+                    <x-menuitem><x-label>Radial Gradient</x-label></x-menuitem>
+                  </x-menu>
+                </x-select>
+
+                <x-button style="width: 100%; margin-top: 7px;">
+                  <x-label>Reset</x-label>
+                </x-button>
+              </main>
+            </x-accordion>
+
+            <hr/>
+
+            <x-accordion>
+              <header>
+                <x-label>Border</x-label>
+                <x-colorselect value="#bada55" style="width: 40px; height: 20px;">
+                  <x-popover modal>
+                    <x-wheelcolorpicker value="#bada55"></x-wheelcolorpicker>
+                  </x-popover>
+                </x-colorselect>
+              </header>
+
+              <main>
+                <x-slider min="0" max="10" style="width: 100%;">
+                  <x-label value="0">0</x-label>
+                  <x-label value="5">5</x-label>
+                  <x-label value="10">10</x-label>
+                </x-slider>
+              </main>
+            </x-accordion>
+          </div>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

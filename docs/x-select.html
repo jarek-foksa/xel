@@ -1,0 +1,427 @@
+<article>
+  <section id="intro-section">
+    <h2>Select</h2>
+
+    <p><strong>&lt;x-select&gt;</strong> allows user to select a single value from a predefined set of values.</p>
+
+    <x-select>
+      <x-menu>
+        <x-menuitem value="one" toggled>
+          <x-label>Item 1</x-label>
+        </x-menuitem>
+
+        <x-menuitem value="two">
+          <x-label>Item 2</x-label>
+        </x-menuitem>
+
+        <x-menuitem value="three">
+          <x-label>Item 3</x-label>
+        </x-menuitem>
+
+        <x-menuitem value="four">
+          <x-label>Item 4</x-label>
+        </x-menuitem>
+      </x-menu>
+    </x-select>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-select.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Only labels</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="australia">
+                <x-label>Australia</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="canada" toggled>
+                <x-label>Canada</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="ireland" disabled>
+                <x-label>Ireland</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="new-zealand">
+                <x-label>New Zealand</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="uk">
+                <x-label>United Kingdom</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="usa">
+                <x-label>United States</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only icons</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="car">
+                <x-icon name="vehicle-car"></x-icon>
+              </x-menuitem>
+
+              <x-menuitem value="bus">
+                <x-icon name="vehicle-bus"></x-icon>
+              </x-menuitem>
+
+              <x-menuitem value="bicycle">
+                <x-icon name="vehicle-bicycle"></x-icon>
+              </x-menuitem>
+
+              <x-menuitem value="boat" toggled>
+                <x-icon name="vehicle-boat"></x-icon>
+              </x-menuitem>
+
+              <x-menuitem value="airplane">
+                <x-icon name="vehicle-airplane"></x-icon>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Icons and labels</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="car">
+                <x-icon name="vehicle-car"></x-icon>
+                <x-label>Car</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="bus">
+                <x-icon name="vehicle-bus"></x-icon>
+                <x-label>Bus</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="bicycle">
+                <x-icon name="vehicle-bicycle"></x-icon>
+                <x-label>Bicycle</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="boat" toggled>
+                <x-icon name="vehicle-boat"></x-icon>
+                <x-label>Boat</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="airplane">
+                <x-icon name="vehicle-airplane"></x-icon>
+                <x-label>Airplane</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Swatches and labels</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="red" toggled>
+                <x-swatch value="#F44336"></x-swatch>
+                <x-label>Red</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="blue">
+                <x-swatch value="#0091EA"></x-swatch>
+                <x-label>Blue</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="green">
+                <x-swatch value="#8BC34A"></x-swatch>
+                <x-label>Green</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="yellow">
+                <x-swatch value="#FDD835"></x-swatch>
+                <x-label>Yellow</x-label>
+              </x-menuitem>
+
+              <hr/>
+
+              <x-menuitem value="default">
+                <x-swatch value="#78909C"></x-swatch>
+                <x-label>System</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Images and labels</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="red" toggled>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEXnNzcjbf7EAAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==">
+                <x-label>Red</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="blue">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEU3gOeDsyFfAAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==">
+                <x-label>Blue</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="green">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEVdyh9/A7IIAAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==">
+                <x-label>Green</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>No toggled item</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select style="width: 125px;">
+            <x-menu>
+              <x-menuitem value="car">
+                <x-icon name="vehicle-car"></x-icon>
+                <x-label>Car</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="bicycle">
+                <x-icon name="vehicle-bicycle"></x-icon>
+                <x-label>Bicycle</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only one item</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="car" toggled>
+                <x-icon name="vehicle-car"></x-icon>
+                <x-label>Car</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select disabled>
+            <x-menu>
+              <x-menuitem value="car" toggled>
+                <x-icon name="vehicle-car"></x-icon>
+                <x-label>Car</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="bicycle">
+                <x-icon name="vehicle-bicycle"></x-icon>
+                <x-label>Bicycle</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled item</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="car" toggled>
+                <x-icon name="vehicle-car"></x-icon>
+                <x-label>Car</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="bicycle" disabled>
+                <x-icon name="vehicle-bicycle"></x-icon>
+                <x-label>Bicycle</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Wide</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select style="width: 100%;">
+            <x-menu>
+              <x-menuitem value="car" toggled>
+                <x-icon name="vehicle-car"></x-icon>
+                <x-label>Car</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="bicycle">
+                <x-icon name="vehicle-bicycle"></x-icon>
+                <x-label>Bicycle</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Ellipsis</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select style="width: 150px;">
+            <x-menu>
+              <x-menuitem value="car" toggled>
+                <x-icon name="vehicle-car"></x-icon>
+                <x-label>Car - shortest route</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="bicycle">
+                <x-icon name="vehicle-bicycle"></x-icon>
+                <x-label>Bicycle - shortest route</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Long</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-select>
+            <x-menu>
+              <x-menuitem value="" toggled><x-label>Auto</x-label></x-menuitem>
+              <hr/>
+              <x-menuitem value="af"><x-label>Afrikaans</x-label></x-menuitem>
+              <x-menuitem value="sq"><x-label>Albanian</x-label></x-menuitem>
+              <x-menuitem value="ar"><x-label>Arabic</x-label></x-menuitem>
+              <x-menuitem value="hy"><x-label>Armenian</x-label></x-menuitem>
+              <x-menuitem value="az"><x-label>Azeri</x-label></x-menuitem>
+              <x-menuitem value="eu"><x-label>Basque</x-label></x-menuitem>
+              <x-menuitem value="be"><x-label>Belarusian</x-label></x-menuitem>
+              <x-menuitem value="bg"><x-label>Bulgarian</x-label></x-menuitem>
+              <x-menuitem value="ca"><x-label>Catalan</x-label></x-menuitem>
+              <x-menuitem value="zh"><x-label>Chinese</x-label></x-menuitem>
+              <x-menuitem value="hr"><x-label>Croatian</x-label></x-menuitem>
+              <x-menuitem value="cs"><x-label>Czech</x-label></x-menuitem>
+              <x-menuitem value="da"><x-label>Danish</x-label></x-menuitem>
+              <x-menuitem value="nl"><x-label>Dutch</x-label></x-menuitem>
+              <x-menuitem value="en"><x-label>English</x-label></x-menuitem>
+              <x-menuitem value="et"><x-label>Estonian</x-label></x-menuitem>
+              <x-menuitem value="fa"><x-label>Farsi</x-label></x-menuitem>
+              <x-menuitem value="fi"><x-label>Finnish</x-label></x-menuitem>
+              <x-menuitem value="fr"><x-label>French</x-label></x-menuitem>
+              <x-menuitem value="gl"><x-label>Galician</x-label></x-menuitem>
+              <x-menuitem value="de"><x-label>German</x-label></x-menuitem>
+              <x-menuitem value="ka"><x-label>Georgian</x-label></x-menuitem>
+              <x-menuitem value="el"><x-label>Greek</x-label></x-menuitem>
+              <x-menuitem value="he"><x-label>Hebrew</x-label></x-menuitem>
+              <x-menuitem value="hi"><x-label>Hindi</x-label></x-menuitem>
+              <x-menuitem value="hu"><x-label>Hungarian</x-label></x-menuitem>
+              <x-menuitem value="is"><x-label>Icelandic</x-label></x-menuitem>
+              <x-menuitem value="id"><x-label>Indonesian</x-label></x-menuitem>
+              <x-menuitem value="it"><x-label>Italian</x-label></x-menuitem>
+              <x-menuitem value="ja"><x-label>Japanese</x-label></x-menuitem>
+              <x-menuitem value="kk"><x-label>Kazakh</x-label></x-menuitem>
+              <x-menuitem value="ko"><x-label>Korean</x-label></x-menuitem>
+              <x-menuitem value="lv"><x-label>Latvian</x-label></x-menuitem>
+              <x-menuitem value="lt"><x-label>Lithuanian</x-label></x-menuitem>
+              <x-menuitem value="mt"><x-label>Maltese</x-label></x-menuitem>
+              <x-menuitem value="mn"><x-label>Mongolian</x-label></x-menuitem>
+              <x-menuitem value="nb"><x-label>Norwegian</x-label></x-menuitem>
+              <x-menuitem value="pl"><x-label>Polish</x-label></x-menuitem>
+              <x-menuitem value="pt"><x-label>Portuguese</x-label></x-menuitem>
+              <x-menuitem value="ro"><x-label>Romanian</x-label></x-menuitem>
+              <x-menuitem value="ru"><x-label>Russian</x-label></x-menuitem>
+              <x-menuitem value="sk"><x-label>Slovak</x-label></x-menuitem>
+              <x-menuitem value="sl"><x-label>Slovenian</x-label></x-menuitem>
+              <x-menuitem value="es"><x-label>Spanish</x-label></x-menuitem>
+              <x-menuitem value="sv"><x-label>Swedish</x-label></x-menuitem>
+              <x-menuitem value="th"><x-label>Thai</x-label></x-menuitem>
+              <x-menuitem value="tr"><x-label>Turkish</x-label></x-menuitem>
+              <x-menuitem value="uk"><x-label>Ukrainian</x-label></x-menuitem>
+              <x-menuitem value="ur"><x-label>Urdu</x-label></x-menuitem>
+              <x-menuitem value="uz"><x-label>Uzbek</x-label></x-menuitem>
+              <x-menuitem value="vi"><x-label>Vietnamese</x-label></x-menuitem>
+              <x-menuitem value="cy"><x-label>Welsh</x-label></x-menuitem>
+            </x-menu>
+          </x-select>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

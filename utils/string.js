@@ -1,8 +1,8 @@
 
 // @copyright
-//   © 2016-2021 Jarosław Foksa
+//   © 2016-2022 Jarosław Foksa
 // @license
-//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
+//   MIT License (check LICENSE.md for details)
 
 let {isFinite, isNaN, parseFloat} = Number;
 
@@ -41,4 +41,13 @@ export let isDOMWhitespace = (string) => {
 export let isNumeric = (value) => {
   let number = parseFloat(value);
   return isNaN(number) === false && isFinite(number);
+};
+
+// @type (string) => string
+//
+// Normalize the string by escaping any HTML tags.
+export let escapeHTML = (html) => {
+  let div = document.createElement("div");
+  div.appendChild(document.createTextNode(html));
+  return div.innerHTML;
 };

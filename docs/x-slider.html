@@ -1,0 +1,186 @@
+<article>
+  <section id="intro-section">
+    <h2>Slider</h2>
+
+    <p><strong>&lt;x-slider&gt;</strong> allows user to select a numerical value by dragging a grippie.</p>
+    <x-slider value="50"></x-slider>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-slider.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider value="10"></x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Min and max</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider value="10" min="-50" max="50"></x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Buffer</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider value="50" buffer="50 65"></x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Custom step</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider value="10" step="10"></x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Range</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider value="20 80"></x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Vertical</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider vertical></x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider disabled value="10"></x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Labels</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider min="0" max="100" value="100">
+            <x-label value="0">Small</x-label>
+            <x-label value="50"></x-label>
+            <x-label value="100">Large</x-label>
+          </x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+
+  <hr/>
+
+  <section id="recipes-section">
+    <h3>Recipes</h3>
+
+    <section>
+      <h4>Opacity slider</h4>
+
+      <pt-demoblock>
+        <template>
+          <script>
+            let input = document.querySelector("x-numberinput");
+            let slider = document.querySelector("x-slider");
+
+            slider.addEventListener("change", () => input.value = slider.value);
+            input.addEventListener("change", () => slider.value = input.value);
+          </script>
+
+          <style>
+            x-icon {
+              width: 22px;
+              height: 22px;
+            }
+            x-slider {
+              margin: 0 10px;
+              flex: 1;
+            }
+            x-numberinput {
+              margin-left: 8px;
+              min-width: 50px;
+              text-align: center;
+            }
+          </style>
+
+          <x-box>
+            <x-icon name="visibility-hidden"></x-icon>
+            <x-slider min="0" max="100" value="100"></x-slider>
+            <x-icon name="visibility-visible"></x-icon>
+            <x-numberinput value="100" min="0" max="100" suffix="%" condensed></x-numberinput>
+          </x-box>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Temperature range slider</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-slider min="0" max="40" step="5" value="10 25" vertical>
+            <x-label value="0">0° C</x-label>
+            <x-label value="5">5° C</x-label>
+            <x-label value="10">10° C</x-label>
+            <x-label value="15">15° C</x-label>
+            <x-label value="20">20° C</x-label>
+            <x-label value="25">25° C</x-label>
+            <x-label value="30">30° C</x-label>
+            <x-label value="35">35° C</x-label>
+            <x-label value="40">40° C</x-label>
+          </x-slider>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

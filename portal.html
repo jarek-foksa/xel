@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="/"/>
+    <title>Xel</title>
+
+    <!-- Security settings -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src
+       'self';
+      script-src
+       'self'
+       'unsafe-eval';
+      child-src
+       'self';
+      object-src
+        'none';
+      font-src
+       'self'
+        https://fonts.gstatic.com;
+      style-src
+       'self'
+       'unsafe-inline'
+        https://fonts.googleapis.com;
+      img-src
+       'self'
+        blob:
+        data:
+        https://xel-toolkit.org
+        https://camo.githubusercontent.com;
+      media-src
+        'none';
+      connect-src
+       'self'
+        data:
+        https://xel-toolkit.org
+        https://*.googleapis.com
+        https://fonts.gstatic.com;
+    ">
+
+    <!-- Viewport settings -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <!-- Xel settings -->
+    <meta name="xel-theme"></meta>
+    <meta name="xel-accent-color"></meta>
+    <meta name="xel-size"></meta>
+    <meta name="xel-iconset"></meta>
+
+    <!-- Favicons -->
+    <link rel="icon" href="favicon.svg">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inter:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Scripts -->
+    <script src="portal-preload.js"></script>
+    <script src="/node_modules/marked/marked.min.js"></script>
+    <script src="/node_modules/prismjs/prism.js"></script>
+    <script src="portal.js" type="module"></script>
+  </head>
+
+  <body></body>
+</html>

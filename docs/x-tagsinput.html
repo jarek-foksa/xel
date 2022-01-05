@@ -1,0 +1,386 @@
+<article>
+  <section id="intro-section">
+    <h2>Tags input</h2>
+
+    <p><strong>&lt;x-tagsinput&gt;</strong> allows user to enter tags.</p>
+
+    <x-tagsinput>
+      <x-tag value="tag-1">
+        <x-label>Tag 1</x-label>
+      </x-tag>
+
+      <x-tag value="tag-2">
+        <x-label>Tag 2</x-label>
+      </x-tag>
+
+      <x-tag value="tag-3">
+        <x-label>Tag 3</x-label>
+      </x-tag>
+    </x-tagsinput>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-tagsinput.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tagsinput>
+            <x-tag value="tag-1">
+              <x-label>Tag 1</x-label>
+            </x-tag>
+
+            <x-tag value="tag-2">
+              <x-label>Tag 2</x-label>
+            </x-tag>
+
+            <x-tag value="tag-3">
+              <x-label>Tag 3</x-label>
+            </x-tag>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Icons</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tagsinput>
+            <x-tag value="car">
+              <x-icon name="vehicle-car"></x-icon>
+              <x-label>Car</x-label>
+            </x-tag>
+
+            <x-tag value="airplane">
+              <x-icon name="vehicle-airplane"></x-icon>
+              <x-label>Plane</x-label>
+            </x-tag>
+
+            <x-tag value="boat">
+              <x-icon name="vehicle-boat"></x-icon>
+              <x-label>Boat</x-label>
+            </x-tag>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Swatches</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tagsinput>
+            <x-tag value="red">
+              <x-swatch value="#fc7b7e"></x-swatch>
+              <x-label>Red</x-label>
+            </x-tag>
+
+            <x-tag value="green">
+              <x-swatch value="#83e283"></x-swatch>
+              <x-label>Green</x-label>
+            </x-tag>
+
+            <x-tag value="yellow">
+              <x-swatch value="#fde05b"></x-swatch>
+              <x-label>Yellow</x-label>
+            </x-tag>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Colored</h4>
+
+      <pt-demoblock>
+        <template>
+          <style>
+            x-tag[value="red"] {
+              color: black;
+              background: #fc7b7e;
+            }
+            x-tag[value="green"] {
+              color: black;
+              background: #83e283;
+            }
+            x-tag[value="yellow"] {
+              color: black;
+              background: #fde05b;
+            }
+          </style>
+
+          <x-tagsinput>
+            <x-tag value="red">
+              <x-label>Red</x-label>
+            </x-tag>
+
+            <x-tag value="green">
+              <x-label>Green</x-label>
+            </x-tag>
+
+            <x-tag value="yellow">
+              <x-label>Yellow</x-label>
+            </x-tag>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Placeholder</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tagsinput>
+            <x-label>Enter your tags</x-label>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Required</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tagsinput required>
+            <x-label>Enter your tags</x-label>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tagsinput disabled>
+            <x-tag value="tag-1">
+              <x-label>Tag 1</x-label>
+            </x-tag>
+
+            <x-tag value="tag-2">
+              <x-label>Tag 2</x-label>
+            </x-tag>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+
+  <hr/>
+
+  <section id="recipes-section">
+    <h3>Recipes</h3>
+
+    <section>
+      <h4>Article tags</h4>
+
+      <p>In this recipe we postrocess the user entered tags by adding a random color swatch and ensuring that the
+         tag label starts with <code>"@"</code>.</p>
+
+      <pt-demoblock>
+        <template>
+          <script>
+            let input = document.querySelector("x-tagsinput");
+
+            input.addEventListener("add", (event) => {
+              let tag = event.detail;
+              let label = tag.querySelector("x-label");
+              let text = label.textContent;
+
+              let customText = text.startsWith("@") ? text : "@" + text;
+              let customValue = customText.substring(1).toLowerCase();
+              let customColor = "#" + ((1<<24)*Math.random()|0).toString(16);
+
+              tag.value = customValue;
+              tag.insertAdjacentHTML("afterbegin", `<x-swatch value="${customColor}"/>`);
+              label.textContent = customText;
+            });
+          </script>
+
+          <x-tagsinput>
+            <x-tag value="html">
+              <x-swatch value="#fc7b7e"></x-swatch>
+              <x-label>@html</x-label>
+            </x-tag>
+
+            <x-tag value="css">
+              <x-swatch value="#83e283"></x-swatch>
+              <x-label>@css</x-label>
+            </x-tag>
+
+            <x-tag value="svg">
+              <x-swatch value="#fde05b"></x-swatch>
+              <x-label>@svg</x-label>
+            </x-tag>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Transit tags</h4>
+
+      <p>You can show available tags directly below the input. This pattern works best when only a small set
+      of tags is allowed.</p>
+
+      <pt-demoblock>
+        <template>
+          <script>
+            let input = document.querySelector("x-tagsinput");
+            let availableTags = document.querySelector("x-tags");
+
+            input.addEventListener("add", (event) => {
+              let addedTag = event.detail;
+              let found = false;
+
+              for (let tag of availableTags.children) {
+                if (
+                  tag.querySelector("x-label").textContent.toLowerCase() ===
+                  addedTag.querySelector("x-label").textContent.toLowerCase()
+                ) {
+                  addedTag.replaceWith(tag);
+                  found = true;
+                  break;
+                }
+              }
+            });
+
+            input.addEventListener("remove", (event) => {
+              let removedTag = event.detail;
+              availableTags.append(removedTag);
+            });
+
+            availableTags.addEventListener("click", (event) => {
+              let tag = event.target.closest("x-tag");
+
+              if (tag) {
+                input.append(tag);
+              }
+            });
+          </script>
+
+          <x-tagsinput>
+            <x-tag value="bus">
+              <x-icon name="vehicle-bus"></x-icon>
+              <x-label>Bus</x-label>
+            </x-tag>
+          </x-tagsinput>
+
+          <x-tags style="margin-top: 4px;">
+            <x-tag value="car">
+              <x-icon name="vehicle-car"></x-icon>
+              <x-label>Car</x-label>
+            </x-tag>
+
+            <x-tag value="airplane">
+              <x-icon name="vehicle-airplane"></x-icon>
+              <x-label>Plane</x-label>
+            </x-tag>
+
+            <x-tag value="boat">
+              <x-icon name="vehicle-boat"></x-icon>
+              <x-label>Boat</x-label>
+            </x-tag>
+
+            <x-tag value="bicycle">
+              <x-icon name="vehicle-bicycle"></x-icon>
+              <x-label>Bicycle</x-label>
+            </x-tag>
+          </x-tags>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>People tags</h4>
+
+      <p>Available tags can be also shown as suggestions in a popover. This pattern works best with bigger
+      number of allowed tags.</p>
+
+      <pt-demoblock>
+        <template>
+          <script>
+            let input = document.querySelector("x-tagsinput");
+
+            let names = [
+              "Barbara Adams",   "Susan Allen",       "John Anderson",
+              "Margaret Baker",  "Ronald Brown",      "Elizabeth Campbell",
+              "Kimberly Carter", "Robert Clark",      "Deborah Collins",
+              "Mary Davis",      "Sharon Edwards",    "Helen Evans",
+              "Nancy Garcia",    "Betty Gonzalez",    "Jason Green",
+              "Linda Hall",      "Anthony Harris",    "Carol Hernandez",
+              "Mark Hill",       "Daniel Jackson",    "David Johnson",
+              "George Jones",    "Sarah King",        "Steven Lee",
+              "Paul Lewis",      "Joseph Lopez",      "Patricia Martin",
+              "Donna Martinez",  "Jennifer Miller",   "William Mitchell",
+              "Sandra Moore",    "Ruth Nelson",       "Dorothy Parker",
+              "Thomas Perez",    "Jeff Phillips",     "Donald Roberts",
+              "Laura Robinson",  "Charles Rodriguez", "Edward Scott",
+              "James Smith",     "Michelle Taylor",   "Richard Thomas",
+              "Maria Thompson",  "Brian Turner",      "Kevin Walker",
+              "Daniel West",     "Kenneth White",     "Christopher Williams",
+              "Lisa Wilson",     "Michael Wright",    "Karen Young"
+            ];
+
+            input.getSuggestions = (text) => {
+              let matchedNames = names.filter((name) => {
+                return name.toLowerCase().startsWith(text.toLowerCase()) &&
+                       input.value.includes(name) === false;
+              });
+
+              return matchedNames.map((name) => {
+                let tag = document.createElement("x-tag");
+                tag.value = name;
+                tag.innerHTML = `<x-label>${name}</x-label>`;
+                return tag;
+              });
+            };
+          </script>
+
+          <x-tagsinput suggestions>
+            <x-tag value="Margaret Baker">
+              <x-label>Margaret Baker</x-label>
+            </x-tag>
+
+            <x-tag value="Brian Turner">
+              <x-label>Brian Turner</x-label>
+            </x-tag>
+          </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

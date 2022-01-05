@@ -1,0 +1,123 @@
+<article>
+  <section id="intro-section">
+    <h2>Radio</h2>
+
+    <p><strong>&lt;x-radio&gt;</strong> is meant to be used inside <strong>&lt;x-radios&gt;</strong> element
+    which allows the user to choose one of a predefined set of mutually exclusive options.</p>
+
+    <x-radio toggled>
+      <x-label>Radio</x-label>
+    </x-radio>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-radio.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-radio></x-radio>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-radio toggled></x-radio>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Mixed</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-radio toggled mixed></x-radio>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-radio disabled></x-radio>
+          <x-radio toggled disabled></x-radio>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-radio>
+            <x-label>Sample label</x-label>
+          </x-radio>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Multiline label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-radio>
+            <x-label><strong>Switch</strong></x-label>
+            <x-label>Description with a <a href="#">link</a></x-label>
+          </x-radio>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Radios</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-radios>
+            <x-radio>
+              <x-label>First option</x-label>
+            </x-radio>
+            <x-radio toggled>
+              <x-label>Second option</x-label>
+            </x-radio>
+            <x-radio>
+              <x-label>Third option</x-label>
+            </x-radio>
+          </x-radios>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

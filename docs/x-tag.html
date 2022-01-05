@@ -1,0 +1,162 @@
+<article>
+  <section id="intro-section">
+    <h2>Tag</h2>
+
+    <p><strong>&lt;x-tag&gt;</strong> can be used a stand-alone element or as part of
+       <strong>&lt;x-tags&gt;</strong> or <strong>&lt;x-tagsinput&gt;</strong>.</p>
+
+    <x-tag>
+      <x-icon name="bookmark"></x-icon>
+      <x-label>Tag</x-label>
+    </x-tag>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-tag.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tag>
+            <x-label>Tag</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Icon and label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tag>
+            <x-icon name="bookmark"></x-icon>
+            <x-label>Tag</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Swatch and label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tag>
+            <x-swatch value="red"></x-swatch>
+            <x-label>Tag</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tag toggled>
+            <x-icon name="bookmark"></x-icon>
+            <x-label>Tag</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Scoped</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tag>
+            <x-label slot="scope">OS</x-label>
+            <x-label>Linux</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Removable</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tag removable>
+            <x-icon name="bookmark"></x-icon>
+            <x-label>Tag</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tag disabled>
+            <x-icon name="bookmark"></x-icon>
+            <x-label>Tag</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Custom color</h4>
+
+      <pt-demoblock>
+        <template>
+          <style>
+            x-tag[value="red"] {
+              background: #fc7b7e;
+            }
+            x-tag[value="green"] {
+              background: #83e283;
+            }
+            x-tag[value="yellow"] {
+              background: #fde05b;
+            }
+          </style>
+
+          <x-tag value="red">
+            <x-label>Red</x-label>
+          </x-tag>
+
+          <x-tag value="green">
+            <x-label>Green</x-label>
+          </x-tag>
+
+          <x-tag value="yellow">
+            <x-label>Yellow</x-label>
+          </x-tag>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

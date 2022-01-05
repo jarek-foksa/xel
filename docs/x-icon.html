@@ -1,0 +1,72 @@
+<article>
+  <section id="intro-section">
+    <h2>Icon</h2>
+
+    <p><strong>&lt;x-icon&gt;</strong> is used to display a specific icon from an SVG iconset file.</p>
+
+    <p>Xel comes with several predefined iconsets containing the most often used icons:</p>
+
+    <ul style="padding-left: 28px;">
+      <li>Material - located in <code>/node_modules/xel/iconsets/material.svg</code></li>
+      <li>Material Outlined - located in <code>/node_modules/xel/iconsets/material-outlined.svg</code></li>
+      <li>Fluent - located in <code>/node_modules/xel/iconsets/fluent.svg</code></li>
+      <li>Fluent Outlined - located in <code>/node_modules/xel/iconsets/fluent-outlined.svg</code></li>
+    </ul>
+
+    <p>It is recommended that you create your own iconset that contains only the icons needed by your app. This
+    could be done e.g. by copying a predefined iconset file and then manipulating it with
+    <a href="https://boxy-svg.com">Boxy SVG</a>.</p>
+
+    <x-icon name="home"></x-icon>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-icon.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section class="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Default iconset</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-icon name="mail"></x-icon>
+        </template>
+      </pt-demoblock>
+
+      <p><strong>Note:</strong> You must specify the default iconset URL in <code>&lt;head&gt;</code> as described
+      in <a href="/setup#link-iconset-card">the setup guide</a>.</p>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Explicit iconset (local)</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-icon name="folder" iconset="/node_modules/xel/iconsets/material.svg"></x-icon>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Explicit iconset (external)</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-icon name="lock" iconset="https://xel-toolkit.org/iconsets/fluent.svg"></x-icon>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

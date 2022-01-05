@@ -1,0 +1,177 @@
+<article>
+  <section id="intro-section">
+    <h2>Tags</h2>
+
+    <p><strong>&lt;x-tags&gt;</strong> allows user to select one or more tags from a fixed list of
+    predefined tags.</p>
+
+    <x-tags>
+      <x-tag value="tag-1">
+        <x-label>Tag 1</x-label>
+      </x-tag>
+
+      <x-tag value="tag-2">
+        <x-label>Tag 2</x-label>
+      </x-tag>
+
+      <x-tag value="tag-3">
+        <x-label>Tag 3</x-label>
+      </x-tag>
+    </x-tags>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-tags.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Basic</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tags>
+            <x-tag value="tag-1">
+              <x-label>Tag 1</x-label>
+            </x-tag>
+
+            <x-tag value="tag-2">
+              <x-label>Tag 2</x-label>
+            </x-tag>
+
+            <x-tag value="tag-3">
+              <x-label>Tag 3</x-label>
+            </x-tag>
+          </x-tags>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Icons</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tags prefix="@">
+            <x-tag value="car">
+              <x-icon name="vehicle-car"></x-icon>
+              <x-label>Car</x-label>
+            </x-tag>
+
+            <x-tag value="airplane">
+              <x-icon name="vehicle-airplane"></x-icon>
+              <x-label>Plane</x-label>
+            </x-tag>
+
+            <x-tag value="boat">
+              <x-icon name="vehicle-boat"></x-icon>
+              <x-label>Boat</x-label>
+            </x-tag>
+          </x-tags>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Swatches</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tags>
+            <x-tag value="red">
+              <x-swatch value="#fc7b7e"></x-swatch>
+              <x-label>Red</x-label>
+            </x-tag>
+
+            <x-tag value="green">
+              <x-swatch value="#83e283"></x-swatch>
+              <x-label>Green</x-label>
+            </x-tag>
+
+            <x-tag value="yellow">
+              <x-swatch value="#fde05b"></x-swatch>
+              <x-label>Yellow</x-label>
+            </x-tag>
+          </x-tags>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Scoped</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tags>
+            <x-tag>
+              <x-label slot="scope">OS</x-label>
+              <x-label>Linux</x-label>
+            </x-tag>
+
+            <x-tag>
+              <x-label slot="scope">OS</x-label>
+              <x-label>macOS</x-label>
+            </x-tag>
+
+            <x-tag>
+              <x-label slot="scope">OS</x-label>
+              <x-label>Windows</x-label>
+            </x-tag>
+          </x-tags>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Colored</h4>
+
+      <pt-demoblock>
+        <template>
+          <style>
+            x-tag[value="red"] {
+              color: black;
+              background: #fc7b7e;
+            }
+            x-tag[value="green"] {
+              color: black;
+              background: #83e283;
+            }
+            x-tag[value="yellow"] {
+              color: black;
+              background: #fde05b;
+            }
+          </style>
+
+          <x-tags>
+            <x-tag value="red">
+              <x-label>Red</x-label>
+            </x-tag>
+
+            <x-tag value="green">
+              <x-label>Green</x-label>
+            </x-tag>
+
+            <x-tag value="yellow">
+              <x-label>Yellow</x-label>
+            </x-tag>
+          </x-tags>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

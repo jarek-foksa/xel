@@ -1,0 +1,124 @@
+<article>
+  <section id="intro-section">
+    <h2>Color select</h2>
+
+    <p><strong>&lt;x-colorselect&gt;</strong> allows user to choose a color value.</p>
+
+    <x-colorselect value="#bada55">
+      <x-popover modal>
+        <x-wheelcolorpicker alphaslider></x-wheelcolorpicker>
+      </x-popover>
+    </x-colorselect>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-colorselect.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>System color picker</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-colorselect></x-colorselect>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Wheel color picker</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-colorselect value="#bada55">
+            <x-popover modal>
+              <x-wheelcolorpicker></x-wheelcolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Rect color picker</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-colorselect value="pink">
+            <x-popover modal>
+              <x-rectcolorpicker></x-rectcolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Bars color picker</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-colorselect value="cornflowerblue">
+            <x-popover modal>
+              <x-barscolorpicker></x-barscolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Alpha slider visible</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-colorselect value="#bada55">
+            <x-popover modal>
+              <x-wheelcolorpicker alphaslider></x-wheelcolorpicker>
+            </x-popover>
+          </x-colorselect>
+
+          <x-colorselect value="pink" style="margin-top: 10px;">
+            <x-popover modal>
+              <x-rectcolorpicker alphaslider></x-rectcolorpicker>
+            </x-popover>
+          </x-colorselect>
+
+          <x-colorselect value="cornflowerblue" style="margin-top: 10px;">
+            <x-popover modal>
+              <x-barscolorpicker alphaslider></x-barscolorpicker>
+            </x-popover>
+          </x-colorselect>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Disabled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-colorselect disabled></x-colorselect>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

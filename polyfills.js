@@ -2,7 +2,7 @@
 // @copyright
 //   © 2016-2021 Jarosław Foksa
 // @license
-//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
+//   MIT License (check LICENSE.md for details)
 
 //
 // Pointer events polyfills

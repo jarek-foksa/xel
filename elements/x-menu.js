@@ -1,8 +1,8 @@
 
 // @copyright
-//   © 2016-2021 Jarosław Foksa
+//   © 2016-2022 Jarosław Foksa
 // @license
-//   GNU General Public License v3, Xel Commercial License v1 (check LICENSE.md for details)
+//   MIT License (check LICENSE.md for details)
 
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";

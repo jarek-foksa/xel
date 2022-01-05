@@ -1,1 +1,15 @@
-.DS_Store
+# Directories
+dist
+node_modules
+
+# Regular files
+firebase-debug.log
+npm-debug.log
+package-lock.json
+xel.sublime-workspace
+
+# Dot files
+.*
+!.gitignore
+!.firebaserc
+!.npmignore

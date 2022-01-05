@@ -1,6 +1,13 @@
 
 # CHANGELOG
 
+## 0.10.0 (2022-01-05)
+
+- Switch from GPL/Commercial dual licensing model to MIT license
+- Remove the custom issue tracker (use GitHub instead)
+- Move all files into a single GitHub repository
+- Update documentation
+
 ## 0.9.12 (2021-12-19)
 
 - [Bugfix] NPM bundle contains unused files
