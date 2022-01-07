@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.10.1 (2022-01-07)
+
+- Use ES syntax to denote private properties and methods
+
 ## 0.10.0 (2022-01-05)
 
 - Switch from GPL/Commercial dual licensing model to MIT license
