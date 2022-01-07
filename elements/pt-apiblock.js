@@ -12,7 +12,7 @@ import {escapeHTML} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 
 export default class PTApiBlockElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <article>
         <section id="element-section">
@@ -48,7 +48,7 @@ export default class PTApiBlockElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
     }
@@ -106,52 +106,52 @@ export default class PTApiBlockElement extends HTMLElement {
   }
 
   get shadowRoot() {
-    return this._shadowRoot;
+    return this.#shadowRoot;
   }
 
   // @property
   // @type Promise
   get whenReady() {
     return new Promise((resolve) => {
-      if (this._readyCallbacks === null) {
+      if (this.#readyCallbacks === null) {
         resolve();
       }
       else {
-        this._readyCallbacks.push(resolve);
+        this.#readyCallbacks.push(resolve);
       }
     });
   }
 
-  _readyCallbacks = [];
-  _shadowRoot = null;
-  _elements = {};
+  #readyCallbacks = [];
+  #shadowRoot = null;
+  #elements = {};
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, PTApiBlockElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(PTApiBlockElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, PTApiBlockElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(PTApiBlockElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
   }
 
   async connectedCallback() {
-    await this._update();
+    await this.#update();
 
-    if (this._readyCallbacks !== null) {
-      for (let callback of this._readyCallbacks) callback();
-      this._readyCallbacks = null;
+    if (this.#readyCallbacks !== null) {
+      for (let callback of this.#readyCallbacks) callback();
+      this.#readyCallbacks = null;
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     return new Promise(async (resolve) => {
       let response = await fetch(this.value);
       let jsText = await response.text();
@@ -177,13 +177,13 @@ export default class PTApiBlockElement extends HTMLElement {
           </tr>
         `;
 
-        this._elements["element-table"].innerHTML = tableHTML;
+        this.#elements["element-table"].innerHTML = tableHTML;
       }
 
       // Properties
       {
         if (api.properties.length === 0) {
-          this._elements["properties-section"].hidden = true;
+          this.#elements["properties-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -231,14 +231,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this._elements["properties-tables"].innerHTML = tablesHTML;
+          this.#elements["properties-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Events
       {
         if (api.events.length === 0) {
-          this._elements["events-section"].hidden = true;
+          this.#elements["events-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -262,14 +262,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this._elements["events-tables"].innerHTML = tablesHTML;
+          this.#elements["events-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Methods
       {
         if (api.methods.length === 0) {
-          this._elements["methods-section"].hidden = true;
+          this.#elements["methods-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -293,14 +293,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this._elements["methods-tables"].innerHTML = tablesHTML;
+          this.#elements["methods-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Parts
       {
         if (api.parts.length === 0) {
-          this._elements["parts-section"].hidden = true;
+          this.#elements["parts-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -324,14 +324,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this._elements["parts-tables"].innerHTML = tablesHTML;
+          this.#elements["parts-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Icons
       {
         if (api.elementName !== "x-icon") {
-          this._elements["icons-section"].hidden = true;
+          this.#elements["icons-section"].hidden = true;
         }
         else {
           let materialIconset = await getIconset("/node_modules/xel/iconsets/material.svg");
@@ -359,7 +359,7 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this._elements["icons-table"].innerHTML = rowsHTML;
+          this.#elements["icons-table"].innerHTML = rowsHTML;
         }
       }
 

@@ -8,13 +8,13 @@ import {html, css} from "../utils/template.js";
 
 // @element x-card
 export default class XCardElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       width: 100%;
@@ -30,16 +30,16 @@ export default class XCardElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _shadowRoot = null;
+  #shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XCardElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XCardElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XCardElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XCardElement.#shadowTemplate.content, true));
   }
 }
 

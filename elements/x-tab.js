@@ -17,7 +17,7 @@ let {max} = Math;
 export default class XTabElement extends HTMLElement {
   static observedAttributes = ["selected", "disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <div id="ripples"></div>
       <div id="selection-indicator" part="selection-indicator"></div>
@@ -27,7 +27,7 @@ export default class XTabElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       position: relative;
       display: flex;
@@ -157,47 +157,47 @@ export default class XTabElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XTabElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XTabElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XTabElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XTabElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
   }
 
   connectedCallback() {
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "selected") {
-      this._updateAccessabilityAttributes();
+      this.#updateAccessabilityAttributes();
     }
     else if (name === "disabled") {
-      this._updateAccessabilityAttributes();
+      this.#updateAccessabilityAttributes();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -205,11 +205,11 @@ export default class XTabElement extends HTMLElement {
 
   animateSelectionIndicator(toTab) {
     return new Promise(async (resolve) => {
-      if (this._elements["selection-indicator"].style.height !== "0px") {
+      if (this.#elements["selection-indicator"].style.height !== "0px") {
         let fromBBox = this.getBoundingClientRect();
         let toBBox = toTab.getBoundingClientRect();
 
-        let animation = this._elements["selection-indicator"].animate(
+        let animation = this.#elements["selection-indicator"].animate(
           [
             {
               left: 0 + "px",
@@ -237,14 +237,14 @@ export default class XTabElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("role", "tab");
     this.setAttribute("aria-selected", this.selected);
     this.setAttribute("aria-disabled", this.disabled);
     this.setAttribute("tabindex", this.selected ? "0" : "-1");
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -272,7 +272,7 @@ export default class XTabElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async _onPointerDown(pointerDownEvent) {
+  async #onPointerDown(pointerDownEvent) {
     // Don't focus the tab with pointer
     if (this.matches(":focus") === false) {
       pointerDownEvent.preventDefault();
@@ -314,7 +314,7 @@ export default class XTabElement extends HTMLElement {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let bounds = this._elements["ripples"].getBoundingClientRect();
+        let bounds = this.#elements["ripples"].getBoundingClientRect();
         let size = max(bounds.width, bounds.height) * 1.5;
         let top  = pointerDownEvent.clientY - bounds.y - size/2;
         let left = pointerDownEvent.clientX - bounds.x - size/2;
@@ -324,7 +324,7 @@ export default class XTabElement extends HTMLElement {
         ripple.setAttribute("part", "ripple");
         ripple.setAttribute("class", "ripple pointer-down-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this._elements["ripples"].append(ripple);
+        this.#elements["ripples"].append(ripple);
 
         this.setPointerCapture(pointerDownEvent.pointerId);
 
@@ -355,13 +355,13 @@ export default class XTabElement extends HTMLElement {
     }
   }
 
-  async _onClick(event) {
+  async #onClick(event) {
     // Ripple
-    if (this._elements["ripples"].querySelector(".pointer-down-ripple") === null) {
+    if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let bounds = this._elements["ripples"].getBoundingClientRect();
+        let bounds = this.#elements["ripples"].getBoundingClientRect();
         let size = max(bounds.width, bounds.height) * 1.5;
         let top  = (bounds.y + bounds.height/2) - bounds.y - size/2;
         let left = (bounds.x + bounds.width/2) - bounds.x - size/2;
@@ -370,7 +370,7 @@ export default class XTabElement extends HTMLElement {
         ripple.setAttribute("part", "ripple");
         ripple.setAttribute("class", "ripple click-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this._elements["ripples"].append(ripple);
+        this.#elements["ripples"].append(ripple);
 
         let inAnimation = ripple.animate(
           { transform: ["scale(0)", "scale(1)"]},

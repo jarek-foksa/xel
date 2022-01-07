@@ -8,13 +8,13 @@ import {html, css} from "../utils/template.js";
 
 // @element x-box
 export default class XBoxElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       box-sizing: border-box;
@@ -45,16 +45,16 @@ export default class XBoxElement extends HTMLElement {
     vertical ? this.setAttribute("vertical", "") : this.removeAttribute("vertical");
   }
 
-  _shadowRoot = null;
+  #shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XBoxElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XBoxElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XBoxElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XBoxElement.#shadowTemplate.content, true));
   }
 }
 

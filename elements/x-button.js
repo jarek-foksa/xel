@@ -18,7 +18,7 @@ let {max} = Math;
 export default class XButtonElement extends HTMLElement {
   static observedAttributes = ["disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <div id="ripples"></div>
       <slot></slot>
@@ -29,7 +29,7 @@ export default class XButtonElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       align-items: center;
@@ -240,7 +240,7 @@ export default class XButtonElement extends HTMLElement {
   //
   // Whether clicking this button will cause a menu or popover to show up.
   get expandable() {
-    return this._canOpenMenu() || this._canOpenPopover();
+    return this.#canOpenMenu() || this.#canOpenPopover();
   }
 
   // @property readOnly
@@ -264,34 +264,34 @@ export default class XButtonElement extends HTMLElement {
     return null;
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _wasFocusedBeforeExpanding = false;
-  _lastPointerDownEvent = null;
-  _lastTabIndex = 0;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #wasFocusedBeforeExpanding = false;
+  #lastPointerDownEvent = null;
+  #lastTabIndex = 0;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XButtonElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XButtonElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XButtonElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XButtonElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
 
     (async () => {
       await customElements.whenDefined("x-backdrop");
-      this._elements["backdrop"] = createElement("x-backdrop");
-      this._elements["backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+      this.#elements["backdrop"] = createElement("x-backdrop");
+      this.#elements["backdrop"].style.background =  "rgba(0, 0, 0, 0)";
     })();
   }
 
@@ -301,23 +301,23 @@ export default class XButtonElement extends HTMLElement {
       this.parentElement.tabIndex = -1;
     }
 
-    this._updateArrowVisibility();
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updateArrowVisibility();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "disabled") {
-      this._updateAccessabilityAttributes();
+      this.#updateAccessabilityAttributes();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -329,12 +329,12 @@ export default class XButtonElement extends HTMLElement {
   // Open the child menu or overlay.
   expand() {
     return new Promise( async (resolve) => {
-      if (this._canOpenMenu()) {
-        await this._openMenu();
+      if (this.#canOpenMenu()) {
+        await this.#openMenu();
       }
 
-      else if (this._canOpenPopover()) {
-        await this._openPopover();
+      else if (this.#canOpenPopover()) {
+        await this.#openPopover();
       }
 
       resolve();
@@ -349,27 +349,27 @@ export default class XButtonElement extends HTMLElement {
     return new Promise(async (resolve) => {
       let popup = null;
 
-      if (this._canCloseMenu()) {
-        await this._closeMenu(delay);
+      if (this.#canCloseMenu()) {
+        await this.#closeMenu(delay);
       }
-      else if (this._canClosePopover()) {
-        await this._closePopover(delay);
+      else if (this.#canClosePopover()) {
+        await this.#closePopover(delay);
       }
 
       resolve();
     });
   }
 
-  _openMenu() {
+  #openMenu() {
     return new Promise( async (resolve) => {
-      if (this._canOpenMenu()) {
+      if (this.#canOpenMenu()) {
         let menu = this.querySelector(":scope > x-menu");
 
-        this._wasFocusedBeforeExpanding = this.matches(":focus");
+        this.#wasFocusedBeforeExpanding = this.matches(":focus");
         this.setAttribute("expanded", "");
 
-        this._elements["backdrop"].ownerElement = menu;
-        this._elements["backdrop"].show(false);
+        this.#elements["backdrop"].ownerElement = menu;
+        this.#elements["backdrop"].show(false);
 
         await menu.openNextToElement(this, "vertical", 3);
         menu.focus();
@@ -379,22 +379,22 @@ export default class XButtonElement extends HTMLElement {
     });
   }
 
-  _closeMenu(delay = null) {
+  #closeMenu(delay = null) {
     return new Promise( async (resolve) => {
-      if (this._canCloseMenu()) {
+      if (this.#canCloseMenu()) {
         let menu = this.querySelector(":scope > x-menu");
         menu.setAttribute("closing", "");
 
         await delay;
         await menu.close();
 
-        this._elements["backdrop"].hide(false);
+        this.#elements["backdrop"].hide(false);
         this.removeAttribute("expanded");
 
         // @bugfix: Button gets stuck with :hover state after user clicks the backdrop.
         this.replaceWith(this);
 
-        if (this._wasFocusedBeforeExpanding) {
+        if (this.#wasFocusedBeforeExpanding) {
           this.focus();
         }
         else {
@@ -412,7 +412,7 @@ export default class XButtonElement extends HTMLElement {
     });
   }
 
-  _canOpenMenu() {
+  #canOpenMenu() {
     let result = false;
 
     if (this.disabled === false) {
@@ -430,7 +430,7 @@ export default class XButtonElement extends HTMLElement {
     return result;
   }
 
-  _canCloseMenu() {
+  #canCloseMenu() {
     let result = false;
 
     if (this.disabled === false) {
@@ -444,12 +444,12 @@ export default class XButtonElement extends HTMLElement {
     return result;
   }
 
-  _openPopover() {
+  #openPopover() {
     return new Promise( async (resolve) => {
-      if (this._canOpenPopover()) {
+      if (this.#canOpenPopover()) {
         let popover = this.querySelector(":scope > x-popover");
 
-        this._wasFocusedBeforeExpanding = this.matches(":focus");
+        this.#wasFocusedBeforeExpanding = this.matches(":focus");
         this.setAttribute("expanded", "");
 
         await popover.open(this);
@@ -459,9 +459,9 @@ export default class XButtonElement extends HTMLElement {
     });
   }
 
-  _closePopover(delay = null) {
+  #closePopover(delay = null) {
     return new Promise( async (resolve) => {
-      if (this._canClosePopover()) {
+      if (this.#canClosePopover()) {
         let popover = this.querySelector(":scope > x-popover");
         popover.setAttribute("closing", "");
 
@@ -475,7 +475,7 @@ export default class XButtonElement extends HTMLElement {
           this.replaceWith(this);
         }
 
-        if (this._wasFocusedBeforeExpanding) {
+        if (this.#wasFocusedBeforeExpanding) {
           this.focus();
         }
         else {
@@ -493,7 +493,7 @@ export default class XButtonElement extends HTMLElement {
     });
   }
 
-  _canOpenPopover() {
+  #canOpenPopover() {
     let result = false;
 
     if (this.disabled === false) {
@@ -507,7 +507,7 @@ export default class XButtonElement extends HTMLElement {
     return result;
   }
 
-  _canClosePopover() {
+  #canClosePopover() {
     let result = false;
 
     if (this.disabled === false) {
@@ -521,9 +521,9 @@ export default class XButtonElement extends HTMLElement {
     return result;
   }
 
-  _openDialog() {
+  #openDialog() {
     return new Promise((resolve) => {
-      if (this._canOpenDialog()) {
+      if (this.#canOpenDialog()) {
         let dialog = this.querySelector(":scope > dialog");
         dialog.showModal();
       }
@@ -532,7 +532,7 @@ export default class XButtonElement extends HTMLElement {
     });
   }
 
-  _canOpenDialog() {
+  #canOpenDialog() {
     let result = false;
 
     if (this.disabled === false) {
@@ -546,9 +546,9 @@ export default class XButtonElement extends HTMLElement {
     return result;
   }
 
-  _openNotification() {
+  #openNotification() {
     return new Promise((resolve) => {
-      if (this._canOpenNotification()) {
+      if (this.#canOpenNotification()) {
         let notification = this.querySelector(":scope > x-notification");
         notification.opened = true;
       }
@@ -557,7 +557,7 @@ export default class XButtonElement extends HTMLElement {
     });
   }
 
-  _canOpenNotification() {
+  #canOpenNotification() {
     let result = false;
 
     if (this.disabled === false) {
@@ -573,29 +573,29 @@ export default class XButtonElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateArrowVisibility() {
+  #updateArrowVisibility() {
     let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
-    this._elements["arrow"].style.display = (popup ? null : "none");
+    this.#elements["arrow"].style.display = (popup ? null : "none");
   }
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("role", "button");
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+        this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
       }
 
-      this._lastTabIndex = 0;
+      this.#lastTabIndex = 0;
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -623,16 +623,16 @@ export default class XButtonElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onPointerDown(event) {
+  #onPointerDown(event) {
     let openedMenu = this.querySelector(":scope > x-menu[opened]");
     let openedPopover = this.querySelector(":scope > x-popover[opened]");
     let openedDialog = this.querySelector(":scope > dialog[open]");
     let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
-    this._lastPointerDownEvent = event;
+    this.#lastPointerDownEvent = event;
 
-    if (event.target === this._elements["backdrop"]) {
-      this._onBackdropPointerDown(event);
+    if (event.target === this.#elements["backdrop"]) {
+      this.#onBackdropPointerDown(event);
     }
     else if (openedMenu && openedMenu.contains(event.target)) {
       return;
@@ -647,22 +647,22 @@ export default class XButtonElement extends HTMLElement {
       return;
     }
     else {
-      this._onButtonPointerDown(event);
+      this.#onButtonPointerDown(event);
     }
   }
 
-  _onClick(event) {
+  #onClick(event) {
     let openedMenu = this.querySelector(":scope > x-menu[opened]");
     let openedPopover = this.querySelector(":scope > x-popover[opened]");
     let openedDialog = this.querySelector(":scope > dialog[open]");
     let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
-    if (event.target === this._elements["backdrop"]) {
+    if (event.target === this.#elements["backdrop"]) {
       return;
     }
     else if (openedMenu && openedMenu.contains(event.target)) {
       if (openedMenu.hasAttribute("closing") === false && event.target.closest("x-menuitem")) {
-        this._onMenuItemClick(event);
+        this.#onMenuItemClick(event);
       }
     }
     else if (openedPopover && openedPopover.contains(event.target)) {
@@ -675,15 +675,15 @@ export default class XButtonElement extends HTMLElement {
       return;
     }
     else {
-      this._onButtonClick(event);
+      this.#onButtonClick(event);
     }
   }
 
-  _onBackdropPointerDown(pointerDownEvent) {
+  #onBackdropPointerDown(pointerDownEvent) {
     this.collapse();
   }
 
-  async _onButtonPointerDown(pointerDownEvent) {
+  async #onButtonPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1) {
       pointerDownEvent.preventDefault();
       return;
@@ -722,7 +722,7 @@ export default class XButtonElement extends HTMLElement {
 
     // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
     // to last at least 150ms.
-    if (this._canOpenMenu() === false && this._canOpenPopover() === false && this._canClosePopover() === false) {
+    if (this.#canOpenMenu() === false && this.#canOpenPopover() === false && this.#canClosePopover() === false) {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
       let minPressedTime = parseInt(getComputedStyle(this).getPropertyValue("--min-pressed-time") || "150ms");
@@ -765,18 +765,18 @@ export default class XButtonElement extends HTMLElement {
       })();
     }
 
-    if (this._canOpenMenu()) {
+    if (this.#canOpenMenu()) {
       if (pointerDownEvent.pointerType !== "touch") {
-        this._openMenu();
+        this.#openMenu();
       }
     }
-    else if (this._canOpenPopover()) {
+    else if (this.#canOpenPopover()) {
       if (pointerDownEvent.pointerType !== "touch") {
-        this._openPopover();
+        this.#openPopover();
       }
     }
-    else if (this._canClosePopover()) {
-      this._closePopover();
+    else if (this.#canClosePopover()) {
+      this.#closePopover();
     }
 
     // Ripple
@@ -784,7 +784,7 @@ export default class XButtonElement extends HTMLElement {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let rect = this._elements["ripples"].getBoundingClientRect();
+        let rect = this.#elements["ripples"].getBoundingClientRect();
         let size = max(rect.width, rect.height) * 1.5;
         let top  = pointerDownEvent.clientY - rect.y - size/2;
         let left = pointerDownEvent.clientX - rect.x - size/2;
@@ -819,8 +819,8 @@ export default class XButtonElement extends HTMLElement {
         ripple.setAttribute("class", "ripple pointer-down-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
 
-        this._elements["ripples"].append(ripple);
-        this._elements["ripples"].style.contain = "strict";
+        this.#elements["ripples"].append(ripple);
+        this.#elements["ripples"].style.contain = "strict";
 
         let inAnimation = ripple.animate(
           { transform: ["scale3d(0, 0, 0)", "none"]},
@@ -844,7 +844,7 @@ export default class XButtonElement extends HTMLElement {
       }
 
       else if (triggerEffect === "unbounded-ripple") {
-        let bounds = this._elements["ripples"].getBoundingClientRect();
+        let bounds = this.#elements["ripples"].getBoundingClientRect();
         let size = bounds.height * 1.25;
         let top  = (bounds.y + bounds.height/2) - bounds.y - size/2;
         let left = (bounds.x + bounds.width/2)  - bounds.x - size/2;
@@ -855,8 +855,8 @@ export default class XButtonElement extends HTMLElement {
         ripple.setAttribute("class", "ripple pointer-down-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
 
-        this._elements["ripples"].append(ripple);
-        this._elements["ripples"].style.contain = "none";
+        this.#elements["ripples"].append(ripple);
+        this.#elements["ripples"].style.contain = "none";
 
         // Workaround for buttons that change their color when toggled on/off.
         ripple.hidden = true;
@@ -882,7 +882,7 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
-  async _onButtonClick(event) {
+  async #onButtonClick(event) {
     let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
 
     if (popup) {
@@ -894,21 +894,21 @@ export default class XButtonElement extends HTMLElement {
       }
     }
 
-    if (this._canClosePopover() === false) {
-      if (this._canOpenDialog()) {
-        this._openDialog();
+    if (this.#canClosePopover() === false) {
+      if (this.#canOpenDialog()) {
+        this.#openDialog();
       }
-      else if (this._canOpenNotification()) {
-        this._openNotification();
+      else if (this.#canOpenNotification()) {
+        this.#openNotification();
       }
     }
 
-    if (this._lastPointerDownEvent && this._lastPointerDownEvent.pointerType === "touch") {
-      if (this._canOpenMenu()) {
-        this._openMenu();
+    if (this.#lastPointerDownEvent && this.#lastPointerDownEvent.pointerType === "touch") {
+      if (this.#canOpenMenu()) {
+        this.#openMenu();
       }
-      else if (this._canOpenPopover()) {
-        this._openPopover();
+      else if (this.#canOpenPopover()) {
+        this.#openPopover();
       }
     }
 
@@ -920,11 +920,11 @@ export default class XButtonElement extends HTMLElement {
     }
 
     // Ripple
-    if (this._elements["ripples"].querySelector(".pointer-down-ripple") === null) {
+    if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let rect = this._elements["ripples"].getBoundingClientRect();
+        let rect = this.#elements["ripples"].getBoundingClientRect();
         let size = max(rect.width, rect.height) * 1.5;
         let top  = (rect.y + rect.height/2) - rect.y - size/2;
         let left = (rect.x + rect.width/2) - rect.x - size/2;
@@ -947,8 +947,8 @@ export default class XButtonElement extends HTMLElement {
         ripple.setAttribute("class", "ripple click-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
 
-        this._elements["ripples"].append(ripple);
-        this._elements["ripples"].style.contain = "strict";
+        this.#elements["ripples"].append(ripple);
+        this.#elements["ripples"].style.contain = "strict";
 
         let inAnimation = ripple.animate(
           { transform: ["scale3d(0, 0, 0)", "none"]},
@@ -970,7 +970,7 @@ export default class XButtonElement extends HTMLElement {
       }
 
       else if (triggerEffect === "unbounded-ripple") {
-        let rect = this._elements["ripples"].getBoundingClientRect();
+        let rect = this.#elements["ripples"].getBoundingClientRect();
         let size = rect.height * 1.35;
         let top  = (rect.y + rect.height/2) - rect.y - size/2;
         let left = (rect.x + rect.width/2) - rect.x - size/2;
@@ -980,8 +980,8 @@ export default class XButtonElement extends HTMLElement {
         ripple.setAttribute("class", "ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
 
-        this._elements["ripples"].append(ripple);
-        this._elements["ripples"].style.contain = "none";
+        this.#elements["ripples"].append(ripple);
+        this.#elements["ripples"].style.contain = "none";
 
         await ripple.animate(
           { transform: ["scale3d(0, 0, 0)", "none"] },
@@ -998,7 +998,7 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
-  _onMenuItemClick(event) {
+  #onMenuItemClick(event) {
     let item = event.target.closest("x-menuitem");
     let menu = this.querySelector(":scope > x-menu");
 
@@ -1007,32 +1007,32 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.defaultPrevented === false) {
       if (event.code === "Enter" || event.code === "Space") {
-        if (this._canOpenMenu()) {
+        if (this.#canOpenMenu()) {
           event.preventDefault();
-          this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
+          this.#openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
         }
-        else if (this._canOpenPopover()) {
+        else if (this.#canOpenPopover()) {
           event.preventDefault();
-          this._openPopover();
+          this.#openPopover();
         }
-        else if (this._canOpenDialog()) {
+        else if (this.#canOpenDialog()) {
           event.preventDefault();
-          this._openDialog();
+          this.#openDialog();
         }
-        else if (this._canOpenNotification()) {
+        else if (this.#canOpenNotification()) {
           event.preventDefault();
-          this._openNotification();
+          this.#openNotification();
         }
         else {
           if (this.matches(":focus")) {
-            if (this._canClosePopover()) {
-              this._closePopover();
+            if (this.#canClosePopover()) {
+              this.#closePopover();
             }
-            else if (this._canCloseMenu()) {
-              this._closeMenu();
+            else if (this.#canCloseMenu()) {
+              this.#closeMenu();
             }
             else {
               event.preventDefault();
@@ -1043,14 +1043,14 @@ export default class XButtonElement extends HTMLElement {
       }
 
       else if (event.code === "ArrowDown") {
-        if (this._canOpenMenu()) {
+        if (this.#canOpenMenu()) {
           let menu = this.querySelector(":scope > x-menu");
           event.preventDefault();
-          this._openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
+          this.#openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
         }
-        else if (this._canOpenPopover()) {
+        else if (this.#canOpenPopover()) {
           event.preventDefault();
-          this._openPopover();
+          this.#openPopover();
         }
         else {
           event.preventDefault();
@@ -1059,13 +1059,13 @@ export default class XButtonElement extends HTMLElement {
       }
 
       else if (event.code === "ArrowUp") {
-        if (this._canOpenMenu()) {
+        if (this.#canOpenMenu()) {
           event.preventDefault();
-          this._openMenu().then(() => this.querySelector(":scope > x-menu").focusLastMenuItem());
+          this.#openMenu().then(() => this.querySelector(":scope > x-menu").focusLastMenuItem());
         }
-        else if (this._canOpenPopover()) {
+        else if (this.#canOpenPopover()) {
           event.preventDefault();
-          this._openPopover();
+          this.#openPopover();
         }
         else {
           event.preventDefault();
@@ -1074,11 +1074,11 @@ export default class XButtonElement extends HTMLElement {
       }
 
       else if (event.code === "Escape") {
-        if (this._canCloseMenu()) {
+        if (this.#canCloseMenu()) {
           event.preventDefault();
           this.collapse();
         }
-        else if (this._canClosePopover()) {
+        else if (this.#canClosePopover()) {
           event.preventDefault();
           this.collapse();
         }

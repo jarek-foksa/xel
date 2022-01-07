@@ -212,83 +212,83 @@ export default class PTSetupPageElement extends PTPage {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _xelThemeChangeListener;
-  _xelAccentColorChangeListener;
-  _xelSizeChangeListener;
-  _xelIconsetChangeListener;
+  #xelThemeChangeListener;
+  #xelAccentColorChangeListener;
+  #xelSizeChangeListener;
+  #xelIconsetChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._elements["theme-select"].addEventListener("change", () => this._onThemeSelectChange());
-    this._elements["accent-preset-select"].addEventListener("change", () => this._onAccentPresetSelectChange());
-    this._elements["size-select"].addEventListener("change", () => this._onSizeSelectChange());
-    this._elements["iconset-select"].addEventListener("change", () => this._onIconsetSelectChange());
+    this._elements["theme-select"].addEventListener("change", () => this.#onThemeSelectChange());
+    this._elements["accent-preset-select"].addEventListener("change", () => this.#onAccentPresetSelectChange());
+    this._elements["size-select"].addEventListener("change", () => this.#onSizeSelectChange());
+    this._elements["iconset-select"].addEventListener("change", () => this.#onIconsetSelectChange());
   }
 
   connectedCallback() {
     super.connectedCallback();
 
-    Xel.addEventListener("themechange", this._xelThemeChangeListener = () => this._onXelThemeChange());
-    Xel.addEventListener("accentcolorchange", this._xelAccentColorChangeListener = () => this._onXelAccentColorChange());
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._onXelSizeChange());
-    Xel.addEventListener("iconsetchange", this._xelIconsetChangeListener = () => this._onXelIconsetChange());
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#onXelThemeChange());
+    Xel.addEventListener("accentcolorchange", this.#xelAccentColorChangeListener = () => this.#onXelAccentColorChange());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#onXelSizeChange());
+    Xel.addEventListener("iconsetchange", this.#xelIconsetChangeListener = () => this.#onXelIconsetChange());
 
-    this._updateAccentColorMenu();
-    this._update();
+    this.#updateAccentColorMenu();
+    this.#update();
     this._onReady();
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("themechange", this._xelThemeChangeListener);
-    Xel.removeEventListener("accentcolorchange", this._xelAccentColorChangeListener);
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
-    Xel.removeEventListener("iconsetchange", this._xelIconsetChangeListener);
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
+    Xel.removeEventListener("accentcolorchange", this.#xelAccentColorChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
+    Xel.removeEventListener("iconsetchange", this.#xelIconsetChangeListener);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onXelThemeChange() {
-    this._updateAccentColorMenu();
-    this._update();
+  #onXelThemeChange() {
+    this.#updateAccentColorMenu();
+    this.#update();
   }
 
-  _onXelAccentColorChange() {
-    this._update();
+  #onXelAccentColorChange() {
+    this.#update();
   }
 
-  _onXelSizeChange() {
-    this._update();
+  #onXelSizeChange() {
+    this.#update();
   }
 
-  _onXelIconsetChange() {
-    this._update();
+  #onXelIconsetChange() {
+    this.#update();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onThemeSelectChange() {
+  #onThemeSelectChange() {
     Xel.theme = `/themes/${this._elements["theme-select"].value}-portal.css`;
   }
 
-  _onAccentPresetSelectChange() {
+  #onAccentPresetSelectChange() {
     let value = this._elements["accent-preset-select"].value;
     Xel.accentColor = (value === "custom") ? Xel.presetAccentColors[Xel.accentColor] : value;
   }
 
-  _onSizeSelectChange() {
+  #onSizeSelectChange() {
     Xel.size = this._elements["size-select"].value;
   }
 
-  _onIconsetSelectChange() {
+  #onIconsetSelectChange() {
     Xel.iconset = `/iconsets/${this._elements["iconset-select"].value}.svg`;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     // Theme
     {
       let name = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
@@ -328,7 +328,7 @@ export default class PTSetupPageElement extends PTPage {
     }
   }
 
-  _updateAccentColorMenu() {
+  #updateAccentColorMenu() {
     let itemsHTML = "";
 
     for (let [colorName, colorValue] of Object.entries(Xel.presetAccentColors)) {

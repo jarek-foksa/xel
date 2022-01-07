@@ -8,7 +8,7 @@ import {css} from "../utils/template.js";
 
 // @element x-backdrop
 export default class XBackdropElement extends HTMLElement {
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       position: fixed;
@@ -33,32 +33,33 @@ export default class XBackdropElement extends HTMLElement {
   //
   // Element below which the backdrop should be placed.
   get ownerElement() {
-    return this._ownerElement ? this._ownerElement : document.body.firstElementChild;
+    return this.#ownerElement ? this.#ownerElement : document.body.firstElementChild;
   }
   set ownerElement(ownerElement) {
-    this._ownerElement = ownerElement;
+    this.#ownerElement = ownerElement;
   }
 
-  _shadowRoot = null;
-  _ownerElement = null;
+  #shadowRoot = null;
+  #ownerElement = null;
+  #wheelListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XBackdropElement._shadowStyleSheet];
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XBackdropElement.#shadowStyleSheet];
 
     this.addEventListener("pointerdown", (event) => event.preventDefault()); // Don't steal the focus
   }
 
   connectedCallback() {
-    this.addEventListener("wheel", this._wheelListener = (event) => event.preventDefault());
+    this.addEventListener("wheel", this.#wheelListener = (event) => event.preventDefault());
   }
 
   disconnectedCallback() {
-    this.removeEventListener("wheel", this._wheelListener);
+    this.removeEventListener("wheel", this.#wheelListener);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

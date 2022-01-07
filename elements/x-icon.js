@@ -13,13 +13,13 @@ import {html, css} from "../utils/template.js";
 export default class XIconElement extends HTMLElement {
   static observedAttributes = ["name", "iconset", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <svg id="svg" preserveAspectRatio="none" viewBox="0 0 100 100" width="0px" height="0px"></svg>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       color: currentColor;
@@ -112,41 +112,41 @@ export default class XIconElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _defaultIconsetChangeListener = null;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #defaultIconsetChangeListener = null;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XIconElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XIconElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XIconElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XIconElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
   }
 
   connectedCallback() {
-    Xel.addEventListener("iconsetchange", this._defaultIconsetChangeListener = () => {
-      this._update();
+    Xel.addEventListener("iconsetchange", this.#defaultIconsetChangeListener = () => {
+      this.#update();
     });
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => {
-      this._updateComputedSizeAttriubte();
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => {
+      this.#updateComputedSizeAttriubte();
     });
 
-    this._update();
-    this._updateComputedSizeAttriubte();
+    this.#update();
+    this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("iconsetchange", this._defaultIconsetChangeListener);
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("iconsetchange", this.#defaultIconsetChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -154,21 +154,21 @@ export default class XIconElement extends HTMLElement {
       return;
     }
     else if (name === "name") {
-      this._update();
+      this.#update();
     }
     else if (name === "iconset") {
-      this._update();
+      this.#update();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async _update() {
+  async #update() {
     if (this.name === "") {
-      this._elements["svg"].innerHTML = "";
+      this.#elements["svg"].innerHTML = "";
     }
     else {
       let symbol = null;
@@ -188,16 +188,16 @@ export default class XIconElement extends HTMLElement {
       }
 
       if (symbol) {
-        this._elements["svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
-        this._elements["svg"].innerHTML = symbol.innerHTML;
+        this.#elements["svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
+        this.#elements["svg"].innerHTML = symbol.innerHTML;
       }
       else {
-        this._elements["svg"].innerHTML = "";
+        this.#elements["svg"].innerHTML = "";
       }
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";

@@ -37,13 +37,13 @@ export default class PTTermsPageElement extends PTPage {
   async connectedCallback() {
     super.connectedCallback();
 
-    await this._update();
+    await this.#update();
     this._onReady();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     return new Promise(async (resolve) => {
       if (this._shadowRoot.childElementCount === 0) {
         let viewHTML = await (await fetch("/docs/terms.html")).text();

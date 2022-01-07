@@ -22,7 +22,7 @@ let {parseInt} = Number;
 export default class XDocTabsElement extends HTMLElement {
   static observedAttributes = ["size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
 
@@ -32,7 +32,7 @@ export default class XDocTabsElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       align-items: center;
@@ -113,39 +113,39 @@ export default class XDocTabsElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #xelSizeChangeListener = null;
 
-  _waitingForTabToClose = false;
-  _waitingForPointerMoveAfterClosingTab = false;
+  #waitingForTabToClose = false;
+  #waitingForPointerMoveAfterClosingTab = false;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: false});
-    this._shadowRoot.adoptedStyleSheets = [XDocTabsElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XDocTabsElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: false});
+    this.#shadowRoot.adoptedStyleSheets = [XDocTabsElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XDocTabsElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-    this._elements["open-button"].addEventListener("click", (event) => this._onOpenButtonClick(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.#elements["open-button"].addEventListener("click", (event) => this.#onOpenButtonClick(event));
   }
 
   connectedCallback() {
-    this._updateComputedSizeAttriubte();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -153,13 +153,13 @@ export default class XDocTabsElement extends HTMLElement {
       return;
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -243,7 +243,7 @@ export default class XDocTabsElement extends HTMLElement {
     return new Promise( async (resolve) => {
       let tabs = this.getTabsByScreenIndex().filter(tab => tab.hasAttribute("closing") === false);
       let tabWidth = tab.getBoundingClientRect().width;
-      let tabScreenIndex = this._getTabScreenIndex(tab)
+      let tabScreenIndex = this.#getTabScreenIndex(tab)
 
       tab.setAttribute("closing", "");
 
@@ -266,7 +266,7 @@ export default class XDocTabsElement extends HTMLElement {
       tab.style.maxWidth = "0px";
       tab.style.pointerEvents = "none";
 
-      this._waitingForTabToClose = true;
+      this.#waitingForTabToClose = true;
 
       if (tab.selected) {
         let previousTab = tabs[tabs.indexOf(tab) - 1];
@@ -301,20 +301,20 @@ export default class XDocTabsElement extends HTMLElement {
       }
 
       tab.remove();
-      this._waitingForTabToClose = false;
+      this.#waitingForTabToClose = false;
       tab.removeAttribute("closing");
 
       resolve();
 
-      if (!this._waitingForPointerMoveAfterClosingTab) {
-        this._waitingForPointerMoveAfterClosingTab = true;
-        await this._whenPointerMoved(3);
-        this._waitingForPointerMoveAfterClosingTab = false;
+      if (!this.#waitingForPointerMoveAfterClosingTab) {
+        this.#waitingForPointerMoveAfterClosingTab = true;
+        await this.#whenPointerMoved(3);
+        this.#waitingForPointerMoveAfterClosingTab = false;
 
         for (let tab of this.children) {
           tab.style.transition = null;
           tab.style.maxWidth = null;
-          tab.style.order = this._getTabScreenIndex(tab);
+          tab.style.order = this.#getTabScreenIndex(tab);
         }
       }
     });
@@ -325,7 +325,7 @@ export default class XDocTabsElement extends HTMLElement {
   selectPreviousTab() {
     let tabs = this.getTabsByScreenIndex();
     let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab");
-    let previousTab = this._getPreviousTabOnScreen(currentTab);
+    let previousTab = this.#getPreviousTabOnScreen(currentTab);
 
     if (currentTab && previousTab) {
       this.selectTab(previousTab);
@@ -341,7 +341,7 @@ export default class XDocTabsElement extends HTMLElement {
   selectNextTab() {
     let tabs = this.getTabsByScreenIndex();
     let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab:last-of-type");
-    let nextTab = this._getNextTabOnScreen(currentTab);
+    let nextTab = this.#getNextTabOnScreen(currentTab);
 
     if (currentTab && nextTab) {
       this.selectTab(nextTab);
@@ -370,10 +370,10 @@ export default class XDocTabsElement extends HTMLElement {
   // @type () => void
   moveSelectedTabLeft() {
     let selectedTab = this.querySelector("x-doctab[selected]");
-    let selectedTabScreenIndex = this._getTabScreenIndex(selectedTab);
+    let selectedTabScreenIndex = this.#getTabScreenIndex(selectedTab);
 
     for (let tab of this.children) {
-      tab.style.order = this._getTabScreenIndex(tab);
+      tab.style.order = this.#getTabScreenIndex(tab);
     }
 
     if (parseInt(selectedTab.style.order) === 0) {
@@ -387,7 +387,7 @@ export default class XDocTabsElement extends HTMLElement {
       }
     }
     else {
-      let otherTab = this._getTabWithScreenIndex(selectedTabScreenIndex - 1);
+      let otherTab = this.#getTabWithScreenIndex(selectedTabScreenIndex - 1);
       otherTab.style.order = parseInt(otherTab.style.order) + 1;
       selectedTab.style.order = parseInt(selectedTab.style.order) - 1;
     }
@@ -397,10 +397,10 @@ export default class XDocTabsElement extends HTMLElement {
   // @type () => void
   moveSelectedTabRight() {
     let selectedTab = this.querySelector("x-doctab[selected]");
-    let selectedTabScreenIndex = this._getTabScreenIndex(selectedTab);
+    let selectedTabScreenIndex = this.#getTabScreenIndex(selectedTab);
 
     for (let tab of this.children) {
-      tab.style.order = this._getTabScreenIndex(tab);
+      tab.style.order = this.#getTabScreenIndex(tab);
     }
 
     if (parseInt(selectedTab.style.order) === this.childElementCount - 1) {
@@ -414,7 +414,7 @@ export default class XDocTabsElement extends HTMLElement {
       }
     }
     else {
-      let otherTab = this._getTabWithScreenIndex(selectedTabScreenIndex + 1);
+      let otherTab = this.#getTabWithScreenIndex(selectedTabScreenIndex + 1);
       otherTab.style.order = parseInt(otherTab.style.order) - 1;
       selectedTab.style.order = parseInt(selectedTab.style.order) + 1;
     }
@@ -425,7 +425,7 @@ export default class XDocTabsElement extends HTMLElement {
   // @type (number) => Promise
   //
   // Returns a promise that is resolved when the pointer is moved by at least the given distance.
-  _whenPointerMoved(distance = 3) {
+  #whenPointerMoved(distance = 3) {
     return new Promise((resolve) => {
       let pointerMoveListener, pointerOutListener, blurListener;
       let fromPoint = null;
@@ -468,13 +468,13 @@ export default class XDocTabsElement extends HTMLElement {
     let $screenIndex = Symbol();
 
     for (let tab of this.children) {
-      tab[$screenIndex] = this._getTabScreenIndex(tab);
+      tab[$screenIndex] = this.#getTabScreenIndex(tab);
     }
 
     return [...this.children].sort((tab1, tab2) => tab1[$screenIndex] > tab2[$screenIndex]);
   }
 
-  _getTabScreenIndex(tab) {
+  #getTabScreenIndex(tab) {
     let tabBounds = tab.getBoundingClientRect();
     let tabsBounds = this.getBoundingClientRect();
 
@@ -501,9 +501,9 @@ export default class XDocTabsElement extends HTMLElement {
     }
   }
 
-  _getTabWithScreenIndex(screenIndex) {
+  #getTabWithScreenIndex(screenIndex) {
     for (let tab of this.children) {
-      if (this._getTabScreenIndex(tab) === screenIndex) {
+      if (this.#getTabScreenIndex(tab) === screenIndex) {
         return tab;
       }
     }
@@ -511,7 +511,7 @@ export default class XDocTabsElement extends HTMLElement {
     return null;
   }
 
-  _getPreviousTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
+  #getPreviousTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
     let tabs = this.getTabsByScreenIndex();
     let tabScreenIndex = tabs.indexOf(tab);
     let previousTab = null;
@@ -547,7 +547,7 @@ export default class XDocTabsElement extends HTMLElement {
     return previousTab;
   }
 
-  _getNextTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
+  #getNextTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
     let tabs = this.getTabsByScreenIndex();
     let tabScreenIndex = tabs.indexOf(tab);
     let nextTab = null;
@@ -585,13 +585,13 @@ export default class XDocTabsElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onPointerDown(event) {
-    if (event.buttons === 1 && !this._waitingForTabToClose && event.target.closest("x-doctab")) {
-      this._onTabPointerDown(event);
+  #onPointerDown(event) {
+    if (event.buttons === 1 && !this.#waitingForTabToClose && event.target.closest("x-doctab")) {
+      this.#onTabPointerDown(event);
     }
   }
 
-  async _onTabPointerDown(pointerDownEvent) {
+  async #onTabPointerDown(pointerDownEvent) {
     if (pointerDownEvent.isPrimary === false) {
       return;
     }
@@ -627,7 +627,7 @@ export default class XDocTabsElement extends HTMLElement {
         this.removeEventListener("pointermove", pointerMoveListener);
         this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
 
-        this._onTabDragStart(pointerDownEvent, pointerDownTab);
+        this.#onTabDragStart(pointerDownEvent, pointerDownTab);
       }
     });
 
@@ -637,7 +637,7 @@ export default class XDocTabsElement extends HTMLElement {
     });
   }
 
-  _onTabDragStart(firstPointerMoveEvent, draggedTab) {
+  #onTabDragStart(firstPointerMoveEvent, draggedTab) {
     let tabBounds = draggedTab.getBoundingClientRect();
     let tabsBounds = this.getBoundingClientRect();
 
@@ -646,10 +646,10 @@ export default class XDocTabsElement extends HTMLElement {
     let $flexOffset = Symbol();
 
     draggedTab.style.zIndex = 999;
-    this._elements["open-button"].style.setProperty("opacity", "0", "important");
+    this.#elements["open-button"].style.setProperty("opacity", "0", "important");
 
     for (let tab of this.children) {
-      let screenIndex = this._getTabScreenIndex(tab);
+      let screenIndex = this.#getTabScreenIndex(tab);
       tab[$screenIndex] = screenIndex;
       tab[$initialScreenIndex] = screenIndex;
       tab[$flexOffset] = tab.getBoundingClientRect().left - tabsBounds.left;
@@ -706,7 +706,7 @@ export default class XDocTabsElement extends HTMLElement {
         }
 
         draggedTab.style.transform = "translate(" + dragOffset + "px)";
-        let screenIndex = this._getTabScreenIndex(draggedTab);
+        let screenIndex = this.#getTabScreenIndex(draggedTab);
 
         if (screenIndex !== draggedTab[$screenIndex]) {
           let previousTabScreenIndex = draggedTab[$screenIndex];
@@ -738,7 +738,7 @@ export default class XDocTabsElement extends HTMLElement {
       await sleep(150);
 
       draggedTab.style.zIndex = null;
-      this._elements["open-button"].style.opacity = null;
+      this.#elements["open-button"].style.opacity = null;
 
       for (let tab of this.children) {
         tab.style.transition = "none";
@@ -751,7 +751,7 @@ export default class XDocTabsElement extends HTMLElement {
     this.addEventListener("lostpointercapture", lostPointerCaptureListener);
   }
 
-  _onOpenButtonClick(clickEvent) {
+  #onOpenButtonClick(clickEvent) {
     if (clickEvent.button === 0) {
       let customEvent = new CustomEvent("open", {cancelable: true});
       this.dispatchEvent(customEvent);
@@ -766,7 +766,7 @@ export default class XDocTabsElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) {
       return;
     }
@@ -796,7 +796,7 @@ export default class XDocTabsElement extends HTMLElement {
     else if (event.code === "ArrowLeft") {
       let tabs = this.getTabsByScreenIndex();
       let currentTab = this.querySelector(`x-doctab[tabindex="0"]`);
-      let previousTab = this._getPreviousTabOnScreen(currentTab);
+      let previousTab = this.#getPreviousTabOnScreen(currentTab);
 
       if (previousTab) {
         event.preventDefault();
@@ -810,7 +810,7 @@ export default class XDocTabsElement extends HTMLElement {
     else if (event.code === "ArrowRight") {
       let tabs = this.getTabsByScreenIndex();
       let currentTab = this.querySelector(`x-doctab[tabindex="0"]`);
-      let nextTab = this._getNextTabOnScreen(currentTab);
+      let nextTab = this.#getNextTabOnScreen(currentTab);
 
       if (nextTab) {
         event.preventDefault();

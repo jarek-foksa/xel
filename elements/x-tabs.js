@@ -10,13 +10,13 @@ import {html, css} from "../utils/template.js";
 // @element x-tabs
 // @event ^change - Selected tab has changed.
 export default class XTabsElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       position: relative;
       display: flex;
@@ -51,19 +51,19 @@ export default class XTabsElement extends HTMLElement {
     }
   }
 
-  _shadowRoot = null;
+  #shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XTabsElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XTabsElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XTabsElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XTabsElement.#shadowTemplate.content, true));
 
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
   connectedCallback() {
@@ -72,7 +72,7 @@ export default class XTabsElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async _onClick(event) {
+  async #onClick(event) {
     if (event.button !== 0) {
       return;
     }
@@ -96,7 +96,7 @@ export default class XTabsElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.code === "Enter" || event.code === "Space") {
       let tab = event.target;
       let label = tab.querySelector("x-label");

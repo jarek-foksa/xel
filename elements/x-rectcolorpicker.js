@@ -20,7 +20,7 @@ const DEBUG = false;
 export default class XRectColorPickerElement extends HTMLElement {
   static observedAttributes = ["value", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <x-box vertical>
         <div id="hue-slider">
@@ -43,7 +43,7 @@ export default class XRectColorPickerElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       width: 100%;
@@ -228,47 +228,47 @@ export default class XRectColorPickerElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #xelSizeChangeListener = null;
 
   // Note that HSVA color model is used only internally
-  _h = 0;   // Hue (0 ~ 360)
-  _s = 0;   // Saturation (0 ~ 100)
-  _v = 100; // Value (0 ~ 100)
-  _a = 1;   // Alpha (0 ~ 1)
+  #h = 0;   // Hue (0 ~ 360)
+  #s = 0;   // Saturation (0 ~ 100)
+  #v = 100; // Value (0 ~ 100)
+  #a = 1;   // Alpha (0 ~ 1)
 
-  _isDraggingHueSliderMarker = false;
-  _isDraggingSatlightMarker = false;
-  _isDraggingAlphaSliderMarker = false;
+  #isDraggingHueSliderMarker   = false;
+  #isDraggingSatlightMarker    = false;
+  #isDraggingAlphaSliderMarker = false;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XRectColorPickerElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XRectColorPickerElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XRectColorPickerElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XRectColorPickerElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this._elements["hue-slider"].addEventListener("pointerdown", (e) => this._onHueSliderPointerDown(e));
-    this._elements["satlight-slider"].addEventListener("pointerdown", (e) => this._onSatlightSliderPointerDown(e));
-    this._elements["alpha-slider"].addEventListener("pointerdown", (e) => this._onAlphaSliderPointerDown(e));
+    this.#elements["hue-slider"].addEventListener("pointerdown", (e) => this.#onHueSliderPointerDown(e));
+    this.#elements["satlight-slider"].addEventListener("pointerdown", (e) => this.#onSatlightSliderPointerDown(e));
+    this.#elements["alpha-slider"].addEventListener("pointerdown", (e) => this.#onAlphaSliderPointerDown(e));
   }
 
   connectedCallback() {
-    this._update();
-    this._updateComputedSizeAttriubte();
+    this.#update();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -276,57 +276,57 @@ export default class XRectColorPickerElement extends HTMLElement {
       return;
     }
     else if (name === "value") {
-      this._onValueAttributeChange();
+      this.#onValueAttributeChange();
     }
     else if (name === "size") {
-      this._onSizeAttributeChange();
+      this.#onSizeAttributeChange();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
-    this._updateHueSliderMarker();
+  #update() {
+    this.#updateHueSliderMarker();
 
-    this._updateSatlightSliderMarker();
-    this._updateSatlightSliderBackground();
+    this.#updateSatlightSliderMarker();
+    this.#updateSatlightSliderBackground();
 
-    this._updateAlphaSliderMarker();
-    this._updateAlphaSliderBackground();
+    this.#updateAlphaSliderMarker();
+    this.#updateAlphaSliderBackground();
   }
 
-  _updateHueSliderMarker() {
-    this._elements["hue-slider-marker"].style.left = ((normalize(this._h, 0, 360, 0) / 360) * 100) + "%";
+  #updateHueSliderMarker() {
+    this.#elements["hue-slider-marker"].style.left = ((normalize(this.#h, 0, 360, 0) / 360) * 100) + "%";
   }
 
-  _updateSatlightSliderMarker() {
-    let left = (this._s / 100) * 100;
-    let top = 100 - ((this._v / 100) * 100);
+  #updateSatlightSliderMarker() {
+    let left = (this.#s / 100) * 100;
+    let top = 100 - ((this.#v / 100) * 100);
 
-    this._elements["satlight-marker"].style.left = `${left}%`;
-    this._elements["satlight-marker"].style.top = `${top}%`;
+    this.#elements["satlight-marker"].style.left = `${left}%`;
+    this.#elements["satlight-marker"].style.top = `${top}%`;
   }
 
-  _updateSatlightSliderBackground() {
-    let background1 = serializeColor([this._h, 100, 50, 1], "hsla", "hex");
+  #updateSatlightSliderBackground() {
+    let background1 = serializeColor([this.#h, 100, 50, 1], "hsla", "hex");
     let background2 = "linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,1))";
     let background3 = "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1))";
-    this._elements["satlight-slider"].style.background = `${background3}, ${background2}, ${background1}`;
+    this.#elements["satlight-slider"].style.background = `${background3}, ${background2}, ${background1}`;
   }
 
-  _updateAlphaSliderMarker() {
-    this._elements["alpha-slider-marker"].style.left = normalize((1 - this._a) * 100, 0, 100, 2) + "%";
+  #updateAlphaSliderMarker() {
+    this.#elements["alpha-slider-marker"].style.left = normalize((1 - this.#a) * 100, 0, 100, 2) + "%";
   }
 
-  _updateAlphaSliderBackground() {
-    let [r, g, b] = hsvToRgb(this._h, this._s, this._v).map($0 => round($0, 0));
+  #updateAlphaSliderBackground() {
+    let [r, g, b] = hsvToRgb(this.#h, this.#s, this.#v).map($0 => round($0, 0));
 
-    this._elements["alpha-slider-gradient"].style.background = `
+    this.#elements["alpha-slider-gradient"].style.background = `
       linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))
     `;
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -354,20 +354,20 @@ export default class XRectColorPickerElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onValueAttributeChange() {
+  #onValueAttributeChange() {
     if (
-      this._isDraggingHueSliderMarker === false &&
-      this._isDraggingSatlightMarker === false &&
-      this._isDraggingAlphaSliderMarker === false
+      this.#isDraggingHueSliderMarker === false &&
+      this.#isDraggingSatlightMarker === false &&
+      this.#isDraggingAlphaSliderMarker === false
     ) {
       let [h, s, v, a] = new ColorParser().parse(this.value, "hsva");
 
-      this._h = h;
-      this._s = s;
-      this._v = v;
-      this._a = a;
+      this.#h = h;
+      this.#s = s;
+      this.#v = v;
+      this.#a = a;
 
-      this._update();
+      this.#update();
     }
 
     if (DEBUG) {
@@ -375,21 +375,21 @@ export default class XRectColorPickerElement extends HTMLElement {
     }
   }
 
-  _onSizeAttributeChange() {
-    this._updateComputedSizeAttriubte();
+  #onSizeAttributeChange() {
+    this.#updateComputedSizeAttriubte();
   }
 
-  _onSatlightSliderPointerDown(pointerDownEvent) {
+  #onSatlightSliderPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1) {
       return;
     }
 
     let pointerMoveListener, lostPointerCaptureListener;
-    let sliderBounds = this._elements["satlight-slider"].getBoundingClientRect();
+    let sliderBounds = this.#elements["satlight-slider"].getBoundingClientRect();
 
-    this._isDraggingSatlightMarker = true;
+    this.#isDraggingSatlightMarker = true;
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-    this._elements["satlight-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.#elements["satlight-slider"].setPointerCapture(pointerDownEvent.pointerId);
 
     let onPointerMove = (clientX, clientY) => {
       let x = ((clientX - sliderBounds.left) / sliderBounds.width) * 100;
@@ -398,55 +398,55 @@ export default class XRectColorPickerElement extends HTMLElement {
       x = normalize(x, 0, 100, 2);
       y = normalize(y, 0, 100, 2);
 
-      this._s = x;
-      this._v = 100 - y;
+      this.#s = x;
+      this.#v = 100 - y;
 
-      this.value = serializeColor([this._h, this._s, this._v, this._a], "hsva", "hsla");
+      this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 
-      this._updateSatlightSliderMarker();
-      this._updateSatlightSliderBackground();
-      this._updateAlphaSliderBackground();
+      this.#updateSatlightSliderMarker();
+      this.#updateSatlightSliderBackground();
+      this.#updateAlphaSliderBackground();
     };
 
     onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
 
-    this._elements["satlight-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    this.#elements["satlight-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
     });
 
-    this._elements["satlight-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
-      this._elements["satlight-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this._elements["satlight-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    this.#elements["satlight-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
+      this.#elements["satlight-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this.#elements["satlight-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-      this._isDraggingSatlightMarker = false;
+      this.#isDraggingSatlightMarker = false;
     });
   }
 
-  _onHueSliderPointerDown(pointerDownEvent) {
+  #onHueSliderPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1) {
       return;
     }
 
-    let trackBounds = this._elements["hue-slider-track"].getBoundingClientRect();
+    let trackBounds = this.#elements["hue-slider-track"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
 
-    this._isDraggingHueSliderMarker = true;
-    this._elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.#isDraggingHueSliderMarker = true;
+    this.#elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
     let onPointerMove = (clientX) => {
       let h = ((clientX - trackBounds.x) / trackBounds.width) * 360;
       h = normalize(h, 0, 360, 0);
 
-      if (h !== this._h) {
-        this._h = h;
-        this.value = serializeColor([this._h, this._s, this._v, this._a], "hsva", "hsla");
+      if (h !== this.#h) {
+        this.#h = h;
+        this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
 
-        this._updateHueSliderMarker();
-        this._updateSatlightSliderBackground();
-        this._updateSatlightSliderMarker();
-        this._updateAlphaSliderBackground();
+        this.#updateHueSliderMarker();
+        this.#updateSatlightSliderBackground();
+        this.#updateSatlightSliderMarker();
+        this.#updateAlphaSliderBackground();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -454,55 +454,55 @@ export default class XRectColorPickerElement extends HTMLElement {
 
     onPointerMove(pointerDownEvent.clientX);
 
-    this._elements["hue-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    this.#elements["hue-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this._elements["hue-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
-      this._elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this._elements["hue-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    this.#elements["hue-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+      this.#elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this.#elements["hue-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
-      this._isDraggingHueSliderMarker = false;
+      this.#isDraggingHueSliderMarker = false;
     });
   }
 
-  _onAlphaSliderPointerDown(pointerDownEvent) {
+  #onAlphaSliderPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1) {
       return;
     }
 
-    let trackBounds = this._elements["alpha-slider-track"].getBoundingClientRect();
+    let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
 
-    this._isDraggingAlphaSliderMarker = true;
-    this._elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.#isDraggingAlphaSliderMarker = true;
+    this.#elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
     let onPointerMove = (clientX) => {
       let a = 1 - ((clientX - trackBounds.x) / trackBounds.width);
       a = normalize(a, 0, 1, 2);
 
-      if (a !== this._a) {
-        this._a = a;
-        this.value = serializeColor([this._h, this._s, this._v, this._a], "hsva", "hsla");
-        this._updateAlphaSliderMarker();
+      if (a !== this.#a) {
+        this.#a = a;
+        this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+        this.#updateAlphaSliderMarker();
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
     };
 
     onPointerMove(pointerDownEvent.clientX);
 
-    this._elements["alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+    this.#elements["alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this._elements["alpha-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
-      this._elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this._elements["alpha-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+    this.#elements["alpha-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+      this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this.#elements["alpha-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
-      this._isDraggingAlphaSliderMarker = false;
+      this.#isDraggingAlphaSliderMarker = false;
     });
   }
 };

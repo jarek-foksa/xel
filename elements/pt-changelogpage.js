@@ -44,13 +44,13 @@ export default class PTChangelogPageElement extends PTPage {
 
   async connectedCallback() {
     super.connectedCallback();
-    await this._update();
+    await this.#update();
     this._onReady();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     return new Promise(async (resolve) => {
       if (this._shadowRoot.childElementCount === 0) {
         let changelogMarkdown = await (await fetch("/CHANGELOG.md")).text();
@@ -73,7 +73,7 @@ export default class PTChangelogPageElement extends PTPage {
             let tagsHTML = item.tags.map(tag => `<x-tag size="small" skin="colored">${tag}</x-tag>`).join("");
 
             itemsHTML += `
-              <li>${tagsHTML} ${this._markdownToHTML(item.text)}</li>
+              <li>${tagsHTML} ${this.#markdownToHTML(item.text)}</li>
             `;
           }
 
@@ -104,7 +104,7 @@ export default class PTChangelogPageElement extends PTPage {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _markdownToHTML(markdown) {
+  #markdownToHTML(markdown) {
     // @doc https://marked.js.org/using_advanced#options
     marked.setOptions({
       gfm: true,

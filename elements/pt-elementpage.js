@@ -40,7 +40,7 @@ export default class PTElementPageElement extends PTPage {
   async connectedCallback() {
     super.connectedCallback();
 
-    await this._update();
+    await this.#update();
 
     // Wait until all blocks are ready
     await Promise.all(
@@ -52,7 +52,7 @@ export default class PTElementPageElement extends PTPage {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     return new Promise(async (resolve) => {
       if (this._shadowRoot.childElementCount === 0) {
         let viewHTML = "";

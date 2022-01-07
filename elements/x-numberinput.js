@@ -24,7 +24,7 @@ const NUMERIC_KEYS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+"
 export default class XNumberInputElement extends HTMLElement {
   static observedAttributes = ["value", "min", "max", "prefix", "suffix", "disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main id="main">
         <div id="editor-container">
@@ -35,7 +35,7 @@ export default class XNumberInputElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       position: relative;
@@ -299,78 +299,78 @@ export default class XNumberInputElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _lastTabIndex = 0;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #lastTabIndex = 0;
+  #xelSizeChangeListener = null;
 
-  _isDragging = false;
-  _isChangeStart = false;
-  _isArrowKeyDown = false;
-  _isBackspaceKeyDown = false;
-  _isStepperButtonDown = false;
-  _visited = false;
+  #isDragging = false;
+  #isChangeStart = false;
+  #isArrowKeyDown = false;
+  #isBackspaceKeyDown = false;
+  #isStepperButtonDown = false;
+  #visited = false;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.adoptedStyleSheets = [XNumberInputElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XNumberInputElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this.#shadowRoot.adoptedStyleSheets = [XNumberInputElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XNumberInputElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
-    this._shadowRoot.addEventListener("wheel", (event) => this._onWheel(event));
-    this._elements["editor"].addEventListener("paste", (event) => this._onPaste(event));
-    this._elements["editor"].addEventListener("input", (event) => this._onEditorInput(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-    this.addEventListener("keyup", (event) => this._onKeyUp(event));
-    this.addEventListener("keypress", (event) => this._onKeyPress(event));
-    this.addEventListener("incrementstart", (event) => this._onStepperIncrementStart(event));
-    this.addEventListener("decrementstart", (event) => this._onStepperDecrementStart(event));
-    this.addEventListener("focusin", (event) => this._onFocusIn(event));
-    this.addEventListener("focusout", (event) => this._onFocusOut(event));
+    this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
+    this.#shadowRoot.addEventListener("wheel", (event) => this.#onWheel(event));
+    this.#elements["editor"].addEventListener("paste", (event) => this.#onPaste(event));
+    this.#elements["editor"].addEventListener("input", (event) => this.#onEditorInput(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.addEventListener("keyup", (event) => this.#onKeyUp(event));
+    this.addEventListener("keypress", (event) => this.#onKeyPress(event));
+    this.addEventListener("incrementstart", (event) => this.#onStepperIncrementStart(event));
+    this.addEventListener("decrementstart", (event) => this.#onStepperDecrementStart(event));
+    this.addEventListener("focusin", (event) => this.#onFocusIn(event));
+    this.addEventListener("focusout", (event) => this.#onFocusOut(event));
   }
 
   connectedCallback() {
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
-    this._update();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
+    this.#update();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "value") {
-      this._onValueAttributeChange();
+      this.#onValueAttributeChange();
     }
     else if (name === "min") {
-      this._onMinAttributeChange();
+      this.#onMinAttributeChange();
     }
     else if (name === "max") {
-      this._onMaxAttributeChange();
+      this.#onMaxAttributeChange();
     }
     else if (name === "prefix") {
-      this._onPrefixAttributeChange();
+      this.#onPrefixAttributeChange();
     }
     else if (name === "suffix") {
-      this._onSuffixAttributeChange();
+      this.#onSuffixAttributeChange();
     }
     else if (name === "disabled") {
-      this._onDisabledAttributeChange();
+      this.#onDisabledAttributeChange();
     }
     else if (name === "size") {
-      this._onSizeAttributeChange();
+      this.#onSizeAttributeChange();
     }
   }
 
@@ -395,7 +395,7 @@ export default class XNumberInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _increment(large = false) {
+  #increment(large = false) {
     let oldValue = this.value
     let newValue = this.value;
 
@@ -417,10 +417,10 @@ export default class XNumberInputElement extends HTMLElement {
     }
 
     this.validate();
-    this._updateEmptyState();
+    this.#updateEmptyState();
   }
 
-  _decrement(large = false) {
+  #decrement(large = false) {
     let oldValue = this.value
     let newValue = this.value;
 
@@ -442,27 +442,27 @@ export default class XNumberInputElement extends HTMLElement {
     }
 
     this.validate();
-    this._updateEmptyState();
+    this.#updateEmptyState();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _maybeDispatchChangeStartEvent() {
-    if (!this._isChangeStart) {
-      this._isChangeStart = true;
+  #maybeDispatchChangeStartEvent() {
+    if (!this.#isChangeStart) {
+      this.#isChangeStart = true;
       this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
     }
   }
 
-  _maybeDispatchChangeEndEvent = debounce(() => {
-    if (this._isChangeStart && !this._isArrowKeyDown && !this._isBackspaceKeyDown && !this._isStepperButtonDown) {
-      this._isChangeStart = false;
+  #maybeDispatchChangeEndEvent = debounce(() => {
+    if (this.#isChangeStart && !this.#isArrowKeyDown && !this.#isBackspaceKeyDown && !this.#isStepperButtonDown) {
+      this.#isChangeStart = false;
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
     }
   }, 500);
 
-  _commitEditorChanges() {
-    let editorTextContent = this._elements["editor"].textContent;
+  #commitEditorChanges() {
+    let editorTextContent = this.#elements["editor"].textContent;
     let editorValue = editorTextContent.trim() === "" ? null : parseFloat(editorTextContent);
     let normalizedEditorValue = normalize(editorValue, this.min, this.max);
 
@@ -481,30 +481,30 @@ export default class XNumberInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
-    if (this._visited) {
+  #update() {
+    if (this.#visited) {
       this.validate();
     }
 
-    this._updateEditorTextContent();
-    this._updateEmptyState();
-    this._updateStepper();
+    this.#updateEditorTextContent();
+    this.#updateEmptyState();
+    this.#updateStepper();
   }
 
-  _updateEditorTextContent() {
+  #updateEditorTextContent() {
     if (this.hasAttribute("value")) {
-      this._elements["editor"].textContent = this.getAttribute("value").trim();
+      this.#elements["editor"].textContent = this.getAttribute("value").trim();
     }
     else {
-      this._elements["editor"].textContent = "";
+      this.#elements["editor"].textContent = "";
     }
   }
 
-  _updateEmptyState() {
+  #updateEmptyState() {
     let value = null;
 
     if (this.matches(":focus")) {
-      let textContent = this._elements["editor"].textContent;
+      let textContent = this.#elements["editor"].textContent;
       value = textContent.trim() === "" ? null : parseFloat(textContent);
     }
     else {
@@ -519,7 +519,7 @@ export default class XNumberInputElement extends HTMLElement {
     }
   }
 
-  _updateStepper() {
+  #updateStepper() {
     let stepper = this.querySelector("x-stepper");
 
     if (stepper) {
@@ -541,24 +541,24 @@ export default class XNumberInputElement extends HTMLElement {
     }
   }
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("role", "input");
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+        this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
       }
 
-      this._lastTabIndex = 0;
+      this.#lastTabIndex = 0;
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -586,92 +586,92 @@ export default class XNumberInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onValueAttributeChange() {
-    this._update();
+  #onValueAttributeChange() {
+    this.#update();
   }
 
-  _onMinAttributeChange() {
-    this._updateStepper();
+  #onMinAttributeChange() {
+    this.#updateStepper();
   }
 
-  _onMaxAttributeChange() {
-    this._updateStepper();
+  #onMaxAttributeChange() {
+    this.#updateStepper();
   }
 
-  _onPrefixAttributeChange() {
-    this._elements["editor"].setAttribute("data-prefix", this.prefix);
+  #onPrefixAttributeChange() {
+    this.#elements["editor"].setAttribute("data-prefix", this.prefix);
   }
 
-  _onSuffixAttributeChange() {
-    this._elements["editor"].setAttribute("data-suffix", this.suffix);
+  #onSuffixAttributeChange() {
+    this.#elements["editor"].setAttribute("data-suffix", this.suffix);
   }
 
-  _onDisabledAttributeChange() {
-    this._elements["editor"].disabled = this.disabled;
-    this._updateAccessabilityAttributes();
+  #onDisabledAttributeChange() {
+    this.#elements["editor"].disabled = this.disabled;
+    this.#updateAccessabilityAttributes();
   }
 
-  _onSizeAttributeChange() {
-    this._updateComputedSizeAttriubte();
+  #onSizeAttributeChange() {
+    this.#updateComputedSizeAttriubte();
   }
 
-  _onFocusIn() {
-    this._visited = true;
+  #onFocusIn() {
+    this.#visited = true;
     document.execCommand("selectAll");
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
 
-  _onFocusOut() {
-    this._shadowRoot.getSelection().collapse(this._elements["main"]);
-    this._elements["editor"].scrollLeft = 0;
+  #onFocusOut() {
+    this.#shadowRoot.getSelection().collapse(this.#elements["main"]);
+    this.#elements["editor"].scrollLeft = 0;
 
-    this._commitEditorChanges();
+    this.#commitEditorChanges();
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
   }
 
-  _onEditorInput() {
+  #onEditorInput() {
     this.error = null;
-    this._updateEmptyState();
-    this._updateStepper();
+    this.#updateEmptyState();
+    this.#updateStepper();
   }
 
-  _onWheel(event) {
+  #onWheel(event) {
     if (this.matches(":focus")) {
       event.preventDefault();
-      this._maybeDispatchChangeStartEvent();
+      this.#maybeDispatchChangeStartEvent();
 
       if (event.wheelDeltaX > 0 || event.wheelDeltaY > 0) {
-        this._increment(event.shiftKey);
+        this.#increment(event.shiftKey);
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
       else {
-        this._decrement(event.shiftKey);
+        this.#decrement(event.shiftKey);
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
 
-      this._maybeDispatchChangeEndEvent();
+      this.#maybeDispatchChangeEndEvent();
     }
   }
 
-  _onClick(event) {
+  #onClick(event) {
     event.preventDefault();
   }
 
-  _onPointerDown(pointerDownEvent) {
+  #onPointerDown(pointerDownEvent) {
     if (pointerDownEvent.target.localName === "x-stepper") {
       // Don't focus the input when user clicks stepper
       pointerDownEvent.preventDefault();
     }
   }
 
-  _onShadowRootPointerDown(pointerDownEvent) {
+  #onShadowRootPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1 || pointerDownEvent.isPrimary === false) {
       pointerDownEvent.preventDefault();
       return;
     }
 
-    if (pointerDownEvent.target === this._elements["editor"]) {
-      if (this._elements["editor"].matches(":focus") === false) {
+    if (pointerDownEvent.target === this.#elements["editor"]) {
+      if (this.#elements["editor"].matches(":focus") === false) {
         pointerDownEvent.preventDefault();
 
         let initialValue = this.value;
@@ -680,9 +680,9 @@ export default class XNumberInputElement extends HTMLElement {
         let pointerMoveListener, lostPointerCaptureListener;
 
         this.style.cursor = "col-resize";
-        this._elements["editor"].setPointerCapture(pointerDownEvent.pointerId);
+        this.#elements["editor"].setPointerCapture(pointerDownEvent.pointerId);
 
-        this._elements["editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+        this.#elements["editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
           let pointerMovePoint = new DOMPoint(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
           let deltaTime = pointerMoveEvent.timeStamp - pointerDownEvent.timeStamp;
           let isDistinct = pointerMoveEvent.clientX !== cachedClientX;
@@ -690,9 +690,9 @@ export default class XNumberInputElement extends HTMLElement {
           cachedClientX = pointerMoveEvent.clientX;
 
           if (isDistinct && isIntentional && pointerMoveEvent.isPrimary) {
-            if (this._isDragging === false) {
-              this._isDragging = true;
-              this._isChangeStart = true;
+            if (this.#isDragging === false) {
+              this.#isDragging = true;
+              this.#isChangeStart = true;
               this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
             }
 
@@ -706,19 +706,19 @@ export default class XNumberInputElement extends HTMLElement {
           }
         });
 
-        this._elements["editor"].addEventListener("lostpointercapture",  lostPointerCaptureListener = () => {
-          this._elements["editor"].removeEventListener("pointermove", pointerMoveListener);
-          this._elements["editor"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+        this.#elements["editor"].addEventListener("lostpointercapture",  lostPointerCaptureListener = () => {
+          this.#elements["editor"].removeEventListener("pointermove", pointerMoveListener);
+          this.#elements["editor"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
 
           this.style.cursor = null;
 
-          if (this._isDragging === true) {
-            this._isDragging = false;
-            this._isChangeStart = false;
+          if (this.#isDragging === true) {
+            this.#isDragging = false;
+            this.#isChangeStart = false;
             this.dispatchEvent(new CustomEvent("changeend", {detail: this.value !== initialValue, bubbles: true}));
           }
           else {
-            this._elements["editor"].focus();
+            this.#elements["editor"].focus();
             document.execCommand("selectAll");
           }
         });
@@ -726,113 +726,113 @@ export default class XNumberInputElement extends HTMLElement {
     }
   }
 
-  _onStepperIncrementStart(event) {
+  #onStepperIncrementStart(event) {
     let incrementListener, incrementEndListener;
 
     if (this.matches(":focus")) {
-      this._commitEditorChanges();
+      this.#commitEditorChanges();
     }
 
-    this._isStepperButtonDown = true;
+    this.#isStepperButtonDown = true;
 
     this.addEventListener("increment", incrementListener = (event) => {
-      this._maybeDispatchChangeStartEvent();
-      this._increment(event.detail.shiftKey);
+      this.#maybeDispatchChangeStartEvent();
+      this.#increment(event.detail.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      this._maybeDispatchChangeEndEvent();
-      this._update();
+      this.#maybeDispatchChangeEndEvent();
+      this.#update();
     });
 
     this.addEventListener("incrementend", incrementEndListener = (event) => {
-      this._isStepperButtonDown = false;
+      this.#isStepperButtonDown = false;
       this.removeEventListener("increment", incrementListener);
       this.removeEventListener("incrementend", incrementEndListener);
     });
   }
 
-  _onStepperDecrementStart(event) {
+  #onStepperDecrementStart(event) {
     let decrementListener, decrementEndListener;
 
     if (this.matches(":focus")) {
-      this._commitEditorChanges();
+      this.#commitEditorChanges();
     }
 
-    this._isStepperButtonDown = true;
+    this.#isStepperButtonDown = true;
 
     this.addEventListener("decrement", decrementListener = (event) => {
-      this._maybeDispatchChangeStartEvent();
-      this._decrement(event.detail.shiftKey);
+      this.#maybeDispatchChangeStartEvent();
+      this.#decrement(event.detail.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      this._maybeDispatchChangeEndEvent();
+      this.#maybeDispatchChangeEndEvent();
 
-      this._update();
+      this.#update();
     });
 
     this.addEventListener("decrementend", decrementEndListener = (event) => {
-      this._isStepperButtonDown = false;
+      this.#isStepperButtonDown = false;
       this.removeEventListener("decrement", decrementListener);
       this.removeEventListener("decrementend", decrementEndListener);
     });
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.code === "ArrowDown") {
       event.preventDefault();
 
-      this._isArrowKeyDown = true;
-      this._maybeDispatchChangeStartEvent();
-      this._decrement(event.shiftKey);
+      this.#isArrowKeyDown = true;
+      this.#maybeDispatchChangeStartEvent();
+      this.#decrement(event.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      this._maybeDispatchChangeEndEvent();
+      this.#maybeDispatchChangeEndEvent();
 
-      this._update();
+      this.#update();
     }
 
     else if (event.code === "ArrowUp") {
       event.preventDefault();
 
-      this._isArrowKeyDown = true;
-      this._maybeDispatchChangeStartEvent();
-      this._increment(event.shiftKey);
+      this.#isArrowKeyDown = true;
+      this.#maybeDispatchChangeStartEvent();
+      this.#increment(event.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      this._maybeDispatchChangeEndEvent();
+      this.#maybeDispatchChangeEndEvent();
 
-      this._update();
+      this.#update();
     }
 
     else if (event.code === "Backspace") {
-      this._isBackspaceKeyDown = true;
+      this.#isBackspaceKeyDown = true;
     }
 
     else if (event.code === "Enter") {
-      this._commitEditorChanges();
+      this.#commitEditorChanges();
       document.execCommand("selectAll");
     }
   }
 
-  _onKeyUp(event) {
+  #onKeyUp(event) {
     if (event.code === "ArrowDown") {
-      this._isArrowKeyDown = false;
-      this._maybeDispatchChangeEndEvent();
+      this.#isArrowKeyDown = false;
+      this.#maybeDispatchChangeEndEvent();
     }
 
     else if (event.code === "ArrowUp") {
-      this._isArrowKeyDown = false;
-      this._maybeDispatchChangeEndEvent();
+      this.#isArrowKeyDown = false;
+      this.#maybeDispatchChangeEndEvent();
     }
 
     else if (event.code === "Backspace") {
-      this._isBackspaceKeyDown = false;
+      this.#isBackspaceKeyDown = false;
     }
   }
 
-  _onKeyPress(event) {
+  #onKeyPress(event) {
     if (NUMERIC_KEYS.includes(event.key) === false) {
       event.preventDefault();
     }
   }
 
-  async _onPaste(event) {
+  async #onPaste(event) {
     // Allow only for pasting numeric text
     event.preventDefault();
     let content = event.clipboardData.getData("text/plain").trim();

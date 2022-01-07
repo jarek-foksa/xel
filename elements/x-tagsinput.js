@@ -21,7 +21,7 @@ import {sleep} from "../utils/time.js";
 export default class XTagsInputElement extends HTMLElement {
   static observedAttributes = ["spellcheck", "disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main id="main">
         <div id="tags">
@@ -36,7 +36,7 @@ export default class XTagsInputElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       position: relative;
@@ -256,43 +256,43 @@ export default class XTagsInputElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _lastTabIndex = 0;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #lastTabIndex = 0;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XTagsInputElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XTagsInputElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XTagsInputElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XTagsInputElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("focusout", (event) => this.matches(":focus-within") ? null : this._onBlur(event));
-    this._elements["input"].addEventListener("focusin", (event) => this._onInputFocusIn(event));
-    this._elements["input"].addEventListener("focusout", (event) => this._onInputFocusOut(event));
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
-    this._shadowRoot.addEventListener("remove", (event) => this._onRemoveButtonClick(event));
-    this._shadowRoot.addEventListener("keydown", (event) => this._onKeyDown(event));
-    this._elements["input"].addEventListener("input", (event) => this._onInputInput(event));
+    this.addEventListener("focusout", (event) => this.matches(":focus-within") ? null : this.#onBlur(event));
+    this.#elements["input"].addEventListener("focusin", (event) => this.#onInputFocusIn(event));
+    this.#elements["input"].addEventListener("focusout", (event) => this.#onInputFocusOut(event));
+    this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
+    this.#shadowRoot.addEventListener("remove", (event) => this.#onRemoveButtonClick(event));
+    this.#shadowRoot.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.#elements["input"].addEventListener("input", (event) => this.#onInputInput(event));
   }
 
   connectedCallback() {
-    this._updatePlaceholderVisibility();
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updatePlaceholderVisibility();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -300,13 +300,13 @@ export default class XTagsInputElement extends HTMLElement {
       return;
     }
     else if (name === "spellcheck") {
-      this._onSpellcheckAttributeChange();
+      this.#onSpellcheckAttributeChange();
     }
     else if (name === "disabled") {
-      this._onDisabledAttributeChange();
+      this.#onDisabledAttributeChange();
     }
     else if (name === "size") {
-      this._onSizeAttributeChange();
+      this.#onSizeAttributeChange();
     }
   }
 
@@ -323,8 +323,8 @@ export default class XTagsInputElement extends HTMLElement {
 
       this.error = null;
 
-      this._updateSuggestions();
-      this._updatePlaceholderVisibility();
+      this.#updateSuggestions();
+      this.#updatePlaceholderVisibility();
 
       this.dispatchEvent(new CustomEvent("change"));
     }
@@ -340,23 +340,23 @@ export default class XTagsInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _getInputTextBoundingClientRect() {
+  #getInputTextBoundingClientRect() {
     let range = new Range();
-    range.selectNodeContents(this._elements["input"]);
+    range.selectNodeContents(this.#elements["input"]);
 
     let rect = range.getBoundingClientRect();
 
     if (rect.x === 0 && rect.width === 0) {
-      rect = this._elements["input"].getBoundingClientRect();
+      rect = this.#elements["input"].getBoundingClientRect();
       rect.width = 20;
     }
 
     return rect;
   }
 
-  _commitInput() {
-    let tagText = this._elements["input"].textContent.trim();
-    this._elements["input"].textContent = "";
+  #commitInput() {
+    let tagText = this.#elements["input"].textContent.trim();
+    this.#elements["input"].textContent = "";
 
     if (tagText.length > 0) {
       if (this.value.includes(tagText) === false) {
@@ -384,8 +384,8 @@ export default class XTagsInputElement extends HTMLElement {
 
         this.append(tag);
 
-        this._updateSuggestions();
-        this._updatePlaceholderVisibility();
+        this.#updateSuggestions();
+        this.#updatePlaceholderVisibility();
 
         this.dispatchEvent(new CustomEvent("add", {detail: tag}));
         this.dispatchEvent(new CustomEvent("change"));
@@ -395,16 +395,16 @@ export default class XTagsInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onShadowRootPointerDown(event) {
-    if (event.target === this._elements["main"] || event.target === this._elements["tags"]) {
+  #onShadowRootPointerDown(event) {
+    if (event.target === this.#elements["main"] || event.target === this.#elements["tags"]) {
       event.preventDefault();
 
-      this._elements["input"].setAttribute("contenteditable", "");
-      this._updateInputSelection();
+      this.#elements["input"].setAttribute("contenteditable", "");
+      this.#updateInputSelection();
     }
-    else if (event.target === this._elements["input"]) {
-      this._elements["input"].setAttribute("contenteditable", "");
-      this._updateSuggestions();
+    else if (event.target === this.#elements["input"]) {
+      this.#elements["input"].setAttribute("contenteditable", "");
+      this.#updateSuggestions();
     }
     else if (event.target.closest("x-popover")) {
       event.preventDefault();
@@ -412,8 +412,8 @@ export default class XTagsInputElement extends HTMLElement {
       let tag = event.target.closest("x-tag");
 
       if (tag) {
-        this._elements["input"].textContent = "";
-        this._elements["suggestions-popover"].close();
+        this.#elements["input"].textContent = "";
+        this.#elements["suggestions-popover"].close();
 
         this.append(tag);
 
@@ -422,35 +422,35 @@ export default class XTagsInputElement extends HTMLElement {
       }
     }
     else if (event.target.closest("x-tag")) {
-      this._elements["input"].focus();
-      this._commitInput();
+      this.#elements["input"].focus();
+      this.#commitInput();
     }
   }
 
-  _onRemoveButtonClick(event) {
+  #onRemoveButtonClick(event) {
     event.stopPropagation();
 
     let tag = event.target;
     tag.remove();
 
-    this._updatePlaceholderVisibility();
+    this.#updatePlaceholderVisibility();
     this.dispatchEvent(new CustomEvent("remove", {detail: tag}));
     this.dispatchEvent(new CustomEvent("change"));
   }
 
-  _onSpellcheckAttributeChange() {
-    this._elements["input"].spellcheck = this.spellcheck;
+  #onSpellcheckAttributeChange() {
+    this.#elements["input"].spellcheck = this.spellcheck;
   }
 
-  _onDisabledAttributeChange() {
-    this._updateAccessabilityAttributes();
+  #onDisabledAttributeChange() {
+    this.#updateAccessabilityAttributes();
   }
 
-  _onSizeAttributeChange() {
-    this._updateComputedSizeAttriubte();
+  #onSizeAttributeChange() {
+    this.#updateComputedSizeAttriubte();
   }
 
-  _onBlur() {
+  #onBlur() {
     if (this.required) {
       let tags = [...this.children].filter(child => child.localName === "x-tag");
 
@@ -460,58 +460,58 @@ export default class XTagsInputElement extends HTMLElement {
     }
   }
 
-  async _onInputFocusIn() {
-    this._elements["input"].setAttribute("contenteditable", "");
+  async #onInputFocusIn() {
+    this.#elements["input"].setAttribute("contenteditable", "");
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
 
     await sleep(10);
 
-    if (this._elements["input"].matches(":focus")) {
-      this._updateInputSelection();
-      this._updateSuggestions();
+    if (this.#elements["input"].matches(":focus")) {
+      this.#updateInputSelection();
+      this.#updateSuggestions();
     }
   }
 
-  _onInputFocusOut() {
-    this._commitInput();
-    this._elements["input"].removeAttribute("contenteditable");
+  #onInputFocusOut() {
+    this.#commitInput();
+    this.#elements["input"].removeAttribute("contenteditable");
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
 
     if (this.hasAttribute("error")) {
-      this._elements["input"].textContent = "";
+      this.#elements["input"].textContent = "";
       this.removeAttribute("error");
     }
 
-    this._elements["suggestions-popover"].close();
+    this.#elements["suggestions-popover"].close();
   }
 
-  _onInputInput(event) {
-    let value = this._elements["input"].textContent;
+  #onInputInput(event) {
+    let value = this.#elements["input"].textContent;
 
     if (value.includes(this.delimiter)) {
-      this._commitInput();
+      this.#commitInput();
     }
 
-    this._updatePlaceholderVisibility();
+    this.#updatePlaceholderVisibility();
 
     if (this.hasAttribute("error")) {
       this.removeAttribute("error");
     }
 
     this.dispatchEvent(new CustomEvent("input"));
-    this._updateSuggestions(event.inputType);
+    this.#updateSuggestions(event.inputType);
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.key === "Enter") {
-      if (event.target === this._elements["input"]) {
+      if (event.target === this.#elements["input"]) {
         event.preventDefault();
-        this._commitInput();
+        this.#commitInput();
       }
     }
     else if (event.key === "Backspace") {
-      if (event.target === this._elements["input"]) {
-        let value = this._elements["input"].textContent;
+      if (event.target === this.#elements["input"]) {
+        let value = this.#elements["input"].textContent;
 
         if (value.length === 0) {
           let tags = [...this.children].filter(child => child.localName === "x-tag");
@@ -520,8 +520,8 @@ export default class XTagsInputElement extends HTMLElement {
           if (lastTag) {
             lastTag.remove();
 
-            this._updateSuggestions();
-            this._updatePlaceholderVisibility();
+            this.#updateSuggestions();
+            this.#updatePlaceholderVisibility();
 
             this.dispatchEvent(new CustomEvent("remove", {detail: lastTag}));
             this.dispatchEvent(new CustomEvent("change"));
@@ -542,19 +542,19 @@ export default class XTagsInputElement extends HTMLElement {
           prevTag.focus();
         }
         else {
-          this._elements["input"].focus();
+          this.#elements["input"].focus();
         }
 
         focusedTag.remove();
-        this._updatePlaceholderVisibility();
+        this.#updatePlaceholderVisibility();
 
         this.dispatchEvent(new CustomEvent("remove", {detail: focusedTag}));
         this.dispatchEvent(new CustomEvent("change"));
       }
     }
     else if (event.key === "ArrowDown") {
-      if (this._elements["suggestions-popover"].opened) {
-        let suggestedTags = [...this._elements["suggested-tags"].children];
+      if (this.#elements["suggestions-popover"].opened) {
+        let suggestedTags = [...this.#elements["suggested-tags"].children];
 
         if (suggestedTags.length > 1) {
           event.preventDefault();
@@ -583,18 +583,18 @@ export default class XTagsInputElement extends HTMLElement {
 
           // Update input
           {
-            let startOffset = this._shadowRoot.getSelection().getRangeAt(0).startOffset;
+            let startOffset = this.#shadowRoot.getSelection().getRangeAt(0).startOffset;
             let text = nextTag.querySelector("x-label").textContent;
 
-            this._elements["input"].textContent = text;
-            this._updateInputSelection(startOffset, text.length);
+            this.#elements["input"].textContent = text;
+            this.#updateInputSelection(startOffset, text.length);
           }
         }
       }
     }
     else if (event.key === "ArrowUp") {
-      if (this._elements["suggestions-popover"].opened) {
-        let suggestedTags = [...this._elements["suggested-tags"].children];
+      if (this.#elements["suggestions-popover"].opened) {
+        let suggestedTags = [...this.#elements["suggested-tags"].children];
 
         if (suggestedTags.length > 1) {
           event.preventDefault();
@@ -623,11 +623,11 @@ export default class XTagsInputElement extends HTMLElement {
 
           // Update input
           {
-            let startOffset = this._shadowRoot.getSelection().getRangeAt(0).startOffset;
+            let startOffset = this.#shadowRoot.getSelection().getRangeAt(0).startOffset;
             let text = prevTag.querySelector("x-label").textContent;
 
-            this._elements["input"].textContent = text;
-            this._updateInputSelection(startOffset, text.length);
+            this.#elements["input"].textContent = text;
+            this.#updateInputSelection(startOffset, text.length);
           }
         }
       }
@@ -636,36 +636,36 @@ export default class XTagsInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
-    this._updatePlaceholderVisibility();
+  #update() {
+    this.#updatePlaceholderVisibility();
   }
 
-  _updatePlaceholderVisibility() {
+  #updatePlaceholderVisibility() {
     let placeholder = this.querySelector(":scope > x-label");
 
     if (placeholder) {
-      placeholder.hidden = (this.value.length > 0 || this._elements["input"].textContent.length > 0);
+      placeholder.hidden = (this.value.length > 0 || this.#elements["input"].textContent.length > 0);
     }
   }
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("role", "input");
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+        this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
       }
 
-      this._lastTabIndex = 0;
+      this.#lastTabIndex = 0;
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -691,15 +691,15 @@ export default class XTagsInputElement extends HTMLElement {
     }
   }
 
-  _updateInputSelection(startOffset = 0, endOffset = this._elements["input"].textContent.length) {
+  #updateInputSelection(startOffset = 0, endOffset = this.#elements["input"].textContent.length) {
     let range = new Range();
 
-    if (startOffset === 0 && endOffset === this._elements["input"].textContent.length) {
-      range.selectNodeContents(this._elements["input"]);
+    if (startOffset === 0 && endOffset === this.#elements["input"].textContent.length) {
+      range.selectNodeContents(this.#elements["input"]);
     }
     else {
-      range.setStart(this._elements["input"].firstChild, startOffset);
-      range.setEnd(this._elements["input"].firstChild, endOffset);
+      range.setStart(this.#elements["input"].firstChild, startOffset);
+      range.setEnd(this.#elements["input"].firstChild, endOffset);
     }
 
     let selection = window.getSelection();
@@ -707,10 +707,10 @@ export default class XTagsInputElement extends HTMLElement {
     selection.addRange(range);
   }
 
-  _updateSuggestions(inputType = "insertText") {
+  #updateSuggestions(inputType = "insertText") {
     if (this.suggestions) {
-      let text = this._elements["input"].textContent;
-      let range = this._shadowRoot.getSelection().getRangeAt(0);
+      let text = this.#elements["input"].textContent;
+      let range = this.#shadowRoot.getSelection().getRangeAt(0);
 
       if (range.collapsed === false) {
         text = text.substring(0, range.startOffset);
@@ -721,13 +721,13 @@ export default class XTagsInputElement extends HTMLElement {
       // Update input
       {
         if (suggestedTags.length > 0 && inputType !== "deleteContentBackward") {
-          let inputText = this._elements["input"].textContent;
+          let inputText = this.#elements["input"].textContent;
           let suggestedText = suggestedTags[0].querySelector("x-label").textContent;
-          let textNode = this._elements["input"].firstChild;
+          let textNode = this.#elements["input"].firstChild;
 
           if (textNode) {
             textNode.textContent = suggestedText;
-            this._updateInputSelection(inputText.length, suggestedText.length);
+            this.#updateInputSelection(inputText.length, suggestedText.length);
           }
         }
       }
@@ -735,31 +735,31 @@ export default class XTagsInputElement extends HTMLElement {
       // Update popover
       {
         if (suggestedTags.length === 0) {
-          this._elements["suggested-tags"].innerHTML = "";
+          this.#elements["suggested-tags"].innerHTML = "";
 
-          if (this._elements["suggestions-popover"].opened === true) {
-            this._elements["suggestions-popover"].close();
+          if (this.#elements["suggestions-popover"].opened === true) {
+            this.#elements["suggestions-popover"].close();
           }
         }
         else {
-          let refRect = this._getInputTextBoundingClientRect();
+          let refRect = this.#getInputTextBoundingClientRect();
 
-          this._elements["suggested-tags"].innerHTML = "";
-          this._elements["suggested-tags"].append(...suggestedTags);
+          this.#elements["suggested-tags"].innerHTML = "";
+          this.#elements["suggested-tags"].append(...suggestedTags);
 
           if (inputType !== "deleteContentBackward" && text.length > 0) {
             suggestedTags[0].toggled = true;
           }
 
-          if (this._elements["suggestions-popover"].opened === false) {
-            this._elements["suggestions-popover"].open(refRect);
+          if (this.#elements["suggestions-popover"].opened === false) {
+            this.#elements["suggestions-popover"].open(refRect);
           }
           else {
-            this._elements["suggestions-popover"].close(false);
-            this._elements["suggestions-popover"].open(refRect);
+            this.#elements["suggestions-popover"].close(false);
+            this.#elements["suggestions-popover"].open(refRect);
           }
 
-          this._elements["suggested-tags"].scrollTop = 0;
+          this.#elements["suggested-tags"].scrollTop = 0;
         }
       }
     }

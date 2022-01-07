@@ -16,7 +16,7 @@ import {html, css} from "../utils/template.js";
 export default class XTextEditorElement extends HTMLElement {
   static observedAttributes = ["value", "spellcheck", "disabled", "validation", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main id="main">
         <slot></slot>
@@ -25,7 +25,7 @@ export default class XTextEditorElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       position: relative;
@@ -115,10 +115,10 @@ export default class XTextEditorElement extends HTMLElement {
   // @type string
   // @default ""
   get value() {
-    return this._elements["editor"].textContent;
+    return this.#elements["editor"].textContent;
   }
   set value(value) {
-    this._elements["editor"].textContent = value;
+    this.#elements["editor"].textContent = value;
 
     if (this.validation === "instant") {
       this.validate();
@@ -129,7 +129,7 @@ export default class XTextEditorElement extends HTMLElement {
       }
     }
 
-    this._updateEmptyState();
+    this.#updateEmptyState();
   }
 
   // @property
@@ -246,35 +246,36 @@ export default class XTextEditorElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _lastTabIndex = 0;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #focusInValue = "";
+  #lastTabIndex = 0;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.adoptedStyleSheets = [XTextEditorElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XTextEditorElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this.#shadowRoot.adoptedStyleSheets = [XTextEditorElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XTextEditorElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("focusin", (event) => this._onFocusIn(event));
-    this.addEventListener("focusout", (event) => this._onFocusOut(event));
+    this.addEventListener("focusin", (event) => this.#onFocusIn(event));
+    this.addEventListener("focusout", (event) => this.#onFocusOut(event));
 
-    this._elements["editor"].addEventListener("click", (event) => this._onEditorClick(event));
-    this._elements["editor"].addEventListener("input", (event) => this._onEditorInput(event));
+    this.#elements["editor"].addEventListener("click", (event) => this.#onEditorClick(event));
+    this.#elements["editor"].addEventListener("input", (event) => this.#onEditorInput(event));
   }
 
   connectedCallback() {
-    this._updateEmptyState();
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updateEmptyState();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
 
     if (this.validation === "instant") {
       this.validate();
@@ -285,28 +286,28 @@ export default class XTextEditorElement extends HTMLElement {
       }
     }
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "value") {
-      this._onValueAttributeChange();
+      this.#onValueAttributeChange();
     }
     else if (name === "spellcheck") {
-      this._onSpellcheckAttributeChange();
+      this.#onSpellcheckAttributeChange();
     }
     else if (name === "disabled") {
-      this._onDisabledAttributeChange();
+      this.#onDisabledAttributeChange();
     }
     else if (name === "validation") {
-      this._onValidationAttributeChnage();
+      this.#onValidationAttributeChnage();
     }
     else if (name === "size") {
-      this._onSizeAttributeChange();
+      this.#onSizeAttributeChange();
     }
   }
 
@@ -331,7 +332,7 @@ export default class XTextEditorElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateEmptyState() {
+  #updateEmptyState() {
     if (this.value.length === 0) {
       this.setAttribute("empty", "");
     }
@@ -340,24 +341,24 @@ export default class XTextEditorElement extends HTMLElement {
     }
   }
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("role", "input");
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+        this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
       }
 
-      this._lastTabIndex = 0;
+      this.#lastTabIndex = 0;
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -385,7 +386,7 @@ export default class XTextEditorElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onValueAttributeChange() {
+  #onValueAttributeChange() {
     this.value = this.hasAttribute("value") ? this.getAttribute("value") : "";
 
     if (this.matches(":focus")) {
@@ -393,16 +394,16 @@ export default class XTextEditorElement extends HTMLElement {
     }
   }
 
-  _onSpellcheckAttributeChange() {
-    this._elements["editor"].spellcheck = this.spellcheck;
+  #onSpellcheckAttributeChange() {
+    this.#elements["editor"].spellcheck = this.spellcheck;
   }
 
-  _onDisabledAttributeChange() {
-    this._elements["editor"].disabled = this.disabled;
-    this._updateAccessabilityAttributes();
+  #onDisabledAttributeChange() {
+    this.#elements["editor"].disabled = this.disabled;
+    this.#updateAccessabilityAttributes();
   }
 
-  _onValidationAttributeChnage() {
+  #onValidationAttributeChnage() {
     if (this.validation === "instant") {
       this.validate();
     }
@@ -413,38 +414,38 @@ export default class XTextEditorElement extends HTMLElement {
     }
   }
 
-  _onSizeAttributeChange() {
-    this._updateComputedSizeAttriubte();
+  #onSizeAttributeChange() {
+    this.#updateComputedSizeAttriubte();
   }
 
-  _onFocusIn() {
-    this._focusInValue = this.value;
+  #onFocusIn() {
+    this.#focusInValue = this.value;
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
 
-  _onFocusOut() {
+  #onFocusOut() {
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-    this._shadowRoot.getSelection().collapse(this._elements["main"]);
+    this.#shadowRoot.getSelection().collapse(this.#elements["main"]);
 
     if (this.validation === "auto") {
       this.validate();
     }
 
-    if (this.error === null && (this.value !== this._focusInValue || this.mixed)) {
+    if (this.error === null && (this.value !== this.#focusInValue || this.mixed)) {
       this.mixed = false;
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
     }
   }
 
-  _onEditorClick(event) {
+  #onEditorClick(event) {
     if (event.detail >= 4) {
       document.execCommand("selectAll");
     }
   }
 
-  _onEditorInput(event) {
+  #onEditorInput(event) {
     this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
-    this._updateEmptyState();
+    this.#updateEmptyState();
 
     if (this.validation === "instant") {
       this.validate();

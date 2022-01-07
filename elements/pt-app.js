@@ -27,7 +27,7 @@ import {sleep, debounce} from "../utils/time.js";
 
 // @event locationchange
 export default class PTAppElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <x-button id="expand-sidebar-button" icon="menu" hidden>
         <x-icon name="menu"></x-icon>
@@ -508,7 +508,7 @@ export default class PTAppElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       position: relative;
       display: flex;
@@ -703,14 +703,15 @@ export default class PTAppElement extends HTMLElement {
   //
   // Last visited location.
   get oldLocation() {
-    return this._oldLocation;
+    return this.#oldLocation;
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _authReadyCallbacks = [];
-  _currentLocation = null;
-  _oldLocation = null;
+  #shadowRoot = null;
+  #elements = {};
+  #authReadyCallbacks = [];
+  #currentLocation = null;
+  #oldLocation = null;
+  #lockInputListeners = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -718,7 +719,6 @@ export default class PTAppElement extends HTMLElement {
     super();
 
     this.hidden = true;
-    this._onMainWheelDeboucned = debounce(this._onMainWheelDeboucned, 400, this);
 
     // Initialize history manager
     {
@@ -743,89 +743,89 @@ export default class PTAppElement extends HTMLElement {
       this.hidden = false;
     }
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, PTAppElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(PTAppElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, PTAppElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(PTAppElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    window.addEventListener("popstate", (event) => this._onPopState(event));
-    window.addEventListener("beforeunload", (event) => this._onWindowBeforeUnload(event));
+    window.addEventListener("popstate", (event) => this.#onPopState(event));
+    window.addEventListener("beforeunload", (event) => this.#onWindowBeforeUnload(event));
 
-    Xel.addEventListener("themechange", () => this._onXelThemeChange());
-    Xel.addEventListener("accentcolorchange", () => this._onXelAccentColorChange());
-    Xel.addEventListener("sizechange", () => this._onXelSizeChange());
-    Xel.addEventListener("iconsetchange", () => this._onXelIconsetChange());
+    Xel.addEventListener("themechange", () => this.#onXelThemeChange());
+    Xel.addEventListener("accentcolorchange", () => this.#onXelAccentColorChange());
+    Xel.addEventListener("sizechange", () => this.#onXelSizeChange());
+    Xel.addEventListener("iconsetchange", () => this.#onXelIconsetChange());
 
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
-    this._shadowRoot.addEventListener("click", (event) => this._onShadowRootClick(event), true);
-    this._elements["expand-sidebar-button"].addEventListener("click", (e) => this._onExpandSidebarButtonClick(e));
-    this._elements["collapse-sidebar-button"].addEventListener("click", (e) => this._onCollapseSidebarButtonClick(e));
-    this._elements["theme-select"].addEventListener("change", (e) => this._onThemeSelectChange(e));
-    this._elements["accent-preset-select"].addEventListener("change", (e) => this._onAccentPresetSelectChange(e));
-    this._elements["accent-color-select"].addEventListener("change", (e) => this._onAccentColorSelectChange(e));
-    this._elements["size-buttons"].addEventListener("toggle", (e) => this._onSizeButtonsToggle(e));
-    this._elements["iconset-select"].addEventListener("change", (e) => this._onIconsetSelectChange(e));
-    this._elements["main"].addEventListener("wheel", (e) => this._onMainWheel(e), {passive: true});
+    this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
+    this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
+    this.#elements["expand-sidebar-button"].addEventListener("click", (e) => this.#onExpandSidebarButtonClick(e));
+    this.#elements["collapse-sidebar-button"].addEventListener("click", (e) => this.#onCollapseSidebarButtonClick(e));
+    this.#elements["theme-select"].addEventListener("change", (e) => this.#onThemeSelectChange(e));
+    this.#elements["accent-preset-select"].addEventListener("change", (e) => this.#onAccentPresetSelectChange(e));
+    this.#elements["accent-color-select"].addEventListener("change", (e) => this.#onAccentColorSelectChange(e));
+    this.#elements["size-buttons"].addEventListener("toggle", (e) => this.#onSizeButtonsToggle(e));
+    this.#elements["iconset-select"].addEventListener("change", (e) => this.#onIconsetSelectChange(e));
+    this.#elements["main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
 
     // Sidebar
     {
       let mediaQueryList = window.matchMedia("(min-width: 900px)");
-      this._toggleSidebarMode(mediaQueryList.matches ? "normal" : "overlay");
+      this.#toggleSidebarMode(mediaQueryList.matches ? "normal" : "overlay");
 
       mediaQueryList.addListener((event) => {
-        this._toggleSidebarMode(mediaQueryList.matches ? "normal" : "overlay");
+        this.#toggleSidebarMode(mediaQueryList.matches ? "normal" : "overlay");
       });
     }
 
-    this._updateSidebarNav();
-    this._updateSidebarThemeSection();
+    this.#updateSidebarNav();
+    this.#updateSidebarThemeSection();
 
-    await this._updateMain();
-    this._maybeDispatchLocationChangeEvent("load");
+    await this.#updateMain();
+    this.#maybeDispatchLocationChangeEvent("load");
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onXelThemeChange() {
-    this._updateSidebarThemeSection();
+  #onXelThemeChange() {
+    this.#updateSidebarThemeSection();
 
     let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
     localStorage.setItem("theme", themeName);
   }
 
-  _onXelAccentColorChange() {
+  #onXelAccentColorChange() {
     let color = Xel.accentColor;
 
     // Custom color
     if (Xel.presetAccentColors[color] === undefined) {
-      this._elements["accent-preset-select"].value = "custom";
-      this._elements["accent-color-select"].value = color;
+      this.#elements["accent-preset-select"].value = "custom";
+      this.#elements["accent-color-select"].value = color;
     }
     // Preset color
     else {
-      this._elements["accent-preset-select"].value = color;
-      this._elements["accent-color-select"].value = Xel.presetAccentColors[color];
+      this.#elements["accent-preset-select"].value = color;
+      this.#elements["accent-color-select"].value = Xel.presetAccentColors[color];
     }
 
     localStorage.setItem("accentColor", color);
   }
 
-  _onXelSizeChange() {
-    this._updateSidebarThemeSection();
-    localStorage.setItem("size", this._elements["size-buttons"].value);
+  #onXelSizeChange() {
+    this.#updateSidebarThemeSection();
+    localStorage.setItem("size", this.#elements["size-buttons"].value);
   }
 
-  _onXelIconsetChange() {
-    this._updateSidebarThemeSection();
-    localStorage.setItem("iconset", this._elements["iconset-select"].value);
+  #onXelIconsetChange() {
+    this.#updateSidebarThemeSection();
+    localStorage.setItem("iconset", this.#elements["iconset-select"].value);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async _onLocationChange(event) {
+  async #onLocationChange(event) {
     let {method, fromLocation, toLocation, state} = event.detail;
     let fromParams = new URLSearchParams(fromLocation ? fromLocation.search : "");
     let toParams = new URLSearchParams(toLocation.search);
@@ -836,22 +836,22 @@ export default class PTAppElement extends HTMLElement {
       let pathChanged = (fromLocation === null) || (fromLocation.pathname !== toLocation.pathname);
 
       if (method === "load") {
-        this._updateSidebarNav();
-        await this._updateMain()
+        this.#updateSidebarNav();
+        await this.#updateMain()
         await sleep(100);
         this.restoreMainScrollOffset();
       }
       else if (method === "push" || method === "replace") {
         if (pathChanged) {
-          this._updateSidebarNav();
-          this._updateMain();
+          this.#updateSidebarNav();
+          this.#updateMain();
           this.resetMainScrollOffset();
         }
       }
       else if (method === "pop") {
         if (pathChanged) {
-          this._updateSidebarNav();
-          await this._updateMain()
+          this.#updateSidebarNav();
+          await this.#updateMain()
           this.restoreMainScrollOffset();
         }
       }
@@ -876,7 +876,7 @@ export default class PTAppElement extends HTMLElement {
 
         if (toValue === null) {
           let param = fromValue.split("→")[0];
-          let fromDialog = this._elements["dialogs"].querySelector(`:scope > dialog[data-param="${param}"]`);
+          let fromDialog = this.#elements["dialogs"].querySelector(`:scope > dialog[data-param="${param}"]`);
 
           if (fromDialog && fromDialog.open) {
             fromDialog.close();
@@ -886,15 +886,15 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  _onWindowBeforeUnload(event) {
+  #onWindowBeforeUnload(event) {
     this.storeMainScrollOffset();
   }
 
-  _onPopState(event) {
-    this._maybeDispatchLocationChangeEvent("pop");
+  #onPopState(event) {
+    this.#maybeDispatchLocationChangeEvent("pop");
   }
 
-  _onShadowRootPointerDown(event) {
+  #onShadowRootPointerDown(event) {
     let downAnchor = event.target.closest("a");
 
     if (downAnchor) {
@@ -903,7 +903,7 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  _onShadowRootClick(event) {
+  #onShadowRootClick(event) {
     // Clicked anchor
     {
       let clickedAnchor = event.target.closest("a");
@@ -919,37 +919,37 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  _onMainWheel(event) {
+  #onMainWheel(event) {
     if (location.hash) {
       history.pushState(
-        {index: history.state.index+1, scrollTop: this._elements["main"].scrollTop}, null, location.href.split("#")[0]
+        {index: history.state.index+1, scrollTop: this.#elements["main"].scrollTop}, null, location.href.split("#")[0]
       );
 
-      this._maybeDispatchLocationChangeEvent("push");
+      this.#maybeDispatchLocationChangeEvent("push");
     }
 
-    this._onMainWheelDeboucned();
+    this.#onMainWheelDebounced();
   }
 
-  _onMainWheelDeboucned(event) {
+  #onMainWheelDebounced = debounce(() => {
     if (!location.hash) {
       this.storeMainScrollOffset();
     }
-  }
+  }, 400);
 
-  _onExpandSidebarButtonClick(event) {
+  #onExpandSidebarButtonClick(event) {
     if (event.button === 0) {
-      this._elements["sidebar-dialog"].showModal();
+      this.#elements["sidebar-dialog"].showModal();
     }
   }
 
-  _onCollapseSidebarButtonClick(event) {
+  #onCollapseSidebarButtonClick(event) {
     if (event.button === 0) {
-      this._elements["sidebar-dialog"].close();
+      this.#elements["sidebar-dialog"].close();
     }
   }
 
-  _onDialogClose(event) {
+  #onDialogClose(event) {
     let dialog = event.target;
     let url = new URL(location.href);
     let params = new URLSearchParams(location.search);
@@ -966,7 +966,7 @@ export default class PTAppElement extends HTMLElement {
     }
 
     dialog.remove();
-    delete this._elements[dialog.id];
+    delete this.#elements[dialog.id];
 
     if (dialog.dataset.param === dialogName) {
       params.delete("dialog");
@@ -975,25 +975,25 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  _onThemeSelectChange() {
-    Xel.theme = "/themes/" + this._elements["theme-select"].value + "-portal.css";
+  #onThemeSelectChange() {
+    Xel.theme = "/themes/" + this.#elements["theme-select"].value + "-portal.css";
   }
 
-  _onAccentPresetSelectChange() {
-    let value = this._elements["accent-preset-select"].value;
+  #onAccentPresetSelectChange() {
+    let value = this.#elements["accent-preset-select"].value;
     Xel.accentColor = (value === "custom") ? Xel.presetAccentColors[Xel.accentColor] : value;
   }
 
-  _onAccentColorSelectChange() {
-    Xel.accentColor = this._elements["accent-color-select"].value;
+  #onAccentColorSelectChange() {
+    Xel.accentColor = this.#elements["accent-color-select"].value;
   }
 
-  _onSizeButtonsToggle() {
-    Xel.size = this._elements["size-buttons"].value;
+  #onSizeButtonsToggle() {
+    Xel.size = this.#elements["size-buttons"].value;
   }
 
-  _onIconsetSelectChange() {
-    Xel.iconset = "/iconsets/" + this._elements["iconset-select"].value + ".svg";
+  #onIconsetSelectChange() {
+    Xel.iconset = "/iconsets/" + this.#elements["iconset-select"].value + ".svg";
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1003,15 +1003,15 @@ export default class PTAppElement extends HTMLElement {
     if (replace === false) {
       this.storeMainScrollOffset();
       history.pushState({index: history.state.index+1, scrollTop: 0}, null, href);
-      this._maybeDispatchLocationChangeEvent("push");
+      this.#maybeDispatchLocationChangeEvent("push");
     }
     else if (replace === true) {
       history.replaceState({index: history.state.index, scrollTop: 0}, null, href);
-      this._maybeDispatchLocationChangeEvent("replace");
+      this.#maybeDispatchLocationChangeEvent("replace");
     }
   }
 
-  storeMainScrollOffset(offset = this._elements["main"].scrollTop) {
+  storeMainScrollOffset(offset = this.#elements["main"].scrollTop) {
     history.replaceState({index: history.state.index, scrollTop: offset}, null, location.href);
   }
 
@@ -1019,28 +1019,28 @@ export default class PTAppElement extends HTMLElement {
     let offset = 0;
 
     if (location.hash) {
-      let page = this._elements["main"].firstElementChild;
+      let page = this.#elements["main"].firstElementChild;
       let elementID = location.hash.substring(1);
       page.scrollElementIntoView(elementID);
     }
     else {
-      this._elements["main"].scrollTop = history.state.scrollTop;
+      this.#elements["main"].scrollTop = history.state.scrollTop;
     }
   }
 
   resetMainScrollOffset() {
-    this._elements["main"].scrollTop = 0;
+    this.#elements["main"].scrollTop = 0;
   }
 
-  _maybeDispatchLocationChangeEvent(method = "pop") {
+  #maybeDispatchLocationChangeEvent(method = "pop") {
     let changed = false;
 
-    if (this._currentLocation) {
+    if (this.#currentLocation) {
       if (
-        location.origin   !== this._currentLocation.origin   ||
-        location.pathname !== this._currentLocation.pathname ||
-        location.search   !== this._currentLocation.search   ||
-        location.hash     !== this._currentLocation.hash
+        location.origin   !== this.#currentLocation.origin   ||
+        location.pathname !== this.#currentLocation.pathname ||
+        location.search   !== this.#currentLocation.search   ||
+        location.hash     !== this.#currentLocation.hash
       ) {
         changed = true;
       }
@@ -1050,39 +1050,39 @@ export default class PTAppElement extends HTMLElement {
     }
 
     if (changed) {
-      let fromLocation = this._currentLocation;
+      let fromLocation = this.#currentLocation;
       let toLocation = new URL(window.location.href);
 
-      this._oldLocation = fromLocation;
-      this._currentLocation = toLocation;
+      this.#oldLocation = fromLocation;
+      this.#currentLocation = toLocation;
 
       let event = new CustomEvent("locationchange", {
         detail: {method, fromLocation, toLocation, state: history.state}
       });
 
       this.dispatchEvent(event);
-      this._onLocationChange(event);
+      this.#onLocationChange(event);
     }
   }
 
   // @type "normal" || "overlay"
-  _toggleSidebarMode(mode) {
+  #toggleSidebarMode(mode) {
     if (mode === "overlay") {
-      if (!this._elements["sidebar-dialog"]) {
-        this._elements["sidebar-dialog"] = html`<dialog id="sidebar-dialog" tabindex="0"></dialog>`;
-        this._elements["sidebar-dialog"].append(this._elements["sidebar"]);
-        this._elements["dialogs"].append(this._elements["sidebar-dialog"]);
-        this._elements["expand-sidebar-button"].hidden = false;
-        this._elements["collapse-sidebar-button"].hidden = false;
+      if (!this.#elements["sidebar-dialog"]) {
+        this.#elements["sidebar-dialog"] = html`<dialog id="sidebar-dialog" tabindex="0"></dialog>`;
+        this.#elements["sidebar-dialog"].append(this.#elements["sidebar"]);
+        this.#elements["dialogs"].append(this.#elements["sidebar-dialog"]);
+        this.#elements["expand-sidebar-button"].hidden = false;
+        this.#elements["collapse-sidebar-button"].hidden = false;
       }
     }
     else if (mode === "normal") {
-      if (this._elements["sidebar-dialog"]) {
-        this._elements["sidebar-dialog"].remove();
-        this._elements["sidebar-dialog"] = null;
-        this._elements["main"].before(this._elements["sidebar"]);
-        this._elements["expand-sidebar-button"].hidden = true;
-        this._elements["collapse-sidebar-button"].hidden = true;
+      if (this.#elements["sidebar-dialog"]) {
+        this.#elements["sidebar-dialog"].remove();
+        this.#elements["sidebar-dialog"] = null;
+        this.#elements["main"].before(this.#elements["sidebar"]);
+        this.#elements["expand-sidebar-button"].hidden = true;
+        this.#elements["collapse-sidebar-button"].hidden = true;
       }
     }
   }
@@ -1090,9 +1090,9 @@ export default class PTAppElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @type (boolean) => Promise
-  _closeDialog(immidiate = false) {
+  #closeDialog(immidiate = false) {
     return new Promise( async (resolve) => {
-      let dialog = this._elements["dialogs"].querySelector("dialog:not(#sidebar-dialog)");
+      let dialog = this.#elements["dialogs"].querySelector("dialog:not(#sidebar-dialog)");
 
       if (dialog && dialog.id) {
         if (immidiate) {
@@ -1112,7 +1112,7 @@ export default class PTAppElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   lockInput() {
-    if (!this._lockInputListeners) {
+    if (!this.#lockInputListeners) {
       let lockInputEventNames = [
         "mousedown", "mouseenter", "mouseleave", "mousemove", "mouseout", "mosueover", "mouseup",
         "pointerover", "pointerenter", "pointerdown", "pointermove", "pointerup", "pointerout", "pointerleave",
@@ -1121,11 +1121,11 @@ export default class PTAppElement extends HTMLElement {
         "compositionstart", "compositionupdate", "compositionend"
       ];
 
-      this._lockInputListeners = {};
+      this.#lockInputListeners = {};
       this.style.pointerEvents = "none";
 
       for (let eventName of lockInputEventNames) {
-        window.addEventListener(eventName, this._lockInputListeners[eventName] = (event) => {
+        window.addEventListener(eventName, this.#lockInputListeners[eventName] = (event) => {
           event.stopImmediatePropagation();
           event.preventDefault();
         }, true);
@@ -1134,65 +1134,65 @@ export default class PTAppElement extends HTMLElement {
   }
 
   unlockInput() {
-    if (this._lockInputListeners) {
-      for (let [eventName, listener] of Object.entries(this._lockInputListeners)) {
+    if (this.#lockInputListeners) {
+      for (let [eventName, listener] of Object.entries(this.#lockInputListeners)) {
         window.removeEventListener(eventName, listener, true);
       }
 
-      this._lockInputListeners = null;
+      this.#lockInputListeners = null;
       this.style.pointerEvents = null;
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateMain() {
+  #updateMain() {
     return new Promise(async (resolve) => {
       let path = location.pathname;
       let title = document.querySelector("title");
 
-      if (this._elements["main"].dataset.path !== path) {
+      if (this.#elements["main"].dataset.path !== path) {
         if (path === "/") {
           title.textContent = "Xel";
-          this._elements["main"].innerHTML = "<pt-aboutpage></pt-aboutpage>";
+          this.#elements["main"].innerHTML = "<pt-aboutpage></pt-aboutpage>";
         }
         else if (path === "/setup") {
           title.textContent = "Xel | Setup";
-          this._elements["main"].innerHTML = "<pt-setuppage></pt-setuppage>";
+          this.#elements["main"].innerHTML = "<pt-setuppage></pt-setuppage>";
         }
         else if (path === "/faq") {
           title.textContent = "Xel | FAQ";
-          this._elements["main"].innerHTML = "<pt-faqpage></pt-faqpage>";
+          this.#elements["main"].innerHTML = "<pt-faqpage></pt-faqpage>";
         }
         else if (path === "/changelog") {
           title.textContent = "Xel | Changelog";
-          this._elements["main"].innerHTML = "<pt-changelogpage></pt-changelogpage>";
+          this.#elements["main"].innerHTML = "<pt-changelogpage></pt-changelogpage>";
         }
         else if (path === "/license") {
           title.textContent = "Xel | License";
-          this._elements["main"].innerHTML = "<pt-licensepage></pt-licensepage>";
+          this.#elements["main"].innerHTML = "<pt-licensepage></pt-licensepage>";
         }
         else if (path === "/privacy") {
           title.textContent = "Xel | Privacy";
-          this._elements["main"].innerHTML = "<pt-privacypage></pt-privacypage>";
+          this.#elements["main"].innerHTML = "<pt-privacypage></pt-privacypage>";
         }
         else if (path === "/terms") {
           title.textContent = "Xel | Terms";
-          this._elements["main"].innerHTML = "<pt-termspage></pt-termspage>";
+          this.#elements["main"].innerHTML = "<pt-termspage></pt-termspage>";
         }
         else if (path.startsWith("/elements/")) {
           let elementName = path.substring(10);
           title.textContent = "Xel | " + elementName;
-          this._elements["main"].innerHTML = `<pt-elementpage value="${elementName}"></pt-elementpage>`;
+          this.#elements["main"].innerHTML = `<pt-elementpage value="${elementName}"></pt-elementpage>`;
         }
         else {
-          this._elements["main"].innerHTML = "";
+          this.#elements["main"].innerHTML = "";
         }
 
-        this._elements["main"].dataset.path = path;
+        this.#elements["main"].dataset.path = path;
       }
 
-      let page = this._elements["main"].firstElementChild;
+      let page = this.#elements["main"].firstElementChild;
 
       if (page) {
         await page.whenReady;
@@ -1202,8 +1202,8 @@ export default class PTAppElement extends HTMLElement {
     });
   }
 
-  _updateSidebarNav() {
-    for (let section of this._elements["nav"].querySelectorAll(":scope > section")) {
+  #updateSidebarNav() {
+    for (let section of this.#elements["nav"].querySelectorAll(":scope > section")) {
       if (section.id !== "theme-section") {
         for (let button of section.querySelectorAll("x-button")) {
           let anchor = button.closest("a");
@@ -1228,12 +1228,12 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  _updateSidebarThemeSection() {
+  #updateSidebarThemeSection() {
     // Update theme subsection
     {
       let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
 
-      for (let item of this._elements["theme-select"].querySelectorAll("x-menuitem")) {
+      for (let item of this.#elements["theme-select"].querySelectorAll("x-menuitem")) {
         if (item.getAttribute("value") === themeName) {
           item.setAttribute("toggled", "");
         }
@@ -1264,29 +1264,29 @@ export default class PTAppElement extends HTMLElement {
         </x-menuitem>
       `;
 
-      this._elements["accent-preset-menu"].innerHTML = itemsHTML;
+      this.#elements["accent-preset-menu"].innerHTML = itemsHTML;
 
       // Preset color
       if (Xel.presetAccentColors[Xel.accentColor]) {
-        this._elements["accent-preset-select"].value = Xel.accentColor;
-        this._elements["accent-color-select"].value = Xel.presetAccentColors[Xel.accentColor];
+        this.#elements["accent-preset-select"].value = Xel.accentColor;
+        this.#elements["accent-color-select"].value = Xel.presetAccentColors[Xel.accentColor];
       }
       // Custom color
       else {
-        this._elements["accent-preset-select"].value = "custom";
-        this._elements["accent-color-select"].value = Xel.accentColor;
+        this.#elements["accent-preset-select"].value = "custom";
+        this.#elements["accent-color-select"].value = Xel.accentColor;
       }
     }
 
     // Update size subsection
     {
-      this._elements["size-buttons"].value = Xel.size;
+      this.#elements["size-buttons"].value = Xel.size;
     }
 
     // Update iconset subsection
     {
       let iconsetName = Xel.iconset.substring(Xel.iconset.lastIndexOf("/") + 1, Xel.iconset.lastIndexOf("."));
-      this._elements["iconset-select"].value = iconsetName;
+      this.#elements["iconset-select"].value = iconsetName;
     }
   }
 }

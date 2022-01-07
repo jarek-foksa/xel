@@ -14,7 +14,7 @@ import {html, css} from "../utils/template.js";
 export default class XTagElement extends HTMLElement {
   static observedAttributes = ["disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <div id="container">
         <div id="scope" part="scope">
@@ -32,7 +32,7 @@ export default class XTagElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: inline-block;;
       height: 25px;
@@ -182,32 +182,32 @@ export default class XTagElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XTagElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XTagElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XTagElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XTagElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this._elements["scope-slot"].addEventListener("slotchange", () => this._updateScopedAttribute());
-    this._elements["remove-button"].addEventListener("click", (event) => this._onRemoveButtonClick(event));
+    this.#elements["scope-slot"].addEventListener("slotchange", () => this.#updateScopedAttribute());
+    this.#elements["remove-button"].addEventListener("click", (event) => this.#onRemoveButtonClick(event));
   }
 
   connectedCallback() {
-    this._updateComputedSizeAttriubte();
-    this._updateScopedAttribute();
+    this.#updateComputedSizeAttriubte();
+    this.#updateScopedAttribute();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
     if (this.closest("x-tags")) {
       this.tabIndex = 0;
@@ -224,18 +224,18 @@ export default class XTagElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onRemoveButtonClick(event) {
+  #onRemoveButtonClick(event) {
     if (event.buttons === 0) {
       this.dispatchEvent(new CustomEvent("remove", {bubbles: true}));
     }
@@ -243,7 +243,7 @@ export default class XTagElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -269,8 +269,8 @@ export default class XTagElement extends HTMLElement {
     }
   }
 
-  _updateScopedAttribute() {
-    if (this._elements["scope-slot"].assignedElements().length === 0) {
+  #updateScopedAttribute() {
+    if (this.#elements["scope-slot"].assignedElements().length === 0) {
       this.removeAttribute("scoped");
     }
     else {

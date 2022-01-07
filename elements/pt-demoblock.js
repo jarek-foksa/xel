@@ -12,7 +12,7 @@ import {html, css} from "../utils/template.js";
 let counter = 0;
 
 export default class PTDemoBlockElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main>
         <div id="live-view"></div>
@@ -21,7 +21,7 @@ export default class PTDemoBlockElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
     }
@@ -54,46 +54,46 @@ export default class PTDemoBlockElement extends HTMLElement {
   // @type Promise
   get whenReady() {
     return new Promise((resolve) => {
-      if (this._readyCallbacks === null) {
+      if (this.#readyCallbacks === null) {
         resolve();
       }
       else {
-        this._readyCallbacks.push(resolve);
+        this.#readyCallbacks.push(resolve);
       }
     });
   }
 
-  _readyCallbacks = [];
-  _shadowRoot = null;
-  _elements = {};
-  _demoStyleSheet = new CSSStyleSheet();
+  #readyCallbacks = [];
+  #shadowRoot = null;
+  #elements = {};
+  #demoStyleSheet = new CSSStyleSheet();
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, PTDemoBlockElement._shadowStyleSheet, this._demoStyleSheet];
-    this._shadowRoot.append(document.importNode(PTDemoBlockElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, PTDemoBlockElement.#shadowStyleSheet, this.#demoStyleSheet];
+    this.#shadowRoot.append(document.importNode(PTDemoBlockElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
   }
 
   async connectedCallback() {
-    await this._update();
+    await this.#update();
 
-    if (this._readyCallbacks !== null) {
-      for (let callback of this._readyCallbacks) callback();
-      this._readyCallbacks = null;
+    if (this.#readyCallbacks !== null) {
+      for (let callback of this.#readyCallbacks) callback();
+      this.#readyCallbacks = null;
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     return new Promise(async (resolve) => {
       let template = this.querySelector("template");
 
@@ -109,16 +109,16 @@ export default class PTDemoBlockElement extends HTMLElement {
         let styleElement = liveViewContent.querySelector("style");
 
         if (styleElement) {
-          await this._demoStyleSheet.replaceSync(styleElement.textContent),
+          await this.#demoStyleSheet.replaceSync(styleElement.textContent),
           styleElement.remove();
         }
 
-        this._elements["live-view"].append(liveViewContent);
+        this.#elements["live-view"].append(liveViewContent);
 
-        let scripts = this._elements["live-view"].querySelectorAll("script");
+        let scripts = this.#elements["live-view"].querySelectorAll("script");
 
         if (scripts.length > 0) {
-          window["shadowRoot" + counter] = this._elements["live-view"];
+          window["shadowRoot" + counter] = this.#elements["live-view"];
           window["shadowRoot" + counter].createElement = (arg) => document.createElement(arg);
 
           for (let script of scripts) {
@@ -194,7 +194,7 @@ export default class PTDemoBlockElement extends HTMLElement {
           lines = lines.map(line => line.substring(minIndent));
         }
 
-        this._elements["code-view"].textContent = lines.join("\n");
+        this.#elements["code-view"].textContent = lines.join("\n");
       }
 
       resolve();

@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2021 Jarosław Foksa
+//   © 2016-2022 Jarosław Foksa
 
 import Xel from "./xel.js";
 

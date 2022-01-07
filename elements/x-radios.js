@@ -20,18 +20,18 @@ export default class XRadiosElement extends HTMLElement {
     }
   }
 
-  _shadowRoot = null;
+  #shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.innerHTML = `<slot></slot>`;
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.innerHTML = `<slot></slot>`;
 
-    this.addEventListener("click", (event) => this._onClick(event), true);
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event), true);
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
   connectedCallback() {
@@ -48,7 +48,7 @@ export default class XRadiosElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onClick(event) {
+  #onClick(event) {
     let clickedRadio = event.target.closest("x-radio");
 
     if (clickedRadio && !clickedRadio.toggled && !clickedRadio.disabled && event.button === 0) {
@@ -70,7 +70,7 @@ export default class XRadiosElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     let {key} = event;
 
     if (key === "ArrowDown" || key === "ArrowRight") {

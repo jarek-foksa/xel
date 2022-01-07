@@ -18,13 +18,13 @@ const WINDOW_PADDING = 7;
 export default class XMenuElement extends HTMLElement {
   static observedAttributes = ["opened"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot id="slot"></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: none;
       top: 0;
@@ -79,37 +79,37 @@ export default class XMenuElement extends HTMLElement {
     return this.hasAttribute("opened");
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _delayPoints = [];
-  _delayTimeoutID = null;
-  _lastDelayPoint = null;
-  _lastScrollTop = 0;
-  _extraTop = 0;
-  _expandWhenScrolled = false;
-  _isPointerOverMenuBlock = false;
-  _openedTimestamp = null;
+  #shadowRoot = null;
+  #elements = {};
+  #delayPoints = [];
+  #delayTimeoutID = null;
+  #lastDelayPoint = null;
+  #lastScrollTop = 0;
+  #extraTop = 0;
+  #expandWhenScrolled = false;
+  #isPointerOverMenuBlock = false;
+  #openedTimestamp = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XMenuElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XMenuElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XMenuElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XMenuElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("pointerover", (event) => this._onPointerOver(event));
-    this.addEventListener("pointerout", (event) => this._onPointerOut(event));
-    this.addEventListener("pointermove", (event) => this._onPointerMove(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
-    this.addEventListener("wheel", (event) => this._onWheel(event), {passive: false});
-    this.addEventListener("scroll", (event) => this._onScroll(event), {passive: true});
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("pointerover", (event) => this.#onPointerOver(event));
+    this.addEventListener("pointerout", (event) => this.#onPointerOut(event));
+    this.addEventListener("pointermove", (event) => this.#onPointerMove(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.addEventListener("wheel", (event) => this.#onWheel(event), {passive: false});
+    this.addEventListener("scroll", (event) => this.#onScroll(event), {passive: true});
   }
 
   connectedCallback() {
@@ -120,7 +120,7 @@ export default class XMenuElement extends HTMLElement {
 
   attributeChangedCallback(name) {
     if (name === "opened") {
-      this._onOpenedAttributeChange();
+      this.#onOpenedAttributeChange();
     }
   }
 
@@ -137,9 +137,9 @@ export default class XMenuElement extends HTMLElement {
       let items = this.querySelectorAll(":scope > x-menuitem");
 
       if (items.length > 0) {
-        this._expandWhenScrolled = true;
-        this._openedTimestamp = getTimeStamp();
-        this._resetInlineStyles();
+        this.#expandWhenScrolled = true;
+        this.#openedTimestamp = getTimeStamp();
+        this.#resetInlineStyles();
         this.setAttribute("opened", "");
 
         let menuItem = [...items].find((item) => item.contains(overElement)) || items[0];
@@ -207,7 +207,7 @@ export default class XMenuElement extends HTMLElement {
         // Animate the menu block
         {
           let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-          let [property, duration, easing] = this._parseTransistion(transition);
+          let [property, duration, easing] = this.#parseTransistion(transition);
 
           if (property === "transform") {
             let blockBounds = this.getBoundingClientRect();
@@ -224,7 +224,7 @@ export default class XMenuElement extends HTMLElement {
         }
 
         this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
-        this._extraTop = extraTop;
+        this.#extraTop = extraTop;
       }
 
       resolve();
@@ -241,10 +241,10 @@ export default class XMenuElement extends HTMLElement {
       let items = this.querySelectorAll(":scope > x-menuitem");
 
       if (items.length > 0) {
-        this._resetInlineStyles();
+        this.#resetInlineStyles();
         this.setAttribute("opened", "");
-        this._expandWhenScrolled = true;
-        this._openedTimestamp = getTimeStamp();
+        this.#expandWhenScrolled = true;
+        this.#openedTimestamp = getTimeStamp();
 
         let item = [...items].find((item) => {
           let itemLabel = item.querySelector("x-label");
@@ -270,10 +270,10 @@ export default class XMenuElement extends HTMLElement {
   // Returns a promise that is resolved when the menu finishes animating.
   openNextToElement(element, direction = "horizontal", elementWhitespace = 0) {
     return new Promise(async (resolve) => {
-      this._expandWhenScrolled = false;
-      this._openedTimestamp = getTimeStamp();
+      this.#expandWhenScrolled = false;
+      this.#openedTimestamp = getTimeStamp();
 
-      this._resetInlineStyles();
+      this.#resetInlineStyles();
       this.setAttribute("opened", "");
       this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
 
@@ -354,7 +354,7 @@ export default class XMenuElement extends HTMLElement {
         // Animate the menu
         {
           let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-          let [property, duration, easing] = this._parseTransistion(transition);
+          let [property, duration, easing] = this.#parseTransistion(transition);
 
           if (property === "transform") {
             await this.animate(
@@ -469,7 +469,7 @@ export default class XMenuElement extends HTMLElement {
         // Animate the menu
         {
           let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-          let [property, duration, easing] = this._parseTransistion(transition);
+          let [property, duration, easing] = this.#parseTransistion(transition);
 
           if (property === "transform") {
             await this.animate(
@@ -483,7 +483,7 @@ export default class XMenuElement extends HTMLElement {
         }
       }
 
-      this._extraTop = extraTop;
+      this.#extraTop = extraTop;
       resolve();
     });
   }
@@ -495,10 +495,10 @@ export default class XMenuElement extends HTMLElement {
   // Returns a promise that is resolved when the menu finishes animating.
   openAtPoint(left, top) {
     return new Promise( async (resolve) => {
-      this._expandWhenScrolled = false;
-      this._openedTimestamp = getTimeStamp();
+      this.#expandWhenScrolled = false;
+      this.#openedTimestamp = getTimeStamp();
 
-      this._resetInlineStyles();
+      this.#resetInlineStyles();
       this.setAttribute("opened", "");
       this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
 
@@ -547,7 +547,7 @@ export default class XMenuElement extends HTMLElement {
       // Animate the menu
       {
         let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-        let [property, duration, easing] = this._parseTransistion(transition);
+        let [property, duration, easing] = this.#parseTransistion(transition);
 
         if (property === "transform") {
           await this.animate(
@@ -563,7 +563,7 @@ export default class XMenuElement extends HTMLElement {
         }
       }
 
-      this._extraTop = extraTop;
+      this.#extraTop = extraTop;
       resolve();
     });
   }
@@ -589,7 +589,7 @@ export default class XMenuElement extends HTMLElement {
           this.setAttribute("animating", "");
 
           let transition = getComputedStyle(this).getPropertyValue("--close-transition");
-          let [property, duration, easing] = this._parseTransistion(transition);
+          let [property, duration, easing] = this.#parseTransistion(transition);
 
           if (property === "opacity") {
             await this.animate({ opacity: ["1", "0"] }, { duration, easing }).finished;
@@ -717,15 +717,15 @@ export default class XMenuElement extends HTMLElement {
 
   // @doc
   //   http://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown
-  _delay(callback) {
+  #delay(callback) {
     let tolerance = 75;
     let fullDelay = 300;
     let delay = 0;
     let direction = "right";
 
     {
-      let point = this._delayPoints[this._delayPoints.length - 1];
-      let prevPoint = this._delayPoints[0];
+      let point = this.#delayPoints[this.#delayPoints.length - 1];
+      let prevPoint = this.#delayPoints[0];
       let openedSubmenu = this.querySelector("x-menu[opened]");
 
       if (openedSubmenu && point) {
@@ -750,9 +750,9 @@ export default class XMenuElement extends HTMLElement {
         }
 
         if (
-          this._lastDelayPoint &&
-          point.x === this._lastDelayPoint.x &&
-          point.y === this._lastDelayPoint.y
+          this.#lastDelayPoint &&
+          point.x === this.#lastDelayPoint.x &&
+          point.y === this.#lastDelayPoint.y
         ) {
           proceed = false;
         }
@@ -785,19 +785,19 @@ export default class XMenuElement extends HTMLElement {
           let prevIncreasingSlope = getSlope(prevPoint, increasingCorner);
 
           if (decreasingSlope < prevDecreasingSlope && increasingSlope > prevIncreasingSlope) {
-            this._lastDelayPoint = point;
+            this.#lastDelayPoint = point;
             delay = fullDelay;
           }
           else {
-            this._lastDelayPoint = null;
+            this.#lastDelayPoint = null;
           }
         }
       }
     }
 
     if (delay > 0) {
-      this._delayTimeoutID = setTimeout(() => {
-        this._delay(callback);
+      this.#delayTimeoutID = setTimeout(() => {
+        this.#delay(callback);
       }, delay);
     }
     else {
@@ -805,14 +805,14 @@ export default class XMenuElement extends HTMLElement {
     }
   }
 
-  _clearDelay() {
-    if (this._delayTimeoutID) {
-      clearTimeout(this._delayTimeoutID);
-      this._delayTimeoutID = null;
+  #clearDelay() {
+    if (this.#delayTimeoutID) {
+      clearTimeout(this.#delayTimeoutID);
+      this.#delayTimeoutID = null;
     }
   }
 
-  _resetInlineStyles() {
+  #resetInlineStyles() {
     this.style.position = "fixed";
     this.style.top = "0px";
     this.style.left = "0px";
@@ -825,14 +825,14 @@ export default class XMenuElement extends HTMLElement {
   // @type () => boolean
   //
   // Whether this or any ancestor menu is closing
-  _isClosing() {
+  #isClosing() {
     return this.matches("*[closing], *[closing] x-menu");
   }
 
   // @type (string) => [string, number, string]
   //
   // Parse the value of CSS transition property.
-  _parseTransistion(string) {
+  #parseTransistion(string) {
     let [rawDuration, property, ...rest] = string.trim().split(" ");
     let duration = parseFloat(rawDuration);
     let easing = rest.join(" ");
@@ -841,18 +841,18 @@ export default class XMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onOpenedAttributeChange() {
+  #onOpenedAttributeChange() {
     this.setAttribute("aria-hidden", !this.opened);
   }
 
-  _onPointerDown(event) {
+  #onPointerDown(event) {
     if (event.target === this || event.target.localName === "hr") {
       event.stopPropagation();
     }
 
     if (event.pointerType === "touch" && event.target.closest("x-menu") === this) {
-      if (this._isPointerOverMenuBlock === false) {
-        this._onMenuBlockPointerEnter();
+      if (this.#isPointerOverMenuBlock === false) {
+        this.#onMenuBlockPointerEnter();
       }
 
       // Focus and expand the menu item under pointer and collapse other items
@@ -861,7 +861,7 @@ export default class XMenuElement extends HTMLElement {
 
         if (item && item.disabled === false && item.closest("x-menu") === this) {
           if (item.matches(":focus") === false) {
-            this._delay( async () => {
+            this.#delay( async () => {
               let otherItem = this.querySelector(":scope > x-menuitem:focus");
 
               if (otherItem) {
@@ -897,7 +897,7 @@ export default class XMenuElement extends HTMLElement {
           }
         }
         else {
-          this._delay(() => {
+          this.#delay(() => {
             this.focus();
           });
         }
@@ -905,14 +905,14 @@ export default class XMenuElement extends HTMLElement {
     }
   }
 
-  _onPointerOver(event) {
-    if (this._isClosing() || event.pointerType === "touch") {
+  #onPointerOver(event) {
+    if (this.#isClosing() || event.pointerType === "touch") {
       return;
     }
 
     if (event.target.closest("x-menu") === this) {
-      if (this._isPointerOverMenuBlock === false) {
-        this._onMenuBlockPointerEnter();
+      if (this.#isPointerOverMenuBlock === false) {
+        this.#onMenuBlockPointerEnter();
       }
 
       // Focus and expand the menu item under pointer and collapse other items
@@ -921,7 +921,7 @@ export default class XMenuElement extends HTMLElement {
 
         if (item && item.disabled === false && item.closest("x-menu") === this) {
           if (item.matches(":focus") === false) {
-            this._delay( async () => {
+            this.#delay( async () => {
               let otherItem = this.querySelector(":scope > x-menuitem:focus");
 
               if (otherItem) {
@@ -958,7 +958,7 @@ export default class XMenuElement extends HTMLElement {
           }
         }
         else {
-          this._delay(() => {
+          this.#delay(() => {
             this.focus();
           });
         }
@@ -966,67 +966,67 @@ export default class XMenuElement extends HTMLElement {
     }
   }
 
-  _onPointerOut(event) {
+  #onPointerOut(event) {
     // @bug: event.relatedTarget leaks shadowDOM, so we have to use closest() utility function
     if (!event.relatedTarget || closest(event.relatedTarget, "x-menu") !== this) {
-      if (this._isPointerOverMenuBlock === true) {
-        this._onMenuBlockPointerLeave();
+      if (this.#isPointerOverMenuBlock === true) {
+        this.#onMenuBlockPointerLeave();
       }
     }
   }
 
-  _onMenuBlockPointerEnter() {
-    if (this._isClosing()) {
+  #onMenuBlockPointerEnter() {
+    if (this.#isClosing()) {
       return;
     }
 
-    this._isPointerOverMenuBlock = true;
-    this._clearDelay();
+    this.#isPointerOverMenuBlock = true;
+    this.#clearDelay();
   }
 
-  _onMenuBlockPointerLeave() {
-    if (this._isClosing()) {
+  #onMenuBlockPointerLeave() {
+    if (this.#isClosing()) {
       return;
     }
 
-    this._isPointerOverMenuBlock = false;
-    this._clearDelay();
+    this.#isPointerOverMenuBlock = false;
+    this.#clearDelay();
     this.focus();
   }
 
-  _onPointerMove(event) {
-    this._delayPoints.push({
+  #onPointerMove(event) {
+    this.#delayPoints.push({
       x: event.clientX,
       y: event.clientY
     });
 
-    if (this._delayPoints.length > 3) {
-      this._delayPoints.shift();
+    if (this.#delayPoints.length > 3) {
+      this.#delayPoints.shift();
     }
   }
 
-  _onWheel(event) {
+  #onWheel(event) {
     if (event.target.closest("x-menu") === this) {
-      // @bugfix: Can't rely on the default wheel event behavior as it messes up the _onScroll handler on Windows.
+      // @bugfix: Can't rely on the default wheel event behavior as it messes up the #onScroll handler on Windows.
       // For details check https://github.com/jarek-foksa/xel/issues/75
       {
         event.preventDefault();
         this.scrollTop = this.scrollTop + event.deltaY;
       }
 
-      this._isPointerOverMenuBlock = true;
+      this.#isPointerOverMenuBlock = true;
     }
     else {
-      this._isPointerOverMenuBlock = false;
+      this.#isPointerOverMenuBlock = false;
     }
   }
 
-  _onScroll() {
-    if (this._expandWhenScrolled) {
-      let delta = this.scrollTop - this._lastScrollTop;
-      this._lastScrollTop = this.scrollTop;
+  #onScroll() {
+    if (this.#expandWhenScrolled) {
+      let delta = this.scrollTop - this.#lastScrollTop;
+      this.#lastScrollTop = this.scrollTop;
 
-      if (getTimeStamp() - this._openedTimestamp > 100) {
+      if (getTimeStamp() - this.#openedTimestamp > 100) {
         let menuRect = this.getBoundingClientRect();
 
         if (delta < 0) {
@@ -1039,14 +1039,14 @@ export default class XMenuElement extends HTMLElement {
         }
         else if (delta > 0) {
           if (menuRect.top - delta >= WINDOW_PADDING) {
-            this.style.top = (this._extraTop + menuRect.top - delta) + "px";
+            this.style.top = (this.#extraTop + menuRect.top - delta) + "px";
             this.style.height = (menuRect.height + delta) + "px";
 
             this.scrollTop = 0;
-            this._lastScrollTop = 0;
+            this.#lastScrollTop = 0;
           }
           else {
-            this.style.top = (WINDOW_PADDING + this._extraTop) + "px";
+            this.style.top = (WINDOW_PADDING + this.#extraTop) + "px";
             this.style.height = (window.innerHeight - (WINDOW_PADDING*2)) + "px";
           }
         }
@@ -1054,8 +1054,8 @@ export default class XMenuElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
-    if (this._isClosing()) {
+  #onKeyDown(event) {
+    if (this.#isClosing()) {
       event.preventDefault();
       event.stopPropagation();
     }

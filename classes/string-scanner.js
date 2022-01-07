@@ -5,15 +5,15 @@
 //   MIT License (check LICENSE.md for details)
 
 export default class StringScanner {
+  text = "";
+  cursor = 0;
+  line = 1;
+  column = 1;
+  #storedPosition = {cursor: 0, line: 1, column: 1};
+
   // @type (string) => void
   constructor(text) {
     this.text = text;
-
-    this.cursor = 0;
-    this.line = 1;
-    this.column = 1;
-
-    this._storedPosition = {cursor: 0, line: 1, column: 1};
   }
 
   // @type (number) => string?
@@ -95,12 +95,12 @@ export default class StringScanner {
   // @type () => void
   storePosition() {
     let {cursor, line, column} = this;
-    this._storedPosition = {cursor, line, column};
+    this.#storedPosition = {cursor, line, column};
   }
 
   // @type () => void
   restorePosition() {
-    let {cursor, line, column} = this._storedPosition;
+    let {cursor, line, column} = this.#storedPosition;
 
     this.cursor = cursor;
     this.line = line;

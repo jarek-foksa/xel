@@ -9,14 +9,14 @@ import Xel from "../classes/xel.js";
 import {html, css} from "../utils/template.js";
 
 export default class PTCodeElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <link id="prism-theme" rel="stylesheet">
       <code id="code" class="language-html"></code>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       width: 100%;
@@ -54,64 +54,64 @@ export default class PTCodeElement extends HTMLElement {
   // @type string
   // @default ""
   get value() {
-    return this._value;
+    return this.#value;
   }
   set value(value) {
-    this._value = value;
+    this.#value = value;
   }
 
-  _value = "";
-  _shadowRoot = null;
-  _elements = {};
-  _themeChangeListener = null;
-  _observer = new MutationObserver(() => this._updateCode());
-  _prismStyleSheet = new CSSStyleSheet();
+  #value = "";
+  #shadowRoot = null;
+  #elements = {};
+  #themeChangeListener = null;
+  #observer = new MutationObserver(() => this.#updateCode());
+  #prismStyleSheet = new CSSStyleSheet();
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [PTCodeElement._shadowStyleSheet, this._prismStyleSheet];
-    this._shadowRoot.append(document.importNode(PTCodeElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [PTCodeElement.#shadowStyleSheet, this.#prismStyleSheet];
+    this.#shadowRoot.append(document.importNode(PTCodeElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
   }
 
   connectedCallback() {
-    Xel.addEventListener("themechange", this._themeChangeListener = () => {
-      this._updateTheme();
+    Xel.addEventListener("themechange", this.#themeChangeListener = () => {
+      this.#updateTheme();
     });
 
-    this._elements["code"].setAttribute("class", "language-" + (this.getAttribute("lang") || "html"));
-    this._observer.observe(this, {childList: true, attributes: false, characterData: true, subtree: true});
+    this.#elements["code"].setAttribute("class", "language-" + (this.getAttribute("lang") || "html"));
+    this.#observer.observe(this, {childList: true, attributes: false, characterData: true, subtree: true});
 
-    this._updateTheme();
-    this._updateCode();
+    this.#updateTheme();
+    this.#updateCode();
   }
 
   disconnectedCallback() {
-    this._observer.disconnect();
-    Xel.removeEventListener("themechange", this._themeChangeListener);
+    this.#observer.disconnect();
+    Xel.removeEventListener("themechange", this.#themeChangeListener);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateCode() {
-    this._elements["code"].textContent = this.textContent;
+  #updateCode() {
+    this.#elements["code"].textContent = this.textContent;
 
-    if (this._elements["code"].textContent !== "") {
-      Prism.highlightElement(this._elements["code"], true);
+    if (this.#elements["code"].textContent !== "") {
+      Prism.highlightElement(this.#elements["code"], true);
     }
   }
 
-  async _updateTheme() {
+  async #updateTheme() {
     let prismTheme = Xel.theme.includes("dark") ? "prism-dark" : "prism-coy";
     let cssText = await (await fetch(`/node_modules/prismjs/themes/${prismTheme}.css`)).text();
-    this._prismStyleSheet.replaceSync(cssText);
+    this.#prismStyleSheet.replaceSync(cssText);
   }
 }
 

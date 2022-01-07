@@ -5,18 +5,18 @@
 //   MIT License (check LICENSE.md for details)
 
 export default class EventEmitter {
-  _events = {};
+  #events = {};
 
   // @type (string, Function) => void
   addEventListener(eventName, listener) {
-    if (!this._events) {
-      this._events = {};
+    if (!this.#events) {
+      this.#events = {};
     }
 
-    let listeners = this._events[eventName];
+    let listeners = this.#events[eventName];
 
     if (!listeners) {
-      this._events[eventName] = listeners = [];
+      this.#events[eventName] = listeners = [];
     }
 
     listeners.push(listener);
@@ -29,28 +29,28 @@ export default class EventEmitter {
 
   // @type (string, Function) => void
   removeEventListener(eventName, listener) {
-    if (!this._events || !this._events[eventName]) {
+    if (!this.#events || !this.#events[eventName]) {
       return;
     }
 
     var temp = [];
 
-    for (var i = 0; i < this._events[eventName].length; i += 1) {
-      if (this._events[eventName][i] !== listener) {
-        temp.push(this._events[eventName][i]);
+    for (var i = 0; i < this.#events[eventName].length; i += 1) {
+      if (this.#events[eventName][i] !== listener) {
+        temp.push(this.#events[eventName][i]);
       }
     }
 
-    this._events[eventName] = temp;
+    this.#events[eventName] = temp;
   }
 
   // @type (CustomEvent) => void
   dispatchEvent(event) {
-    if (!this._events) {
+    if (!this.#events) {
       return;
     }
 
-    let listeners = this._events[event.type];
+    let listeners = this.#events[event.type];
 
     if (!listeners) {
       return;

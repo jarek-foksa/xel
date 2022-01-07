@@ -11,13 +11,13 @@ let {isArray} = Array;
 // @element x-buttons
 // @event ^toggle - User toggled a button on or off.
 export default class XButtonsElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       flex-flow: row;
@@ -70,11 +70,11 @@ export default class XButtonsElement extends HTMLElement {
   // Get/set the buttons that should have toggled state.
   get value() {
     if (this.tracking === 2 || this.tracking === 3) {
-      let buttons = this._getButtons().filter(button => button.toggled);
+      let buttons = this.#getButtons().filter(button => button.toggled);
       return buttons.map(button => button.value).filter(value => value != undefined);
     }
     else if (this.tracking === 1 || this.tracking === 0) {
-      let button = this._getButtons().find(button => button.toggled);
+      let button = this.#getButtons().find(button => button.toggled);
       return button && button.value !== undefined ? button.value : null;
     }
     else if (this.tracking === -1) {
@@ -83,7 +83,7 @@ export default class XButtonsElement extends HTMLElement {
   }
   set value(value) {
     if (this.tracking === 2 || this.tracking === 3) {
-      let buttons = this._getButtons();
+      let buttons = this.#getButtons();
 
       if (isArray(value)) {
         for (let button of buttons) {
@@ -97,7 +97,7 @@ export default class XButtonsElement extends HTMLElement {
       }
     }
     else if (this.tracking === 1 || this.tracking === 0) {
-      let buttons = this._getButtons();
+      let buttons = this.#getButtons();
       let matchedButton = buttons.find(button => button.value === value);
 
       for (let button of buttons) {
@@ -106,19 +106,19 @@ export default class XButtonsElement extends HTMLElement {
     }
   }
 
-  _shadowRoot = null;
+  #shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XButtonsElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XButtonsElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XButtonsElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XButtonsElement.#shadowTemplate.content, true));
 
-    this.addEventListener("click", (event) => this._onClick(event), true);
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event), true);
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
   connectedCallback() {
@@ -140,13 +140,13 @@ export default class XButtonsElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _getButtons() {
+  #getButtons() {
     return [...this.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onClick(event) {
+  #onClick(event) {
     if (event.button !== 0) {
       return;
     }
@@ -155,7 +155,7 @@ export default class XButtonsElement extends HTMLElement {
     let canToggle = (clickedButton && clickedButton.disabled === false && clickedButton.expandable === false);
 
     if (canToggle) {
-      let otherButtons = this._getButtons().filter(button => button !== clickedButton);
+      let otherButtons = this.#getButtons().filter(button => button !== clickedButton);
 
       if (this.tracking === 0) {
         if (clickedButton.mixed) {
@@ -213,7 +213,7 @@ export default class XButtonsElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     let {key} = event;
 
     if (key === "ArrowRight") {

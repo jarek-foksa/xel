@@ -19,7 +19,7 @@ let {max} = Math;
 export default class XDocTabElement extends HTMLElement {
   static observedAttributes = ["selected", "disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <div id="ripples"></div>
       <div id="selection-indicator" part="selection-indicator"></div>
@@ -32,7 +32,7 @@ export default class XDocTabElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       align-items: center;
@@ -225,38 +225,38 @@ export default class XDocTabElement extends HTMLElement {
     return this.closest("x-doctabs");
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XDocTabElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XDocTabElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XDocTabElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XDocTabElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("pointerdown", (e) => this._onPointerDown(e));
-    this.addEventListener("click", (e) => this._onClick(e));
-    this._elements["close-button"].addEventListener("pointerdown", (e) => this._onCloseButtonPointerDown(e));
-    this._elements["close-button"].addEventListener("click", (e) => this._onCloseButtonClick(e));
+    this.addEventListener("pointerdown", (e) => this.#onPointerDown(e));
+    this.addEventListener("click", (e) => this.#onClick(e));
+    this.#elements["close-button"].addEventListener("pointerdown", (e) => this.#onCloseButtonPointerDown(e));
+    this.#elements["close-button"].addEventListener("click", (e) => this.#onCloseButtonClick(e));
   }
 
   connectedCallback() {
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -264,13 +264,13 @@ export default class XDocTabElement extends HTMLElement {
       return;
     }
     else if (name === "selected") {
-      this._updateAccessabilityAttributes();
+      this.#updateAccessabilityAttributes();
     }
     else if (name === "disabled") {
-      this._updateAccessabilityAttributes();
+      this.#updateAccessabilityAttributes();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -278,13 +278,13 @@ export default class XDocTabElement extends HTMLElement {
 
   animateSelectionIndicator(toTab) {
     return new Promise(async (resolve) => {
-      if (this._elements["selection-indicator"].style.height !== "0px") {
+      if (this.#elements["selection-indicator"].style.height !== "0px") {
         let fromBBox = this.getBoundingClientRect();
         let toBBox = toTab.getBoundingClientRect();
 
         this.setAttribute("animatingindicator", "");
 
-        let animation = this._elements["selection-indicator"].animate(
+        let animation = this.#elements["selection-indicator"].animate(
           [
             {
               left: 0 + "px",
@@ -313,14 +313,14 @@ export default class XDocTabElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("tabindex", this.selected ? "0" : "-1");
     this.setAttribute("role", "tab");
     this.setAttribute("aria-selected", this.selected);
     this.setAttribute("aria-disabled", this.disabled);
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -348,7 +348,7 @@ export default class XDocTabElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onPointerDown(pointerDownEvent) {
+  #onPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1) {
       pointerDownEvent.preventDefault();
       return;
@@ -391,7 +391,7 @@ export default class XDocTabElement extends HTMLElement {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let rect = this._elements["ripples"].getBoundingClientRect();
+        let rect = this.#elements["ripples"].getBoundingClientRect();
         let size = max(rect.width, rect.height) * 1.5;
         let top  = pointerDownEvent.clientY - rect.y - size/2;
         let left = pointerDownEvent.clientX - rect.x - size/2;
@@ -399,7 +399,7 @@ export default class XDocTabElement extends HTMLElement {
         let ripple = createElement("div");
         ripple.setAttribute("class", "ripple pointer-down-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this._elements["ripples"].append(ripple);
+        this.#elements["ripples"].append(ripple);
 
         let inAnimation = ripple.animate(
           { transform: ["scale(0)", "scale(1)"] },
@@ -429,17 +429,17 @@ export default class XDocTabElement extends HTMLElement {
     }
   }
 
-  async _onClick(event) {
+  async #onClick(event) {
     if (event.button !== 0) {
       return;
     }
 
     // Ripple
-    if (this._elements["ripples"].querySelector(".pointer-down-ripple") === null) {
+    if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let rect = this._elements["ripples"].getBoundingClientRect();
+        let rect = this.#elements["ripples"].getBoundingClientRect();
         let size = max(rect.width, rect.height) * 1.5;
         let top  = (rect.y + rect.height/2) - rect.y - size/2;
         let left = (rect.x + rect.width/2) - rect.x - size/2;
@@ -447,7 +447,7 @@ export default class XDocTabElement extends HTMLElement {
         let ripple = createElement("div");
         ripple.setAttribute("class", "ripple click-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this._elements["ripples"].append(ripple);
+        this.#elements["ripples"].append(ripple);
 
         let inAnimation = ripple.animate(
           { transform: ["scale(0)", "scale(1)"]},
@@ -470,7 +470,7 @@ export default class XDocTabElement extends HTMLElement {
     }
   }
 
-  _onCloseButtonPointerDown(event) {
+  #onCloseButtonPointerDown(event) {
     if (event.buttons !== 1) {
       return;
     }
@@ -489,7 +489,7 @@ export default class XDocTabElement extends HTMLElement {
     event.stopPropagation();
   }
 
-  _onCloseButtonClick(event) {
+  #onCloseButtonClick(event) {
     if (event.button !== 0) {
       return;
     }

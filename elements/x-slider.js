@@ -29,7 +29,7 @@ let getClosestMultiple = (number, step) => round(round(number / step) * step, ge
 export default class XSliderElement extends HTMLElement {
   static observedAttributes = ["value", "buffer", "min", "max", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main id="main">
         <div id="tracks-and-thumbs">
@@ -51,7 +51,7 @@ export default class XSliderElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       width: 100%;
@@ -394,39 +394,39 @@ export default class XSliderElement extends HTMLElement {
     return this.getAttribute("dragging");
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _lastTabIndex = 0;
+  #shadowRoot = null;
+  #elements = {};
+  #lastTabIndex = 0;
 
-  _xelSizeChangeListener = null;
-  _mutationObserver = new MutationObserver((args) => this._onMutation(args));
-  _thumbResizeObserver = new ResizeObserver(() => this._onThumbResize());
+  #xelSizeChangeListener = null;
+  #mutationObserver = new MutationObserver((args) => this.#onMutation(args));
+  #thumbResizeObserver = new ResizeObserver(() => this.#onThumbResize());
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
-    this._shadowRoot.adoptedStyleSheets = [XSliderElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XSliderElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
+    this.#shadowRoot.adoptedStyleSheets = [XSliderElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XSliderElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onShadowRootPointerDown(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
   connectedCallback() {
     this.setAttribute("value", this.value);
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
-    this._thumbResizeObserver.observe(this._elements["start-thumb"]);
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
+    this.#thumbResizeObserver.observe(this.#elements["start-thumb"]);
 
-    this._mutationObserver.observe(this, {
+    this.#mutationObserver.observe(this, {
       childList: true,
       subtree: true,
       attributes: true,
@@ -434,17 +434,17 @@ export default class XSliderElement extends HTMLElement {
       characterData: false
     });
 
-    this._updateTracks();
-    this._updateThumbs();
-    this._updateLabelsAndTicks();
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updateTracks();
+    this.#updateThumbs();
+    this.#updateLabelsAndTicks();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
-    this._thumbResizeObserver.unobserve(this._elements["start-thumb"]);
-    this._mutationObserver.disconnect();
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
+    this.#thumbResizeObserver.unobserve(this.#elements["start-thumb"]);
+    this.#mutationObserver.disconnect();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -452,67 +452,67 @@ export default class XSliderElement extends HTMLElement {
       return;
     }
     else if (name === "value") {
-      this._onValueAttributeChange();
+      this.#onValueAttributeChange();
     }
     else if (name === "buffer") {
-      this._onBufferAttributeChange();
+      this.#onBufferAttributeChange();
     }
     else if (name === "min") {
-      this._onMinAttributeChange();
+      this.#onMinAttributeChange();
     }
     else if (name === "max") {
-      this._onMaxAttributeChange();
+      this.#onMaxAttributeChange();
     }
     else if (name === "size") {
-      this._onSizeAttributeChange();
+      this.#onSizeAttributeChange();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onValueAttributeChange() {
-    this._updateTracks();
-    this._updateThumbs();
+  #onValueAttributeChange() {
+    this.#updateTracks();
+    this.#updateThumbs();
   }
 
-  _onBufferAttributeChange() {
-    this._updateTracks();
+  #onBufferAttributeChange() {
+    this.#updateTracks();
   }
 
-  _onMinAttributeChange() {
-    this._updateTracks();
-    this._updateThumbs();
-    this._updateLabelsAndTicks();
+  #onMinAttributeChange() {
+    this.#updateTracks();
+    this.#updateThumbs();
+    this.#updateLabelsAndTicks();
   }
 
-  _onMaxAttributeChange() {
-    this._updateTracks();
-    this._updateThumbs();
-    this._updateLabelsAndTicks();
+  #onMaxAttributeChange() {
+    this.#updateTracks();
+    this.#updateThumbs();
+    this.#updateLabelsAndTicks();
   }
 
-  _onSizeAttributeChange() {
-    this._updateComputedSizeAttriubte();
+  #onSizeAttributeChange() {
+    this.#updateComputedSizeAttriubte();
   }
 
-  _onMutation(records) {
+  #onMutation(records) {
     for (let record of records) {
       if (record.type === "attributes" && record.target === this) {
         return;
       }
       else {
-        this._updateLabelsTicksThrottled();
+        this.#updateLabelsTicksThrottled();
       }
     }
   }
 
-  _onThumbResize() {
-    let thumbRect = this._elements["start-thumb"].getBoundingClientRect();
-    this._elements["main"].style.setProperty("--computed-thumb-width", thumbRect.width + "px");
-    this._elements["main"].style.setProperty("--computed-thumb-height", thumbRect.height + "px");
+  #onThumbResize() {
+    let thumbRect = this.#elements["start-thumb"].getBoundingClientRect();
+    this.#elements["main"].style.setProperty("--computed-thumb-width", thumbRect.width + "px");
+    this.#elements["main"].style.setProperty("--computed-thumb-height", thumbRect.height + "px");
   }
 
-  _onPointerDown(event) {
+  #onPointerDown(event) {
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
     if (this.matches(":focus") === false) {
       event.preventDefault();
@@ -525,14 +525,14 @@ export default class XSliderElement extends HTMLElement {
     }
   }
 
-  _onShadowRootPointerDown(pointerDownEvent) {
+  #onShadowRootPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1 || pointerDownEvent.isPrimary === false) {
       return;
     }
 
     let draggedThumb = null;
-    let {width: thumbWidth, height: thumbHeight} = this._elements["start-thumb"].getBoundingClientRect();
-    let containerBounds = this._elements["main"].getBoundingClientRect();
+    let {width: thumbWidth, height: thumbHeight} = this.#elements["start-thumb"].getBoundingClientRect();
+    let containerBounds = this.#elements["main"].getBoundingClientRect();
     let pointerMoveListener, lostPointerCaptureListener;
     let changeStarted = false;
 
@@ -542,12 +542,12 @@ export default class XSliderElement extends HTMLElement {
         draggedThumb = pointerDownEvent.target;
       }
       else {
-        if (this._elements["end-thumb"].hidden === true) {
-          draggedThumb = this._elements["start-thumb"];
+        if (this.#elements["end-thumb"].hidden === true) {
+          draggedThumb = this.#elements["start-thumb"];
         }
         else {
-          let startBounds = this._elements["start-thumb"].getBoundingClientRect();
-          let endBounds = this._elements["end-thumb"].getBoundingClientRect();
+          let startBounds = this.#elements["start-thumb"].getBoundingClientRect();
+          let endBounds = this.#elements["end-thumb"].getBoundingClientRect();
 
           let startPoint = new DOMPoint(startBounds.x + startBounds.width / 2, startBounds.y + startBounds.height / 2);
           let endPoint = new DOMPoint(endBounds.x + endBounds.width / 2, endBounds.y + endBounds.height / 2);
@@ -557,10 +557,10 @@ export default class XSliderElement extends HTMLElement {
           let endDistance = getDistanceBetweenPoints(pointerPoint, endPoint);
 
           if (startDistance <= endDistance) {
-            draggedThumb = this._elements["start-thumb"];
+            draggedThumb = this.#elements["start-thumb"];
           }
           else {
-            draggedThumb = this._elements["end-thumb"];
+            draggedThumb = this.#elements["end-thumb"];
           }
         }
       }
@@ -587,7 +587,7 @@ export default class XSliderElement extends HTMLElement {
       if (Array.isArray(this.value)) {
         let [startValue, endValue] = this.value;
 
-        if (draggedThumb === this._elements["start-thumb"]) {
+        if (draggedThumb === this.#elements["start-thumb"]) {
           if (value >= endValue) {
             value = endValue;
           }
@@ -603,7 +603,7 @@ export default class XSliderElement extends HTMLElement {
             this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
           }
         }
-        else if (draggedThumb === this._elements["end-thumb"]) {
+        else if (draggedThumb === this.#elements["end-thumb"]) {
           if (value <= startValue) {
             value = startValue;
           }
@@ -639,7 +639,7 @@ export default class XSliderElement extends HTMLElement {
 
     updateValue(pointerDownEvent.clientX, pointerDownEvent.clientY);
 
-    for (let thumb of this._elements["thumbs"].children) {
+    for (let thumb of this.#elements["thumbs"].children) {
       thumb.style.zIndex = (thumb === draggedThumb) ? "1" : "0";
     }
 
@@ -660,7 +660,7 @@ export default class XSliderElement extends HTMLElement {
     });
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.code === "ArrowLeft" || event.code === "ArrowDown") {
       event.preventDefault();
       this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
@@ -670,7 +670,7 @@ export default class XSliderElement extends HTMLElement {
       if (Array.isArray(this.value)) {
         let [startValue, endValue] = this.value;
 
-        if (this._shadowRoot.activeElement === this._elements["start-thumb"]) {
+        if (this.#shadowRoot.activeElement === this.#elements["start-thumb"]) {
           if (event.shiftKey) {
             startValue -= this.step * 10;
           }
@@ -678,7 +678,7 @@ export default class XSliderElement extends HTMLElement {
             startValue -= this.step;
           }
         }
-        else if (this._shadowRoot.activeElement === this._elements["end-thumb"]) {
+        else if (this.#shadowRoot.activeElement === this.#elements["end-thumb"]) {
           if (event.shiftKey) {
             endValue -= this.step * 10;
           }
@@ -722,7 +722,7 @@ export default class XSliderElement extends HTMLElement {
       if (Array.isArray(this.value)) {
         let [startValue, endValue] = this.value;
 
-        if (this._shadowRoot.activeElement === this._elements["start-thumb"]) {
+        if (this.#shadowRoot.activeElement === this.#elements["start-thumb"]) {
           if (event.shiftKey) {
             startValue += this.step * 10;
           }
@@ -734,7 +734,7 @@ export default class XSliderElement extends HTMLElement {
             startValue = endValue;
           }
         }
-        else if (this._shadowRoot.activeElement === this._elements["end-thumb"]) {
+        else if (this.#shadowRoot.activeElement === this.#elements["end-thumb"]) {
           if (event.shiftKey) {
             endValue += this.step * 10;
           }
@@ -768,7 +768,7 @@ export default class XSliderElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateThumbs() {
+  #updateThumbs() {
     if (Array.isArray(this.value)) {
       let [startValue, endValue] = this.value;
 
@@ -776,12 +776,12 @@ export default class XSliderElement extends HTMLElement {
         let offset = (((startValue - this.min) / (this.max - this.min)) * 100);
 
         if (this.vertical) {
-          this._elements["start-thumb"].style.top = (100 - offset) + "%"
-          this._elements["start-thumb"].hidden = false;
+          this.#elements["start-thumb"].style.top = (100 - offset) + "%"
+          this.#elements["start-thumb"].hidden = false;
         }
         else {
-          this._elements["start-thumb"].style.left = offset + "%";
-          this._elements["start-thumb"].hidden = false;
+          this.#elements["start-thumb"].style.left = offset + "%";
+          this.#elements["start-thumb"].hidden = false;
         }
       }
 
@@ -789,12 +789,12 @@ export default class XSliderElement extends HTMLElement {
         let offset = (((endValue - this.min) / (this.max - this.min)) * 100);
 
         if (this.vertical) {
-          this._elements["end-thumb"].style.top = (100 - offset) + "%";
-          this._elements["end-thumb"].hidden = false;
+          this.#elements["end-thumb"].style.top = (100 - offset) + "%";
+          this.#elements["end-thumb"].hidden = false;
         }
         else {
-          this._elements["end-thumb"].style.left = offset + "%";
-          this._elements["end-thumb"].hidden = false;
+          this.#elements["end-thumb"].style.left = offset + "%";
+          this.#elements["end-thumb"].hidden = false;
         }
       }
     }
@@ -802,19 +802,19 @@ export default class XSliderElement extends HTMLElement {
       let offset = (((this.value - this.min) / (this.max - this.min)) * 100);
 
       if (this.vertical) {
-        this._elements["start-thumb"].style.top = (100 - offset) + "%"
-        this._elements["start-thumb"].hidden = false;
-        this._elements["end-thumb"].hidden = true;
+        this.#elements["start-thumb"].style.top = (100 - offset) + "%"
+        this.#elements["start-thumb"].hidden = false;
+        this.#elements["end-thumb"].hidden = true;
       }
       else {
-        this._elements["start-thumb"].style.left = offset + "%";
-        this._elements["start-thumb"].hidden = false;
-        this._elements["end-thumb"].hidden = true;
+        this.#elements["start-thumb"].style.left = offset + "%";
+        this.#elements["start-thumb"].hidden = false;
+        this.#elements["end-thumb"].hidden = true;
       }
     }
   }
 
-  _updateTracks() {
+  #updateTracks() {
     // Range track
     if (Array.isArray(this.value)) {
       let [startValue, endValue] = this.value;
@@ -822,12 +822,12 @@ export default class XSliderElement extends HTMLElement {
       let endOffset = (((endValue - this.min) / (this.max - this.min)) * 100);
 
       if (this.vertical) {
-        this._elements["range-track"].style.bottom = `${startOffset}%`;
-        this._elements["range-track"].style.height = (endOffset - startOffset) + "%";
+        this.#elements["range-track"].style.bottom = `${startOffset}%`;
+        this.#elements["range-track"].style.height = (endOffset - startOffset) + "%";
       }
       else {
-        this._elements["range-track"].style.left = `${startOffset}%`;
-        this._elements["range-track"].style.width = (endOffset - startOffset) + "%";
+        this.#elements["range-track"].style.left = `${startOffset}%`;
+        this.#elements["range-track"].style.width = (endOffset - startOffset) + "%";
       }
     }
     else {
@@ -836,22 +836,22 @@ export default class XSliderElement extends HTMLElement {
 
       if (this.vertical) {
         if (offset >= originOffset) {
-          this._elements["range-track"].style.bottom = `${originOffset}%`;
-          this._elements["range-track"].style.height = (offset - originOffset) + "%";
+          this.#elements["range-track"].style.bottom = `${originOffset}%`;
+          this.#elements["range-track"].style.height = (offset - originOffset) + "%";
         }
         else {
-          this._elements["range-track"].style.bottom = `${offset}%`;
-          this._elements["range-track"].style.height = `${originOffset - offset}%`;
+          this.#elements["range-track"].style.bottom = `${offset}%`;
+          this.#elements["range-track"].style.height = `${originOffset - offset}%`;
         }
       }
       else {
         if (offset >= originOffset) {
-          this._elements["range-track"].style.left = `${originOffset}%`;
-          this._elements["range-track"].style.width = (offset - originOffset) + "%";
+          this.#elements["range-track"].style.left = `${originOffset}%`;
+          this.#elements["range-track"].style.width = (offset - originOffset) + "%";
         }
         else {
-          this._elements["range-track"].style.left = `${offset}%`;
-          this._elements["range-track"].style.width = `${originOffset - offset}%`;
+          this.#elements["range-track"].style.left = `${offset}%`;
+          this.#elements["range-track"].style.width = `${originOffset - offset}%`;
         }
       }
     }
@@ -863,20 +863,20 @@ export default class XSliderElement extends HTMLElement {
       let endOffset = (((endValue - this.min) / (this.max - this.min)) * 100);
 
       if (this.vertical) {
-        this._elements["buffer-track"].style.bottom = startOffset + "%"
-        this._elements["buffer-track"].style.height = (endOffset - startOffset) + "%"
+        this.#elements["buffer-track"].style.bottom = startOffset + "%"
+        this.#elements["buffer-track"].style.height = (endOffset - startOffset) + "%"
       }
       else {
-        this._elements["buffer-track"].style.left = startOffset + "%";
-        this._elements["buffer-track"].style.width = (endOffset - startOffset) + "%"
+        this.#elements["buffer-track"].style.left = startOffset + "%";
+        this.#elements["buffer-track"].style.width = (endOffset - startOffset) + "%"
       }
     }
   }
 
-  async _updateLabelsAndTicks() {
+  async #updateLabelsAndTicks() {
     await customElements.whenDefined("x-label");
 
-    this._elements["ticks"].innerHTML = "";
+    this.#elements["ticks"].innerHTML = "";
 
     for (let label of this.querySelectorAll(":scope > x-label")) {
       if (this.vertical) {
@@ -894,37 +894,37 @@ export default class XSliderElement extends HTMLElement {
       }
 
       if (this.vertical) {
-        this._elements["ticks"].insertAdjacentHTML(
+        this.#elements["ticks"].insertAdjacentHTML(
           "beforeend", `<div class="tick" part="tick" style="top: ${label.style.top}"></div>`
         );
       }
       else {
-        this._elements["ticks"].insertAdjacentHTML(
+        this.#elements["ticks"].insertAdjacentHTML(
           "beforeend", `<div class="tick" part="tick" style="left: ${label.style.left}"></div>`
         );
       }
     }
   }
 
-  _updateLabelsTicksThrottled = throttle(this._updateLabelsAndTicks, 500, this);
+  #updateLabelsTicksThrottled = throttle(this.#updateLabelsAndTicks, 500, this);
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+        this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
       }
 
-      this._lastTabIndex = 0;
+      this.#lastTabIndex = 0;
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";

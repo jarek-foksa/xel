@@ -15,7 +15,7 @@ import {html, css} from "../utils/template.js";
 export default class XAccordionElement extends HTMLElement {
   static observedAttributes = ["expanded", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main id="main">
         <div id="arrow-container">
@@ -29,7 +29,7 @@ export default class XAccordionElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       width: 100%;
@@ -122,41 +122,41 @@ export default class XAccordionElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _elements = {};
-  _shadowRoot = null;
-  _resizeObserver = null;
-  _xelSizeChangeListener = null;
-  _currentAnimation = null;
+  #elements = {};
+  #shadowRoot = null;
+  #resizeObserver = null;
+  #xelSizeChangeListener = null;
+  #currentAnimation = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XAccordionElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XAccordionElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XAccordionElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XAccordionElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this._resizeObserver = new ResizeObserver(() => this._updateArrowPosition());
+    this.#resizeObserver = new ResizeObserver(() => this.#updateArrowPosition());
 
-    this.addEventListener("click", (event) => this._onClick(event));
-    this._elements["arrow"].addEventListener("keydown", (event) => this._onArrowKeyDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
+    this.#elements["arrow"].addEventListener("keydown", (event) => this.#onArrowKeyDown(event));
   }
 
   connectedCallback() {
-    this._updateComputedSizeAttriubte();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
-    this._resizeObserver.observe(this);
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
+    this.#resizeObserver.observe(this);
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
-    this._resizeObserver.unobserve(this);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
+    this.#resizeObserver.unobserve(this);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -164,10 +164,10 @@ export default class XAccordionElement extends HTMLElement {
       return;
     }
     else if (name === "expanded") {
-      this._updateArrowPosition();
+      this.#updateArrowPosition();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -182,8 +182,8 @@ export default class XAccordionElement extends HTMLElement {
       if (this.expanded === false) {
         let startBBox = this.getBoundingClientRect();
 
-        if (this._currentAnimation) {
-          this._currentAnimation.finish();
+        if (this.#currentAnimation) {
+          this.#currentAnimation.finish();
         }
 
         this.expanded = true;
@@ -201,10 +201,10 @@ export default class XAccordionElement extends HTMLElement {
           }
         );
 
-        this._currentAnimation = animation;
+        this.#currentAnimation = animation;
         await animation.finished;
 
-        if (this._currentAnimation === animation) {
+        if (this.#currentAnimation === animation) {
           this.removeAttribute("animating");
         }
       }
@@ -222,8 +222,8 @@ export default class XAccordionElement extends HTMLElement {
       if (this.expanded === true) {
         let startBBox = this.getBoundingClientRect();
 
-        if (this._currentAnimation) {
-          this._currentAnimation.finish();
+        if (this.#currentAnimation) {
+          this.#currentAnimation.finish();
         }
 
         this.expanded = false;
@@ -241,10 +241,10 @@ export default class XAccordionElement extends HTMLElement {
           }
         );
 
-        this._currentAnimation = animation;
+        this.#currentAnimation = animation;
         await animation.finished;
 
-        if (this._currentAnimation === animation) {
+        if (this.#currentAnimation === animation) {
           this.removeAttribute("animating");
         }
       }
@@ -255,18 +255,18 @@ export default class XAccordionElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateArrowPosition() {
+  #updateArrowPosition() {
     let header = this.querySelector(":scope > header");
 
     if (header) {
-      this._elements["arrow-container"].style.height = header.getBoundingClientRect().height + "px";
+      this.#elements["arrow-container"].style.height = header.getBoundingClientRect().height + "px";
     }
     else {
-      this._elements["arrow-container"].style.height = null;
+      this.#elements["arrow-container"].style.height = null;
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -294,13 +294,13 @@ export default class XAccordionElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onArrowKeyDown(event) {
+  #onArrowKeyDown(event) {
     if (event.key === "Enter") {
       this.querySelector("header").click();
     }
   }
 
-  _onClick(event) {
+  #onClick(event) {
     let header = this.querySelector("header");
     let closestFocusableElement = event.target.closest("[tabindex]");
 

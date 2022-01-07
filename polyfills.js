@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2021 Jarosław Foksa
+//   © 2016-2022 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 

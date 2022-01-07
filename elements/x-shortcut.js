@@ -28,13 +28,13 @@ const MOD_KEYS = [
 export default class XShortcutElement extends HTMLElement {
   static observedAttributes = ["value"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main id="main"></main>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: inline-block;
       box-sizing: border-box;
@@ -96,32 +96,32 @@ export default class XShortcutElement extends HTMLElement {
     return key === undefined ? null : key;
   }
 
-  _shadowRoot = null;
-  _elements = {};
+  #shadowRoot = null;
+  #elements = {};
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XShortcutElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XShortcutElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XShortcutElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XShortcutElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
   }
 
   attributeChangedCallback(name) {
     if (name === "value") {
-      this._update();
+      this.#update();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     let displayValue = "";
     let keys = this.value;
     let modKeys = this.modKeys;
@@ -189,7 +189,7 @@ export default class XShortcutElement extends HTMLElement {
       displayValue = parts.join("+");
     }
 
-    this._elements["main"].textContent = displayValue;
+    this.#elements["main"].textContent = displayValue;
   }
 }
 

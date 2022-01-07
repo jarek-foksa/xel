@@ -21,7 +21,7 @@ import {sleep} from "../utils/time.js";
 export default class XStepperElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <div id="decrement-button" part="decrement-button" class="button">
         <svg id="decrement-arrow" part="decrement-arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -37,7 +37,7 @@ export default class XStepperElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       flex-flow: column-reverse;
@@ -134,67 +134,67 @@ export default class XStepperElement extends HTMLElement {
     }
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _parentInput = null;
+  #shadowRoot = null;
+  #elements = {};
+  #parentInput = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XStepperElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XStepperElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XStepperElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XStepperElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onPointerDown(event));
+    this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
   }
 
   connectedCallback() {
     if (this.parentElement.localName === "x-numberinput") {
-      this._parentInput = this.parentElement;
-      this._parentInput.setAttribute("hasstepper", "");
+      this.#parentInput = this.parentElement;
+      this.#parentInput.setAttribute("hasstepper", "");
     }
   }
 
   disconnectedCallback() {
-    if (this._parentInput) {
-      if (this._parentInput.querySelector(":scope > x-stepper") === null) {
-        this._parentInput.removeAttribute("hasstepper", "");
+    if (this.#parentInput) {
+      if (this.#parentInput.querySelector(":scope > x-stepper") === null) {
+        this.#parentInput.removeAttribute("hasstepper", "");
       }
 
-      this._parentInput = null;
+      this.#parentInput = null;
     }
   }
 
   attributeChangedCallback(name) {
     if (name === "disabled") {
-      this._onDisabledAttributeChange();
+      this.#onDisabledAttributeChange();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onDisabledAttributeChange() {
+  #onDisabledAttributeChange() {
     if (this.hasAttribute("disabled")) {
       this.removeAttribute("pressed");
-      this._elements["increment-button"].removeAttribute("data-pressed");
-      this._elements["decrement-button"].removeAttribute("data-pressed");
+      this.#elements["increment-button"].removeAttribute("data-pressed");
+      this.#elements["decrement-button"].removeAttribute("data-pressed");
     }
   }
 
-  _onPointerDown(pointerDownEvent) {
+  #onPointerDown(pointerDownEvent) {
     let button = pointerDownEvent.target.closest(".button");
     let action = null;
 
-    if (button === this._elements["increment-button"]) {
+    if (button === this.#elements["increment-button"]) {
       action = "increment";
     }
-    else if (button === this._elements["decrement-button"]) {
+    else if (button === this.#elements["decrement-button"]) {
       action = "decrement";
     }
 

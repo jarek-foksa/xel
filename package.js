@@ -394,7 +394,7 @@ let minifyScript = (code, verbose = false) => {
     // Minify JS code
     {
       let result = await JSMinifier.minify(code, {
-        ecma: 2020,
+        ecma: 2022,
         module: true,
         compress: {
           keep_infinity: true

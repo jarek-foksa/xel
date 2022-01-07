@@ -14,13 +14,13 @@ import {getTimeStamp} from "../utils/time.js";
 export default class XNotificationElement extends HTMLElement {
   static observedAttributes = ["opened", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: none;
       position: fixed;
@@ -60,7 +60,7 @@ export default class XNotificationElement extends HTMLElement {
   }
   set opened(opened) {
     opened === true ? this.setAttribute("opened", "") : this.removeAttribute("opened");
-    this._time = 0;
+    this.#time = 0;
   }
 
   // @property
@@ -97,31 +97,31 @@ export default class XNotificationElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _time = 0;
-  _intervalID = null;
-  _xelSizeChangeListener = null;
-  _windowPointerDownListener = null;
+  #shadowRoot = null;
+  #time = 0;
+  #intervalID = null;
+  #xelSizeChangeListener = null;
+  #windowPointerDownListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XNotificationElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XNotificationElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XNotificationElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XNotificationElement.#shadowTemplate.content, true));
   }
 
   connectedCallback() {
     this.setAttribute("tabindex", "0");
-    this._updateComputedSizeAttriubte();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -129,16 +129,16 @@ export default class XNotificationElement extends HTMLElement {
       return;
     }
     else if (name === "opened") {
-      this.opened ? this._onOpen() : this._onClose();
+      this.opened ? this.#onOpen() : this.#onClose();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -166,7 +166,7 @@ export default class XNotificationElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onOpen() {
+  #onOpen() {
     // Animate in
     if (this.isConnected) {
       let fromBottom = (0 - this.getBoundingClientRect().height - 10) + "px";
@@ -180,19 +180,19 @@ export default class XNotificationElement extends HTMLElement {
 
     // Automatically close the notification after given timeout
     {
-      this._time = 0;
+      this.#time = 0;
 
-      this._intervalID = setInterval(() => {
-        this._time += 100;
+      this.#intervalID = setInterval(() => {
+        this.#time += 100;
 
-        if (this.timeout > 0 && this._time > this.timeout) {
+        if (this.timeout > 0 && this.#time > this.timeout) {
           this.opened = false;
         }
       }, 100);
 
       let openTimeStamp = getTimeStamp();
 
-      window.addEventListener("pointerdown", this._windowPointerDownListener = (event) => {
+      window.addEventListener("pointerdown", this.#windowPointerDownListener = (event) => {
         let pointerDownTimeStamp = getTimeStamp();
         let bounds = this.getBoundingClientRect();
 
@@ -206,8 +206,8 @@ export default class XNotificationElement extends HTMLElement {
     }
   }
 
-  async _onClose() {
-    clearInterval(this._intervalID);
+  async #onClose() {
+    clearInterval(this.#intervalID);
 
     // Animate out
     if (this.isConnected) {
@@ -224,7 +224,7 @@ export default class XNotificationElement extends HTMLElement {
       this.removeAttribute("animating");
     }
 
-    window.removeEventListener("pointerdown", this._windowPointerDownListener, true);
+    window.removeEventListener("pointerdown", this.#windowPointerDownListener, true);
   }
 }
 

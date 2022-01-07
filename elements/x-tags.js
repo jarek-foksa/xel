@@ -10,13 +10,13 @@ import {html, css} from "../utils/template.js";
 // @element x-tags
 // @event toggle
 export default class XTagsElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       box-sizing: border-box;
@@ -44,25 +44,25 @@ export default class XTagsElement extends HTMLElement {
     }
   }
 
-  _shadowRoot = null;
+  #shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XTagsElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XTagsElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XTagsElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XTagsElement.#shadowTemplate.content, true));
 
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onPointerDown(pointerDownEvent) {
+  #onPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons !== 1) {
       pointerDownEvent.preventDefault();
       return;
@@ -88,7 +88,7 @@ export default class XTagsElement extends HTMLElement {
     }
   }
 
-  _onClick(event) {
+  #onClick(event) {
     let tag = event.target.closest("x-tag");
 
     if (tag && event.defaultPrevented === false) {
@@ -97,7 +97,7 @@ export default class XTagsElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.defaultPrevented === false) {
       if (event.code === "Enter" || event.code === "Space") {
         let focusedTag = this.querySelector("x-tag:focus");

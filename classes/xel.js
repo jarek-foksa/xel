@@ -19,7 +19,7 @@ export default new class Xel extends EventEmitter {
   //
   // URL to a CSS file with Xel theme definition.
   get theme() {
-    return this._theme;
+    return this.#theme;
   }
   set theme(value) {
     let metaElement = document.head.querySelector(`:scope > meta[name="xel-theme"]`);
@@ -37,7 +37,7 @@ export default new class Xel extends EventEmitter {
   //
   // Accent color.
   get accentColor() {
-    return this._accentColor;
+    return this.#accentColor;
   }
   set accentColor(value) {
     let meta = document.head.querySelector(`:scope > meta[name="xel-accent-color"]`);
@@ -55,7 +55,7 @@ export default new class Xel extends EventEmitter {
   //
   // Widgets size.
   get size() {
-    return this._size;
+    return this.#size;
   }
   set size(value) {
     let meta = document.head.querySelector(`:scope > meta[name="xel-size"]`);
@@ -73,7 +73,7 @@ export default new class Xel extends EventEmitter {
   //
   // URL to an SVG file with Xel iconset definition.
   get iconset() {
-    return this._iconset;
+    return this.#iconset;
   }
   set iconset(url) {
     let metaElement = document.head.querySelector(`:scope > meta[name="xel-iconset"]`);
@@ -91,22 +91,22 @@ export default new class Xel extends EventEmitter {
 
   get whenThemeReady() {
     return new Promise((resolve) => {
-      if (this._themeReadyCalbacks === null) {
+      if (this.#themeReadyCalbacks === null) {
         resolve();
       }
       else {
-        this._themeReadyCalbacks.push(resolve);
+        this.#themeReadyCalbacks.push(resolve);
       }
     });
   }
 
   get whenIconsetReady() {
     return new Promise((resolve) => {
-      if (this._iconsetReadyCalbacks === null) {
+      if (this.#iconsetReadyCalbacks === null) {
         resolve();
       }
       else {
-        this._iconsetReadyCalbacks.push(resolve);
+        this.#iconsetReadyCalbacks.push(resolve);
       }
     });
   }
@@ -115,19 +115,19 @@ export default new class Xel extends EventEmitter {
 
   // @type CSSStyleSheet
   get themeStyleSheet() {
-    return this._themeStyleSheet;
+    return this.#themeStyleSheet;
   }
 
   // @type SVGSVGElement
   get iconsetElement() {
-    return this._iconsetElement;
+    return this.#iconsetElement;
   }
 
   // @type Object
   get presetAccentColors() {
     let colors = {};
 
-    for (let rule of this._themeStyleSheet.cssRules) {
+    for (let rule of this.#themeStyleSheet.cssRules) {
       if (rule.type === 1 && rule.selectorText === "body" && rule.styleMap.has("--preset-accent-colors")) {
         let unparsedValue = rule.styleMap.get("--preset-accent-colors");
 
@@ -143,80 +143,80 @@ export default new class Xel extends EventEmitter {
     return colors;
   }
 
-  _theme = null;
-  _accentColor = null;
-  _size = null;
-  _iconset = null;
+  #theme = null;
+  #accentColor = null;
+  #size = null;
+  #iconset = null;
 
-  _themeStyleSheet = new CSSStyleSheet();
-  _iconsetElement = null;
+  #themeStyleSheet = new CSSStyleSheet();
+  #iconsetElement = null;
 
-  _themeReadyCalbacks = [];
-  _iconsetReadyCalbacks = [];
+  #themeReadyCalbacks = [];
+  #iconsetReadyCalbacks = [];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    document.adoptedStyleSheets = [this._themeStyleSheet];
+    document.adoptedStyleSheets = [this.#themeStyleSheet];
 
-    let {theme, accentColor, size, iconset} = this._getSettings();
+    let {theme, accentColor, size, iconset} = this.#getSettings();
 
-    this._theme = theme;
-    this._accentColor = accentColor;
-    this._size = size;
-    this._iconset = iconset;
+    this.#theme = theme;
+    this.#accentColor = accentColor;
+    this.#size = size;
+    this.#iconset = iconset;
 
     // Load theme
-    if (this._theme !== null) {
-      this._loadTheme(this._theme);
+    if (this.#theme !== null) {
+      this.#loadTheme(this.#theme);
     }
 
     // Load iconset
-    if (this._iconset !== null) {
-      this._loadIconset(this._iconset);
+    if (this.#iconset !== null) {
+      this.#loadIconset(this.#iconset);
     }
 
     // Observe <head> for changes
     {
-      let observer = new MutationObserver((mutations) => this._onHeadChange(mutations));
+      let observer = new MutationObserver((mutations) => this.#onHeadChange(mutations));
       observer.observe(document.head, {attributes: true, subtree: true});
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onHeadChange(mutations) {
-    let oldTheme = this._theme;
-    let oldAccentColor = this._accentColor;
-    let oldSize = this._size;
-    let oldIconset = this._iconset;
+  #onHeadChange(mutations) {
+    let oldTheme = this.#theme;
+    let oldAccentColor = this.#accentColor;
+    let oldSize = this.#size;
+    let oldIconset = this.#iconset;
 
-    let {theme, accentColor, size, iconset} = this._getSettings();
+    let {theme, accentColor, size, iconset} = this.#getSettings();
 
-    this._theme = theme;
-    this._accentColor = accentColor;
-    this._size = size;
-    this._iconset = iconset;
+    this.#theme = theme;
+    this.#accentColor = accentColor;
+    this.#size = size;
+    this.#iconset = iconset;
 
-    if (this._theme !== oldTheme) {
-      this._loadTheme(this._theme).then(() => {
+    if (this.#theme !== oldTheme) {
+      this.#loadTheme(this.#theme).then(() => {
         this.dispatchEvent(new CustomEvent("themechange"));
       });
     }
 
-    if (this._accentColor !== oldAccentColor) {
-      this._updateThemeAccentColor();
+    if (this.#accentColor !== oldAccentColor) {
+      this.#updateThemeAccentColor();
       this.dispatchEvent(new CustomEvent("accentcolorchange"));
     }
 
-    if (this._size !== oldSize) {
+    if (this.#size !== oldSize) {
       this.dispatchEvent(new CustomEvent("sizechange"));
     }
 
-    if (this._iconset !== oldIconset) {
-      this._loadIconset(this._iconset).then(() => {
+    if (this.#iconset !== oldIconset) {
+      this.#loadIconset(this.#iconset).then(() => {
         this.dispatchEvent(new CustomEvent("iconsetchange"));
       });
     }
@@ -224,13 +224,13 @@ export default new class Xel extends EventEmitter {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _fetchTheme(url) {
+  #fetchTheme(url) {
     return new Promise(async (resolve) => {
       let response = await fetch(url);
       let themeText = await response.text();
 
-      for (let [importRuleURL, importRuleText] of this._getThemeImportRules(themeText)) {
-        let importText = await this._fetchTheme(importRuleURL);
+      for (let [importRuleURL, importRuleText] of this.#getThemeImportRules(themeText)) {
+        let importText = await this.#fetchTheme(importRuleURL);
         themeText = themeText.replace(importRuleText, importText);
       }
 
@@ -238,49 +238,49 @@ export default new class Xel extends EventEmitter {
     });
   }
 
-  _loadTheme(url) {
+  #loadTheme(url) {
     return new Promise(async (resolve) => {
-      if (this._themeReadyCalbacks === null) {
-        this._themeReadyCalbacks = [];
+      if (this.#themeReadyCalbacks === null) {
+        this.#themeReadyCalbacks = [];
       }
 
-      let cssText = await this._fetchTheme(url);
-      await this._themeStyleSheet.replace(cssText);
+      let cssText = await this.#fetchTheme(url);
+      await this.#themeStyleSheet.replace(cssText);
 
-      this._updateThemeAccentColor();
-      this._updateTitlebarColor();
+      this.#updateThemeAccentColor();
+      this.#updateTitlebarColor();
 
-      if (this._themeReadyCalbacks !== null) {
-        for (let callback of this._themeReadyCalbacks) {
+      if (this.#themeReadyCalbacks !== null) {
+        for (let callback of this.#themeReadyCalbacks) {
           callback();
         }
 
-        this._themeReadyCalbacks = null;
+        this.#themeReadyCalbacks = null;
       }
 
       resolve();
     });
   }
 
-  _loadIconset(url) {
+  #loadIconset(url) {
     return new Promise(async (resolve) => {
-      if (this._iconsetReadyCalbacks === null) {
-        this._iconsetReadyCalbacks = [];
+      if (this.#iconsetReadyCalbacks === null) {
+        this.#iconsetReadyCalbacks = [];
       }
 
       let iconsetElement = await getIconset(url);
-      this._iconsetElement = iconsetElement;
+      this.#iconsetElement = iconsetElement;
 
-      for (let callback of this._iconsetReadyCalbacks) {
+      for (let callback of this.#iconsetReadyCalbacks) {
         callback();
       }
 
-      this._iconsetReadyCalbacks = null;
+      this.#iconsetReadyCalbacks = null;
       resolve();
     });
   }
 
-  async _updateTitlebarColor() {
+  async #updateTitlebarColor() {
     await this.whenThemeReady;
 
     let meta = document.head.querySelector(`meta[name="theme-color"]`);
@@ -302,16 +302,16 @@ export default new class Xel extends EventEmitter {
     }
   }
 
-  async _updateThemeAccentColor() {
+  async #updateThemeAccentColor() {
     await this.whenThemeReady;
-    let serializedColor = this._accentColor || this.presetAccentColors.blue;
+    let serializedColor = this.#accentColor || this.presetAccentColors.blue;
 
     if (this.presetAccentColors[serializedColor]) {
       serializedColor = this.presetAccentColors[serializedColor];
     }
 
     let [h, s, l, a] = new ColorParser().parse(serializedColor, "hsla");
-    let rule = [...this._themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
+    let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
 
     rule.styleMap.set("--accent-color-h", h);
     rule.styleMap.set("--accent-color-s", `${s}%`);
@@ -319,7 +319,7 @@ export default new class Xel extends EventEmitter {
     rule.styleMap.set("--accent-color-a", a);
   }
 
-  _getSettings() {
+  #getSettings() {
     let themeMeta       = document.head.querySelector(`:scope > meta[name="xel-theme"]`);
     let accentColorMeta = document.head.querySelector(`:scope > meta[name="xel-accent-color"]`);
     let sizeMeta        = document.head.querySelector(`:scope > meta[name="xel-size"]`);
@@ -333,7 +333,7 @@ export default new class Xel extends EventEmitter {
     };
   }
 
-  _getThemeImportRules(themeText) {
+  #getThemeImportRules(themeText) {
     let output = [];
     let currentIndex = -1;
 

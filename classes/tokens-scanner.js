@@ -5,14 +5,16 @@
 //   MIT License (check LICENSE.md for details)
 
 export default class TokensScanner {
+  currentToken = null;
+  position = 0;
+  #tokens = null;
+
   constructor(tokens) {
-    this._tokens = tokens;
-    this.currentToken = null;
-    this.position = 0;
+    this.#tokens = tokens;
   }
 
   read() {
-    let token = this._tokens[this.position];
+    let token = this.#tokens[this.position];
     this.currentToken = token;
 
     if (token.type === "EOF") {

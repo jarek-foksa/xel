@@ -15,7 +15,7 @@ export default class ColorParser {
   // @doc http://www.w3.org/TR/css3-color/#svg-color
   //
   // A list of named colors and their corresponding RGB values.
-  static _namedColors = {
+  static #namedColors = {
                           // R,   G,   B
     aliceblue:            [240, 248, 255],
     antiquewhite:         [250, 235, 215],
@@ -172,7 +172,7 @@ export default class ColorParser {
   parse(colorString, outputModel = "rgba") {
     colorString = colorString.trim();
 
-    let tokens = this._tokenize(colorString);
+    let tokens = this.#tokenize(colorString);
     let rgbaComponents = null;
     let hslaComponents = null;
 
@@ -332,11 +332,11 @@ export default class ColorParser {
 
     // Named color, e.g. "white"
 
-    else if (ColorParser._namedColors[colorString]) {
+    else if (ColorParser.#namedColors[colorString]) {
       rgbaComponents = [
-        ColorParser._namedColors[colorString][0],
-        ColorParser._namedColors[colorString][1],
-        ColorParser._namedColors[colorString][2],
+        ColorParser.#namedColors[colorString][0],
+        ColorParser.#namedColors[colorString][1],
+        ColorParser.#namedColors[colorString][2],
         1,
       ];
     }
@@ -400,7 +400,7 @@ export default class ColorParser {
   // "NUMBER"      "100", ".2", "10.3234"
   // "PERCENTAGE"  "100%", "0.2%"
   // "CHAR"        ")", ","
-  _tokenize(colorString) {
+  #tokenize(colorString) {
     let tokens = [];
     let scanner = new StringScanner(colorString.toLowerCase());
 

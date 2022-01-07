@@ -12,11 +12,11 @@ import {html, css} from "../utils/template.js";
 // @element x-radio
 // @part indicator
 // @part indicator-dot
-// @event ^toggle - User toggled the radio on or offf
+// @event ^toggle - User toggled the radio on or off
 export default class XRadioElement extends HTMLElement {
   static observedAttributes = ["toggled", "disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <main id="main">
         <div id="indicator" part="indicator">
@@ -30,7 +30,7 @@ export default class XRadioElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       position: relative;
@@ -161,75 +161,75 @@ export default class XRadioElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _lastTabIndex = 0;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #lastTabIndex = 0;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XRadioElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XRadioElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XRadioElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XRadioElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
 
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
   connectedCallback() {
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "toggled") {
-      this._onToggledAttributeChange();
+      this.#onToggledAttributeChange();
     }
     else if (name === "disabled") {
-      this._onDisabledAttributeChange();
+      this.#onDisabledAttributeChange();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("role", "radio");
     this.setAttribute("aria-checked", this.toggled);
     this.setAttribute("aria-disabled", this.disabled);
 
     if (!this.closest("x-radios")) {
       if (this.disabled) {
-        this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+        this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
         this.tabIndex = -1;
       }
       else {
         if (this.tabIndex < 0) {
-          this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+          this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
         }
 
-        this._lastTabIndex = 0;
+        this.#lastTabIndex = 0;
       }
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -257,15 +257,15 @@ export default class XRadioElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onToggledAttributeChange() {
+  #onToggledAttributeChange() {
     this.setAttribute("aria-checked", this.toggled);
   }
 
-  _onDisabledAttributeChange() {
-    this._updateAccessabilityAttributes();
+  #onDisabledAttributeChange() {
+    this.#updateAccessabilityAttributes();
   }
 
-  _onClick(event) {
+  #onClick(event) {
     if (!this.closest("x-radios")) {
       if (this.toggled && this.mixed) {
         this.mixed = false;
@@ -279,7 +279,7 @@ export default class XRadioElement extends HTMLElement {
     }
   }
 
-  _onPointerDown(event) {
+  #onPointerDown(event) {
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
     if (this.matches(":focus") === false) {
       event.preventDefault();
@@ -292,7 +292,7 @@ export default class XRadioElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.code === "Enter" || event.code === "Space") {
       event.preventDefault();
       this.click();

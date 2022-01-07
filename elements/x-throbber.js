@@ -12,7 +12,7 @@ import {html, css} from "../utils/template.js";
 export default class XThrobberElement extends HTMLElement {
   static observedAttributes = ["type", "size"];
 
-  static _ringTemplate = html`
+  static #ringTemplate = html`
     <template>
       <svg data-type="ring" viewBox="0 0 100 100">
         <ellipse ry="40" rx="40" cy="50" cx="50" stroke-width="10"/>
@@ -20,7 +20,7 @@ export default class XThrobberElement extends HTMLElement {
     </template>
   `;
 
-  static _spinTemplate = html`
+  static #spinTemplate = html`
     <template>
       <svg data-type="spin" viewBox="0 0 100 100">
         <rect transform="rotate(  0 50 50) translate(0 -38)"></rect>
@@ -39,7 +39,7 @@ export default class XThrobberElement extends HTMLElement {
     </template>
   `
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       width: 30px;
@@ -167,27 +167,27 @@ export default class XThrobberElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XThrobberElement._shadowStyleSheet];
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XThrobberElement.#shadowStyleSheet];
   }
 
   connectedCallback() {
-    this._update();
-    this._updateComputedSizeAttriubte();
+    this.#update();
+    this.#updateComputedSizeAttriubte();
 
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -195,21 +195,21 @@ export default class XThrobberElement extends HTMLElement {
       return;
     }
     else if (name === "type") {
-      this._update();
+      this.#update();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
-    let svg = this._shadowRoot.firstElementChild;
-    let template = (this.type === "ring") ? XThrobberElement._ringTemplate : XThrobberElement._spinTemplate;
+  #update() {
+    let svg = this.#shadowRoot.firstElementChild;
+    let template = (this.type === "ring") ? XThrobberElement.#ringTemplate : XThrobberElement.#spinTemplate;
 
     if (svg === null) {
-      this._shadowRoot.append(document.importNode(template.content, true));
+      this.#shadowRoot.append(document.importNode(template.content, true));
     }
     else if (svg.dataset.type !== this.type) {
       svg.replaceWith(document.importNode(template.content, true));
@@ -220,7 +220,7 @@ export default class XThrobberElement extends HTMLElement {
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";

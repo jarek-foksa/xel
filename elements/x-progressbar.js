@@ -13,7 +13,7 @@ import {html, css} from "../utils/template.js";
 export default class XProgressbarElement extends HTMLElement {
   static observedAttributes = ["value", "max", "disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <div id="determinate-bar" part="bar"></div>
 
@@ -24,7 +24,7 @@ export default class XProgressbarElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       box-sizing: border-box;
@@ -141,34 +141,34 @@ export default class XProgressbarElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _indeterminateAnimations = null;
-  _xelSizeChangeListener = null;
+  #shadowRoot = null;
+  #elements = {};
+  #indeterminateAnimations = null;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XProgressbarElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XProgressbarElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XProgressbarElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XProgressbarElement.#shadowTemplate.content, true));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
   }
 
   connectedCallback() {
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
-    this._update();
-    this._updateComputedSizeAttriubte();
+    this.#update();
+    this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -176,28 +176,28 @@ export default class XProgressbarElement extends HTMLElement {
       return;
     }
     else if (name === "value") {
-      this._update();
+      this.#update();
     }
     else if (name === "disabled") {
-      this._update();
+      this.#update();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     // Determinate bar
     {
       // Hide
       if (this.value === null || this.value === -1 || this.disabled) {
-        this._elements["determinate-bar"].style.width = "0%";
+        this.#elements["determinate-bar"].style.width = "0%";
       }
       // Show
       else {
-        this._elements["determinate-bar"].style.width = ((this.value / this.max) * 100) + "%";
+        this.#elements["determinate-bar"].style.width = ((this.value / this.max) * 100) + "%";
       }
     }
 
@@ -205,19 +205,19 @@ export default class XProgressbarElement extends HTMLElement {
     {
       // Hide
       if (this.value !== null || this.disabled) {
-        if (this._indeterminateAnimations) {
-          for (let animation of this._indeterminateAnimations) {
+        if (this.#indeterminateAnimations) {
+          for (let animation of this.#indeterminateAnimations) {
             animation.cancel();
           }
 
-          this._indeterminateAnimations = null;
+          this.#indeterminateAnimations = null;
         }
       }
       // Show
       else {
-        if (!this._indeterminateAnimations) {
-          this._indeterminateAnimations = [
-            this._elements["primary-indeterminate-bar"].animate(
+        if (!this.#indeterminateAnimations) {
+          this.#indeterminateAnimations = [
+            this.#elements["primary-indeterminate-bar"].animate(
               [
                 { left: "-35%", right: "100%", offset: 0.0 },
                 { left: "100%", right: "-90%", offset: 0.6 },
@@ -229,7 +229,7 @@ export default class XProgressbarElement extends HTMLElement {
                 iterations: Infinity
               }
             ),
-            this._elements["secondary-indeterminate-bar"].animate(
+            this.#elements["secondary-indeterminate-bar"].animate(
               [
                 { left: "-100%", right: "100%", offset: 0.0 },
                 { left:  "110%", right: "-30%", offset: 0.8 },
@@ -248,7 +248,7 @@ export default class XProgressbarElement extends HTMLElement {
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";

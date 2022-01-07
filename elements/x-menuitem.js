@@ -19,7 +19,7 @@ let {max} = Math;
 export default class XMenuItemElement extends HTMLElement {
   static observedAttributes = ["disabled", "size"];
 
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <div id="ripples"></div>
 
@@ -35,7 +35,7 @@ export default class XMenuItemElement extends HTMLElement {
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: flex;
       flex-flow: row;
@@ -223,101 +223,101 @@ export default class XMenuItemElement extends HTMLElement {
   // Promise that is resolved when any trigger effects (such ripples or blinking) are finished.
   get whenTriggerEnd() {
     return new Promise((resolve) => {
-      if (this._elements["ripples"].childElementCount === 0 && this._triggering === false) {
+      if (this.#elements["ripples"].childElementCount === 0 && this.#triggering === false) {
         resolve();
       }
       else {
-        this._triggerEndCallbacks.push(resolve);
+        this.#triggerEndCallbacks.push(resolve);
       }
     });
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _lastTabIndex = 0;
-  _triggering = false;
-  _triggerEndCallbacks = [];
-  _wasFocused = false;
-  _xelSizeChangeListener = null;
-  _observer = new MutationObserver(() => this._updateArrowIconVisibility());
+  #shadowRoot = null;
+  #elements = {};
+  #lastTabIndex = 0;
+  #triggering = false;
+  #triggerEndCallbacks = [];
+  #wasFocused = false;
+  #xelSizeChangeListener = null;
+  #observer = new MutationObserver(() => this.#updateArrowIconVisibility());
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XMenuItemElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XMenuItemElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XMenuItemElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XMenuItemElement.#shadowTemplate.content, true));
 
-    this.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this.addEventListener("click", (event) => this._onClick(event));
-    this.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
 
-    for (let element of this._shadowRoot.querySelectorAll("[id]")) {
-      this._elements[element.id] = element;
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this.#elements[element.id] = element;
     }
   }
 
   connectedCallback() {
-    this._updateArrowIconVisibility();
-    this._updateAccessabilityAttributes();
-    this._updateComputedSizeAttriubte();
+    this.#updateArrowIconVisibility();
+    this.#updateAccessabilityAttributes();
+    this.#updateComputedSizeAttriubte();
 
-    this._observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
-    Xel.addEventListener("sizechange", this._xelSizeChangeListener = () => this._updateComputedSizeAttriubte());
+    this.#observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
+    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
-    this._observer.disconnect();
-    Xel.removeEventListener("sizechange", this._xelSizeChangeListener);
+    this.#observer.disconnect();
+    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "disabled") {
-      this._updateAccessabilityAttributes();
+      this.#updateAccessabilityAttributes();
     }
     else if (name === "size") {
-      this._updateComputedSizeAttriubte();
+      this.#updateComputedSizeAttriubte();
     }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _updateArrowIconVisibility() {
+  #updateArrowIconVisibility() {
     if (this.parentElement.localName === "x-menubar") {
-      this._elements["arrow"].setAttribute("hidden", "");
+      this.#elements["arrow"].setAttribute("hidden", "");
     }
     else {
       let menu = this.querySelector("x-menu");
 
       if (menu) {
-        this._elements["arrow"].removeAttribute("hidden");
+        this.#elements["arrow"].removeAttribute("hidden");
       }
       else {
-        this._elements["arrow"].setAttribute("hidden", "");
+        this.#elements["arrow"].setAttribute("hidden", "");
       }
     }
   }
 
-  _updateAccessabilityAttributes() {
+  #updateAccessabilityAttributes() {
     this.setAttribute("role", "menuitem");
     this.setAttribute("aria-disabled", this.disabled);
 
     if (this.disabled) {
-      this._lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
       this.tabIndex = -1;
     }
     else {
       if (this.tabIndex < 0) {
-        this.tabIndex = (this._lastTabIndex > 0) ? this._lastTabIndex : 0;
+        this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
       }
 
-      this._lastTabIndex = 0;
+      this.#lastTabIndex = 0;
     }
   }
 
-  _updateComputedSizeAttriubte() {
+  #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;
     let customSize = this.size;
     let computedSize = "medium";
@@ -345,8 +345,8 @@ export default class XMenuItemElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async _onPointerDown(pointerDownEvent) {
-    this._wasFocused = this.matches(":focus");
+  async #onPointerDown(pointerDownEvent) {
+    this.#wasFocused = this.matches(":focus");
 
     if (pointerDownEvent.buttons !== 1) {
       return false;
@@ -392,7 +392,7 @@ export default class XMenuItemElement extends HTMLElement {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        let rect = this._elements["ripples"].getBoundingClientRect();
+        let rect = this.#elements["ripples"].getBoundingClientRect();
         let size = max(rect.width, rect.height) * 1.5;
         let top  = pointerDownEvent.clientY - rect.y - size/2;
         let left = pointerDownEvent.clientX - rect.x - size/2;
@@ -402,7 +402,7 @@ export default class XMenuItemElement extends HTMLElement {
         ripple.setAttribute("part", "ripple");
         ripple.setAttribute("class", "ripple pointer-down-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this._elements["ripples"].append(ripple);
+        this.#elements["ripples"].append(ripple);
 
         this.setPointerCapture(pointerDownEvent.pointerId);
 
@@ -422,8 +422,8 @@ export default class XMenuItemElement extends HTMLElement {
         await outAnimation.finished;
         ripple.remove();
 
-        if (this._elements["ripples"].childElementCount === 0) {
-          for (let callback of this._triggerEndCallbacks) {
+        if (this.#elements["ripples"].childElementCount === 0) {
+          for (let callback of this.#triggerEndCallbacks) {
             callback();
           }
         }
@@ -431,7 +431,7 @@ export default class XMenuItemElement extends HTMLElement {
     }
   }
 
-  async _onClick(event) {
+  async #onClick(event) {
     if (
       event.button > 0 ||
       event.target.closest("x-menuitem") !== this ||
@@ -455,8 +455,8 @@ export default class XMenuItemElement extends HTMLElement {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "ripple") {
-        if (this._elements["ripples"].querySelector(".pointer-down-ripple") === null) {
-          let rect = this._elements["ripples"].getBoundingClientRect();
+        if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
+          let rect = this.#elements["ripples"].getBoundingClientRect();
           let size = max(rect.width, rect.height) * 1.5;
           let top  = (rect.y + rect.height/2) - rect.y - size/2;
           let left = (rect.x + rect.width/2) - rect.x - size/2;
@@ -465,7 +465,7 @@ export default class XMenuItemElement extends HTMLElement {
           ripple.setAttribute("part", "ripple");
           ripple.setAttribute("class", "ripple click-ripple");
           ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-          this._elements["ripples"].append(ripple);
+          this.#elements["ripples"].append(ripple);
 
           let inAnimation = ripple.animate(
             { transform: ["scale3d(0, 0, 0)", "none"]},
@@ -483,20 +483,20 @@ export default class XMenuItemElement extends HTMLElement {
 
           ripple.remove();
 
-          if (this._elements["ripples"].childElementCount === 0) {
-            for (let callback of this._triggerEndCallbacks) {
+          if (this.#elements["ripples"].childElementCount === 0) {
+            for (let callback of this.#triggerEndCallbacks) {
               callback();
             }
 
-            this._triggerEndCallbacks = [];
+            this.#triggerEndCallbacks = [];
           }
         }
       }
 
       else if (triggerEffect === "blink") {
-        this._triggering = true;
+        this.#triggering = true;
 
-        if (this._wasFocused) {
+        if (this.#wasFocused) {
           this.parentElement.focus();
           await sleep(150);
           this.focus();
@@ -509,29 +509,29 @@ export default class XMenuItemElement extends HTMLElement {
           await sleep(150);
         }
 
-        for (let callback of this._triggerEndCallbacks) {
+        for (let callback of this.#triggerEndCallbacks) {
           callback();
         }
 
-        this._triggerEndCallbacks = [];
-        this._triggering = false;
+        this.#triggerEndCallbacks = [];
+        this.#triggering = false;
       }
 
       else if (triggerEffect === "none") {
-        this._triggering = true;
+        this.#triggering = true;
         await sleep(150);
 
-        for (let callback of this._triggerEndCallbacks) {
+        for (let callback of this.#triggerEndCallbacks) {
           callback();
         }
 
-        this._triggerEndCallbacks = [];
-        this._triggering = false;
+        this.#triggerEndCallbacks = [];
+        this.#triggering = false;
       }
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.code === "Enter" || event.code === "Space") {
       event.preventDefault();
 

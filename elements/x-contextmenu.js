@@ -9,13 +9,13 @@ import {html, css} from "../utils/template.js";
 
 // @element x-contextmenu
 export default class XContextMenuElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       position: fixed;
@@ -39,49 +39,49 @@ export default class XContextMenuElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  _shadowRoot = null;
-  _elements = {};
-  _parentElement = null;
+  #shadowRoot = null;
+  #elements = {};
+  #parentElement = null;
 
-  _windowBlurListener = null;
-  _parentContextMenuListener = null;
+  #windowBlurListener = null;
+  #parentContextMenuListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XContextMenuElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XContextMenuElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XContextMenuElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XContextMenuElement.#shadowTemplate.content, true));
 
-    this._elements["backdrop"] = createElement("x-backdrop");
-    this._elements["backdrop"].style.background =  "rgba(0, 0, 0, 0)";
-    this._elements["backdrop"].addEventListener("contextmenu", (event) => this._onBackdropContextMenu(event));
-    this._elements["backdrop"].addEventListener("pointerdown", (event) => this._onBackdropPointerDown(event));
+    this.#elements["backdrop"] = createElement("x-backdrop");
+    this.#elements["backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+    this.#elements["backdrop"].addEventListener("contextmenu", (event) => this.#onBackdropContextMenu(event));
+    this.#elements["backdrop"].addEventListener("pointerdown", (event) => this.#onBackdropPointerDown(event));
 
-    this.addEventListener("blur", (event) => this._onBlur());
-    this.addEventListener("keydown", (event) => this._onKeyDown(event), true);
-    this.addEventListener("click", (event) => this._onClick(event));
+    this.addEventListener("blur", (event) => this.#onBlur());
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event), true);
+    this.addEventListener("click", (event) => this.#onClick(event));
   }
 
   connectedCallback() {
-    this._parentElement = this.parentElement || this.parentNode.host;
+    this.#parentElement = this.parentElement || this.parentNode.host;
 
-    window.addEventListener("blur", this._windowBlurListener = () => {
-      this._onBlur();
+    window.addEventListener("blur", this.#windowBlurListener = () => {
+      this.#onBlur();
     });
 
-    this._parentElement.addEventListener("contextmenu", this._parentContextMenuListener = (event) => {
-      this._onParentContextMenu(event);
+    this.#parentElement.addEventListener("contextmenu", this.#parentContextMenuListener = (event) => {
+      this.#onParentContextMenu(event);
     });
   }
 
   disconnectedCallback() {
-    window.removeEventListener("blur", this._windowBlurListener);
-    this._parentElement.removeEventListener("contextmenu", this._parentContextMenuListener);
+    window.removeEventListener("blur", this.#windowBlurListener);
+    this.#parentElement.removeEventListener("contextmenu", this.#parentContextMenuListener);
 
-    this._parentElement = null;
+    this.#parentElement = null;
   }
 
   ///////////////////////////////////'/////////////////////////////////////////////////////////////////////////////
@@ -96,8 +96,8 @@ export default class XContextMenuElement extends HTMLElement {
     if (menu.opened === false) {
       menu.openAtPoint(clientX, clientY);
 
-      this._elements["backdrop"].ownerElement = menu;
-      this._elements["backdrop"].show(false);
+      this.#elements["backdrop"].ownerElement = menu;
+      this.#elements["backdrop"].show(false);
 
       menu.focus();
     }
@@ -113,7 +113,7 @@ export default class XContextMenuElement extends HTMLElement {
 
       if (menu && menu.opened === true) {
         await menu.close();
-        this._elements["backdrop"].hide(false);
+        this.#elements["backdrop"].hide(false);
 
         let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
 
@@ -128,18 +128,18 @@ export default class XContextMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onBlur() {
+  #onBlur() {
     this.close();
   }
 
-  _onParentContextMenu(event) {
+  #onParentContextMenu(event) {
     if (this.disabled === false) {
       event.preventDefault();
       this.open(event.clientX, event.clientY);
     }
   }
 
-  _onBackdropContextMenu(event) {
+  #onBackdropContextMenu(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
 
@@ -150,7 +150,7 @@ export default class XContextMenuElement extends HTMLElement {
     });
   }
 
-  _onBackdropPointerDown(event) {
+  #onBackdropPointerDown(event) {
     if (event.buttons === 1) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -158,7 +158,7 @@ export default class XContextMenuElement extends HTMLElement {
     }
   }
 
-  async _onClick(event) {
+  async #onClick(event) {
     let item = event.target.closest("x-menuitem");
 
     if (item && item.disabled === false) {
@@ -183,7 +183,7 @@ export default class XContextMenuElement extends HTMLElement {
     }
   }
 
-  _onKeyDown(event) {
+  #onKeyDown(event) {
     if (event.key === "Escape") {
       let menu = this.querySelector("x-menu");
 

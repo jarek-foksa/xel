@@ -8,13 +8,13 @@ import {html, css} from "../utils/template.js";
 
 // @element x-label
 export default class XLabelElement extends HTMLElement {
-  static _shadowTemplate = html`
+  static #shadowTemplate = html`
     <template>
       <slot></slot>
     </template>
   `;
 
-  static _shadowStyleSheet = css`
+  static #shadowStyleSheet = css`
     :host {
       display: block;
       line-height: 1.2;
@@ -57,16 +57,16 @@ export default class XLabelElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  _shadowRoot = null;
+  #shadowRoot = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({mode: "closed"});
-    this._shadowRoot.adoptedStyleSheets = [XLabelElement._shadowStyleSheet];
-    this._shadowRoot.append(document.importNode(XLabelElement._shadowTemplate.content, true));
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.adoptedStyleSheets = [XLabelElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XLabelElement.#shadowTemplate.content, true));
   }
 }
 

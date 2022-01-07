@@ -21,19 +21,19 @@ export default class PTPageElement extends HTMLElement {
   // @type Promise
   get whenReady() {
     return new Promise((resolve) => {
-      if (this._readyCallbacks === null) {
+      if (this.#readyCallbacks === null) {
         resolve();
       }
       else {
-        this._readyCallbacks.push(resolve);
+        this.#readyCallbacks.push(resolve);
       }
     });
   }
 
-  _readyCallbacks = [];
   _elements = {};
   _shadowRoot = null;
-  _ownerApp = null;
+  #readyCallbacks = [];
+  #ownerApp = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,13 +59,13 @@ export default class PTPageElement extends HTMLElement {
       this._elements[element.id] = element;
     }
 
-    this._shadowRoot.addEventListener("pointerdown", (event) => this._onPointerDown(event));
-    this._shadowRoot.addEventListener("click", (event) => this._onClick(event), true);
+    this._shadowRoot.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this._shadowRoot.addEventListener("click", (event) => this.#onClick(event), true);
     this.setAttribute("extends", "pt-page");
   }
 
   connectedCallback() {
-    this._ownerApp = closest(this, "pt-app");
+    this.#ownerApp = closest(this, "pt-app");
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,17 @@ export default class PTPageElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _onPointerDown(event) {
+  _onReady() {
+    if (this.#readyCallbacks !== null) {
+      for (let callback of this.#readyCallbacks) {
+        callback();
+      }
+
+      this.#readyCallbacks = null;
+    }
+  }
+
+  #onPointerDown(event) {
     let downAnchor = event.target.closest("a");
 
     if (downAnchor) {
@@ -92,7 +102,7 @@ export default class PTPageElement extends HTMLElement {
     }
   }
 
-  _onClick(event) {
+  #onClick(event) {
     // Clicked anchor
     {
       let clickedAnchor = event.target.closest("a");
@@ -102,19 +112,9 @@ export default class PTPageElement extends HTMLElement {
 
         if (url.origin === location.origin) {
           event.preventDefault();
-          this._ownerApp.navigate(url.href);
+          this.#ownerApp.navigate(url.href);
         }
       }
-    }
-  }
-
-  _onReady() {
-    if (this._readyCallbacks !== null) {
-      for (let callback of this._readyCallbacks) {
-        callback();
-      }
-
-      this._readyCallbacks = null;
     }
   }
 }

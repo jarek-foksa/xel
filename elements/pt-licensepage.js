@@ -9,13 +9,13 @@ import PTPage from "./pt-page.js";
 export default class PTLicensePageElement extends PTPage {
   async connectedCallback() {
     super.connectedCallback();
-    await this._update();
+    await this.#update();
     this._onReady();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  _update() {
+  #update() {
     return new Promise(async (resolve) => {
       if (this._shadowRoot.childElementCount === 0) {
         let viewHTML = await (await fetch("/docs/license.html")).text();
