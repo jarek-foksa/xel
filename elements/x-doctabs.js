@@ -586,7 +586,7 @@ export default class XDocTabsElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onPointerDown(event) {
-    if (event.buttons === 1 && !this.#waitingForTabToClose && event.target.closest("x-doctab")) {
+    if (event.buttons <= 1 && !this.#waitingForTabToClose && event.target.closest("x-doctab")) {
       this.#onTabPointerDown(event);
     }
   }
@@ -596,7 +596,7 @@ export default class XDocTabsElement extends HTMLElement {
       return;
     }
 
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
     let pointerDownTab = pointerDownEvent.target.closest("x-doctab");
     let selectedTab = this.querySelector("x-doctab[selected]");
 
@@ -625,15 +625,15 @@ export default class XDocTabsElement extends HTMLElement {
 
       if (pointerMoveEvent.isPrimary && isIntentional) {
         this.removeEventListener("pointermove", pointerMoveListener);
-        this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+        this.removeEventListener("pointerup", pointerUpListener);
 
         this.#onTabDragStart(pointerDownEvent, pointerDownTab);
       }
     });
 
-    this.addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    this.addEventListener("pointerup", pointerUpListener = () => {
       this.removeEventListener("pointermove", pointerMoveListener);
-      this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.removeEventListener("pointerup", pointerUpListener);
     });
   }
 
@@ -716,9 +716,9 @@ export default class XDocTabsElement extends HTMLElement {
       }
     };
 
-    let lostPointerCaptureListener = async (dragEndEvent) => {
+    let pointerUpListener = async (dragEndEvent) => {
       this.removeEventListener("pointermove", pointerMoveListener);
-      this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.removeEventListener("pointerup", pointerUpListener);
 
       let translateX = -draggedTab[$flexOffset];
 
@@ -748,11 +748,11 @@ export default class XDocTabsElement extends HTMLElement {
     };
 
     this.addEventListener("pointermove", pointerMoveListener);
-    this.addEventListener("lostpointercapture", lostPointerCaptureListener);
+    this.addEventListener("pointerup", pointerUpListener);
   }
 
   #onOpenButtonClick(clickEvent) {
-    if (clickEvent.button === 0) {
+    if (clickEvent.buttons <= 1) {
       let customEvent = new CustomEvent("open", {cancelable: true});
       this.dispatchEvent(customEvent);
 

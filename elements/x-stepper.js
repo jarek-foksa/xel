@@ -198,7 +198,7 @@ export default class XStepperElement extends HTMLElement {
       action = "decrement";
     }
 
-    if (pointerDownEvent.buttons !== 1 || action === null) {
+    if (pointerDownEvent.buttons > 1 || action === null) {
       return;
     }
 
@@ -211,7 +211,7 @@ export default class XStepperElement extends HTMLElement {
       this.setAttribute("pressed", action);
       this.setPointerCapture(pointerDownEvent.pointerId);
 
-      this.addEventListener("lostpointercapture", async (event) => {
+      this.addEventListener("pointerup", async (event) => {
         let pressedTime = Date.now() - pointerDownTimeStamp;
         let minPressedTime = 100;
 
@@ -233,7 +233,7 @@ export default class XStepperElement extends HTMLElement {
       this.dispatchEvent(new CustomEvent(action + "start", {bubbles: true}));
       this.dispatchEvent(new CustomEvent(action, {bubbles: true, detail: {shiftKey}}));
 
-      this.addEventListener("lostpointercapture", (event) => {
+      this.addEventListener("pointerup", (event) => {
         clearInterval(intervalID);
         this.dispatchEvent(new CustomEvent(action + "end", {bubbles: true}));
       }, {once: true});

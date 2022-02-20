@@ -684,7 +684,7 @@ export default class XButtonElement extends HTMLElement {
   }
 
   async #onButtonPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       pointerDownEvent.preventDefault();
       return;
     }
@@ -709,7 +709,7 @@ export default class XButtonElement extends HTMLElement {
       if (this.matches(":focus") === false) {
         let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
 
-        this.addEventListener("lostpointercapture", () => {
+        this.addEventListener("pointerup", () => {
           if (ancestorFocusableElement) {
             ancestorFocusableElement.focus();
           }
@@ -727,7 +727,7 @@ export default class XButtonElement extends HTMLElement {
       let isDown = true;
       let minPressedTime = parseInt(getComputedStyle(this).getPropertyValue("--min-pressed-time") || "150ms");
 
-      this.addEventListener("lostpointercapture", async () => {
+      this.addEventListener("pointerup", async () => {
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
 
@@ -788,7 +788,7 @@ export default class XButtonElement extends HTMLElement {
         let size = max(rect.width, rect.height) * 1.5;
         let top  = pointerDownEvent.clientY - rect.y - size/2;
         let left = pointerDownEvent.clientX - rect.x - size/2;
-        let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
+        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
         let delay = true;
 
         if (this.expandable === false) {
@@ -827,7 +827,7 @@ export default class XButtonElement extends HTMLElement {
           { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         );
 
-        await whenLostPointerCapture;
+        await whenPointerUp;
 
         if (delay) {
           await inAnimation.finished;
@@ -848,7 +848,7 @@ export default class XButtonElement extends HTMLElement {
         let size = bounds.height * 1.25;
         let top  = (bounds.y + bounds.height/2) - bounds.y - size/2;
         let left = (bounds.x + bounds.width/2)  - bounds.x - size/2;
-        let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
+        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
 
         let ripple = createElement("div");
         ripple.setAttribute("part", "ripple");
@@ -868,7 +868,7 @@ export default class XButtonElement extends HTMLElement {
           { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         );
 
-        await whenLostPointerCapture;
+        await whenPointerUp;
         await inAnimation.finished;
 
         let outAnimation = ripple.animate(

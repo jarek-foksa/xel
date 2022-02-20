@@ -480,12 +480,12 @@ export default class XBarsColorPickerElement extends HTMLElement {
   }
 
   #onHueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
     let trackBounds = this.#elements["hue-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
 
     this.#isDraggingHueSliderMarker = true;
     this.#elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -514,9 +514,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["hue-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["hue-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingHueSliderMarker = false;
@@ -524,12 +524,12 @@ export default class XBarsColorPickerElement extends HTMLElement {
   }
 
   #onSaturationSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
     let trackBounds = this.#elements["saturation-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
 
     this.#isDraggingSaturationSliderMarker = true;
     this.#elements["saturation-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -558,9 +558,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["saturation-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    this.#elements["saturation-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["saturation-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["saturation-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.#elements["saturation-slider"].removeEventListener("pointerup", pointerUpListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingSaturationSliderMarker = false;
@@ -568,12 +568,12 @@ export default class XBarsColorPickerElement extends HTMLElement {
   }
 
   #onLightnessSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
     let trackBounds = this.#elements["lightness-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
 
     this.#isDraggingLightnessSliderMarker = true;
     this.#elements["lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -602,9 +602,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["lightness-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    this.#elements["lightness-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["lightness-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.#elements["lightness-slider"].removeEventListener("pointerup", pointerUpListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingLightnessSliderMarker = false;
@@ -612,12 +612,12 @@ export default class XBarsColorPickerElement extends HTMLElement {
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
 
     this.#isDraggingAlphaSliderMarker = true;
     this.#elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -641,9 +641,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["alpha-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["alpha-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingAlphaSliderMarker = false;

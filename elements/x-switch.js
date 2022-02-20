@@ -257,7 +257,7 @@ export default class XSwitchElement extends HTMLElement {
   }
 
   #onPointerDown(event) {
-    if (event.buttons !== 1) {
+    if (event.buttons > 1) {
       event.preventDefault();
       return;
     }

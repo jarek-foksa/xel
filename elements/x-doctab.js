@@ -349,7 +349,7 @@ export default class XDocTabElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       pointerDownEvent.preventDefault();
       return;
     }
@@ -372,7 +372,7 @@ export default class XDocTabElement extends HTMLElement {
       this.setAttribute("pressed", "");
       this.setPointerCapture(pointerDownEvent.pointerId);
 
-      this.addEventListener("lostpointercapture", async (event) => {
+      this.addEventListener("pointerup", async (event) => {
         if (this.selected === true) {
           let pressedTime = Date.now() - pointerDownTimeStamp;
           let minPressedTime = 100;
@@ -411,7 +411,7 @@ export default class XDocTabElement extends HTMLElement {
         // operation.
         this.ownerTabs.setPointerCapture(pointerDownEvent.pointerId);
 
-        this.ownerTabs.addEventListener("lostpointercapture", async () => {
+        this.ownerTabs.addEventListener("pointerup", async () => {
           await inAnimation.finished;
 
           let fromOpacity = getComputedStyle(ripple).opacity;
@@ -430,7 +430,7 @@ export default class XDocTabElement extends HTMLElement {
   }
 
   async #onClick(event) {
-    if (event.button !== 0) {
+    if (event.buttons > 1) {
       return;
     }
 
@@ -471,7 +471,7 @@ export default class XDocTabElement extends HTMLElement {
   }
 
   #onCloseButtonPointerDown(event) {
-    if (event.buttons !== 1) {
+    if (event.buttons > 1) {
       return;
     }
 
@@ -490,7 +490,7 @@ export default class XDocTabElement extends HTMLElement {
   }
 
   #onCloseButtonClick(event) {
-    if (event.button !== 0) {
+    if (event.buttons > 1) {
       return;
     }
 

@@ -380,12 +380,12 @@ export default class XRectColorPickerElement extends HTMLElement {
   }
 
   #onSatlightSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
-    let pointerMoveListener, lostPointerCaptureListener;
     let sliderBounds = this.#elements["satlight-slider"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpListener;
 
     this.#isDraggingSatlightMarker = true;
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
@@ -415,21 +415,21 @@ export default class XRectColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
     });
 
-    this.#elements["satlight-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
+    this.#elements["satlight-slider"].addEventListener("pointerup", pointerUpListener = (pointerUpEvent) => {
       this.#elements["satlight-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["satlight-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.#elements["satlight-slider"].removeEventListener("pointerup", pointerUpListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingSatlightMarker = false;
     });
   }
 
   #onHueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
     let trackBounds = this.#elements["hue-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
 
     this.#isDraggingHueSliderMarker = true;
     this.#elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -458,9 +458,9 @@ export default class XRectColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["hue-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["hue-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingHueSliderMarker = false;
@@ -468,12 +468,12 @@ export default class XRectColorPickerElement extends HTMLElement {
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
 
     this.#isDraggingAlphaSliderMarker = true;
     this.#elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -497,9 +497,9 @@ export default class XRectColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["alpha-slider"].addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["alpha-slider"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingAlphaSliderMarker = false;

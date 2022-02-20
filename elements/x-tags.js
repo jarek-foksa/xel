@@ -63,7 +63,7 @@ export default class XTagsElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       pointerDownEvent.preventDefault();
       return;
     }
@@ -76,7 +76,7 @@ export default class XTagsElement extends HTMLElement {
       if (this.matches(":focus") === false) {
         let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
 
-        this.addEventListener("lostpointercapture", () => {
+        this.addEventListener("pointerup", () => {
           if (ancestorFocusableElement) {
             ancestorFocusableElement.focus();
           }

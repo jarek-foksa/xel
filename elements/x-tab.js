@@ -284,7 +284,7 @@ export default class XTabElement extends HTMLElement {
       }
     }
 
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return;
     }
 
@@ -295,7 +295,7 @@ export default class XTabElement extends HTMLElement {
       this.setAttribute("pressed", "");
       this.setPointerCapture(pointerDownEvent.pointerId);
 
-      this.addEventListener("lostpointercapture", async (event) => {
+      this.addEventListener("pointerup", async (event) => {
         if (this.selected === true) {
           let pressedTime = Date.now() - pointerDownTimeStamp;
           let minPressedTime = 100;
@@ -318,7 +318,7 @@ export default class XTabElement extends HTMLElement {
         let size = max(bounds.width, bounds.height) * 1.5;
         let top  = pointerDownEvent.clientY - bounds.y - size/2;
         let left = pointerDownEvent.clientX - bounds.x - size/2;
-        let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
+        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
 
         let ripple = createElement("div");
         ripple.setAttribute("part", "ripple");
@@ -338,7 +338,7 @@ export default class XTabElement extends HTMLElement {
           { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         );
 
-        await whenLostPointerCapture;
+        await whenPointerUp;
         await inAnimation.finished;
 
         let fromOpacity = getComputedStyle(ripple).opacity;

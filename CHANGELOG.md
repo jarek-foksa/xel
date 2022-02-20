@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.10.2 (2022-02-20)
+
+- [Bugfix] Click events are not always detected when using macOS 12
+
 ## 0.10.1 (2022-01-07)
 
 - Use ES syntax to denote private properties and methods

@@ -147,7 +147,7 @@ export default class XButtonsElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onClick(event) {
-    if (event.button !== 0) {
+    if (event.buttons > 1) {
       return;
     }
 

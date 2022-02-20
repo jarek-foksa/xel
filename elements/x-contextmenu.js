@@ -151,7 +151,7 @@ export default class XContextMenuElement extends HTMLElement {
   }
 
   #onBackdropPointerDown(event) {
-    if (event.buttons === 1) {
+    if (event.buttons <= 1) {
       event.preventDefault();
       event.stopImmediatePropagation();
       this.close();

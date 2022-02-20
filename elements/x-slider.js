@@ -526,14 +526,14 @@ export default class XSliderElement extends HTMLElement {
   }
 
   #onShadowRootPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1 || pointerDownEvent.isPrimary === false) {
+    if (pointerDownEvent.buttons > 1 || pointerDownEvent.isPrimary === false) {
       return;
     }
 
     let draggedThumb = null;
     let {width: thumbWidth, height: thumbHeight} = this.#elements["start-thumb"].getBoundingClientRect();
     let containerBounds = this.#elements["main"].getBoundingClientRect();
-    let pointerMoveListener, lostPointerCaptureListener;
+    let pointerMoveListener, pointerUpListener;
     let changeStarted = false;
 
     // Determine the thumb to be dragged
@@ -649,9 +649,9 @@ export default class XSliderElement extends HTMLElement {
       }
     });
 
-    draggedThumb.addEventListener("lostpointercapture", lostPointerCaptureListener = () => {
+    draggedThumb.addEventListener("pointerup", pointerUpListener = () => {
       draggedThumb.removeEventListener("pointermove", pointerMoveListener);
-      draggedThumb.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      draggedThumb.removeEventListener("pointerup", pointerUpListener);
       this.removeAttribute("dragging");
 
       if (changeStarted) {

@@ -348,7 +348,7 @@ export default class XMenuItemElement extends HTMLElement {
   async #onPointerDown(pointerDownEvent) {
     this.#wasFocused = this.matches(":focus");
 
-    if (pointerDownEvent.buttons !== 1) {
+    if (pointerDownEvent.buttons > 1) {
       return false;
     }
 
@@ -370,7 +370,7 @@ export default class XMenuItemElement extends HTMLElement {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
 
-      this.addEventListener("lostpointercapture", async () => {
+      this.addEventListener("pointerup", async () => {
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
         let minPressedTime = (pointerDownEvent.pointerType === "touch") ? 600 : 150;
@@ -396,7 +396,7 @@ export default class XMenuItemElement extends HTMLElement {
         let size = max(rect.width, rect.height) * 1.5;
         let top  = pointerDownEvent.clientY - rect.y - size/2;
         let left = pointerDownEvent.clientX - rect.x - size/2;
-        let whenLostPointerCapture = new Promise((r) => this.addEventListener("lostpointercapture", r, {once: true}));
+        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
 
         let ripple = createElement("div");
         ripple.setAttribute("part", "ripple");
@@ -411,7 +411,7 @@ export default class XMenuItemElement extends HTMLElement {
           { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
         );
 
-        await whenLostPointerCapture;
+        await whenPointerUp;
         await inAnimation.finished;
 
         let outAnimation = ripple.animate(
@@ -433,7 +433,7 @@ export default class XMenuItemElement extends HTMLElement {
 
   async #onClick(event) {
     if (
-      event.button > 0 ||
+      event.buttons > 1 ||
       event.target.closest("x-menuitem") !== this ||
       event.target.closest("x-menu") !== this.closest("x-menu") ||
       this.matches("[closing] x-menuitem")

@@ -302,7 +302,7 @@ export default class XCheckboxElement extends HTMLElement {
   }
 
   #onPointerDown(event) {
-    if (event.buttons !== 1) {
+    if (event.buttons > 1) {
       event.preventDefault();
       return;
     }
@@ -334,7 +334,7 @@ export default class XCheckboxElement extends HTMLElement {
 
         this.setPointerCapture(event.pointerId);
 
-        this.addEventListener("lostpointercapture", async () => {
+        this.addEventListener("pointerup", async () => {
           await transformAnimation.finished;
 
           let opacityAnimation = ripple.animate(

@@ -938,13 +938,13 @@ export default class PTAppElement extends HTMLElement {
   }, 400);
 
   #onExpandSidebarButtonClick(event) {
-    if (event.button === 0) {
+    if (event.buttons <= 1) {
       this.#elements["sidebar-dialog"].showModal();
     }
   }
 
   #onCollapseSidebarButtonClick(event) {
-    if (event.button === 0) {
+    if (event.buttons <= 1) {
       this.#elements["sidebar-dialog"].close();
     }
   }

@@ -665,7 +665,7 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onShadowRootPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons !== 1 || pointerDownEvent.isPrimary === false) {
+    if (pointerDownEvent.buttons > 1 || pointerDownEvent.isPrimary === false) {
       pointerDownEvent.preventDefault();
       return;
     }
@@ -677,7 +677,7 @@ export default class XNumberInputElement extends HTMLElement {
         let initialValue = this.value;
         let cachedClientX = pointerDownEvent.clientX;
         let pointerDownPoint = new DOMPoint(pointerDownEvent.clientX, pointerDownEvent.clientY);
-        let pointerMoveListener, lostPointerCaptureListener;
+        let pointerMoveListener, pointerUpListener;
 
         this.style.cursor = "col-resize";
         this.#elements["editor"].setPointerCapture(pointerDownEvent.pointerId);
@@ -706,9 +706,9 @@ export default class XNumberInputElement extends HTMLElement {
           }
         });
 
-        this.#elements["editor"].addEventListener("lostpointercapture",  lostPointerCaptureListener = () => {
+        this.#elements["editor"].addEventListener("pointerup",  pointerUpListener = () => {
           this.#elements["editor"].removeEventListener("pointermove", pointerMoveListener);
-          this.#elements["editor"].removeEventListener("lostpointercapture", lostPointerCaptureListener);
+          this.#elements["editor"].removeEventListener("pointerup", pointerUpListener);
 
           this.style.cursor = null;
 

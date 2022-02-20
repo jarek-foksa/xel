@@ -236,7 +236,7 @@ export default class XTagElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onRemoveButtonClick(event) {
-    if (event.buttons === 0) {
+    if (event.buttons <= 1) {
       this.dispatchEvent(new CustomEvent("remove", {bubbles: true}));
     }
   }

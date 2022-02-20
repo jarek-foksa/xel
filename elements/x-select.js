@@ -481,7 +481,7 @@ export default class XSelectElement extends HTMLElement {
   }
 
   async #onClick(event) {
-    if (event.button !== 0) {
+    if (event.buttons > 1) {
       return;
     }
 
