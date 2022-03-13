@@ -782,61 +782,6 @@ x-tabs:not(:defined) {
 /*****************************************************************************************************************/
 
 /**
- * Document tab
- */
-
-x-doctab:focus {
-  z-index: 100;
-}
-x-doctab:not(:defined) {
-  display: none;
-}
-
-/* Label */
-x-doctab x-label {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 12px;
-  font-weight: 400;
-  text-align: center;
-}
-x-doctab[selected] x-label,
-x-doctab:focus x-label {
-  font-weight: 600;
-}
-
-/* Other children */
-x-doctab img,
-x-doctab x-icon {
-  margin: 0 5px 0 0;
-  width: 15px;
-  height: 15px;
-  min-width: 15px;
-}
-x-doctab[disabled] > * {
-  opacity: 0.5;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Document tabs
- */
-
-x-doctabs[computedSize="small"] {
-  height: 25px;
-}
-x-doctabs[computedSize="large"] {
-  height: 38px;
-}
-x-doctabs:not(:defined) {
-  display: none;
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Menu
  */
 

@@ -313,18 +313,6 @@ export default class PTAppElement extends HTMLElement {
                 <x-label>x-tabs</x-label>
               </x-button>
             </a>
-
-            <a href="/elements/x-doctab">
-              <x-button skin="nav">
-                <x-label>x-doctab</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-doctabs">
-              <x-button skin="nav">
-                <x-label>x-doctabs</x-label>
-              </x-button>
-            </a>
           </section>
 
           <hr/>

@@ -598,67 +598,6 @@ x-tab[selected]:hover::before {
 /*****************************************************************************************************************/
 
 /**
- * Document tabs
- */
-
-x-doctabs {
-  background: var(--background-color);
-  outline: 1px solid var(--light-border-color);
-}
-
-/* Tab */
-x-doctab {
-  background: var(--background-color);
-  border-bottom: none;
-  outline: 1px solid var(--light-border-color);
-  justify-content: flex-start;
-}
-x-doctab:hover {
-  background: #d8d8d8;
-}
-x-doctab[selected] {
-  background: white;
-}
-
-/* Focus ring */
-x-doctab:focus::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  background: none;
-  outline: 2px solid black;
-  outline-offset: 4px;
-}
-
-/* Open button */
-x-doctabs::part(open-button):hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-x-doctabs::part(open-button):active {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/* Close button */
-x-doctab::part(close-button) {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  margin: 0 -12px 0 auto;
-}
-x-doctab::part(close-button):hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-x-doctab::part(close-button):active {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Menu
  */
 

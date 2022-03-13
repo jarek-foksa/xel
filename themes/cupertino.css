@@ -584,62 +584,6 @@ x-tab:active {
 /*****************************************************************************************************************/
 
 /**
- * Document tabs
- */
-
-x-doctabs {
-  background: var(--background-color);
-  outline: 1px solid var(--border-color);
-}
-
-/* Tab */
-x-doctab {
-  background: var(--background-color);
-  outline: 1px solid var(--border-color);
-}
-x-doctab:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-x-doctab:focus {
-  box-shadow: 0 0 0px 3px var(--light-accent-color);
-}
-x-doctab[selected] {
-  background: white;
-}
-
-/* Open button */
-x-doctabs::part(open-button):hover {
-  background: rgba(0, 0, 0, 0.08);
-}
-x-doctabs::part(open-button):active {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/* Close button */
-x-doctab::part(close-button) {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  left: 0px;
-  margin: 0 0 0 3px;
-  opacity: 0;
-}
-x-doctab[edited]::part(close-button) {
-  opacity: 1;
-}
-x-doctab:hover::part(close-button) {
-  opacity: 1;
-}
-x-doctab::part(close-button):hover {
-  background: rgba(0, 0, 0, 0.08);
-}
-x-doctab::part(close-button):active {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Menu
  */
 

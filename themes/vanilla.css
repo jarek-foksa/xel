@@ -524,62 +524,6 @@ x-tab[pressed] + x-tab {
 /*****************************************************************************************************************/
 
 /**
- * Document tabs
- */
-
-x-doctabs {
-  background: var(--background-color);
-  outline: 1px solid var(--border-color);
-}
-
-/* Tab */
-x-doctab {
-  border-bottom: none;
-  outline: 1px solid var(--border-color);
-  justify-content: flex-start;
-}
-x-doctab:hover {
-  background: var(--dark-background-color);
-}
-x-doctab:focus {
-  box-shadow: 0 0 0px 3px var(--light-accent-color);
-  outline-color: var(--accent-color);
-}
-x-doctab[selected] {
-  background: var(--light-background-color);
-}
-
-/* Open button */
-x-doctabs::part(open-button) {
-  opacity: 0.7;
-}
-x-doctabs::part(open-button):hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-x-doctabs::part(open-button):active {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/* Close button */
-x-doctab::part(close-button) {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  left: initial;
-  right: 0px;
-  margin: 0 5px 0 0;
-  opacity: 0.7;
-}
-x-doctab::part(close-button):hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-x-doctab::part(close-button):active {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Menu
  */
 

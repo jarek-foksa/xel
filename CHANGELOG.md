@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.11.0 (2022-03-13)
+
+- Remove `<x-doctabs>` and `<x-doctab>`
+
 ## 0.10.2 (2022-02-20)
 
 - [Bugfix] Click events are not always detected when using macOS 12
