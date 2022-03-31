@@ -4,8 +4,13 @@
  *   © 2016-2022 Jarosław Foksa
  * @license
  *   MIT License (check LICENSE.md for details)
+ * @doc
+ *   https://en.wikipedia.org/wiki/Adwaita_(design_language)
+ *   https://developer.gnome.org/hig/
+ *   https://blogs.gnome.org/alexm/2021/12/31/libadwaita-1-0/
+ *   https://aplazas.pages.gitlab.gnome.org/blog/blog/2021/03/31/introducing-libadwaita.html
  *
- * Generic theme that tries to look neutral on any platform.
+ * Theme implementing GNOME Human Interface Guidelines.
  */
 
 @import "/node_modules/xel/themes/base.css";
@@ -19,38 +24,46 @@
 body {
   color: var(--text-color);
   background: var(--background-color);
-  font-family: "Roboto", "Noto Sans", "Helvetica Neue", "Arial", sans-serif;
-  --preset-accent-colors: blue #1573ff, purple #913398, pink #f341a0, red #dd2c41, orange #f47f11, yellow #fdcb03,
-                          green #67be3b, graphite #989898;
+  font-family: "Cantarell", BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;;
+  --preset-accent-colors: blue #3584e4, purple #9141ac, pink #f74f9e, red #e01b24, orange #ff7800, yellow #e5a50a,
+                          green #2ec27e, graphite #9a9996;
   --titlebar-color: auto;
-  --background-color: #353535;
-  --light-background-color: #444444;
-  --lighter-background-color: #585858;
-  --dark-background-color: #222323;
-  --border-color: #696969;
-  --light-border-color: #908f8f;
-  --dark-border-color: #545454;
-  --autofill-background-color: #fdffc1;
-  --text-color: rgba(255, 255, 255, 0.8);
-  --light-text-color: #efefef;
-  --error-color: #ec6262;
+  --background-color: #fcfcfc;
+  --light-background-color: #ffffff;
+  --dark-background-color: #ebebeb;
+  --border-color: #cccccc;
+  --light-border-color: #dcdcdc;
+  --dark-border-color: #d1d1d1;
+  --autofill-background-color: #faffbd;
+  --text-color: rgba(0, 0, 0, 0.85);
+  --dark-text-color: black;
+  --error-color:  #ff3b30;
   --accent-color: hsla(
       var(--accent-color-h), var(--accent-color-s), var(--accent-color-l), var(--accent-color-a)
     );
   --light-accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 10%), var(--accent-color-a)
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 8%), var(--accent-color-a)
+    );
+  --lightest-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%), var(--accent-color-a)
     );
   --dark-accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 10%), var(--accent-color-a)
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 5%), var(--accent-color-a)
+    );
+  --darker-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 8%), var(--accent-color-a)
+    );
+  --darkest-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 14%), var(--accent-color-a)
     );
   --selection-color: currentColor;
   --selection-background-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), var(--accent-color-l), 0.7
+      var(--accent-color-h), var(--accent-color-s), var(--accent-color-l), 0.2
     );
-  --checkboard-background: linear-gradient( 45deg, #5b5b5b 25%, #0000   25%)  0px  0px / 10px 10px,
-                           linear-gradient(-45deg, #5b5b5b 25%, #0000   25%)  0px  5px / 10px 10px,
-                           linear-gradient( 45deg, #0000   75%, #5b5b5b 75%)  5px -5px / 10px 10px,
-                           linear-gradient(-45deg, #0000   75%, #5b5b5b 75%) -5px  0px / 10px 10px;
+  --checkboard-background: linear-gradient( 45deg, #d6d6d6 25%, #0000   25%)  0px  0px / 10px 10px,
+                           linear-gradient(-45deg, #d6d6d6 25%, #0000   25%)  0px  5px / 10px 10px,
+                           linear-gradient( 45deg, #0000   75%, #d6d6d6 75%)  5px -5px / 10px 10px,
+                           linear-gradient(-45deg, #0000   75%, #d6d6d6 75%) -5px  0px / 10px 10px;
 }
 
 /*****************************************************************************************************************/
@@ -73,13 +86,26 @@ body {
 ::-webkit-scrollbar {
   background: none;
 }
+::-webkit-scrollbar:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
 
 /* Thumb */
-::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.4);
+::-webkit-scrollbar-thumb:vertical {
+  background: linear-gradient(
+    90deg,
+    transparent 0%, transparent 0%, rgba(0, 0, 0, 0.15) 25%, rgba(0, 0, 0, 0.15) 60%, transparent 60%, transparent 100%
+  );
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:horizontal {
+  background: linear-gradient(
+    0deg,
+    transparent 0%, transparent 30%, #7a7a7a 30%, #7a7a7a 70%, transparent 70%, transparent 100%
+  );
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: #7a7a7a;
 }
 
 /*****************************************************************************************************************/
@@ -89,15 +115,15 @@ body {
  */
 
 h2 {
-  color: var(--light-text-color);
+  color: var(--dark-text-color);
 }
 
 h3 {
-  color: var(--light-text-color);
+  color: var(--dark-text-color);
 }
 
 h4 {
-  color: var(--light-text-color);
+  color: var(--dark-text-color);
 }
 
 /*****************************************************************************************************************/
@@ -107,17 +133,15 @@ h4 {
  */
 
 a {
-  color: var(--light-accent-color);
+  color: var(--accent-color);
   text-decoration: underline;
+  font-weight: 500;
 }
 a:focus {
   outline: 3px solid var(--light-accent-color);
 }
 a:hover {
   text-decoration: none;
-}
-a::selection {
-  color: var(--text-color);
 }
 
 /*****************************************************************************************************************/
@@ -126,12 +150,13 @@ a::selection {
  * Code
  */
 
-pre,
 code,
+pre,
 var {
-  background: var(--light-background-color);
-  outline: 1px solid rgba(255, 255, 255, 0.2);
-  font-family: "Roboto Mono", monospace;
+  background: var(--background-color);
+  outline: 1px solid var(--border-color);
+  /* In future the font family should be set to ui-monospace (this value is not supported yet) */
+  font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", monospace;
 }
 
 /*****************************************************************************************************************/
@@ -141,8 +166,7 @@ var {
  */
 
 blockquote {
-  border-color: var(--accent-color);
-  color: rgba(255, 255, 255, 0.7);
+  border-color: #f86466;
 }
 
 /*****************************************************************************************************************/
@@ -152,25 +176,32 @@ blockquote {
  */
 
 mark {
-  color: black;
-  background: #ffd62e;
+  color: inherit;
+  background: #fef49c;
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Separator
+ * Separators
  */
 
 hr {
-  background: var(--border-color);
+  background: var(--light-border-color);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Table
+ * Tables
  */
+
+table {
+  border-radius: 7px;
+  border-style: hidden;
+  box-shadow: 0 0 0 1px var(--border-color);
+  overflow: hidden;
+}
 
 th,
 td {
@@ -185,7 +216,9 @@ td {
 
 x-card {
   background: var(--light-background-color);
-  border: 1px solid var(--dark-border-color);
+  border: 1px solid var(--light-border-color);
+  border-radius: 14px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
 }
 
 /*****************************************************************************************************************/
@@ -195,7 +228,11 @@ x-card {
  */
 
 x-accordion::part(arrow) {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(0, 0, 0, 0.48);
+  d: path("M 31 74 L 56 49 L 32 26 C 30 24 30 20 32 18 L 33 17 C 35 15 39 15 42 17 L 70 45 C 72 47 72 51 70 54 C 69 54 69 55 69 55 L 41 83 C 38 85 35 85 32 83 L 31 82 C 29 80 29 76 31 74 Z");
+}
+x-accordion[expanded]::part(arrow) {
+  color: var(--dark-accent-color);
 }
 x-accordion::part(arrow):focus {
   outline: 3px solid var(--light-accent-color);
@@ -205,6 +242,7 @@ x-accordion::part(arrow):focus {
 /* Label */
 x-accordion > header > x-label {
   font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
 }
 
 /*****************************************************************************************************************/
@@ -214,22 +252,36 @@ x-accordion > header > x-label {
  */
 
 x-stepper {
-  width: 14px;
-  min-width: 14px;
+  width: 16px;
+  min-width: 16px;
   border: 1px solid var(--border-color);
-  background: var(--light-background-color);
-  color: rgba(255, 255, 255, 0.8);
+  background: white;
+  border-radius: 7px;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 /* Buttons */
-x-stepper::part(increment-button):hover,
-x-stepper::part(decrement-button):hover {
-  background: rgba(255, 255, 255, 0.3);
+x-stepper::part(increment-button) {
+  border-bottom: 1px solid var(--border-color);
+}
+x-stepper::part(decrement-button) {
+  border-top: 1px solid var(--border-color);
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
-  background: var(--accent-color);
-  outline: 1px solid var(--dark-accent-color);
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
+}
+
+/* Arrows */
+x-stepper::part(increment-arrow),
+x-stepper::part(decrement-arrow) {
+  width: 10px;
+  height: 10px;
+  d: path("M 13 61 L 46 28 C 46 28 48 26 50 26 C 52 26 54 28 54 28 L 87 61 C 87 61 92 67 87 72 C 82 76 77 71 77 71 L 50 46 L 23 71 C 23 71 18 77 13 72 C 8 67 13 61 13 61 Z");
+}
+x-stepper::part(decrement-arrow) {
+  transform: rotateZ(180deg);
 }
 
 /*****************************************************************************************************************/
@@ -239,7 +291,8 @@ x-stepper[pressed="decrement"]::part(decrement-button) {
  */
 
 x-swatch {
-  border: 1px solid var(--light-border-color);
+  border: 1px solid var(--dark-border-color);
+  border-radius: 99px;
 }
 
 /*****************************************************************************************************************/
@@ -250,45 +303,61 @@ x-swatch {
 
 x-button {
   color: var(--text-color);
-  background: var(--light-background-color);
-  border: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
 }
 x-button:focus {
-  border-color: var(--accent-color);
-  outline: 3px solid var(--light-accent-color);
+  box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
 x-button[expanded] {
   background: rgba(0, 0, 0, 0.05);
 }
 x-button[toggled] {
-  color: white;
-  background: var(--accent-color);
-  border-color: var(--light-accent-color);
+  background: rgba(0, 0, 0, 0.24);
+  border-color: #b5b5b5;
 }
 x-button[pressed] {
-  color: white;
-  background: var(--dark-accent-color);
-  border-color: var(--light-accent-color);
+  background: #b5b5b5;
+  border-color: #b5b5b5;
+}
+x-button[disabled] {
+  opacity: 0.4;
 }
 /* Horizontal siblings */
+x-buttons:not([vertical]) > x-button:not(:first-of-type) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 x-buttons:not([vertical]) > x-button:not(:last-of-type) {
   border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 x-buttons:not([vertical]) > x-button[toggled] + x-button {
-  border-left-color: var(--light-accent-color);
+  border-left-color: #b5b5b5;
 }
 x-buttons:not([vertical]) > x-button[pressed] + x-button {
-  border-left-color: var(--light-accent-color);
+  border-left-color: #b5b5b5;
 }
 /* Vertical siblings */
+x-buttons[vertical] > x-button:not(:first-of-type) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
 x-buttons[vertical] > x-button:not(:last-of-type) {
   border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 x-buttons[vertical] > x-button[toggled] + x-button {
-  border-top-color: var(--light-accent-color);
+  border-top-color: var(--darker-accent-color);
 }
 x-buttons[vertical] > x-button[pressed] + x-button {
-  border-top-color: var(--light-accent-color);
+  border-top-color: var(--darker-accent-color);
+}
+
+x-button > x-label {
+  font-weight: 700;
 }
 
 /*****************************************************************************************************************/
@@ -300,15 +369,15 @@ x-buttons[vertical] > x-button[pressed] + x-button {
 x-button[skin="flat"] {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.65);
 }
 x-button[skin="flat"][toggled],
 x-button[skin="flat"][expanded] {
-  color: var(--light-accent-color);
+  color: var(--dark-accent-color);
   background: none;
 }
 x-button[skin="flat"][pressed] {
-  color: var(--dark-accent-color);
+  color: var(--darkest-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -318,35 +387,38 @@ x-button[skin="flat"][pressed] {
  */
 
 x-button[skin="recessed"] {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--primary-color);
   background: none;
   border: none;
+  border-radius: 4px !important;
 }
 x-button[skin="recessed"][disabled] {
   opacity: 0.3;
 }
-x-button[skin="recessed"][toggled] {
-  color: rgba(0, 0, 0, 0.95);
-  background: rgba(255, 255, 255, 0.8);
+x-button[skin="recessed"]:hover {
+  background: rgba(0, 0, 0, 0.07);
 }
-x-button[skin="recessed"][pressed],
-x-button[skin="recessed"][toggled][pressed] {
-  color: rgba(0, 0, 0, 1);
-  background: rgba(255, 255, 255, 1);
+x-button[skin="recessed"][toggled] {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.42);
+}
+x-button[skin="recessed"][pressed] {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.6);
 }
 /* Horizontal siblings */
 x-buttons:not([vertical]) > x-button + x-button[skin="recessed"] {
-  margin-left: 2px;
+  margin-left: 4px;
 }
 /* Vertical siblings */
 x-buttons[vertical] > x-button + x-button[skin="recessed"] {
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 /* Label */
 x-button[skin="recessed"] > x-label {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   text-align: center;
 }
 
@@ -357,27 +429,33 @@ x-button[skin="recessed"] > x-label {
  */
 
 x-button[skin="nav"] {
+  color: var(--text-color);
   background: none;
   border: none;
-  border-radius: 0;
+  border-radius: 8px !important;
   cursor: default;
 }
-x-button[skin="nav"]:focus {
-  outline-offset: -2px;
-}
 x-button[skin="nav"][toggled] {
-  background: var(--accent-color);
+  background: rgba(0, 0, 0, 0.08);
+}
+x-button[skin="nav"]:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+x-button[skin="nav"][toggled]:hover {
+  background: rgba(0, 0, 0, 0.12);
 }
 x-button[skin="nav"][pressed] {
-  background: rgba(255, 255, 255, 0.2);
-}
-x-button[skin="nav"][toggled][pressed] {
-  background: var(--dark-accent-color);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* Icon */
 x-button[skin="nav"] x-icon {
   opacity: 0.9;
+}
+
+/* Label */
+x-button[skin="nav"] x-label {
+  font-weight: 700;
 }
 
 /*****************************************************************************************************************/
@@ -387,33 +465,32 @@ x-button[skin="nav"] x-icon {
  */
 
 x-button[skin="dock"] {
-  border-color: var(--light-border-color);
+  border: 1px solid transparent;
+  border-color: var(--dark-border-color);
   border-radius: 0;
 }
 x-button[skin="dock"][toggled] {
-  border-color: var(--light-accent-color);
+  color: var(--background-color);
+  border-color: var(--darkest-accent-color);
   background: var(--accent-color);
 }
 x-button[skin="dock"][pressed] {
-  border-color: var(--light-accent-color);
+  border-color: var(--darkest-accent-color);
   background: var(--dark-accent-color);
-}
-x-button[skin="dock"]:focus {
-  border-color: var(--accent-color);
 }
 /* Horizontal siblings */
 x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button {
-  border-left-color: var(--light-accent-color);
+  border-left-color: var(--darkest-accent-color);
 }
 x-buttons:not([vertical]) > x-button[skin="dock"][pressed] + x-button {
-  border-left-color: var(--light-accent-color);
+  border-left-color: var(--darkest-accent-color);
 }
 /* Vertial siblings */
 x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button {
-  border-top-color: var(--light-accent-color);
+  border-top-color: var(--darkest-accent-color);
 }
 x-buttons[vertical] > x-button[skin="dock"][pressed] + x-button {
-  border-top-color: var(--light-accent-color);
+  border-top-color: var(--darkest-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -423,11 +500,14 @@ x-buttons[vertical] > x-button[skin="dock"][pressed] + x-button {
  */
 
 x-button[skin="circular"] {
+  color: var(--accent-color);
+  background: white;
+  border-color: rgba(0, 0, 0, 0.25);
   border-radius: 999px;
 }
-x-button[skin="circular"]:focus {
-  outline: none;
-  box-shadow: 0 0 0px 3px var(--light-accent-color);
+x-button[skin="circular"][pressed],
+x-button[skin="circular"][expanded] {
+  background: var(--background-color);
 }
 
 /*****************************************************************************************************************/
@@ -437,30 +517,37 @@ x-button[skin="circular"]:focus {
  */
 
 x-tag {
-  background: var(--light-background-color);
+  background: var(--background-color);
   border-color: var(--border-color);
+  border-radius: 4px;
   position: relative;
 }
 x-tag:active {
-  filter: brightness(1.2);
+  filter: brightness(0.97);
 }
 x-tag:focus {
-  outline: 1px solid var(--light-accent-color);
+  box-shadow: 0 0 0px 1px var(--light-accent-color);
   border-color: var(--accent-color);
 }
 x-tag[scoped]::part(main) {
-  background: var(--light-background-color);
+  background: var(--background-color);
 }
 x-tag[toggled] {
-  filter: brightness(1.45);
+  filter: brightness(0.8);
+  color: rgba(0, 0, 0, 0.8);
 }
 x-tag[toggled]:active {
-  filter: brightness(0.6);
+  filter: brightness(0.7);
+}
+
+/* Remove button */
+x-tag::part(remove-button) {
+  display: none;
 }
 
 /* Scope prefix */
 x-tag::part(scope) {
-  background: var(--background-color);
+  background: var(--light-background-color);
   border-color: var(--border-color);
 }
 
@@ -471,21 +558,23 @@ x-tag::part(scope) {
  */
 
 x-tagsinput {
-  background: transparent;
+  background: white;
   border: 1px solid var(--border-color);
+  border-radius: 4px;
 }
 x-tagsinput:focus-within {
   border-color: var(--accent-color);
-  outline: 3px solid var(--light-accent-color);
+  box-shadow: 0 0 0px 3px var(--lightest-accent-color);
+  outline: none;
 }
 x-tagsinput[error] {
   border-color: var(--error-color);
-  outline: 3px solid var(--error-color);
+  box-shadow: 0 0 0px 3px rgba(255, 0, 0, 0.49);
 }
 
 /* Placeholder */
 x-tagsinput > x-label {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }
 
 /* Error message */
@@ -500,32 +589,32 @@ x-tagsinput[error]::before {
  * Tabs
  */
 
+x-tabs {
+  width: 100%;
+  justify-content: flex-start;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Tab */
 x-tab {
-  background: var(--light-background-color);
-  border: 1px solid var(--border-color);
+  border-bottom: 4px solid transparent;
+  margin-bottom: -1px;
+}
+x-tab + x-tab {
+  margin-left: 5px;
+}
+x-tab:hover {
+  background: var(--dark-background-color);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 x-tab:focus {
-  outline: 3px solid var(--light-accent-color);
-  border-color: var(--accent-color);
+  box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
 x-tab[selected] {
-  color: white;
-  background: var(--accent-color);
-  border-color: var(--light-accent-color);
+  border-color: var(--accent-color);
 }
-x-tab[pressed] {
-  color: white;
-  background: var(--dark-accent-color);
-  border-color: var(--light-accent-color);
-}
-x-tab:not(:last-of-type) {
-  border-right: none;
-}
-x-tab[selected] + x-tab {
-  border-left-color: var(--light-accent-color);
-}
-x-tab[pressed] + x-tab {
-  border-left-color: var(--light-accent-color);
+x-tab:active {
+  background: rgba(0, 0, 0, 0.12);
 }
 
 /*****************************************************************************************************************/
@@ -535,10 +624,19 @@ x-tab[pressed] + x-tab {
  */
 
 x-menu {
+  padding: 3px;
   color: var(--text-color);
   background: var(--light-background-color);
   border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: rgb(0 0 0 / 17%) 0px 3px 10px 0px;
   --open-transition: none;
+}
+
+/* Separator */
+x-menu hr {
+  width: calc(100% - 8px);
+  margin: 4px 0px 4px 4px;
 }
 
 /*****************************************************************************************************************/
@@ -549,13 +647,39 @@ x-menu {
 
 x-menuitem {
   color: var(--text-color);
+  border-radius: 8px;
+  --trigger-effect: none;
 }
 x-menuitem:focus,
 x-menuitem[expanded] {
-  background: var(--accent-color);
-  color: white;
+  background: rgba(0, 0, 0, 0.08);
+}
+x-menuitem[pressed] {
+  background: rgba(0, 0, 0, 0.12);
 }
 
+/* Checkmark icon */
+x-menuitem::part(checkmark) {
+  d: path("M 38 74 L 22 55 C 20 52 20 48 22 46 C 25 44 28 44 31 47 L 44 63 L 68 26 C 71 23 75 21 78 23 C 80 25 81 29 78 33 L 51 74 C 50 76 46 78 45 78 C 44 78 42 78 41 77 C 40 76 39 75 38 74 Z");
+}
+
+/* Arrow icon */
+x-menuitem::part(arrow) {
+  color: rgba(0, 0, 0, 0.4);
+  d: path("M 34 29 C 31 26 30 21 32 19 C 35 17 39 17 42 20 L 66 44 C 66 44 67 45 67 45 C 67 45 68 46 68 46 C 69 47 69 48 69 50 C 69 52 69 53 68 54 C 68 54 67 55 67 55 C 67 55 66 56 66 56 L 42 80 C 39 83 35 83 32 81 C 30 79 31 74 34 71 L 55 50 Z");
+}
+
+/* Shortcut */
+
+x-menuitem > x-shortcut {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* Swatch */
+x-menuitem:focus > x-swatch,
+x-menuitem[expanded] > x-swatch {
+  border-color: rgba(255, 255, 255, 0.8);
+}
 
 /*****************************************************************************************************************/
 
@@ -565,10 +689,13 @@ x-menuitem[expanded] {
 
 dialog {
   top: 0;
+  overflow: hidden;
   color: inherit;
   background: var(--background-color);
   border: 1px solid var(--dark-border-color);
   border-top: none;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 22px;
   transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
 }
@@ -578,7 +705,7 @@ dialog::backdrop {
 
 /* Heading */
 dialog h3 {
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(0, 0, 0, 0.95);
 }
 
 /*****************************************************************************************************************/
@@ -589,9 +716,10 @@ dialog h3 {
 
 x-popover {
   color: var(--text-color);
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 22px;
+  background: white;
+  border: 1px solid var(--dark-border-color);
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 6px;
   --open-transition: none;
 }
 
@@ -600,6 +728,10 @@ x-popover {
 /**
  * Notification
  */
+
+x-notification {
+  border-radius: 5px;
+}
 
 /* Selection */
 x-notification::selection {
@@ -615,23 +747,30 @@ x-notification::selection {
 
 /* Indicator */
 x-checkbox::part(indicator) {
-  color: rgba(0, 0, 0, 0.5);
-  background: var(--background-color);
-  border: 1px solid var(--light-border-color);
+  background: white;
+  border: 1px solid var(--dark-border-color);
+  border-radius: 6px;
+  d: path("M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 89.1 34.6 C 96.4 27 84.8 15.6 77.3 23.3 L 41.7 63.6 L 23.4 44.5 C 13.2 36.6 5.3 51 12.4 56.7 L 42.7 86.1 L 89.1 34.6 Z");
 }
-x-checkbox:active::part(indicator) {
-  background: rgba(255, 255, 255, 0.1);
+x-checkbox[mixed]::part(indicator) {
+  d: path("M 0 0 L 100 0 L 100 100 L 0 100 Z M 13 50 C 13.1 54.5 16.8 58.2 21.3 58.2 L 78.6 58.2 C 83.1 58.2 86.8 54.5 86.9 50 C 86.9 45.4 83.2 41.7 78.6 41.7 L 21.3 41.7 C 16.7 41.7 13 45.4 13 50 Z");
+}
+x-checkbox:not([toggled]):active::part(indicator) {
+  background: rgba(0, 0, 0, 0.2);
 }
 x-checkbox:focus::part(indicator) {
   box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
+x-checkbox[mixed]::part(indicator) {
+  color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(0, 0, 0, 0.4);
+}
 x-checkbox[toggled]::part(indicator) {
-  background: white;
   color: var(--accent-color);
   border: 2px solid currentColor;
 }
 x-checkbox[toggled]:active::part(indicator) {
-  color: var(--dark-accent-color);
+  color: var(--darkest-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -642,35 +781,33 @@ x-checkbox[toggled]:active::part(indicator) {
 
 /* Indicator */
 x-radio::part(indicator) {
-  background: var(--accent-color);
-  border: 1px solid var(--light-border-color);
+  background: white;
+  border: 1px solid var(--dark-border-color);
+}
+x-radio:not([toggled]):active::part(indicator) {
+  background: rgba(0, 0, 0, 0.2);
 }
 x-radio:focus::part(indicator) {
   box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
 x-radio[toggled]::part(indicator) {
+  background: var(--accent-color);
   border-color: var(--accent-color);
 }
 x-radio[toggled]:active::part(indicator) {
-  background: var(--dark-accent-color);
+  background: var(--darkest-accent-color);
 }
 
 /* Indicator dot */
 x-radio::part(indicator-dot) {
-  background: var(--background-color);
-  transform: scale(1);
-  transition: transform 150ms cubic-bezier(0, 0, 0.2, 1);
-}
-x-radio:active::part(indicator-dot) {
-  filter: brightness(1.4);
+  background: white;
 }
 x-radio[toggled]::part(indicator-dot) {
-  background: white;
-  box-shadow: rgba(0, 0, 0, 0.4) 1px 3px 7px;
   transform: scale(0.4);
 }
-x-radio[toggled]:active::part(indicator-dot) {
-  background: white;
+x-radio[mixed]::part(indicator-dot) {
+  transform: scale(0.5);
+  border-radius: 3px;
 }
 
 /*****************************************************************************************************************/
@@ -685,8 +822,8 @@ x-switch:focus {
 
 /* Indicator thumb */
 x-switch::part(indicator-thumb) {
-  border-radius: 0;
   background: white;
+  box-shadow: white 0px 0px 0px 2px, rgb(0 0 0 / 38%) 0px 1px 3px 2px;
   width: 15px;
   height: 15px;
 }
@@ -715,13 +852,12 @@ x-switch[computedsize="large"][toggled]::part(indicator-thumb) {
 /* Indicator track */
 x-switch::part(indicator-track) {
   height: 100%;
-  border-radius: 0;
-  background: var(--light-background-color);
-  box-shadow: var(--light-border-color) 0px 0px 0px 2px;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.12);
 }
 x-switch[toggled]::part(indicator-track) {
   background: var(--accent-color);
-  box-shadow: 0 0 0 2px var(--dark-accent-color);
+  box-shadow: 0 0 0 4px var(--accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -731,31 +867,21 @@ x-switch[toggled]::part(indicator-track) {
  */
 
 x-select {
-  background: var(--light-background-color);
-  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+x-select[disabled] {
+  opacity: 0.4;
 }
 x-select:focus {
-  border-color: var(--accent-color);
-  outline: 3px solid var(--light-accent-color);
+  box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
 
 /* Arrow icon */
 x-select::part(arrow) {
-  color: white;
-}
-
-/* Arrow background */
-x-select::before {
-  content: "";
-  display: block;
-  width: 20px;
-  height: calc(100% + 2px);
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  background: var(--accent-color);
-  border: 1px solid var(--dark-accent-color);
-  box-sizing: border-box;
+  margin: 0 8px;
+  d: path("M 6 30 L 93 30 L 50 76 L 6 30 Z");
 }
 
 /*****************************************************************************************************************/
@@ -766,7 +892,7 @@ x-select::before {
 
 x-colorselect {
   border: 1px solid var(--border-color);
-  background-color: var(--background-color);
+  border-radius: 999px;
 }
 
 /*****************************************************************************************************************/
@@ -776,71 +902,41 @@ x-colorselect {
  */
 
 x-input {
-  background: var(--light-background-color);
-  border: 1px solid var(--border-color);
+  background: var(--dark-background-color);
+  border: 1px solid var(--light-border-color);
 }
 x-input:focus {
   border-color: var(--accent-color);
-  outline: 3px solid var(--light-accent-color);
+  outline: 3px solid var(--lightest-accent-color);
 }
 x-input[error] {
   border-color: var(--error-color);
-  outline: 3px solid var(--error-color);
+  outline: 3px solid rgba(255, 0, 0, 0.49);
 }
 
 /* Icon */
 x-input > x-icon {
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  padding: 6px;
-  margin: 0;
-  box-sizing: border-box;
-  color: rgba(255, 255, 255, 0.7);
-  background: var(--lighter-background-color);
-  border-right: 1px solid var(--border-color);
-}
-x-input[computedsize="small"] > x-icon {
-  width: 22px;
-  height: 22px;
-  min-width: 22px;
-  padding: 5px;
-}
-x-input[computedsize="large"] > x-icon {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  padding: 8px;
-}
-x-input:focus > x-icon {
-  background: var(--accent-color);
-  outline: 1px solid var(--dark-accent-color);
-  border-right: none;
-  color: rgba(255, 255, 255, 0.9);
-}
-x-input[error] > x-icon {
-  background: var(--error-color);
-  border-right: 1px solid var(--error-color);
-  color: rgba(255, 255, 255, 0.9);
+  color: #565656;
 }
 
 /* Placeholder */
 x-input > x-label {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }
 x-input > x-icon + x-label {
-  padding: 1px 5px 0 36px;
+  padding: 2px 5px 0px 29px;
 }
 x-input[computedsize="small"] > x-icon + x-label {
-  padding: 1px 5px 0 30px;
+  padding: 2px 5px 0px 29px;
 }
 x-input[computedsize="large"] > x-icon + x-label {
-  padding: 1px 5px 0 42px;
+  padding: 2px 5px 0px 33px;
 }
 
 /* Error message */
 x-input[error]::before {
   color: var(--error-color);
+  font-weight: 700;
 }
 
 /*****************************************************************************************************************/
@@ -850,31 +946,33 @@ x-input[error]::before {
  */
 
 x-numberinput {
-  background: var(--light-background-color);
+  background: white;
   border: 1px solid var(--border-color);
 }
 x-numberinput:focus {
   border-color: var(--accent-color);
-  outline: 3px solid var(--light-accent-color);
+  outline: 3px solid var(--lightest-accent-color);
 }
 x-numberinput[error] {
   border-color: var(--error-color);
-  outline: 3px solid var(--error-color);
+  outline: 3px solid rgba(255, 0, 0, 0.49);
 }
 
 /* Placeholder */
 x-numberinput > x-label {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }
 
 /* Stepper */
 x-numberinput[condensed] > x-stepper {
+  border: none;
   border-radius: 0;
+  box-shadow: 0 0 0 1px var(--border-color);;
   margin: 0;
+  width: 14px;
+  min-width: 14px;
   height: 100%;
   display: flex;
-  border: none;
-  box-shadow: 0 0 0 1px var(--border-color);
 }
 x-numberinput[condensed]:focus > x-stepper {
   display: none;
@@ -883,6 +981,7 @@ x-numberinput[condensed]:focus > x-stepper {
 /* Error message */
 x-numberinput[error]::before {
   color: var(--error-color);
+  font-weight: 700;
 }
 
 /*****************************************************************************************************************/
@@ -892,26 +991,27 @@ x-numberinput[error]::before {
  */
 
 x-texteditor {
-  background: var(--light-background-color);
+  background: white;
   border: 1px solid var(--border-color);
 }
 x-texteditor:focus {
   border-color: var(--accent-color);
-  outline: 3px solid var(--light-accent-color);
+  outline: 3px solid var(--lightest-accent-color);
 }
 x-texteditor[error] {
   border-color: var(--error-color);
-  outline: 3px solid var(--error-color);
+  outline: 3px solid rgba(255, 0, 0, 0.49);
 }
 
 /* Placeholder */
 x-texteditor > x-label {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }
 
 /* Error message */
 x-texteditor[error]::before {
   color: var(--error-color);
+  font-weight: 700;
 }
 
 /*****************************************************************************************************************/
@@ -922,55 +1022,35 @@ x-texteditor[error]::before {
 
 /* Groove track */
 x-slider::part(groove-track) {
-  background: var(--light-border-color);
+  background: var(--dark-border-color);
+  border-radius: 5px;
 }
 
 /* Buffer track */
 x-slider::part(buffer-track) {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
 }
 
 /* Range track */
 x-slider::part(range-track) {
-  background: var(--accent-color);
+  background: var(--light-accent-color);
+  border-radius: 5px;
 }
 
 /* Thumbs */
 x-slider::part(thumb) {
-  width: 12px;
-  height: 24px;
-  background: #d4d4d4;
-  border-color: #d4d4d4;
-  border-radius: 4px;
-}
-x-slider[computedsize="small"]::part(thumb) {
-  width: 10px;
-  height: 20px;
-}
-x-slider[computedsize="large"]::part(thumb) {
-  width: 14px;
-  height: 26px;
-}
-x-slider[vertical]::part(thumb) {
-  width: 24px;
-  height: 12px;
-}
-x-slider[vertical][computedsize="small"]::part(thumb) {
-  width: 20px;
-  height: 10px;
-}
-x-slider[vertical][computedsize="large"]::part(thumb) {
-  width: 26px;
-  height: 14px;
+  background: white;
+  border-radius: 99px;
+  box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px 0px;
 }
 x-slider[dragging="start"]::part(start-thumb),
 x-slider[dragging="end"]::part(end-thumb) {
-  background: #e8e8e8;
-  border-color: #e8e8e8;
+  background: var(--background-color);
 }
 x-slider::part(thumb):focus {
   border-color: var(--accent-color);
-  box-shadow: 0 0 0px 3px var(--light-accent-color);
+  box-shadow: 0 0 0px 3px var(--lightest-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -980,13 +1060,14 @@ x-slider::part(thumb):focus {
  */
 
 x-progressbar {
-  background: var(--light-background-color);
-  box-shadow: inset 0px 0px 0px 1px var(--dark-border-color);
+  background: var(--dark-background-color);
+  box-shadow: inset 0px 0px 0px 1px var(--border-color);
+  border-radius: 5px;
 }
 
 /* Bar */
 x-progressbar::part(bar) {
-  background: var(--accent-color);
+  background: var(--light-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -996,5 +1077,5 @@ x-progressbar::part(bar) {
  */
 
 x-throbber[type="ring"] {
-  color: var(--accent-color);
+  color: var(--light-accent-color);
 }

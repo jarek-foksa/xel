@@ -978,16 +978,19 @@ x-texteditor[error]::before {
 /* Groove track */
 x-slider::part(groove-track) {
   background: var(--light-border-color);
+  border-radius: 5px;
 }
 
 /* Buffer track */
 x-slider::part(buffer-track) {
   background: #f7f7f7;
+  border-radius: 5px;
 }
 
 /* Range track */
 x-slider::part(range-track) {
   background: var(--light-accent-color);
+  border-radius: 5px;
 }
 
 /* Thumbs */

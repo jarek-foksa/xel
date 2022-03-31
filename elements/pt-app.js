@@ -109,12 +109,12 @@ export default class PTAppElement extends HTMLElement {
 
               <x-select id="theme-select">
                 <x-menu>
-                  <x-menuitem value="vanilla" toggled>
-                    <x-label>Vanilla</x-label>
+                  <x-menuitem value="adwaita" toggled>
+                    <x-label>Adwaita</x-label>
                   </x-menuitem>
 
-                  <x-menuitem value="vanilla-dark">
-                    <x-label>Vanilla Dark</x-label>
+                  <x-menuitem value="adwaita-dark">
+                    <x-label>Adwaita Dark</x-label>
                   </x-menuitem>
 
                   <x-menuitem value="cupertino">
@@ -513,7 +513,7 @@ export default class PTAppElement extends HTMLElement {
      */
 
     #sidebar {
-      width: 270px;
+      width: 280px;
       overflow: auto;
       position: relative;
     }
@@ -544,6 +544,8 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #sidebar #nav {
+      box-sizing: border-box;
+      padding: 0 20px;
       margin-bottom: 20px;
       width: 100%;
     }
@@ -555,9 +557,6 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #sidebar #nav x-button[skin="nav"] {
-      width: calc(100% + 60px);
-      margin-left: -30px;
-      padding: 8px 30px;
       --ripple-background: white;
       --min-pressed-time: 0ms;
     }
@@ -719,7 +718,7 @@ export default class PTAppElement extends HTMLElement {
   }
 
   async connectedCallback() {
-    Xel.theme = "/themes/" + (localStorage.getItem("theme") || "vanilla") + "-portal.css";
+    Xel.theme = "/themes/" + (localStorage.getItem("theme") || "adwaita") + "-portal.css";
     Xel.accentColor = localStorage.getItem("accentColor") || "blue";
     Xel.size = localStorage.getItem("size") || "medium";
     Xel.iconset = "/iconsets/" + (localStorage.getItem("iconset") || "material") + ".svg";

@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 0.12.0 (PENDING)
+
+- Add Adwaita theme
+- Remove Vanilla theme
+
 ## 0.11.0 (2022-03-13)
 
 - Remove `<x-doctabs>` and `<x-doctab>`

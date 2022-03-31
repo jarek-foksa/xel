@@ -42,12 +42,12 @@ export default class PTSetupPageElement extends PTPage {
             <p>Add to the <code>&lt;head&gt;</code> to use
               <x-select id="theme-select">
                 <x-menu>
-                  <x-menuitem value="vanilla" toggled>
-                    <x-label>Vanilla</x-label>
+                  <x-menuitem value="adwaita" toggled>
+                    <x-label>Adwaita</x-label>
                   </x-menuitem>
 
-                  <x-menuitem value="vanilla-dark">
-                    <x-label>Vanilla Dark</x-label>
+                  <x-menuitem value="adwaita-dark">
+                    <x-label>Adwaita Dark</x-label>
                   </x-menuitem>
 
                   <x-menuitem value="cupertino">

@@ -6,11 +6,11 @@
  *   MIT License (check LICENSE.md for details)
  */
 
-@import url("/node_modules/xel/themes/vanilla-dark.css");
+@import url("/node_modules/xel/themes/adwaita.css");
 
 body {
-  --green-status-color: #93d872;
-  --red-status-color: #ff8e9d;
+  --green-status-color: #519d3a;
+  --red-status-color: #e0383e;
 }
 
 /******************************************************************************************************************
@@ -22,7 +22,7 @@ body {
  */
 
 pt-aboutpage {
-  background: var(--accent-color);
+  background: linear-gradient(to bottom, var(--light-accent-color), var(--accent-color));
 }
 
 /**
@@ -47,7 +47,7 @@ pt-termspage::part(card-footer) {
 
 x-tag[skin="colored"] {
   height: 18px;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.3);
 }
 x-tag[skin="colored"]:not([scoped]) {
   color: #fff;
@@ -55,7 +55,7 @@ x-tag[skin="colored"]:not([scoped]) {
 x-tag[skin="colored"]::part(scope) {
   background: none;
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 /**
@@ -63,8 +63,10 @@ x-tag[skin="colored"]::part(scope) {
  */
 
 pt-code {
-  background: var(--light-background-color);
-  border: 1px solid var(--border-color);
+  background: white;
+  border: 1px solid var(--light-border-color);
+  border-radius: 7px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
 }
 
 /******************************************************************************************************************
@@ -72,13 +74,14 @@ pt-code {
  *****************************************************************************************************************/
 
 #sidebar {
-  background: var(--light-background-color);
-  border-right: 1px solid var(--dark-border-color);
+  border-right: 1px solid var(--light-border-color);
 }
 
-#nav {
-  box-sizing: border-box;
-  padding: 0 30px;
+#sidebar #header {
+  background: var(--dark-background-color);
+}
+#sidebar #header + hr {
+  background: var(--dark-border-color);
 }
 
 #nav > section {
@@ -86,7 +89,7 @@ pt-code {
 }
 
 #nav > section h3 {
-  opacity: 0.65;
+  opacity: 0.4;
   margin: 12px 0 6px 0;
   padding: 0;
   font-size: 13px;
@@ -100,6 +103,10 @@ pt-code {
   width: calc(100% + 60px);
 }
 
+#nav x-button[skin="nav"] {
+  width: 100%;
+}
+
 #nav x-icon[name="open"] {
-  color: var(--light-accent-color);
+  color: var(--accent-color);
 }

@@ -65,6 +65,7 @@ export default class XCheckboxElement extends HTMLElement {
       height: 19px;
       box-sizing: border-box;
       border: 2px solid currentColor;
+      overflow: hidden;
       d: path("M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 95 23 L 86 13 L 37 66 L 13.6 41 L 4.5 51 L 37 85 L 95 23 Z");
     }
     :host([mixed]) #indicator {

@@ -97,13 +97,13 @@ export default class XSliderElement extends HTMLElement {
     #range-track {
       position: absolute;
       width: 0%;
-      height: 3px;
+      height: 4px;
       background: black;
       top: 50%;
       transform: translateY(-50%);
     }
     :host([vertical]) #range-track {
-      width: 3px;
+      width: 4px;
       height: 0%;
       top: initial;
       left: 50%;
@@ -113,14 +113,13 @@ export default class XSliderElement extends HTMLElement {
     #groove-track {
       position: absolute;
       width: 100%;
-      height: 3px;
+      height: 4px;
       background: gray;
-      border-radius: 10px;
       top: 50%;
       transform: translateY(-50%);
     }
     :host([vertical]) #groove-track {
-      width: 3px;
+      width: 4px;
       height: 100%;
       top: initial;
       left: 50%;
@@ -130,13 +129,13 @@ export default class XSliderElement extends HTMLElement {
     #buffer-track {
       position: absolute;
       width: 0%;
-      height: 3px;
+      height: 4px;
       background: red;
       top: 50%;
       transform: translateY(-50%);
     }
     :host([vertical]) #buffer-track {
-      width: 3px;
+      width: 4px;
       height: 0%;
       top: initial;
       left: 50%;

@@ -1051,7 +1051,7 @@ x-radios:not(:defined) {
  */
 
 x-switch + x-switch {
-  margin-top: 6px;
+  margin-top: 12px;
 }
 x-switch:not(:defined) {
   display: none;
@@ -1288,10 +1288,10 @@ x-slider[vertical][computedsize="small"]::part(track) {
   width: 2px;
 }
 x-slider:not([vertical])[computedsize="large"]::part(track) {
-  height: 4px;
+  height: 6px;
 }
 x-slider[vertical][computedsize="large"]::part(track) {
-  width: 4px;
+  width: 6px;
 }
 
 /* Label */

@@ -101,6 +101,12 @@ pt-code {
   width: calc(100% + 60px);
 }
 
+#nav x-button[skin="nav"] {
+  width: calc(100% + 60px);
+  margin-left: -30px;
+  padding: 8px 30px;
+}
+
 #nav x-icon[name="open"] {
   color: var(--light-accent-color);
 }
