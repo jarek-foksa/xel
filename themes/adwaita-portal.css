@@ -89,18 +89,13 @@ pt-code {
 }
 
 #nav > section h3 {
-  opacity: 0.4;
   margin: 12px 0 6px 0;
   padding: 0;
+  color: var(--text-color);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   user-select: none;
   cursor: default;
-}
-
-#nav > hr {
-  margin: 0 0 0 -30px;
-  width: calc(100% + 60px);
 }
 
 #nav x-button[skin="nav"] {

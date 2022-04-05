@@ -318,7 +318,7 @@ export default class XPopoverElement extends HTMLElement {
           let topOverflow = 0;
 
           this.#elements["arrow"].style.top =
-            (extraTop + contextRect.top - arrowWhitespace - borderWidth - arrowRect.height) + "px";
+            Math.floor(extraTop + contextRect.top - arrowWhitespace - borderWidth - arrowRect.height) + "px";
           this.style.top = (extraTop + contextRect.top - arrowWhitespace - arrowRect.height - popoverRect.height) + "px";
 
           popoverRect = roundRect(this.getBoundingClientRect());

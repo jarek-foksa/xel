@@ -93,11 +93,11 @@ pt-code {
 
 #nav > hr {
   margin: 0 0 0 -30px;
-  width: calc(100% + 60px);
+  width: calc(100% + 50px);
 }
 
 #nav x-button[skin="nav"] {
-  width: calc(100% + 60px);
+  width: calc(100% + 50px);
   margin-left: -30px;
   padding: 8px 30px;
 }

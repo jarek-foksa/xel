@@ -81,10 +81,9 @@ let DialogElementMixin = {
           let transitionProperty = computedStyle.getPropertyValue("transition-property");
           let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration")) * 1000;
           let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function");
+          let dialogRect = this.getBoundingClientRect();
 
           if (transitionProperty === "transform") {
-            let dialogRect = this.getBoundingClientRect();
-
             // Animate from left
             if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
               this._showAnimation = this.animate(
@@ -100,9 +99,16 @@ let DialogElementMixin = {
               );
             }
             // Animate from top
-            else {
+            else if (getComputedStyle(this).marginTop === "0px" && getComputedStyle(this).marginBottom === "0px") {
               this._showAnimation = this.animate(
                 { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
+                { duration: transitionDuration, easing: transitionTimingFunction }
+              );
+            }
+            // Animate from center
+            else {
+              this._showAnimation = this.animate(
+                { transform: [`scaleY(0)`, "scaleY(1)"]},
                 { duration: transitionDuration, easing: transitionTimingFunction }
               );
             }
@@ -223,10 +229,9 @@ let DialogElementMixin = {
           let transitionDurationString = computedStyle.getPropertyValue("transition-duration") || "0s";
           let transitionDuration = parseFloat(transitionDurationString) * 1000;
           let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function") || "ease";
+          let dialogRect = this.getBoundingClientRect();
 
           if (transitionProperty === "transform") {
-            let dialogRect = this.getBoundingClientRect();
-
             // Animate to left
             if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
               this._closeAnimation = this.animate(
@@ -242,17 +247,26 @@ let DialogElementMixin = {
               );
             }
             // Animate to top
-            else {
+            else if (getComputedStyle(this).marginTop === "0px" && getComputedStyle(this).marginBottom === "0px") {
               this._closeAnimation = this.animate(
                 { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
                 { duration: transitionDuration, easing: transitionTimingFunction }
               );
             }
-
-            await this._closeAnimation.finished;
-            this._closeAnimation = null;
+            // Animate to center
+            else {
+              this._closeAnimation = this.animate(
+                { transform: [`scaleY(1)`, "scaleY(0)"]},
+                { duration: transitionDuration, easing: transitionTimingFunction }
+              );
+            }
           }
         }
+      }
+
+      if (this._closeAnimation) {
+        await this._closeAnimation.finished;
+        this._closeAnimation = null;
       }
 
       if (this.hasAttribute("open")) {

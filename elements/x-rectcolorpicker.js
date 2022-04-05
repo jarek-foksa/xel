@@ -14,6 +14,7 @@ import {html, css} from "../utils/template.js";
 const DEBUG = false;
 
 // @element x-rectcolorpicker
+// @part slider
 // @event change
 // @event changestart
 // @event changeend
@@ -23,17 +24,17 @@ export default class XRectColorPickerElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
       <x-box vertical>
-        <div id="hue-slider">
+        <div id="hue-slider" part="slider">
           <div id="hue-slider-track">
             <div id="hue-slider-marker"></div>
           </div>
         </div>
 
-        <div id="satlight-slider">
+        <div id="satlight-slider" part="slider">
           <div id="satlight-marker"></div>
         </div>
 
-        <div id="alpha-slider">
+        <div id="alpha-slider" part="slider">
           <div id="alpha-slider-gradient"></div>
           <div id="alpha-slider-track">
             <div id="alpha-slider-marker"></div>

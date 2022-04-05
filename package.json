@@ -40,6 +40,7 @@
     "throbber"
   ],
   "devDependencies": {
+    "cantarell": "0.303.0",
     "clean-css": "5.2.2",
     "fs-extra": "10.0.0",
     "glob": "7.2.0",

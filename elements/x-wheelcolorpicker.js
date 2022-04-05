@@ -19,24 +19,25 @@ const DEBUG = false;
 // @event change
 // @event changestart
 // @event changeend
+// @part slider
 export default class XWheelColorPickerElement extends HTMLElement {
   static observedAttributes = ["value", "size"];
 
   static #shadowTemplate = html`
     <template>
       <x-box vertical>
-        <div id="huesat-slider">
+        <div id="huesat-slider" part="slider">
           <img id="huesat-image"></img>
           <div id="huesat-marker"></div>
         </div>
 
-        <div id="value-slider">
+        <div id="value-slider" part="slider">
           <div id="value-slider-track">
             <div id="value-slider-marker"></div>
           </div>
         </div>
 
-        <div id="alpha-slider">
+        <div id="alpha-slider" part="slider">
           <div id="alpha-slider-gradient"></div>
           <div id="alpha-slider-track">
             <div id="alpha-slider-marker"></div>

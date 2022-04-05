@@ -373,7 +373,6 @@ x-button[skin="flat"][pressed] {
  */
 
 x-button[skin="recessed"] {
-  color: var(--primary-color);
   background: none;
   border: none;
   border-radius: 4px !important;
@@ -1005,6 +1004,18 @@ x-slider[dragging="end"]::part(end-thumb) {
 x-slider::part(thumb):focus {
   border-color: var(--accent-color);
   box-shadow: 0 0 0px 3px var(--lightest-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Color pickers
+ */
+
+x-barscolorpicker::part(slider),
+x-rectcolorpicker::part(slider),
+x-wheelcolorpicker::part(slider) {
+  border-radius: 4px;
 }
 
 /*****************************************************************************************************************/
