@@ -63,9 +63,9 @@ x-tag[skin="colored"]::part(scope) {
  */
 
 pt-code {
-  background: white;
+  background: var(--light-background-color);
   border: 1px solid var(--light-border-color);
-  border-radius: 7px;
+  border-radius: 14px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
 }
 

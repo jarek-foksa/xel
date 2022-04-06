@@ -1,0 +1,1092 @@
+
+/*
+ * @copyright
+ *   © 2016-2022 Jarosław Foksa
+ * @license
+ *   MIT License (check LICENSE.md for details)
+ * @doc
+ *   https://en.wikipedia.org/wiki/Adwaita_(design_language)
+ *   https://developer.gnome.org/hig/
+ *   https://blogs.gnome.org/alexm/2021/12/31/libadwaita-1-0/
+ *   https://aplazas.pages.gitlab.gnome.org/blog/blog/2021/03/31/introducing-libadwaita.html
+ *
+ * Theme implementing GNOME Human Interface Guidelines.
+ */
+
+@import "/node_modules/xel/themes/base.css";
+
+/*****************************************************************************************************************/
+
+/**
+ * Wrappers
+ */
+
+body {
+  color: var(--text-color);
+  background: var(--background-color);
+  font-weight: 500;
+  font-family: "Cantarell", BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;;
+  --preset-accent-colors: blue #3584e4, purple #9141ac, pink #f74f9e, red #e01b24, orange #ff7800, yellow #e5a50a,
+                          green #2ec27e, graphite #9a9996;
+  --titlebar-color: auto;
+  --background-color: #242424;
+  --light-background-color: #363636;
+  --dark-background-color: black;
+  --border-color: #525252;
+  --dark-border-color: #0c0c0c;
+  --text-color: rgba(255, 255, 255, 0.8);
+  --light-text-color: rgba(255, 255, 255, 0.92);
+  --error-color:  #c5313c;
+  --error-background-color: #f4e5e5;
+  --autofill-background-color: #f2ede2;
+  --accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), var(--accent-color-l), var(--accent-color-a)
+    );
+  --light-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 12%), var(--accent-color-a)
+    );
+  --lightest-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%), var(--accent-color-a)
+    );
+  --dark-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 5%), var(--accent-color-a)
+    );
+  --darker-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 8%), var(--accent-color-a)
+    );
+  --darkest-accent-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 18%), var(--accent-color-a)
+    );
+  --selection-color: currentColor;
+  --selection-background-color: hsla(
+      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 10% ), 0.7
+    );
+  --checkboard-background: linear-gradient( 45deg, #ebebeb 25%, #000000 25%)  0px  0px / 10px 10px,
+                           linear-gradient(-45deg, #ebebeb 25%, #000000 25%)  0px  5px / 10px 10px,
+                           linear-gradient( 45deg, #000000 75%, #ebebeb 75%)  5px -5px / 10px 10px,
+                           linear-gradient(-45deg, #000000 75%, #ebebeb 75%) -5px  0px / 10px 10px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Selection
+ */
+
+::selection {
+  color: var(--selection-color);
+  background: var(--selection-background-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Scrollbar
+ */
+
+::-webkit-scrollbar {
+  background: none;
+}
+::-webkit-scrollbar:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Thumb */
+::-webkit-scrollbar-thumb:vertical {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.15) 25%,
+    rgba(0, 0, 0, 0.15) 75%,
+    transparent 75%,
+    transparent 100%
+  );
+}
+::-webkit-scrollbar-thumb:horizontal {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.15) 25%,
+    rgba(0, 0, 0, 0.15) 75%,
+    transparent 75%,
+    transparent 100%
+  );
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7a7a7a;
+  border-radius: 4px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Headings
+ */
+
+h2 {
+  color: var(--light-text-color);
+}
+
+h3 {
+  color: var(--light-text-color);
+}
+
+h4 {
+  color: var(--light-text-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Links
+ */
+
+a {
+  color: var(--light-accent-color);
+  text-decoration: underline;
+}
+a:focus {
+  outline: 3px solid var(--light-accent-color);
+}
+a:hover {
+  color: var(--dark-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Code
+ */
+
+code,
+pre,
+var {
+  background: var(--background-color);
+  outline: 1px solid var(--border-color);
+  /* In future the font family should be set to ui-monospace (this value is not supported yet) */
+  font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", monospace;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Blockquote
+ */
+
+blockquote {
+  border-color: #f86466;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Mark
+ */
+
+mark {
+  color: inherit;
+  background: #fef49c;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Separators
+ */
+
+hr {
+  background: var(--border-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Tables
+ */
+
+table {
+  border-radius: 8px;
+  border-style: hidden;
+  box-shadow: 0 0 0 1px var(--border-color);
+  overflow: hidden;
+}
+
+th,
+td {
+  border: 1px solid var(--border-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Card
+ */
+
+x-card {
+  background: var(--light-background-color);
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Accordion
+ */
+
+x-accordion::part(arrow) {
+  color: rgba(255, 255, 255, 0.5);
+  d: path("M 31 74 L 56 49 L 32 26 C 30 24 30 20 32 18 L 33 17 C 35 15 39 15 42 17 L 70 45 C 72 47 72 51 70 54 C 69 54 69 55 69 55 L 41 83 C 38 85 35 85 32 83 L 31 82 C 29 80 29 76 31 74 Z");
+}
+x-accordion[expanded]::part(arrow) {
+  color: var(--dark-accent-color);
+}
+x-accordion::part(arrow):focus {
+  outline: 3px solid var(--light-accent-color);
+  outline-offset: -2px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Stepper
+ */
+
+x-stepper {
+  flex-flow: row;
+  min-width: 60px;
+  color: var(--text-color);
+}
+
+/* Buttons */
+x-stepper::part(increment-button) {
+  border-left: 1px solid var(--border-color);
+}
+x-stepper::part(increment-button),
+x-stepper::part(decrement-button) {
+  min-height: 24px;
+}
+x-stepper::part(increment-button):hover,
+x-stepper::part(decrement-button):hover {
+  background: #e0e0e0;
+}
+x-stepper[pressed="increment"]::part(increment-button),
+x-stepper[pressed="decrement"]::part(decrement-button) {
+  background: #c2c2c2;
+  color: var(--text-color);
+}
+
+/* Arrows */
+x-stepper::part(increment-arrow),
+x-stepper::part(decrement-arrow) {
+  width: 12px;
+  height: 12px;
+}
+x-stepper::part(increment-arrow) {
+  d: path("M 58 10 L 58 42 L 90 42 L 90 58 L 58 58 L 58 90 L 42 90 L 42 58 L 10 58 L 10 42 L 42 42 L 42 10 Z");
+}
+x-stepper::part(decrement-arrow) {
+  d: path("M 10 42 H 90 V 58 H 10 V 42 Z");
+}
+x-stepper::part(decrement-arrow) {
+  transform: rotateZ(180deg);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Swatch
+ */
+
+x-swatch {
+  border: 1px solid var(--dark-border-color);
+  border-radius: 99px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Button
+ */
+
+x-button {
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  border-width: 0px;
+  border-style: solid;
+  border-color: var(--border-color);
+}
+x-button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+x-button:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-button[toggled],
+x-button[pressed],
+x-button[expanded] {
+  background: rgba(255, 255, 255, 0.28);
+}
+x-button[toggled]:hover,
+x-button[toggled][expended] {
+  background: rgba(255, 255, 255, 0.28);
+}
+x-button[toggled][pressed] {
+  background: rgba(255, 255, 255, 0.32);
+}
+/* Siblings */
+x-buttons > x-button[toggled],
+x-buttons > x-button[toggled] + x-button {
+  border-color: #747474;
+}
+x-buttons > x-button[pressed],
+x-buttons > x-button[pressed] + x-button {
+  border-color: #7d7d7d !important;
+}
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button:not(:first-of-type) {
+  border-left-width: 1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+x-buttons:not([vertical]) > x-button:not(:last-of-type) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+/* Vertical siblings */
+x-buttons[vertical] > x-button:not(:first-of-type) {
+  border-top-width: 1px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+x-buttons[vertical] > x-button:not(:last-of-type) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Label */
+x-button > x-label {
+  font-weight: 700;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Button ("flat" skin)
+ */
+
+x-button[skin="flat"] {
+  background: none;
+  border: none;
+}
+x-button[skin="flat"][toggled],
+x-button[skin="flat"][expanded] {
+  color: var(--accent-color);
+  background: none;
+}
+x-button[skin="flat"][pressed] {
+  color: var(--dark-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Button ("recessed" skin)
+ */
+
+x-button[skin="recessed"] {
+  background: none;
+  border: none;
+  border-radius: 6px !important;
+}
+x-button[skin="recessed"][disabled] {
+  opacity: 0.3;
+}
+x-button[skin="recessed"]:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+x-button[skin="recessed"][toggled] {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.42);
+}
+x-button[skin="recessed"][pressed] {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.6);
+}
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button + x-button[skin="recessed"] {
+  margin-left: 4px;
+}
+/* Vertical siblings */
+x-buttons[vertical] > x-button + x-button[skin="recessed"] {
+  margin-top: 4px;
+}
+
+/* Label */
+x-button[skin="recessed"] > x-label {
+  font-size: 12px;
+  text-align: center;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Button ("nav" skin)
+ */
+
+x-button[skin="nav"] {
+  color: var(--text-color);
+  background: none;
+  border: none;
+  border-radius: 8px !important;
+  cursor: default;
+}
+x-button[skin="nav"][toggled] {
+  background: rgba(255, 255, 255, 0.12);
+}
+x-button[skin="nav"]:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+x-button[skin="nav"][toggled]:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+x-button[skin="nav"][pressed] {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* Label */
+x-button[skin="nav"] x-label {
+  font-weight: 600;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Button ("dock" skin)
+ */
+
+x-button[skin="dock"] {
+  border-radius: 0;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Button ("circular" skin)
+ */
+
+x-button[skin="circular"] {
+  border-radius: 999px;
+}
+
+x-button[skin="circular"] > x-icon {
+  transform: scale(0.8);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Tag
+ */
+
+x-tag {
+  background: var(--background-color);
+  border-color: var(--border-color);
+  border-radius: 4px;
+  position: relative;
+}
+x-tag:active {
+  filter: brightness(0.97);
+}
+x-tag:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+  border-color: var(--accent-color);
+}
+x-tag[scoped]::part(main) {
+  background: var(--background-color);
+}
+x-tag[toggled] {
+  filter: brightness(0.8);
+  color: rgba(0, 0, 0, 0.8);
+}
+x-tag[toggled]:active {
+  filter: brightness(0.7);
+}
+
+/* Remove button */
+x-tag::part(remove-button) {
+  display: none;
+}
+
+/* Scope prefix */
+x-tag::part(scope) {
+  background: var(--light-background-color);
+  border-color: var(--border-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Tags input
+ */
+
+x-tagsinput {
+  background: var(--dark-background-color);
+  border-radius: 6px;
+}
+x-tagsinput:focus-within {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-tagsinput[error] {
+  background: var(--error-background-color);
+  outline: 2px solid var(--error-color);
+  outline-offset: -1px;
+}
+
+/* Placeholder */
+x-tagsinput > x-label {
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+}
+
+/* Error message */
+x-tagsinput[error]::before {
+  color: var(--error-color);
+  font-weight: 700;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Tabs
+ */
+
+x-tabs {
+  width: 100%;
+  justify-content: flex-start;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Tab */
+x-tab {
+  border-bottom: 4px solid transparent;
+  margin-bottom: -1px;
+}
+x-tab + x-tab {
+  margin-left: 5px;
+}
+x-tab:hover {
+  background: var(--dark-background-color);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+x-tab:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-tab[selected] {
+  border-color: var(--accent-color);
+}
+x-tab:active {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Menu
+ */
+
+x-menu {
+  padding: 3px;
+  color: var(--text-color);
+  background: var(--light-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: rgb(0 0 0 / 17%) 0px 3px 10px 0px;
+  --open-transition: none;
+}
+
+/* Separator */
+x-menu hr {
+  width: calc(100% - 8px);
+  margin: 4px 0px 4px 4px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Menu item
+ */
+
+x-menuitem {
+  color: var(--text-color);
+  border-radius: 8px;
+  --trigger-effect: none;
+}
+x-menuitem:hover,
+x-menuitem:focus,
+x-menuitem[expanded] {
+  background: rgba(255, 255, 255, 0.12);
+}
+x-menuitem[pressed] {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Checkmark icon */
+x-menuitem::part(checkmark) {
+  d: path("M 38 74 L 22 55 C 20 52 20 48 22 46 C 25 44 28 44 31 47 L 44 63 L 68 26 C 71 23 75 21 78 23 C 80 25 81 29 78 33 L 51 74 C 50 76 46 78 45 78 C 44 78 42 78 41 77 C 40 76 39 75 38 74 Z");
+}
+
+/* Arrow icon */
+x-menuitem::part(arrow) {
+  color: rgba(255, 255, 255, 0.4);
+  d: path("M 34 29 C 31 26 30 21 32 19 C 35 17 39 17 42 20 L 66 44 C 66 44 67 45 67 45 C 67 45 68 46 68 46 C 69 47 69 48 69 50 C 69 52 69 53 68 54 C 68 54 67 55 67 55 C 67 55 66 56 66 56 L 42 80 C 39 83 35 83 32 81 C 30 79 31 74 34 71 L 55 50 Z");
+}
+
+/* Shortcut */
+
+x-menuitem > x-shortcut {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Swatch */
+x-menuitem:focus > x-swatch,
+x-menuitem[expanded] > x-swatch {
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Dialog
+ */
+
+dialog {
+  overflow: hidden;
+  margin: auto;
+  color: inherit;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 22px;
+  transition: transform 100ms linear;
+}
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Popover
+ */
+
+x-popover {
+  color: var(--text-color);
+  background: var(--light-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 6px;
+  --open-transition: none;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Notification
+ */
+
+x-notification {
+  border-radius: 20px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Selection */
+x-notification::selection {
+  color: black;
+  background: white;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Checkbox
+ */
+
+/* Indicator */
+x-checkbox::part(indicator) {
+  background: white;
+  border: 1px solid var(--dark-border-color);
+  border-radius: 6px;
+  d: path("M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 89.1 34.6 C 96.4 27 84.8 15.6 77.3 23.3 L 41.7 63.6 L 23.4 44.5 C 13.2 36.6 5.3 51 12.4 56.7 L 42.7 86.1 L 89.1 34.6 Z");
+}
+x-checkbox[mixed]::part(indicator) {
+  d: path("M 0 0 L 100 0 L 100 100 L 0 100 Z M 13 50 C 13.1 54.5 16.8 58.2 21.3 58.2 L 78.6 58.2 C 83.1 58.2 86.8 54.5 86.9 50 C 86.9 45.4 83.2 41.7 78.6 41.7 L 21.3 41.7 C 16.7 41.7 13 45.4 13 50 Z");
+}
+x-checkbox:not([toggled]):active::part(indicator) {
+  background: rgba(0, 0, 0, 0.2);
+}
+x-checkbox:focus::part(indicator) {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: 1px;
+}
+x-checkbox[mixed]::part(indicator) {
+  color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(0, 0, 0, 0.4);
+}
+x-checkbox[toggled]::part(indicator) {
+  color: var(--accent-color);
+  border: 2px solid currentColor;
+}
+x-checkbox[toggled]:active::part(indicator) {
+  color: var(--darkest-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Radio
+ */
+
+/* Indicator */
+x-radio::part(indicator) {
+  background: white;
+  border: 1px solid var(--dark-border-color);
+}
+x-radio:not([toggled]):active::part(indicator) {
+  background: rgba(0, 0, 0, 0.2);
+}
+x-radio:focus::part(indicator) {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: 1px;
+}
+x-radio[toggled]::part(indicator) {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+}
+x-radio[toggled]:active::part(indicator) {
+  background: var(--darkest-accent-color);
+}
+
+/* Indicator dot */
+x-radio::part(indicator-dot) {
+  background: white;
+}
+x-radio[toggled]::part(indicator-dot) {
+  transform: scale(0.4);
+}
+x-radio[mixed]::part(indicator-dot) {
+  transform: scale(0.5);
+  border-radius: 3px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Switch
+ */
+
+x-switch:focus {
+  outline: none;
+}
+
+/* Indicator thumb */
+x-switch::part(indicator-thumb) {
+  background: white;
+  box-shadow: white 0px 0px 0px 2px, rgb(0 0 0 / 38%) 0px 1px 3px 2px;
+  width: 15px;
+  height: 15px;
+}
+x-switch[toggled]::part(indicator-thumb) {
+  left: calc(100% - 15px);
+}
+x-switch[computedsize="small"]::part(indicator-thumb) {
+  width: 12px;
+  height: 12px;
+}
+x-switch[computedsize="small"][toggled]::part(indicator-thumb) {
+  left: calc(100% - 12px);
+}
+x-switch[computedsize="large"]::part(indicator-thumb) {
+  width: 18px;
+  height: 18px;
+  left: 1px;
+}
+x-switch[computedsize="large"][toggled]::part(indicator-thumb) {
+  left: calc(100% - 19px);
+}
+
+/* Indicator track */
+x-switch::part(indicator-track) {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.12);
+}
+x-switch[toggled]::part(indicator-track) {
+  background: var(--accent-color);
+  box-shadow: 0 0 0 4px var(--accent-color);
+}
+
+x-switch:focus::part(indicator-track) {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: 5px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Select
+ */
+
+x-select {
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+}
+x-select:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+x-select[disabled] {
+  opacity: 0.4;
+}
+x-select:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+
+/* Arrow icon */
+x-select::part(arrow) {
+  margin: 0 8px;
+  d: path("M 6 30 L 93 30 L 50 76 L 6 30 Z");
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Color select
+ */
+
+x-colorselect {
+  border: 5px solid #3f3f3f;
+  border-radius: 8px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Input
+ */
+
+x-input {
+  background: var(--dark-background-color);
+  border-radius: 6px;
+}
+x-input:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-input[error] {
+  background: var(--error-background-color);
+  outline: 2px solid var(--error-color);
+  outline-offset: -1px;
+}
+
+/* Placeholder */
+x-input > x-label {
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+}
+x-input > x-icon + x-label {
+  padding: 2px 5px 0px 29px;
+}
+x-input[computedsize="small"] > x-icon + x-label {
+  padding: 2px 5px 0px 29px;
+}
+x-input[computedsize="large"] > x-icon + x-label {
+  padding: 2px 5px 0px 33px;
+}
+
+/* Error message */
+x-input[error]::before {
+  color: var(--error-color);
+  font-weight: 700;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Number input
+ */
+
+x-numberinput {
+  background: var(--dark-background-color);
+  border-radius: 6px;
+}
+x-numberinput:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-numberinput[error] {
+  background: var(--error-background-color);
+  outline: 2px solid var(--error-color);
+  outline-offset: -1px;
+}
+
+/* Placeholder */
+x-numberinput > x-label {
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+}
+
+/* Stepper */
+x-numberinput > x-stepper {
+  height: 100%;
+  margin: 0;
+  border-left: 1px solid var(--border-color);
+}
+x-numberinput[condensed] > x-stepper {
+  min-width: 20px;
+  flex-flow: column-reverse;
+}
+x-numberinput[condensed]:focus > x-stepper {
+  display: none;
+}
+x-numberinput[condensed] > x-stepper::part(increment-button),
+x-numberinput[condensed] > x-stepper::part(decrement-button) {
+  min-height: initial;
+  border: none;
+}
+x-numberinput[condensed] > x-stepper::part(increment-button) {
+  border-top-right-radius: 6px;
+}
+x-numberinput[condensed] > x-stepper::part(decrement-button) {
+  border-top: 1px solid var(--border-color);
+  border-bottom-right-radius: 6px;
+}
+x-numberinput[condensed] > x-stepper::part(increment-arrow),
+x-numberinput[condensed] > x-stepper::part(decrement-arrow) {
+  transform: scale(0.8);
+}
+
+/* Error message */
+x-numberinput[error]::before {
+  color: var(--error-color);
+  font-weight: 700;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Text editor
+ */
+
+x-texteditor {
+  background: var(--dark-background-color);
+  border-radius: 6px;
+}
+x-texteditor:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-texteditor[error] {
+  background: var(--error-background-color);
+  outline: 2px solid var(--error-color);
+  outline-offset: -1px;
+}
+
+/* Placeholder */
+x-texteditor > x-label {
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+}
+
+/* Error message */
+x-texteditor[error]::before {
+  color: var(--error-color);
+  font-weight: 700;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Slider
+ */
+
+/* Groove track */
+x-slider::part(groove-track) {
+  background: var(--dark-border-color);
+  border-radius: 5px;
+}
+
+/* Buffer track */
+x-slider::part(buffer-track) {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+}
+
+/* Range track */
+x-slider::part(range-track) {
+  background: var(--light-accent-color);
+  border-radius: 5px;
+}
+
+/* Thumbs */
+x-slider::part(thumb) {
+  background: white;
+  border-radius: 99px;
+  box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px 0px;
+}
+x-slider[dragging="start"]::part(start-thumb),
+x-slider[dragging="end"]::part(end-thumb) {
+  background: var(--background-color);
+}
+x-slider::part(thumb):focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0px 3px var(--lightest-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Color pickers
+ */
+
+x-barscolorpicker::part(slider),
+x-rectcolorpicker::part(slider),
+x-wheelcolorpicker::part(slider) {
+  border-radius: 6px;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Progressbar
+ */
+
+x-progressbar {
+  background: var(--dark-background-color);
+  box-shadow: inset 0px 0px 0px 1px var(--border-color);
+  border-radius: 5px;
+}
+
+/* Bar */
+x-progressbar::part(bar) {
+  background: var(--light-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Throbber
+ */
+
+x-throbber[type="ring"] {
+  color: var(--light-accent-color);
+}
