@@ -288,62 +288,109 @@ x-swatch {
  * Button
  */
 
-x-button {
+x-button:focus {
+  box-shadow: 0 0 0px 3px var(--light-accent-color);
+}
+x-button[disabled] {
+  opacity: 0.4;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Button (default skin)
+ */
+
+x-button[skin="default"] {
   color: var(--text-color);
   background: var(--lighter-background-color);
   border: 1px solid var(--border-color);
   border-radius: 4px;
 }
-x-button:focus {
-  box-shadow: 0 0 0px 3px var(--light-accent-color);
-}
-x-button[expanded] {
+x-button[skin="default"][expanded] {
   background: rgba(0, 0, 0, 0.05);
 }
-x-button[toggled] {
+x-button[skin="default"][toggled] {
   color: white;
   background: linear-gradient(to bottom, var(--light-accent-color), var(--accent-color));
-  border-color: var(--darker-accent-color);
+  border-color: var(--light-accent-color);
 }
-x-button[pressed] {
+x-button[skin="default"][pressed] {
   color: white;
   background: var(--dark-accent-color);
-  border-color: var(--darker-accent-color);
+  border-color: var(--light-accent-color);
 }
-x-button[disabled] {
-  opacity: 0.4;
-}
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button:not(:first-of-type) {
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-x-buttons:not([vertical]) > x-button:not(:last-of-type) {
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
   border-right: none;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-x-buttons:not([vertical]) > x-button[toggled] + x-button {
-  border-left-color: var(--darker-accent-color);
+x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"],
+x-buttons:not([vertical]) > x-button[skin="default"][pressed] + x-button[skin="default"],
+x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"][pressed] {
+  border-left-color: var(--light-accent-color);
 }
-x-buttons:not([vertical]) > x-button[pressed] + x-button {
-  border-left-color: var(--darker-accent-color);
-}
+
 /* Vertical siblings */
-x-buttons[vertical] > x-button:not(:first-of-type) {
+x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-x-buttons[vertical] > x-button:not(:last-of-type) {
+x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
   border-bottom: none;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-x-buttons[vertical] > x-button[toggled] + x-button {
-  border-top-color: var(--darker-accent-color);
+x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"],
+x-buttons[vertical] > x-button[skin="default"][pressed] + x-button[skin="default"],
+x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"][pressed] {
+  border-top-color: var(--light-accent-color);
 }
-x-buttons[vertical] > x-button[pressed] + x-button {
-  border-top-color: var(--darker-accent-color);
+
+/*****************************************************************************************************************/
+
+/**
+ * Button ("dock" skin)
+ */
+
+x-button[skin="dock"] {
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+}
+x-button[skin="dock"][toggled] {
+  color: white;
+  background: var(--accent-color);
+  border-color: var(--light-accent-color);
+}
+x-button[skin="dock"][pressed] {
+  color: white;
+  background: var(--dark-accent-color);
+  border-color: var(--light-accent-color);
+}
+
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
+  border-right: none;
+}
+x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button[skin="dock"],
+x-buttons:not([vertical]) > x-button[skin="dock"][pressed] + x-button[skin="dock"] {
+  border-left-color: var(--light-accent-color);
+}
+
+/* Vertical siblings */
+x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
+  border-bottom: none;
+}
+x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button[skin="dock"],
+x-buttons[vertical] > x-button[skin="dock"][pressed] + x-button[skin="dock"] {
+  border-top-color: var(--light-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -353,14 +400,11 @@ x-buttons[vertical] > x-button[pressed] + x-button {
  */
 
 x-button[skin="flat"] {
-  background: none;
-  border: none;
   color: rgba(255, 255, 255, 0.9);
 }
 x-button[skin="flat"][toggled],
 x-button[skin="flat"][expanded] {
   color: var(--light-accent-color);
-  background: none;
 }
 x-button[skin="flat"][pressed] {
   color: var(--dark-accent-color);
@@ -373,9 +417,8 @@ x-button[skin="flat"][pressed] {
  */
 
 x-button[skin="recessed"] {
-  background: none;
-  border: none;
-  border-radius: 4px !important;
+  color: var(--text-color);
+  border-radius: 4px;
 }
 x-button[skin="recessed"][disabled] {
   opacity: 0.3;
@@ -391,12 +434,14 @@ x-button[skin="recessed"][pressed] {
   color: rgba(255, 255, 255, 0.95);
   background: rgba(255, 255, 255, 0.12);
 }
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button + x-button[skin="recessed"] {
+x-buttons:not([vertical]) > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-left: 4px;
 }
+
 /* Vertical siblings */
-x-buttons[vertical] > x-button + x-button[skin="recessed"] {
+x-buttons[vertical] > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-top: 4px;
 }
 
@@ -415,9 +460,6 @@ x-button[skin="recessed"] > x-label {
 
 x-button[skin="nav"] {
   color: var(--text-color);
-  background: none;
-  border: none;
-  border-radius: 0;
   cursor: default;
 }
 x-button[skin="nav"][toggled] {
@@ -430,39 +472,6 @@ x-button[skin="nav"][pressed] {
 /* Icon */
 x-button[skin="nav"] x-icon {
   opacity: 0.9;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("dock" skin)
- */
-
-x-button[skin="dock"] {
-  background: var(--background-color);
-  border-radius: 0;
-}
-x-button[skin="dock"][toggled] {
-  border-color: var(--light-accent-color);
-  background: var(--accent-color);
-}
-x-button[skin="dock"][pressed] {
-  border-color: var(--light-accent-color);
-  background: var(--dark-accent-color);
-}
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button {
-  border-left-color: var(--light-accent-color);
-}
-x-buttons:not([vertical]) > x-button[skin="dock"][pressed] + x-button {
-  border-left-color: var(--light-accent-color);
-}
-/* Vertial siblings */
-x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button {
-  border-top-color: var(--light-accent-color);
-}
-x-buttons[vertical] > x-button[skin="dock"][pressed] + x-button {
-  border-top-color: var(--light-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -581,6 +590,16 @@ x-tab[selected] {
 x-tab:active {
   background: #838383;
   border-color: #838383;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Menubar
+ */
+
+x-menubar {
+  padding: 0 4px;
 }
 
 /*****************************************************************************************************************/

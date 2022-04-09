@@ -260,36 +260,9 @@ x-swatch {
  * Button
  */
 
-x-button {
-  color: var(--text-color);
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: 2px;
-}
-x-button:hover {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)),
-                    linear-gradient(to right, white, white);
-  border-color: var(--dark-border-color);
-}
 x-button:focus {
   outline: 2px solid black;
   outline-offset: 4px;
-}
-x-button[pressed],
-x-button[expanded] {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-                    linear-gradient(to right, white, white);
-  border-color: var(--dark-border-color);
-}
-x-button[toggled] {
-  color: white;
-  background: var(--accent-color);
-  border-color: var(--dark-accent-color);
-}
-x-button[toggled][pressed],
-x-button[toggled][expanded] {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-                    linear-gradient(to right, var(--accent-color), var(--accent-color));
 }
 x-button[mixed] {
   opacity: 0.7;
@@ -297,53 +270,153 @@ x-button[mixed] {
 x-button[disabled] {
   opacity: 0.4;
 }
+
+/*****************************************************************************************************************/
+
+/**
+ * Button (default skin)
+ */
+
+x-button[skin="default"] {
+  color: var(--text-color);
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+}
+x-button[skin="default"]:hover {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)),
+                    linear-gradient(to right, white, white);
+  border-color: var(--dark-border-color);
+}
+x-button[skin="default"][pressed],
+x-button[skin="default"][expanded] {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+                    linear-gradient(to right, white, white);
+  border-color: var(--dark-border-color);
+}
+
+x-button[skin="default"][toggled] {
+  color: white;
+  background: var(--accent-color);
+  border-color: var(--dark-accent-color);
+}
+x-button[skin="default"][toggled][pressed],
+x-button[skin="default"][toggled][expanded] {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+                    linear-gradient(to right, var(--accent-color), var(--accent-color));
+}
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button:not(:last-of-type) {
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
   border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
-x-buttons:not([vertical]) > x-button[toggled] + x-button:not(:hover) {
+x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"] {
   border-left-color: var(--dark-accent-color);
 }
-x-buttons:not([vertical]) > x-button[pressed] + x-button {
-  border-left-color: var(--dark-accent-color);
-}
-x-buttons:not([vertical]) > x-button:not([toggled]):hover + x-button {
+x-buttons:not([vertical]) > x-button[skin="default"]                         + x-button[skin="default"]:not([toggled]):hover,
+x-buttons:not([vertical]) > x-button[skin="default"]:not([toggled]):hover    + x-button[skin="default"],
+x-buttons:not([vertical]) > x-button[skin="default"]:not([toggled])[pressed] + x-button[skin="default"]:not([toggled]) {
   border-left-color: var(--dark-border-color);
 }
-x-buttons:not([vertical]) > x-button:first-of-type {
+
+/* Vertical siblings */
+x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
+  border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-x-buttons:not([vertical]) > x-button:last-of-type {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-x-buttons:not([vertical]) > x-button:not(:last-of-type):not(:first-of-type) {
-  border-radius: 0;
-}
-/* Vertical siblings */
-x-buttons[vertical] > x-button:not(:last-of-type) {
-  border-bottom: none;
-}
-x-buttons[vertical] > x-button[toggled] + x-button:not(:hover) {
+x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"] {
   border-top-color: var(--dark-accent-color);
 }
-x-buttons[vertical] > x-button[pressed] + x-button {
-  border-top-color: var(--dark-accent-color);
-}
-x-buttons[vertical] > x-button:not([toggled]):hover + x-button {
+x-buttons[vertical] > x-button[skin="default"]                         + x-button[skin="default"]:not([toggled]):hover,
+x-buttons[vertical] > x-button[skin="default"]:not([toggled]):hover    + x-button[skin="default"],
+x-buttons[vertical] > x-button[skin="default"]:not([toggled])[pressed] + x-button[skin="default"]:not([toggled]) {
   border-top-color: var(--dark-border-color);
 }
-x-buttons[vertical] > x-button:first-of-type {
+
+/*****************************************************************************************************************/
+
+/**
+ * Button ("dock" skin)
+ */
+
+x-button[skin="dock"] {
+  color: var(--text-color);
+  background: white;
+  border: 1px solid var(--border-color);
+}
+x-button[skin="dock"]:hover {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)),
+                    linear-gradient(to right, white, white);
+  border-color: var(--dark-border-color);
+}
+x-button[skin="dock"][pressed],
+x-button[skin="dock"][expanded] {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+                    linear-gradient(to right, white, white);
+  border-color: var(--dark-border-color);
+}
+
+x-button[skin="dock"][toggled] {
+  color: white;
+  background: var(--accent-color);
+  border-color: var(--dark-accent-color);
+}
+x-button[skin="dock"][toggled][pressed],
+x-button[skin="dock"][toggled][expanded] {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+                    linear-gradient(to right, var(--accent-color), var(--accent-color));
+}
+x-button[skin="dock"]:focus {
+  outline-offset: -2px;
+}
+
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button[skin="dock"]:not(:first-of-type) {
+  border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+}
+x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
+  border-right: none;
+  border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-x-buttons[vertical] > x-button:last-of-type {
+x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button[skin="dock"] {
+  border-left-color: var(--dark-accent-color);
+}
+x-buttons:not([vertical]) > x-button[skin="dock"]                         + x-button[skin="dock"]:not([toggled]):hover,
+x-buttons:not([vertical]) > x-button[skin="dock"]:not([toggled]):hover    + x-button[skin="dock"],
+x-buttons:not([vertical]) > x-button[skin="dock"]:not([toggled])[pressed] + x-button[skin="dock"]:not([toggled]) {
+  border-left-color: var(--dark-border-color);
+}
+
+/* Vertical siblings */
+x-buttons[vertical] > x-button[skin="dock"]:not(:first-of-type) {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-x-buttons[vertical] > x-button:not(:last-of-type):not(:first-of-type) {
-  border-radius: 0;
+x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button[skin="dock"] {
+  border-top-color: var(--dark-accent-color);
+}
+x-buttons[vertical] > x-button[skin="dock"]                         + x-button[skin="dock"]:not([toggled]):hover,
+x-buttons[vertical] > x-button[skin="dock"]:not([toggled]):hover    + x-button[skin="dock"],
+x-buttons[vertical] > x-button[skin="dock"]:not([toggled])[pressed] + x-button[skin="dock"]:not([toggled]) {
+  border-top-color: var(--dark-border-color);
 }
 
 /*****************************************************************************************************************/
@@ -353,13 +426,11 @@ x-buttons[vertical] > x-button:not(:last-of-type):not(:first-of-type) {
  */
 
 x-button[skin="flat"] {
-  background: none;
-  border: none;
+  color: var(--text-color);
 }
 x-button[skin="flat"][toggled],
 x-button[skin="flat"][expanded] {
   color: var(--accent-color);
-  background: none;
 }
 x-button[skin="flat"][pressed] {
   color: var(--dark-accent-color);
@@ -372,9 +443,7 @@ x-button[skin="flat"][pressed] {
  */
 
 x-button[skin="recessed"] {
-  color: rgba(0, 0, 0, 0.8);
-  background: none;
-  border: none;
+  color: var(--text-color);
 }
 x-button[skin="recessed"][disabled] {
   opacity: 0.3;
@@ -386,6 +455,7 @@ x-button[skin="recessed"][toggled] {
   color: rgba(255, 255, 255, 0.95);
   background: var(--dark-border-color);
 }
+
 x-button[skin="recessed"][toggled]:hover {
   background: rgba(0, 0, 0, 0.7);
 }
@@ -394,12 +464,14 @@ x-button[skin="recessed"][toggled][pressed] {
   color: rgba(255, 255, 255, 0.95);
   background: rgba(0, 0, 0, 0.9);
 }
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button + x-button[skin="recessed"] {
+x-buttons:not([vertical]) > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-left: 4px;
 }
+
 /* Vertical siblings */
-x-buttons[vertical] > x-button + x-button[skin="recessed"] {
+x-buttons[vertical] > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-top: 4px;
 }
 
@@ -417,9 +489,7 @@ x-button[skin="recessed"] > x-label {
  */
 
 x-button[skin="nav"] {
-  background: none;
-  border: none;
-  border-radius: 0;
+  color: var(--text-color);
   cursor: default;
 }
 x-button[skin="nav"]:focus {
@@ -429,6 +499,7 @@ x-button[skin="nav"]:hover {
   background: rgba(0, 0, 0, 0.1);
 }
 x-button[skin="nav"][toggled] {
+  color: white;
   background: var(--accent-color);
 }
 x-button[skin="nav"][pressed] {
@@ -441,26 +512,13 @@ x-button[skin="nav"][toggled][pressed] {
 /*****************************************************************************************************************/
 
 /**
- * Button ("dock" skin)
- */
-
-x-button[skin="dock"] {
-  border-radius: 0;
-}
-x-button[skin="dock"]:focus {
-  outline-offset: -2px;
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Button ("circular" skin)
  */
 
 x-button[skin="circular"] {
   color: white;
   background: rgba(0, 0, 0, 0.4);
-  border-color: var(--border-color);
+  border: 1px solid var(--border-color);
   border-radius: 999px;
 }
 x-button[skin="circular"][pressed],

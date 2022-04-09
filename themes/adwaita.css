@@ -29,14 +29,13 @@ body {
   --preset-accent-colors: blue #3584e4, purple #9141ac, pink #f74f9e, red #e01b24, orange #ff7800, yellow #e5a50a,
                           green #2ec27e, graphite #9a9996;
   --titlebar-color: auto;
-  --background-color: #fcfcfc;
-  --light-background-color: #ffffff;
+  --background-color: #f5f5f5;
+  --light-background-color: #fcfcfc;
   --dark-background-color: #ebebeb;
-  --border-color: #cccccc;
-  --light-border-color: #dcdcdc;
+  --border-color: #dcdcdc;
   --dark-border-color: #d1d1d1;
   --text-color: rgba(0, 0, 0, 0.8);
-  --dark-text-color: black;
+  --dark-text-color: rgba(0, 0, 0, 1);
   --error-color:  #c5313c;
   --error-background-color: #f4e5e5;
   --autofill-background-color: #f2ede2;
@@ -62,10 +61,10 @@ body {
   --selection-background-color: hsla(
       var(--accent-color-h), var(--accent-color-s), var(--accent-color-l), 0.2
     );
-  --checkboard-background: linear-gradient( 45deg, #ebebeb 25%, #000000 25%)  0px  0px / 10px 10px,
-                           linear-gradient(-45deg, #ebebeb 25%, #000000 25%)  0px  5px / 10px 10px,
-                           linear-gradient( 45deg, #000000 75%, #ebebeb 75%)  5px -5px / 10px 10px,
-                           linear-gradient(-45deg, #000000 75%, #ebebeb 75%) -5px  0px / 10px 10px;
+  --checkboard-background: linear-gradient( 45deg, #dedede 25%, #0000   25%)  0px  0px / 10px 10px,
+                           linear-gradient(-45deg, #dedede 25%, #0000   25%)  0px  5px / 10px 10px,
+                           linear-gradient( 45deg, #0000   75%, #dedede 75%)  5px -5px / 10px 10px,
+                           linear-gradient(-45deg, #0000   75%, #dedede 75%) -5px  0px / 10px 10px;
 }
 
 /*****************************************************************************************************************/
@@ -149,7 +148,7 @@ a {
   text-decoration: underline;
 }
 a:focus {
-  outline: 3px solid var(--light-accent-color);
+  outline: 2px solid var(--light-accent-color);
 }
 a:hover {
   color: var(--darkest-accent-color);
@@ -164,7 +163,7 @@ a:hover {
 code,
 pre,
 var {
-  background: var(--background-color);
+  background: var(--light-background-color);
   outline: 1px solid var(--border-color);
   /* In future the font family should be set to ui-monospace (this value is not supported yet) */
   font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", monospace;
@@ -188,7 +187,7 @@ blockquote {
 
 mark {
   color: inherit;
-  background: #fef49c;
+  background: #F6D32D;
 }
 
 /*****************************************************************************************************************/
@@ -198,7 +197,7 @@ mark {
  */
 
 hr {
-  background: var(--light-border-color);
+  background: var(--border-color);
 }
 
 /*****************************************************************************************************************/
@@ -227,9 +226,8 @@ td {
 
 x-card {
   background: var(--light-background-color);
-  border: 1px solid var(--light-border-color);
+  border: 1px solid rgba(0, 0, 0, 0.14);
   border-radius: 12px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
 }
 
 /*****************************************************************************************************************/
@@ -246,13 +244,14 @@ x-accordion[expanded]::part(arrow) {
   color: var(--dark-accent-color);
 }
 x-accordion::part(arrow):focus {
-  outline: 3px solid var(--light-accent-color);
+  outline: 2px solid var(--light-accent-color);
   outline-offset: -2px;
 }
 
 /* Label */
 x-accordion > header > x-label {
-  color: rgba(0, 0, 0, 0.87);
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.92);
 }
 
 /*****************************************************************************************************************/
@@ -277,11 +276,11 @@ x-stepper::part(decrement-button) {
 }
 x-stepper::part(increment-button):hover,
 x-stepper::part(decrement-button):hover {
-  background: #e0e0e0;
+  background: rgba(0, 0, 0, 0.07);
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
-  background: #c2c2c2;
+  background: rgba(0, 0, 0, 0.12);
   color: var(--text-color);
 }
 
@@ -318,61 +317,87 @@ x-swatch {
  * Button
  */
 
-x-button {
-  color: var(--text-color);
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-  border-width: 0px;
-  border-style: solid;
-  border-color: var(--border-color);
-}
-x-button:hover {
-  background: rgba(0, 0, 0, 0.12);
-}
 x-button:focus {
   outline: 2px solid var(--light-accent-color);
   outline-offset: -1px;
 }
-x-button[toggled],
-x-button[pressed],
-x-button[expanded] {
-  background: rgba(0, 0, 0, 0.24);
+
+/*****************************************************************************************************************/
+
+/**
+ * Button (default skin)
+ */
+
+x-button[skin="default"] {
+  color: var(--text-color);
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
 }
-x-button[toggled]:hover,
-x-button[toggled][expended] {
-  background: rgba(0, 0, 0, 0.28);
+x-button[skin="default"]:hover {
+  background: rgba(0, 0, 0, 0.12);
 }
-x-button[toggled][pressed] {
-  background: rgba(0, 0, 0, 0.32);
+x-button[skin="default"][pressed] {
+  background: rgba(0, 0, 0, 0.2);
 }
-/* Siblings */
-x-buttons > x-button[toggled],
-x-buttons > x-button[toggled] + x-button {
-  border-color: #b0b0b0;
+x-button[skin="default"][toggled] {
+  color: #ffffff;
+  background: var(--accent-color);
 }
-x-buttons > x-button[pressed],
-x-buttons > x-button[pressed] + x-button {
-  border-color: #9e9e9e !important;
+x-button[skin="default"][toggled][expanded] {
+  background: var(--dark-accent-color);
 }
+x-button[skin="default"][toggled][pressed] {
+  background: var(--darker-accent-color);
+}
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button:not(:first-of-type) {
-  border-left-width: 1px;
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-x-buttons:not([vertical]) > x-button:not(:last-of-type) {
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
+x-buttons:not([vertical]) > x-button[skin="default"][pressed] {
+  border-left-color: rgba(0, 0, 0, 0.12);
+}
+x-buttons:not([vertical]) > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
+  border-left-color: rgba(0, 0, 0, 0.2);
+}
+x-buttons:not([vertical]) > x-button[skin="default"][toggled],
+x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"] {
+  border-left-color: var(--darker-accent-color);
+}
+x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed],
+x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
+  border-left-color: var(--darkest-accent-color) !important;
+}
+
 /* Vertical siblings */
-x-buttons[vertical] > x-button:not(:first-of-type) {
-  border-top-width: 1px;
+x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-x-buttons[vertical] > x-button:not(:last-of-type) {
+x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+x-buttons[vertical] > x-button[skin="default"][pressed] {
+  border-top-color: rgba(0, 0, 0, 0.12);
+}
+x-buttons[vertical] > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
+  border-top-color: rgba(0, 0, 0, 0.2);
+}
+x-buttons[vertical] > x-button[skin="default"][toggled],
+x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"] {
+  border-top-color: var(--darker-accent-color);
+}
+x-buttons[vertical] > x-button[skin="default"][toggled][pressed],
+x-buttons[vertical] > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
+  border-top-color: var(--darkest-accent-color) !important;
 }
 
 /* Label */
@@ -383,17 +408,55 @@ x-button > x-label {
 /*****************************************************************************************************************/
 
 /**
+ * Button ("dock" skin)
+ */
+
+x-button[skin="dock"] {
+  color: var(--text-color);
+  background: var(--light-background-color);
+  border: 1px solid gray;
+  border-color: var(--dark-border-color);
+}
+x-button[skin="dock"]:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+x-button[skin="dock"][pressed] {
+  background: rgba(0, 0, 0, 0.12);
+}
+x-button[skin="dock"][toggled] {
+  color: var(--light-background-color);
+  background: var(--accent-color);
+  border-color: var(--darkest-accent-color);
+}
+
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
+  border-right: none;
+}
+x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button {
+  border-left-color: var(--darkest-accent-color);
+}
+
+/* Vertical siblings */
+x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
+  border-bottom: none;
+}
+x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button {
+  border-top-color: var(--darkest-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Button ("flat" skin)
  */
 
 x-button[skin="flat"] {
-  background: none;
-  border: none;
+  color: var(--text-color);
 }
 x-button[skin="flat"][toggled],
 x-button[skin="flat"][expanded] {
   color: var(--accent-color);
-  background: none;
 }
 x-button[skin="flat"][pressed] {
   color: var(--dark-accent-color);
@@ -406,12 +469,8 @@ x-button[skin="flat"][pressed] {
  */
 
 x-button[skin="recessed"] {
-  background: none;
-  border: none;
-  border-radius: 6px !important;
-}
-x-button[skin="recessed"][disabled] {
-  opacity: 0.3;
+  color: var(--text-color);
+  border-radius: 6px;
 }
 x-button[skin="recessed"]:hover {
   background: rgba(0, 0, 0, 0.07);
@@ -424,12 +483,14 @@ x-button[skin="recessed"][pressed] {
   color: rgba(255, 255, 255, 0.95);
   background: rgba(0, 0, 0, 0.6);
 }
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button + x-button[skin="recessed"] {
+x-buttons:not([vertical]) > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-left: 4px;
 }
+
 /* Vertical siblings */
-x-buttons[vertical] > x-button + x-button[skin="recessed"] {
+x-buttons[vertical] > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-top: 4px;
 }
 
@@ -447,9 +508,7 @@ x-button[skin="recessed"] > x-label {
 
 x-button[skin="nav"] {
   color: var(--text-color);
-  background: none;
-  border: none;
-  border-radius: 8px !important;
+  border-radius: 8px;
   cursor: default;
 }
 x-button[skin="nav"][toggled] {
@@ -473,21 +532,20 @@ x-button[skin="nav"] x-label {
 /*****************************************************************************************************************/
 
 /**
- * Button ("dock" skin)
- */
-
-x-button[skin="dock"] {
-  border-radius: 0;
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Button ("circular" skin)
  */
 
 x-button[skin="circular"] {
+  color: var(--text-color);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 999px;
+}
+x-button[skin="circular"]:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+x-button[skin="circular"][pressed],
+x-button[skin="circular"][expanded] {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 x-button[skin="circular"] > x-icon {
@@ -501,7 +559,7 @@ x-button[skin="circular"] > x-icon {
  */
 
 x-tag {
-  background: var(--background-color);
+  background: var(--light-background-color);
   border-color: var(--border-color);
   border-radius: 4px;
   position: relative;
@@ -515,7 +573,7 @@ x-tag:focus {
   border-color: var(--accent-color);
 }
 x-tag[scoped]::part(main) {
-  background: var(--background-color);
+  background: var(--light-background-color);
 }
 x-tag[toggled] {
   filter: brightness(0.8);
@@ -532,7 +590,7 @@ x-tag::part(remove-button) {
 
 /* Scope prefix */
 x-tag::part(scope) {
-  background: var(--light-background-color);
+  background: #ffffff;
   border-color: var(--border-color);
 }
 
@@ -606,13 +664,29 @@ x-tab:active {
 /*****************************************************************************************************************/
 
 /**
+ * Menubar
+ */
+
+x-menubar {
+  padding: 0 3px;
+}
+
+x-menubar > x-menuitem,
+x-menubar > x-menuitem[computedsize="small"],
+x-menubar > x-menuitem[computedsize="large"] {
+  height: calc(100% - 6px);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Menu
  */
 
 x-menu {
   padding: 3px;
   color: var(--text-color);
-  background: var(--light-background-color);
+  background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   box-shadow: rgb(0 0 0 / 17%) 0px 3px 10px 0px;
@@ -639,7 +713,7 @@ x-menuitem {
 x-menuitem:hover,
 x-menuitem:focus,
 x-menuitem[expanded] {
-  background: var(--dark-background-color);
+  background: rgba(0, 0, 0, 0.08);
 }
 x-menuitem[pressed] {
   background: rgba(0, 0, 0, 0.12);
@@ -696,7 +770,7 @@ dialog::backdrop {
 
 x-popover {
   color: var(--text-color);
-  background: white;
+  background: var(--light-background-color);
   border: 1px solid var(--dark-border-color);
   border-radius: 12px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 6px;
@@ -860,9 +934,6 @@ x-select {
 x-select:hover {
   background: rgba(0, 0, 0, 0.12);
 }
-x-select[disabled] {
-  opacity: 0.4;
-}
 x-select:focus {
   outline: 2px solid var(--light-accent-color);
   outline-offset: -1px;
@@ -892,7 +963,7 @@ x-colorselect {
  */
 
 x-input {
-  background: var(--dark-background-color);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 6px;
 }
 x-input:focus {
@@ -933,7 +1004,7 @@ x-input[error]::before {
  */
 
 x-numberinput {
-  background: var(--dark-background-color);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 6px;
 }
 x-numberinput:focus {
@@ -995,7 +1066,7 @@ x-numberinput[error]::before {
  */
 
 x-texteditor {
-  background: var(--dark-background-color);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 6px;
 }
 x-texteditor:focus {
@@ -1052,7 +1123,7 @@ x-slider::part(thumb) {
 }
 x-slider[dragging="start"]::part(start-thumb),
 x-slider[dragging="end"]::part(end-thumb) {
-  background: var(--background-color);
+  background: var(--light-background-color);
 }
 x-slider::part(thumb):focus {
   border-color: var(--accent-color);

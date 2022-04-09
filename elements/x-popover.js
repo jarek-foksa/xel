@@ -19,7 +19,7 @@ export default class XPopoverElement extends HTMLElement {
       <svg id="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
         <path id="arrow-path"></path>
       </svg>
-      <slot></slot>
+      <slot id="slot"></slot>
     </template>
   `;
 
@@ -80,6 +80,10 @@ export default class XPopoverElement extends HTMLElement {
     }
     #arrow[data-align="right"] path {
       d: path("M 100 0, L 0 50, L 100 100");
+    }
+
+    #slot {
+      border-radius: inherit;
     }
   `
 

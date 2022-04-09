@@ -16,7 +16,7 @@ let {max} = Math;
 // @event toggle - User toggled the button on or off by clicking it.
 // @part arrow - The arrow icon shown when the button contains <code>x-popover</code> or <code>x-menu</code>.
 export default class XButtonElement extends HTMLElement {
-  static observedAttributes = ["disabled", "size"];
+  static observedAttributes = ["disabled", "size", "skin"];
 
   static #shadowTemplate = html`
     <template>
@@ -41,7 +41,6 @@ export default class XButtonElement extends HTMLElement {
       box-sizing: border-box;
       opacity: 1;
       position: relative;
-      overflow: hidden;
       --trigger-effect: none; /* ripple, unbounded-ripple, none */
     }
     :host(:focus) {
@@ -303,6 +302,7 @@ export default class XButtonElement extends HTMLElement {
 
     this.#updateArrowVisibility();
     this.#updateAccessabilityAttributes();
+    this.#updateSkinAttribute();
     this.#updateComputedSizeAttriubte();
 
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
@@ -315,6 +315,9 @@ export default class XButtonElement extends HTMLElement {
   attributeChangedCallback(name) {
     if (name === "disabled") {
       this.#updateAccessabilityAttributes();
+    }
+    else if (name === "skin") {
+      this.#updateSkinAttribute();
     }
     else if (name === "size") {
       this.#updateComputedSizeAttriubte();
@@ -592,6 +595,12 @@ export default class XButtonElement extends HTMLElement {
       }
 
       this.#lastTabIndex = 0;
+    }
+  }
+
+  #updateSkinAttribute() {
+    if (this.hasAttribute("skin") === false) {
+      this.setAttribute("skin", "default");
     }
   }
 

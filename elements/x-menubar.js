@@ -28,8 +28,7 @@ export default class XMenuBarElement extends HTMLElement {
       display: flex;
       align-items: center;
       width: 100%;
-      height: 30px;
-      padding: 0 6px;
+      height: 36px;
       box-sizing: border-box;
     }
     :host([disabled]) {

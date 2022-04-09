@@ -31,9 +31,8 @@ body {
   --titlebar-color: auto;
   --background-color: #242424;
   --light-background-color: #363636;
-  --dark-background-color: black;
+  --dark-background-color: #000000;
   --border-color: #525252;
-  --dark-border-color: #0c0c0c;
   --text-color: rgba(255, 255, 255, 0.8);
   --light-text-color: rgba(255, 255, 255, 0.92);
   --error-color:  #c5313c;
@@ -61,10 +60,10 @@ body {
   --selection-background-color: hsla(
       var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 10% ), 0.7
     );
-  --checkboard-background: linear-gradient( 45deg, #ebebeb 25%, #000000 25%)  0px  0px / 10px 10px,
-                           linear-gradient(-45deg, #ebebeb 25%, #000000 25%)  0px  5px / 10px 10px,
-                           linear-gradient( 45deg, #000000 75%, #ebebeb 75%)  5px -5px / 10px 10px,
-                           linear-gradient(-45deg, #000000 75%, #ebebeb 75%) -5px  0px / 10px 10px;
+  --checkboard-background: linear-gradient( 45deg, #5b5b5b 25%, #0000   25%)  0px  0px / 10px 10px,
+                           linear-gradient(-45deg, #5b5b5b 25%, #0000   25%)  0px  5px / 10px 10px,
+                           linear-gradient( 45deg, #0000   75%, #5b5b5b 75%)  5px -5px / 10px 10px,
+                           linear-gradient(-45deg, #0000   75%, #5b5b5b 75%) -5px  0px / 10px 10px;
 }
 
 /*****************************************************************************************************************/
@@ -88,7 +87,7 @@ body {
   background: none;
 }
 ::-webkit-scrollbar:hover {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* Thumb */
@@ -97,8 +96,8 @@ body {
     90deg,
     transparent 0%,
     transparent 25%,
-    rgba(0, 0, 0, 0.15) 25%,
-    rgba(0, 0, 0, 0.15) 75%,
+    rgba(255, 255, 255, 0.25) 25%,
+    rgba(255, 255, 255, 0.25) 75%,
     transparent 75%,
     transparent 100%
   );
@@ -108,8 +107,8 @@ body {
     180deg,
     transparent 0%,
     transparent 25%,
-    rgba(0, 0, 0, 0.15) 25%,
-    rgba(0, 0, 0, 0.15) 75%,
+    rgba(255, 255, 255, 0.25) 25%,
+    rgba(255, 255, 255, 0.25) 75%,
     transparent 75%,
     transparent 100%
   );
@@ -148,7 +147,7 @@ a {
   text-decoration: underline;
 }
 a:focus {
-  outline: 3px solid var(--light-accent-color);
+  outline: 2px solid var(--light-accent-color);
 }
 a:hover {
   color: var(--dark-accent-color);
@@ -163,7 +162,7 @@ a:hover {
 code,
 pre,
 var {
-  background: var(--background-color);
+  background: var(--light-background-color);
   outline: 1px solid var(--border-color);
   /* In future the font family should be set to ui-monospace (this value is not supported yet) */
   font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", monospace;
@@ -187,7 +186,7 @@ blockquote {
 
 mark {
   color: inherit;
-  background: #fef49c;
+  background: #E5A50A;
 }
 
 /*****************************************************************************************************************/
@@ -226,8 +225,8 @@ td {
 
 x-card {
   background: var(--light-background-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
 }
 
 /*****************************************************************************************************************/
@@ -241,11 +240,17 @@ x-accordion::part(arrow) {
   d: path("M 31 74 L 56 49 L 32 26 C 30 24 30 20 32 18 L 33 17 C 35 15 39 15 42 17 L 70 45 C 72 47 72 51 70 54 C 69 54 69 55 69 55 L 41 83 C 38 85 35 85 32 83 L 31 82 C 29 80 29 76 31 74 Z");
 }
 x-accordion[expanded]::part(arrow) {
-  color: var(--dark-accent-color);
+  color: var(--light-accent-color);
 }
 x-accordion::part(arrow):focus {
-  outline: 3px solid var(--light-accent-color);
+  outline: 2px solid var(--light-accent-color);
   outline-offset: -2px;
+}
+
+/* Label */
+x-accordion > header > x-label {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 /*****************************************************************************************************************/
@@ -270,11 +275,11 @@ x-stepper::part(decrement-button) {
 }
 x-stepper::part(increment-button):hover,
 x-stepper::part(decrement-button):hover {
-  background: #e0e0e0;
+  background: rgba(255, 255, 255, 0.2);
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
-  background: #c2c2c2;
+  background: rgba(255, 255, 255, 0.3);
   color: var(--text-color);
 }
 
@@ -301,7 +306,7 @@ x-stepper::part(decrement-arrow) {
  */
 
 x-swatch {
-  border: 1px solid var(--dark-border-color);
+  border: 1px solid var(--border-color);
   border-radius: 99px;
 }
 
@@ -311,61 +316,87 @@ x-swatch {
  * Button
  */
 
-x-button {
-  color: var(--text-color);
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  border-width: 0px;
-  border-style: solid;
-  border-color: var(--border-color);
-}
-x-button:hover {
-  background: rgba(255, 255, 255, 0.18);
-}
 x-button:focus {
   outline: 2px solid var(--light-accent-color);
   outline-offset: -1px;
 }
-x-button[toggled],
-x-button[pressed],
-x-button[expanded] {
+
+/*****************************************************************************************************************/
+
+/**
+ * Button (default skin)
+ */
+
+x-button[skin="default"] {
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+x-button[skin="default"]:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+x-button[skin="default"][pressed] {
   background: rgba(255, 255, 255, 0.28);
 }
-x-button[toggled]:hover,
-x-button[toggled][expended] {
-  background: rgba(255, 255, 255, 0.28);
+x-button[skin="default"][toggled] {
+  color: #ffffff;
+  background: var(--accent-color);
 }
-x-button[toggled][pressed] {
-  background: rgba(255, 255, 255, 0.32);
+x-button[skin="default"][toggled][expanded] {
+  background: var(--light-accent-color);
 }
-/* Siblings */
-x-buttons > x-button[toggled],
-x-buttons > x-button[toggled] + x-button {
-  border-color: #747474;
+x-button[skin="default"][toggled][pressed] {
+  background: var(--light-accent-color);
 }
-x-buttons > x-button[pressed],
-x-buttons > x-button[pressed] + x-button {
-  border-color: #7d7d7d !important;
-}
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button:not(:first-of-type) {
-  border-left-width: 1px;
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-x-buttons:not([vertical]) > x-button:not(:last-of-type) {
+x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
+x-buttons:not([vertical]) > x-button[skin="default"][pressed] {
+  border-left-color: rgba(255, 255, 255, 0.12);
+}
+x-buttons:not([vertical]) > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
+  border-left-color: rgba(255, 255, 255, 0.28);
+}
+x-buttons:not([vertical]) > x-button[skin="default"][toggled],
+x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"] {
+  border-left-color: var(--light-accent-color);
+}
+x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed],
+x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
+  border-left-color: var(--lightest-accent-color) !important;
+}
+
 /* Vertical siblings */
-x-buttons[vertical] > x-button:not(:first-of-type) {
-  border-top-width: 1px;
+x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-x-buttons[vertical] > x-button:not(:last-of-type) {
+x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+x-buttons[vertical] > x-button[skin="default"][pressed] {
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+x-buttons[vertical] > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
+  border-top-color: rgba(255, 255, 255, 0.28);
+}
+x-buttons[vertical] > x-button[skin="default"][toggled],
+x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"] {
+  border-top-color: var(--light-accent-color);
+}
+x-buttons[vertical] > x-button[skin="default"][toggled][pressed],
+x-buttons[vertical] > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
+  border-top-color: var(--lightest-accent-color) !important;
 }
 
 /* Label */
@@ -376,20 +407,57 @@ x-button > x-label {
 /*****************************************************************************************************************/
 
 /**
+ * Button ("dock" skin)
+ */
+
+x-button[skin="dock"] {
+  color: var(--text-color);
+  background: var(--light-background-color);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+x-button[skin="dock"]:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+x-button[skin="dock"][pressed] {
+  background: rgba(255, 255, 255, 0.28);
+}
+x-button[skin="dock"][toggled] {
+  color: #ffffff;
+  background: var(--accent-color);
+  border-color: var(--light-accent-color);
+}
+
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
+  border-right: none;
+}
+x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button {
+  border-left-color: var(--light-accent-color);
+}
+
+/* Vertical siblings */
+x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
+  border-bottom: none;
+}
+x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button {
+  border-top-color: var(--light-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Button ("flat" skin)
  */
 
 x-button[skin="flat"] {
-  background: none;
-  border: none;
+  color: var(--text-color);
 }
 x-button[skin="flat"][toggled],
 x-button[skin="flat"][expanded] {
   color: var(--accent-color);
-  background: none;
 }
 x-button[skin="flat"][pressed] {
-  color: var(--dark-accent-color);
+  color: var(--light-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -399,30 +467,28 @@ x-button[skin="flat"][pressed] {
  */
 
 x-button[skin="recessed"] {
-  background: none;
-  border: none;
-  border-radius: 6px !important;
-}
-x-button[skin="recessed"][disabled] {
-  opacity: 0.3;
+  color: var(--text-color);
+  border-radius: 6px;
 }
 x-button[skin="recessed"]:hover {
-  background: rgba(0, 0, 0, 0.07);
+  background: rgba(255, 255, 255, 0.07);
 }
 x-button[skin="recessed"][toggled] {
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(0, 0, 0, 0.42);
+  color: rgba(0, 0, 0, 0.95);
+  background: rgba(255, 255, 255, 0.6);
 }
 x-button[skin="recessed"][pressed] {
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 0.95);
+  background: rgba(255, 255, 255, 0.75);
 }
+
 /* Horizontal siblings */
-x-buttons:not([vertical]) > x-button + x-button[skin="recessed"] {
+x-buttons:not([vertical]) > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-left: 4px;
 }
+
 /* Vertical siblings */
-x-buttons[vertical] > x-button + x-button[skin="recessed"] {
+x-buttons[vertical] > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-top: 4px;
 }
 
@@ -440,9 +506,7 @@ x-button[skin="recessed"] > x-label {
 
 x-button[skin="nav"] {
   color: var(--text-color);
-  background: none;
-  border: none;
-  border-radius: 8px !important;
+  border-radius: 8px;
   cursor: default;
 }
 x-button[skin="nav"][toggled] {
@@ -466,21 +530,20 @@ x-button[skin="nav"] x-label {
 /*****************************************************************************************************************/
 
 /**
- * Button ("dock" skin)
- */
-
-x-button[skin="dock"] {
-  border-radius: 0;
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Button ("circular" skin)
  */
 
 x-button[skin="circular"] {
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 999px;
+}
+x-button[skin="circular"]:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+x-button[skin="circular"][pressed],
+x-button[skin="circular"][expanded] {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 x-button[skin="circular"] > x-icon {
@@ -511,8 +574,8 @@ x-tag[scoped]::part(main) {
   background: var(--background-color);
 }
 x-tag[toggled] {
-  filter: brightness(0.8);
-  color: rgba(0, 0, 0, 0.8);
+  filter: brightness(1.3);
+  color: rgba(255, 255, 255, 0.8);
 }
 x-tag[toggled]:active {
   filter: brightness(0.7);
@@ -536,7 +599,7 @@ x-tag::part(scope) {
  */
 
 x-tagsinput {
-  background: var(--dark-background-color);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 6px;
 }
 x-tagsinput:focus-within {
@@ -582,8 +645,8 @@ x-tab + x-tab {
   margin-left: 5px;
 }
 x-tab:hover {
-  background: var(--dark-background-color);
-  border-color: rgba(0, 0, 0, 0.1);
+  background: var(--light-background-color);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 x-tab:focus {
   outline: 2px solid var(--light-accent-color);
@@ -593,7 +656,23 @@ x-tab[selected] {
   border-color: var(--accent-color);
 }
 x-tab:active {
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Menubar
+ */
+
+x-menubar {
+  padding: 0 3px;
+}
+
+x-menubar > x-menuitem,
+x-menubar > x-menuitem[computedsize="small"],
+x-menubar > x-menuitem[computedsize="large"] {
+  height: calc(100% - 6px);
 }
 
 /*****************************************************************************************************************/
@@ -723,7 +802,7 @@ x-notification::selection {
 /* Indicator */
 x-checkbox::part(indicator) {
   background: white;
-  border: 1px solid var(--dark-border-color);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   d: path("M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 89.1 34.6 C 96.4 27 84.8 15.6 77.3 23.3 L 41.7 63.6 L 23.4 44.5 C 13.2 36.6 5.3 51 12.4 56.7 L 42.7 86.1 L 89.1 34.6 Z");
 }
@@ -758,7 +837,7 @@ x-checkbox[toggled]:active::part(indicator) {
 /* Indicator */
 x-radio::part(indicator) {
   background: white;
-  border: 1px solid var(--dark-border-color);
+  border: 1px solid var(--border-color);
 }
 x-radio:not([toggled]):active::part(indicator) {
   background: rgba(0, 0, 0, 0.2);
@@ -826,8 +905,8 @@ x-switch[computedsize="large"][toggled]::part(indicator-thumb) {
 /* Indicator track */
 x-switch::part(indicator-track) {
   height: 100%;
-  background: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12);
 }
 x-switch[toggled]::part(indicator-track) {
   background: var(--accent-color);
@@ -852,9 +931,6 @@ x-select {
 }
 x-select:hover {
   background: rgba(255, 255, 255, 0.18);
-}
-x-select[disabled] {
-  opacity: 0.4;
 }
 x-select:focus {
   outline: 2px solid var(--light-accent-color);
@@ -885,7 +961,7 @@ x-colorselect {
  */
 
 x-input {
-  background: var(--dark-background-color);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 6px;
 }
 x-input:focus {
@@ -900,7 +976,7 @@ x-input[error] {
 
 /* Placeholder */
 x-input > x-label {
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.4);
   font-weight: 600;
 }
 x-input > x-icon + x-label {
@@ -926,7 +1002,7 @@ x-input[error]::before {
  */
 
 x-numberinput {
-  background: var(--dark-background-color);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 6px;
 }
 x-numberinput:focus {
@@ -988,7 +1064,7 @@ x-numberinput[error]::before {
  */
 
 x-texteditor {
-  background: var(--dark-background-color);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 6px;
 }
 x-texteditor:focus {
@@ -1021,7 +1097,7 @@ x-texteditor[error]::before {
 
 /* Groove track */
 x-slider::part(groove-track) {
-  background: var(--dark-border-color);
+  background: var(--border-color);
   border-radius: 5px;
 }
 
@@ -1045,7 +1121,7 @@ x-slider::part(thumb) {
 }
 x-slider[dragging="start"]::part(start-thumb),
 x-slider[dragging="end"]::part(end-thumb) {
-  background: var(--background-color);
+  background: #cdcdcd;
 }
 x-slider::part(thumb):focus {
   border-color: var(--accent-color);

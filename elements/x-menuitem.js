@@ -519,7 +519,8 @@ export default class XMenuItemElement extends HTMLElement {
 
       else if (triggerEffect === "none") {
         this.#triggering = true;
-        await sleep(150);
+
+        await sleep(50);
 
         for (let callback of this.#triggerEndCallbacks) {
           callback();

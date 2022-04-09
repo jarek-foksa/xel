@@ -1,9 +1,10 @@
 
 # CHANGELOG
 
-## 0.12.0 (PENDING)
+## 0.12.0 (2022-04-09)
 
 - Add Adwaita theme
+- Add Adwaita Dark theme
 - Remove Vanilla theme
 
 ## 0.11.0 (2022-03-13)

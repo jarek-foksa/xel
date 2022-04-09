@@ -859,10 +859,10 @@ x-menuitem x-label + x-shortcut {
  */
 
 x-menubar[computedsize="small"] {
-  height: 24px;
+  height: 30px;
 }
 x-menubar[computedsize="large"] {
-  height: 38px;
+  height: 42px;
 }
 x-menubar:not(:defined) {
   display: none;
@@ -872,6 +872,7 @@ x-menubar:not(:defined) {
 x-menubar > x-menuitem {
   height: 100%;
   padding: 0 11px;
+  min-height: 0;
 }
 
 /*****************************************************************************************************************/
