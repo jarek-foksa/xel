@@ -7,13 +7,16 @@
 import ColorParser from "./color-parser.js";
 import EventEmitter from "./event-emitter.js";
 
+import {compareArrays} from "../utils/array.js";
 import {getIconset} from "../utils/icon.js";
+import {FluentBundle, FluentResource} from "../node_modules/@fluent/bundle/esm/index.js";
 
 // @singleton
 // @event themechange
 // @event accentcolorchange
 // @event sizechange
-// @event iconsetchange
+// @event iconsetschange
+// @event localeschange
 export default new class Xel extends EventEmitter {
   // @type string?
   //
@@ -69,44 +72,75 @@ export default new class Xel extends EventEmitter {
     meta.setAttribute("content", value);
   }
 
-  // @type string?
+  // @type Array<string>
   //
-  // URL to an SVG file with Xel iconset definition.
-  get iconset() {
-    return this.#iconset;
+  // URLs to an SVG files with icons.
+  get iconsets() {
+    return [...this.#iconsets];
   }
-  set iconset(url) {
-    let metaElement = document.head.querySelector(`:scope > meta[name="xel-iconset"]`);
+  set iconsets(urls) {
+    let metaElement = document.head.querySelector(`:scope > meta[name="xel-iconsets"]`);
 
     if (!metaElement) {
       metaElement = document.createElement("meta");
-      metaElement.setAttribute("name", "xel-iconset");
+      metaElement.setAttribute("name", "xel-iconsets");
       document.head.append(metaElement);
     }
 
-    metaElement.setAttribute("content", url);
+    metaElement.setAttribute("content", urls.join(", "));
+  }
+
+  // @type string? || Array<string>
+  //
+  // URLs to files with localizations.
+  // Each file name should consist from ISO 639 language code (e.g. "en"), optionally followed by "-" and ISO 3166
+  // territory, e.g. "en", "en-US" or "en-GB".
+  get locales() {
+    return [...this.#locales];
+  }
+  set locales(urls) {
+    let metaElement = document.head.querySelector(`:scope > meta[name="xel-locales"]`);
+
+    if (!metaElement) {
+      metaElement = document.createElement("meta");
+      metaElement.setAttribute("name", "xel-locales");
+      document.head.append(metaElement);
+    }
+
+    metaElement.setAttribute("content", urls.join(", "));
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   get whenThemeReady() {
     return new Promise((resolve) => {
-      if (this.#themeReadyCalbacks === null) {
+      if (this.#themeReadyCallbacks === null) {
         resolve();
       }
       else {
-        this.#themeReadyCalbacks.push(resolve);
+        this.#themeReadyCallbacks.push(resolve);
       }
     });
   }
 
-  get whenIconsetReady() {
+  get whenIconsetsReady() {
     return new Promise((resolve) => {
-      if (this.#iconsetReadyCalbacks === null) {
+      if (this.#iconsetsReadyCalbacks === null) {
         resolve();
       }
       else {
-        this.#iconsetReadyCalbacks.push(resolve);
+        this.#iconsetsReadyCalbacks.push(resolve);
+      }
+    });
+  }
+
+  get whenLocalesReady() {
+    return new Promise((resolve) => {
+      if (this.#localesReadyCallbacks === null) {
+        resolve();
+      }
+      else {
+        this.#localesReadyCallbacks.push(resolve);
       }
     });
   }
@@ -118,9 +152,14 @@ export default new class Xel extends EventEmitter {
     return this.#themeStyleSheet;
   }
 
-  // @type SVGSVGElement
-  get iconsetElement() {
-    return this.#iconsetElement;
+  // @type Array<SVGSVGElement>
+  get iconsetElements() {
+    return this.#iconsetElements;
+  }
+
+  // @type FluentBundle
+  get localesBundle() {
+    return this.#localesBundle;
   }
 
   // @type Object
@@ -146,13 +185,16 @@ export default new class Xel extends EventEmitter {
   #theme = null;
   #accentColor = null;
   #size = null;
-  #iconset = null;
+  #iconsets = [];
+  #locales = [];
 
   #themeStyleSheet = new CSSStyleSheet();
-  #iconsetElement = null;
+  #iconsetElements = [];
+  #localesBundle = null;
 
-  #themeReadyCalbacks = [];
-  #iconsetReadyCalbacks = [];
+  #themeReadyCallbacks = [];
+  #iconsetsReadyCalbacks = [];
+  #localesReadyCallbacks = [];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -161,21 +203,27 @@ export default new class Xel extends EventEmitter {
 
     document.adoptedStyleSheets = [this.#themeStyleSheet];
 
-    let {theme, accentColor, size, iconset} = this.#getSettings();
+    let {theme, accentColor, size, iconsets, locales} = this.#getSettings();
 
     this.#theme = theme;
     this.#accentColor = accentColor;
     this.#size = size;
-    this.#iconset = iconset;
+    this.#iconsets = iconsets;
+    this.#locales = locales;
 
     // Load theme
     if (this.#theme !== null) {
       this.#loadTheme(this.#theme);
     }
 
-    // Load iconset
-    if (this.#iconset !== null) {
-      this.#loadIconset(this.#iconset);
+    // Load iconsets
+    if (this.#iconsets.length > 0) {
+      this.#loadIconsets(this.#iconsets);
+    }
+
+    // Load locales
+    if (this.#locales.length > 0) {
+      this.#loadLocales(this.#locales);
     }
 
     // Observe <head> for changes
@@ -191,14 +239,16 @@ export default new class Xel extends EventEmitter {
     let oldTheme = this.#theme;
     let oldAccentColor = this.#accentColor;
     let oldSize = this.#size;
-    let oldIconset = this.#iconset;
+    let oldIconsets = this.#iconsets;
+    let oldLocales = this.#locales;
 
-    let {theme, accentColor, size, iconset} = this.#getSettings();
+    let {theme, accentColor, size, iconsets, locales} = this.#getSettings();
 
     this.#theme = theme;
     this.#accentColor = accentColor;
     this.#size = size;
-    this.#iconset = iconset;
+    this.#iconsets = iconsets;
+    this.#locales = locales;
 
     if (this.#theme !== oldTheme) {
       this.#loadTheme(this.#theme).then(() => {
@@ -215,9 +265,15 @@ export default new class Xel extends EventEmitter {
       this.dispatchEvent(new CustomEvent("sizechange"));
     }
 
-    if (this.#iconset !== oldIconset) {
-      this.#loadIconset(this.#iconset).then(() => {
-        this.dispatchEvent(new CustomEvent("iconsetchange"));
+    if (compareArrays(this.#iconsets, oldIconsets, true) === false) {
+      this.#loadIconsets(this.#iconsets).then(() => {
+        this.dispatchEvent(new CustomEvent("iconsetschange"));
+      });
+    }
+
+    if (compareArrays(this.#locales, oldLocales, true) === false) {
+      this.#loadLocales(this.#locales).then(() => {
+        this.dispatchEvent(new CustomEvent("localeschange"));
       });
     }
   }
@@ -240,8 +296,8 @@ export default new class Xel extends EventEmitter {
 
   #loadTheme(url) {
     return new Promise(async (resolve) => {
-      if (this.#themeReadyCalbacks === null) {
-        this.#themeReadyCalbacks = [];
+      if (this.#themeReadyCallbacks === null) {
+        this.#themeReadyCallbacks = [];
       }
 
       let cssText = await this.#fetchTheme(url);
@@ -250,32 +306,74 @@ export default new class Xel extends EventEmitter {
       this.#updateThemeAccentColor();
       this.#updateTitlebarColor();
 
-      if (this.#themeReadyCalbacks !== null) {
-        for (let callback of this.#themeReadyCalbacks) {
+      if (this.#themeReadyCallbacks !== null) {
+        for (let callback of this.#themeReadyCallbacks) {
           callback();
         }
 
-        this.#themeReadyCalbacks = null;
+        this.#themeReadyCallbacks = null;
       }
 
       resolve();
     });
   }
 
-  #loadIconset(url) {
+  #loadIconsets(urls) {
     return new Promise(async (resolve) => {
-      if (this.#iconsetReadyCalbacks === null) {
-        this.#iconsetReadyCalbacks = [];
+      if (this.#iconsetsReadyCalbacks === null) {
+        this.#iconsetsReadyCalbacks = [];
       }
 
-      let iconsetElement = await getIconset(url);
-      this.#iconsetElement = iconsetElement;
+      this.#iconsetElements = [];
 
-      for (let callback of this.#iconsetReadyCalbacks) {
+      for (let url of urls) {
+        let iconsetElement = await getIconset(url);
+        this.#iconsetElements.push(iconsetElement);
+      }
+
+      for (let callback of this.#iconsetsReadyCalbacks) {
         callback();
       }
 
-      this.#iconsetReadyCalbacks = null;
+      this.#iconsetsReadyCalbacks = null;
+      resolve();
+    });
+  }
+
+  #loadLocales(urls) {
+    return new Promise(async (resolve) => {
+      if (this.#localesReadyCallbacks === null) {
+        this.#localesReadyCallbacks = [];
+      }
+
+      let languageTag = "en";
+
+      if (urls.length > 0) {
+        let fileName = urls[0].substring(urls[0].lastIndexOf("/") + 1);
+        languageTag = fileName.substring(0, fileName.indexOf("."));
+      }
+
+      let bundle = new FluentBundle(languageTag);
+
+      for (let i = urls.length-1; i >= 0; i -= 1) {
+        let url = urls[i];
+        let source = await (await fetch(url)).text();
+        let resource = new FluentResource(source);
+        let errors = bundle.addResource(resource, {allowOverrides: true});
+
+        // Syntax errors are per-message and don't break the whole resource
+        if (errors.length) {
+          console.info("Found localization syntax errors", errors);
+        }
+      }
+
+      this.#localesBundle = bundle;
+
+      for (let callback of this.#localesReadyCallbacks) {
+        callback();
+      }
+
+      this.#localesReadyCallbacks = null;
       resolve();
     });
   }
@@ -323,13 +421,15 @@ export default new class Xel extends EventEmitter {
     let themeMeta       = document.head.querySelector(`:scope > meta[name="xel-theme"]`);
     let accentColorMeta = document.head.querySelector(`:scope > meta[name="xel-accent-color"]`);
     let sizeMeta        = document.head.querySelector(`:scope > meta[name="xel-size"]`);
-    let iconsetMeta     = document.head.querySelector(`:scope > meta[name="xel-iconset"]`);
+    let iconsetsMeta    = document.head.querySelector(`:scope > meta[name="xel-iconsets"]`);
+    let localesMeta     = document.head.querySelector(`:scope > meta[name="xel-locales"]`);
 
     return {
       theme       : (themeMeta       && themeMeta.content       !== "") ? themeMeta.content       : null,
       accentColor : (accentColorMeta && accentColorMeta.content !== "") ? accentColorMeta.content : null,
       size        : (sizeMeta        && sizeMeta.content        !== "") ? sizeMeta.content        : null,
-      iconset     : (iconsetMeta     && iconsetMeta.content     !== "") ? iconsetMeta.content     : null,
+      iconsets    : iconsetsMeta ? iconsetsMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : [],
+      locales     : localesMeta  ?  localesMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : []
     };
   }
 

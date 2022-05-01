@@ -40,13 +40,15 @@
     "throbber"
   ],
   "devDependencies": {
+    "@fluent/bundle": "0.17.1",
     "cantarell": "0.303.0",
     "clean-css": "5.2.2",
+    "dompurify": "2.3.6",
     "fs-extra": "10.0.0",
     "glob": "7.2.0",
     "html-minifier-terser": "6.1.0",
-    "marked": "4.0.8",
-    "prismjs": "1.25.0",
+    "marked": "4.0.14",
+    "prismjs": "1.28.0",
     "rollup": "2.63.0",
     "semver": "7.3.5",
     "terser": "5.10.0"

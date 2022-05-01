@@ -120,7 +120,7 @@ export default class PTSetupPageElement extends PTPage {
           </main>
         </x-card>
 
-        <x-card id="link-iconset-card">
+        <x-card id="iconset-card">
           <main>
             <h3><strong>6</strong> Set iconset</h3>
 
@@ -147,8 +147,35 @@ export default class PTSetupPageElement extends PTPage {
             iconset:</p>
             <pt-code id="iconset-code"></pt-code>
 
-            <p><strong>Note:</strong> You can also link a custom iconset SVG file. Each icon should be defined as a
-            <code>&lt;symbol&gt;</code> with a unique ID.</p>
+            <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If an icon
+            is not found in the first iconset file, Xel will look for it in the subsequent iconset files.</p>
+          </main>
+        </x-card>
+
+        <x-card id="locale-card">
+          <main>
+            <h3><strong>7</strong> Set locale (optional)</h3>
+
+            <p>Add to the <code>&lt;head&gt;</code> to use
+            <x-select id="locale-select">
+              <x-menu>
+                <x-menuitem value="en" toggled>
+                  <x-label>English</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="pl">
+                  <x-label>Polish</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-select>
+            locale:</p>
+            <pt-code id="locale-code"></pt-code>
+
+            <p><strong>Note:</strong> You can skip this step if your aren't planning to translate your app UI
+              into multiple languages. Otherwise you should provide a path to your own <a href="https://projectfluent.org/fluent/guide/" target="_blank">FTL locale file</a>. The file name should consist from ISO 639 language code, optionally followed by "-" and ISO 3166 territory code, e.g. <code>en.ftl</code>, <code>en-US.ftl</code> or <code>en-GB.ftl</code>.</p>
+
+            <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If a message
+            is not found in the first locale file, Xel will look for it in the subsequent locale files.</p>
           </main>
         </x-card>
       </article>
@@ -203,7 +230,8 @@ export default class PTSetupPageElement extends PTPage {
     #theme-select,
     #accent-preset-select,
     #size-select,
-    #iconset-select {
+    #iconset-select,
+    #locale-select {
       display: inline-block;
       vertical-align: middle;
       margin: 0 2px;
@@ -215,7 +243,8 @@ export default class PTSetupPageElement extends PTPage {
   #xelThemeChangeListener;
   #xelAccentColorChangeListener;
   #xelSizeChangeListener;
-  #xelIconsetChangeListener;
+  #xelIconsetsChangeListener;
+  #xelLocalesChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -226,6 +255,7 @@ export default class PTSetupPageElement extends PTPage {
     this._elements["accent-preset-select"].addEventListener("change", () => this.#onAccentPresetSelectChange());
     this._elements["size-select"].addEventListener("change", () => this.#onSizeSelectChange());
     this._elements["iconset-select"].addEventListener("change", () => this.#onIconsetSelectChange());
+    this._elements["locale-select"].addEventListener("change", () => this.#onLocaleSelectChange());
   }
 
   connectedCallback() {
@@ -234,7 +264,8 @@ export default class PTSetupPageElement extends PTPage {
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#onXelThemeChange());
     Xel.addEventListener("accentcolorchange", this.#xelAccentColorChangeListener = () => this.#onXelAccentColorChange());
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#onXelSizeChange());
-    Xel.addEventListener("iconsetchange", this.#xelIconsetChangeListener = () => this.#onXelIconsetChange());
+    Xel.addEventListener("iconsetschange", this.#xelIconsetsChangeListener = () => this.#onXelIconsetsChange());
+    Xel.addEventListener("localeschange", this.#xelLocalesChangeListener = () => this.#onXelLocalesChange());
 
     this.#updateAccentColorMenu();
     this.#update();
@@ -245,7 +276,8 @@ export default class PTSetupPageElement extends PTPage {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("accentcolorchange", this.#xelAccentColorChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
-    Xel.removeEventListener("iconsetchange", this.#xelIconsetChangeListener);
+    Xel.removeEventListener("iconsetschange", this.#xelIconsetsChangeListener);
+    Xel.removeEventListener("localeschange", this.#xelLocalesChangeListener);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -263,7 +295,11 @@ export default class PTSetupPageElement extends PTPage {
     this.#update();
   }
 
-  #onXelIconsetChange() {
+  #onXelIconsetsChange() {
+    this.#update();
+  }
+
+  #onXelLocalesChange() {
     this.#update();
   }
 
@@ -283,7 +319,11 @@ export default class PTSetupPageElement extends PTPage {
   }
 
   #onIconsetSelectChange() {
-    Xel.iconset = `/iconsets/${this._elements["iconset-select"].value}.svg`;
+    Xel.iconsets = [`/iconsets/${this._elements["iconset-select"].value}.svg`];
+  }
+
+  #onLocaleSelectChange() {
+    Xel.locales = [`/locales/${this._elements["locale-select"].value}.ftl`];
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,11 +360,22 @@ export default class PTSetupPageElement extends PTPage {
 
     // Iconset
     {
-      let name = Xel.iconset.substring(Xel.iconset.lastIndexOf("/") + 1, Xel.iconset.lastIndexOf("."));
-      let meta = `<meta name="xel-iconset" content="node_modules/xel/iconsets/${name}.svg">`;
+      let iconsetPath = Xel.iconsets[0];
+      let iconsetName = iconsetPath.substring(iconsetPath.lastIndexOf("/") + 1, iconsetPath.lastIndexOf("."));
+      let meta = `<meta name="xel-iconsets" content="node_modules/xel/iconsets/${iconsetName}.svg">`;
 
-      this._elements["iconset-select"].value = name;
+      this._elements["iconset-select"].value = iconsetName;
       this._elements["iconset-code"].textContent = meta;
+    }
+
+    // Locale
+    {
+      let localePath = Xel.locales[0];
+      let localeName = localePath.substring(localePath.lastIndexOf("/") + 1, localePath.lastIndexOf("."));
+      let meta = `<meta name="xel-locales" content="node_modules/xel/locales/${localeName}.ftl">`;
+
+      this._elements["locale-select"].value = localeName;
+      this._elements["locale-code"].textContent = meta;
     }
   }
 

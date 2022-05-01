@@ -12,9 +12,9 @@ export default class PTAboutPageElement extends PTPage {
     <template>
       <main>
         <h1><span>X</span>el</h1>
-        <h2><em>HTML 5</em> widget toolkit.</h2>
-        <h2><em>Native-like</em> look and feel.</h2>
-        <h2>For <em>Web</em>, <em>Electron</em> and <em>Hybrid</em> apps.</h2>
+        <h2><x-message name="slogan-1"></x-message></h2>
+        <h2><x-message name="slogan-2"></x-message></h2>
+        <h2><x-message name="slogan-3"></x-message></h2>
       </main>
     </template>
   `;
@@ -34,6 +34,7 @@ export default class PTAboutPageElement extends PTPage {
 
     main {
       margin: 0 auto;
+      max-width: 500px;
     }
 
     h1 {

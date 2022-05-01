@@ -81,6 +81,16 @@ let createPortalPackage = (minify = true, publish = false) => {
         }
       }
 
+      // Locales
+      {
+        for (let srcPath of Glob.sync(`${projectPath}/locales/*.ftl`)) {
+          let destPath = `${projectPath}/dist/portal/` + srcPath.substring(projectPath.length);
+
+          Fse.ensureDirSync(dirname(destPath));
+          Fse.copySync(srcPath, destPath);
+        }
+      }
+
       // Docs
       {
         for (let srcPath of Glob.sync(`${projectPath}/docs/*.html`)) {

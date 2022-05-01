@@ -114,7 +114,7 @@ export default class XIconElement extends HTMLElement {
 
   #shadowRoot = null;
   #elements = {};
-  #defaultIconsetChangeListener = null;
+  #defaultIconsetsChangeListener = null;
   #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ export default class XIconElement extends HTMLElement {
   }
 
   connectedCallback() {
-    Xel.addEventListener("iconsetchange", this.#defaultIconsetChangeListener = () => {
+    Xel.addEventListener("iconsetschange", this.#defaultIconsetsChangeListener = () => {
       this.#update();
     });
 
@@ -140,12 +140,11 @@ export default class XIconElement extends HTMLElement {
       this.#updateComputedSizeAttriubte();
     });
 
-    this.#update();
     this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("iconsetchange", this.#defaultIconsetChangeListener);
+    Xel.removeEventListener("iconsetschange", this.#defaultIconsetsChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
@@ -183,8 +182,16 @@ export default class XIconElement extends HTMLElement {
       }
       // Default iconset
       else {
-        await Xel.whenIconsetReady;
-        symbol = Xel.iconsetElement.querySelector("#" + CSS.escape(this.name));
+        await Xel.whenIconsetsReady;
+
+        for (let iconsetElement of Xel.iconsetElements) {
+          let matchedSymbol = iconsetElement.querySelector("#" + CSS.escape(this.name));
+
+          if (matchedSymbol) {
+            symbol = matchedSymbol;
+            break;
+          }
+        }
       }
 
       if (symbol) {

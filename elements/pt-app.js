@@ -17,7 +17,6 @@ import "./pt-elementpage.js";
 
 import "./pt-apiblock.js";
 import "./pt-demoblock.js";
-
 import "./pt-code.js";
 
 import {removeDuplicates} from "../utils/array.js";
@@ -52,42 +51,42 @@ export default class PTAppElement extends HTMLElement {
             <a href="/">
               <x-button skin="nav">
                 <x-icon name="help"></x-icon>
-                <x-label>About</x-label>
+                <x-label><x-message name="about"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/setup">
               <x-button skin="nav">
                 <x-icon name="wrench"></x-icon>
-                <x-label>Setup</x-label>
+                <x-label><x-message name="setup"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/faq">
               <x-button skin="nav">
                 <x-icon name="comment"></x-icon>
-                <x-label>FAQ</x-label>
+                <x-label><x-message name="faq"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/changelog">
               <x-button skin="nav">
                 <x-icon name="calendar"></x-icon>
-                <x-label>Changelog</x-label>
+                <x-label><x-message name="changelog"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/license">
               <x-button skin="nav">
                 <x-icon name="paste"></x-icon>
-                <x-label>License</x-label>
+                <x-label><x-message name="license"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="https://github.com/jarek-foksa/xel/issues" target="_blank" tabindex="-1">
               <x-button skin="nav">
                 <x-icon name="visibility-visible"></x-icon>
-                <x-label>Issues</x-label>
+                <x-label><x-message name="issues"></x-message></x-label>
                 <x-icon name="open"></x-icon>
               </x-button>
               </a>
@@ -95,7 +94,7 @@ export default class PTAppElement extends HTMLElement {
             <a href="https://github.com/jarek-foksa/xel" target="_blank" tabindex="-1">
               <x-button skin="nav" role="button" aria-disabled="false" tabindex="0">
                 <x-icon name="code"></x-icon>
-                <x-label>Source Code</x-label>
+                <x-label><x-message name="source-code"></x-message></x-label>
                 <x-icon name="open"></x-icon>
               </x-button>
             </a>
@@ -103,9 +102,9 @@ export default class PTAppElement extends HTMLElement {
 
           <hr/>
 
-          <section id="theme-section">
+          <section id="settings-section">
             <div id="theme-subsection">
-              <h3 id="theme-heading">Theme</h3>
+              <h3 id="theme-heading"><x-message name="theme">Theme</x-message></h3>
 
               <x-select id="theme-select">
                 <x-menu>
@@ -137,7 +136,7 @@ export default class PTAppElement extends HTMLElement {
             </div>
 
             <div id="accent-color-subsection">
-              <h3>Accent color</h3>
+              <h3><x-message name="accent-color"></x-message></h3>
 
               <x-box>
                 <x-select id="accent-preset-select">
@@ -153,25 +152,25 @@ export default class PTAppElement extends HTMLElement {
             </div>
 
             <div id="size-subsection">
-              <h3>Size</h3>
+              <h3><x-message name="size">Size</x-message></h3>
 
               <x-buttons id="size-buttons" tracking="1">
                 <x-button value="small" condensed>
-                  <x-label>Small</x-label>
+                  <x-label><x-message name="size-small">Small</x-message></x-label>
                 </x-button>
 
                 <x-button value="medium" condensed toggled>
-                  <x-label>Medium</x-label>
+                  <x-label><x-message name="size-medium">Medium</x-message></x-label>
                 </x-button>
 
                 <x-button value="large" condensed>
-                  <x-label>Large</x-label>
+                  <x-label><x-message name="size-large">Large</x-message></x-label>
                 </x-button>
               </x-buttons>
             </div>
 
             <div id="iconset-subsection">
-              <h3>Iconset</h3>
+              <h3><x-message name="iconset"></x-message></h3>
 
               <x-select id="iconset-select">
                 <x-menu>
@@ -193,12 +192,29 @@ export default class PTAppElement extends HTMLElement {
                 </x-menu>
               </x-select>
             </div>
+
+            <div id="locale-subsection">
+              <h3><x-message name="locale"></x-message></h3>
+
+              <x-select id="locale-select">
+                <x-menu>
+                  <x-menuitem value="en" toggled>
+                    <x-label><x-message name="locale-en"></x-message></x-label>
+                  </x-menuitem>
+
+                  <x-menuitem value="pl">
+                    <x-label><x-message name="locale-pl"></x-message></x-label>
+                  </x-menuitem>
+                </x-menu>
+              </x-select>
+            </div>
+
           </section>
 
           <hr/>
 
           <section>
-            <h3>Containers</h3>
+            <h3><x-message name="containers"></x-message></h3>
 
             <a href="/elements/x-box">
               <x-button skin="nav">
@@ -222,7 +238,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Primitives</h3>
+            <h3><x-message name="primitives"></x-message></h3>
 
             <a href="/elements/x-icon">
               <x-button skin="nav">
@@ -233,6 +249,12 @@ export default class PTAppElement extends HTMLElement {
             <a href="/elements/x-label">
               <x-button skin="nav">
                 <x-label>x-label</x-label>
+              </x-button>
+            </a>
+
+            <a href="/elements/x-message">
+              <x-button skin="nav">
+                <x-label>x-message</x-label>
               </x-button>
             </a>
 
@@ -258,7 +280,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Buttons</h3>
+            <h3><x-message name="buttons"></x-message></h3>
 
             <a href="/elements/x-button">
               <x-button skin="nav">
@@ -276,7 +298,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Tags</h3>
+            <h3><x-message name="tags"></x-message></h3>
 
             <a href="/elements/x-tag">
               <x-button skin="nav">
@@ -300,7 +322,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Navigation</h3>
+            <h3><x-message name="navigation"></x-message></h3>
 
             <a href="/elements/x-tab">
               <x-button skin="nav">
@@ -318,7 +340,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Menus</h3>
+            <h3><x-message name="menus"></x-message></h3>
 
             <a href="/elements/x-menu">
               <x-button skin="nav">
@@ -348,7 +370,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Popups</h3>
+            <h3><x-message name="popups"></x-message></h3>
 
             <a href="/elements/dialog">
               <x-button skin="nav">
@@ -372,7 +394,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Forms</h3>
+            <h3><x-message name="forms"></x-message></h3>
 
             <a href="/elements/x-checkbox">
               <x-button skin="nav">
@@ -438,7 +460,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Color pickers</h3>
+            <h3><x-message name="color-pickers"></x-message></h3>
 
             <a href="/elements/x-rectcolorpicker">
               <x-button skin="nav">
@@ -462,7 +484,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3>Indicators</h3>
+            <h3><x-message name="indicators"></x-message></h3>
 
             <a href="/elements/x-progressbar">
               <x-button skin="nav">
@@ -582,50 +604,59 @@ export default class PTAppElement extends HTMLElement {
       min-height: 37px;
     }
 
-    /* Theme */
-
-    #theme-section {
+    #settings-section {
       padding: 10px 0px;
     }
 
-    #theme-section #theme-heading {
+    /* Theme */
+
+    #settings-section #theme-heading {
       margin-top: 0;
     }
 
-    #theme-section #theme-select {
+    #settings-section #theme-select {
       width: 100%;
     }
 
     /* Accent color */
 
-    #theme-section #accent-color-subsection {
+    #settings-section #accent-color-subsection {
       margin-top: 14px;
     }
-    #theme-section #accent-preset-select {
+    #settings-section #accent-preset-select {
       flex: 1;
     }
-    #theme-section #accent-color-select {
+    #settings-section #accent-color-select {
       margin-left: 8px;
     }
 
     /* Size */
 
-    #theme-section #size-subsection {
+    #settings-section #size-subsection {
       margin-top: 14px;
     }
-    #theme-section #size-buttons {
+    #settings-section #size-buttons {
       width: 100%;
     }
-    #theme-section #size-buttons x-button {
+    #settings-section #size-buttons x-button {
       flex: 1;
     }
 
     /* Iconset */
 
-    #theme-section #iconset-subsection {
+    #settings-section #iconset-subsection {
       margin-top: 14px;
     }
-    #theme-section #iconset-select {
+    #settings-section #iconset-select {
+      width: 100%;
+    }
+
+    /* Locale */
+
+    #settings-section #locale-subsection {
+      margin-top: 14px;
+    }
+    #settings-section #locale-select {
       width: 100%;
     }
 
@@ -723,12 +754,26 @@ export default class PTAppElement extends HTMLElement {
     Xel.theme = "/themes/" + (localStorage.getItem("theme") || "adwaita") + "-portal.css";
     Xel.accentColor = localStorage.getItem("accentColor") || "blue";
     Xel.size = localStorage.getItem("size") || "medium";
-    Xel.iconset = "/iconsets/" + (localStorage.getItem("iconset") || "material") + ".svg";
+    Xel.iconsets = ["/iconsets/" + (localStorage.getItem("iconset") || "material") + ".svg"];
+
+    // Load locales
+    {
+      let [languageCode, territory] = (localStorage.getItem("locale") || "en").split("-");
+
+      if (territory === undefined) {
+        Xel.locales = [`/locales/${languageCode}.ftl`];
+      }
+      else {
+        Xel.locales = [`/locales/${languageCode}-${territory}.ftl`, `/locales/${languageCode}.ftl`];
+      }
+    }
 
     // Prevent the flash of unstyled content
     {
       await Xel.whenThemeReady;
-      await Xel.whenIconsetReady;
+      await Xel.whenIconsetsReady;
+      await Xel.whenLocalesReady;
+
       this.hidden = false;
     }
 
@@ -746,7 +791,8 @@ export default class PTAppElement extends HTMLElement {
     Xel.addEventListener("themechange", () => this.#onXelThemeChange());
     Xel.addEventListener("accentcolorchange", () => this.#onXelAccentColorChange());
     Xel.addEventListener("sizechange", () => this.#onXelSizeChange());
-    Xel.addEventListener("iconsetchange", () => this.#onXelIconsetChange());
+    Xel.addEventListener("iconsetschange", () => this.#onXelIconsetsChange());
+    Xel.addEventListener("localeschange", () => this.#onXelLocalesChange());
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
@@ -757,6 +803,7 @@ export default class PTAppElement extends HTMLElement {
     this.#elements["accent-color-select"].addEventListener("change", (e) => this.#onAccentColorSelectChange(e));
     this.#elements["size-buttons"].addEventListener("toggle", (e) => this.#onSizeButtonsToggle(e));
     this.#elements["iconset-select"].addEventListener("change", (e) => this.#onIconsetSelectChange(e));
+    this.#elements["locale-select"].addEventListener("change", (e) => this.#onLocaleSelectChange(e));
     this.#elements["main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
 
     // Sidebar
@@ -770,7 +817,7 @@ export default class PTAppElement extends HTMLElement {
     }
 
     this.#updateSidebarNav();
-    this.#updateSidebarThemeSection();
+    this.#updateSidebarSettingsSection();
 
     await this.#updateMain();
     this.#maybeDispatchLocationChangeEvent("load");
@@ -779,7 +826,7 @@ export default class PTAppElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onXelThemeChange() {
-    this.#updateSidebarThemeSection();
+    this.#updateSidebarSettingsSection();
 
     let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
     localStorage.setItem("theme", themeName);
@@ -803,13 +850,18 @@ export default class PTAppElement extends HTMLElement {
   }
 
   #onXelSizeChange() {
-    this.#updateSidebarThemeSection();
+    this.#updateSidebarSettingsSection();
     localStorage.setItem("size", this.#elements["size-buttons"].value);
   }
 
-  #onXelIconsetChange() {
-    this.#updateSidebarThemeSection();
+  #onXelIconsetsChange() {
+    this.#updateSidebarSettingsSection();
     localStorage.setItem("iconset", this.#elements["iconset-select"].value);
+  }
+
+  #onXelLocalesChange() {
+    this.#updateSidebarSettingsSection();
+    localStorage.setItem("locale", this.#elements["locale-select"].value);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -982,7 +1034,18 @@ export default class PTAppElement extends HTMLElement {
   }
 
   #onIconsetSelectChange() {
-    Xel.iconset = "/iconsets/" + this.#elements["iconset-select"].value + ".svg";
+    Xel.iconsets = ["/iconsets/" + this.#elements["iconset-select"].value + ".svg"];
+  }
+
+  #onLocaleSelectChange() {
+    let [languageCode, territory] = this.#elements["locale-select"].value.split("-");
+
+    if (territory === undefined) {
+      Xel.locales = [`/locales/${languageCode}.ftl`];
+    }
+    else {
+      Xel.locales = [`/locales/${languageCode}-${territory}.ftl`, `/locales/${languageCode}.ftl`];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1193,7 +1256,7 @@ export default class PTAppElement extends HTMLElement {
 
   #updateSidebarNav() {
     for (let section of this.#elements["nav"].querySelectorAll(":scope > section")) {
-      if (section.id !== "theme-section") {
+      if (section.id !== "settings-section") {
         for (let button of section.querySelectorAll("x-button")) {
           let anchor = button.closest("a");
 
@@ -1217,7 +1280,7 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  #updateSidebarThemeSection() {
+  #updateSidebarSettingsSection() {
     // Update theme subsection
     {
       let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
@@ -1240,7 +1303,7 @@ export default class PTAppElement extends HTMLElement {
         itemsHTML += `
           <x-menuitem value="${colorName}">
             <x-swatch value="${colorValue}"></x-swatch>
-            <x-label>${capitalize(colorName)}</x-label>
+            <x-label><x-message name="accent-color-${colorName}"></x-message></x-label>
           </x-menuitem>
         `;
       }
@@ -1274,8 +1337,16 @@ export default class PTAppElement extends HTMLElement {
 
     // Update iconset subsection
     {
-      let iconsetName = Xel.iconset.substring(Xel.iconset.lastIndexOf("/") + 1, Xel.iconset.lastIndexOf("."));
+      let iconsetPath = Xel.iconsets[0];
+      let iconsetName = iconsetPath.substring(iconsetPath.lastIndexOf("/") + 1, iconsetPath.lastIndexOf("."));
       this.#elements["iconset-select"].value = iconsetName;
+    }
+
+    // Update locale subsection
+    {
+      let localePath = Xel.locales[0];
+      let localeTag = localePath.substring(localePath.lastIndexOf("/") + 1, localePath.lastIndexOf("."));
+      this.#elements["locale-select"].value = localeTag;
     }
   }
 }

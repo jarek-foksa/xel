@@ -1,6 +1,12 @@
 
 # CHANGELOG
 
+## 0.13.0 (2022-05-01)
+
+- Internationalization and localization support with new `Xel.locales` API and `<x-message>` element
+- Rename `<meta name="xel-iconset">` to `<meta name="xel-iconsets">`
+- Rename `Xel.iconset` to `Xel.iconsets` and make it return an array
+
 ## 0.12.0 (2022-04-09)
 
 - Add Adwaita theme

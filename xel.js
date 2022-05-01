@@ -21,6 +21,7 @@ import "./elements/x-contextmenu.js";
 import "./elements/x-icon.js";
 import "./elements/x-input.js";
 import "./elements/x-label.js";
+import "./elements/x-message.js";
 import "./elements/x-menu.js";
 import "./elements/x-menubar.js";
 import "./elements/x-menuitem.js";
