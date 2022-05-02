@@ -7,6 +7,7 @@
 import DOMPurify from "../node_modules/dompurify/dist/purify.es.js";
 import Xel from "../classes/xel.js";
 
+import {isNumeric} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-message
@@ -49,7 +50,13 @@ export default class XMessageElement extends HTMLElement {
     if (serializedArgs !== "") {
       for (let serializedArg of serializedArgs.split(",")) {
         let [key, value] = serializedArg.split(":");
-        args[key.trim()] = value.trim();
+        key = key.trim();
+        value = value.trim();
+
+        let number = parseFloat(value);
+        let isNumber = (value - number + 1) >= 0;
+
+        args[key] = isNumber ? number : value;
       }
     }
 

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.13.1 (2022-05-02)
+
+- [Bugfix] `<x-message>` treats numeric arguments as strings
+
 ## 0.13.0 (2022-05-01)
 
 - Internationalization and localization support with new `Xel.locales` API and `<x-message>` element
