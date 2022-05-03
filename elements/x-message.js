@@ -7,7 +7,7 @@
 import DOMPurify from "../node_modules/dompurify/dist/purify.es.js";
 import Xel from "../classes/xel.js";
 
-import {isNumeric} from "../utils/string.js";
+import {isNumeric, isString} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-message
@@ -113,20 +113,34 @@ export default class XMessageElement extends HTMLElement {
   async #update() {
     await Xel.whenLocalesReady;
 
-    let message = Xel.localesBundle.getMessage(this.name);
-    let messageText = "";
+    let [id, attributeName] = this.name.split(".");
+    let message = Xel.localesBundle.getMessage(id);
+    let messageText = null;
 
-    if (message?.value) {
-      messageText = Xel.localesBundle.formatPattern(message.value, this.args);
+    if (message) {
+      if (attributeName === undefined) {
+        if (message.value) {
+          messageText = Xel.localesBundle.formatPattern(message.value, this.args);
+        }
+      }
+      else {
+        if (message.attributes?.[attributeName]) {
+          messageText = Xel.localesBundle.formatPattern(message.attributes[attributeName], this.args);
+        }
+      }
     }
 
-    // Markup
-    if (/<|&#?\w+;/.test(messageText)) {
+    // Message not found
+    if (messageText === null) {
+      this.textContent = [id, attributeName].join(".");
+    }
+    // Message contains markup
+    else if (/<|&#?\w+;/.test(messageText)) {
       this.innerHTML = DOMPurify.sanitize(messageText, {
         USE_PROFILES: {html: true},
       });
     }
-    // Plain text
+    // Message contains plain text
     else {
       this.textContent = messageText;
     }

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.13.2 (2022-05-03)
+
+- [Bugfix] `<x-message>` fails to render compound messages
+
 ## 0.13.1 (2022-05-02)
 
 - [Bugfix] `<x-message>` treats numeric arguments as strings
