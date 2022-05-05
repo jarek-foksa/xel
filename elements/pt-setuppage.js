@@ -394,7 +394,7 @@ export default class PTSetupPageElement extends PTPage {
     itemsHTML += `
       <hr/>
       <x-menuitem value="custom">
-        <x-icon name="color-wheel" iconset="/iconsets/other.svg"></x-icon>
+        <x-icon href="/iconsets/other.svg#color-wheel"></x-icon>
         <x-label>Custom</x-label>
       </x-menuitem>
     `;

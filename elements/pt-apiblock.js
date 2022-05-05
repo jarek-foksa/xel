@@ -351,10 +351,10 @@ export default class PTApiBlockElement extends HTMLElement {
             rowsHTML += `
               <tr>
                 <td>${id}</td>
-                <td><x-icon name="${id}" iconset="/node_modules/xel/iconsets/material.svg"></x-icon></td>
-                <td><x-icon name="${id}" iconset="/node_modules/xel/iconsets/material-outlined.svg"></x-icon></td>
-                <td><x-icon name="${id}" iconset="/node_modules/xel/iconsets/fluent.svg"></x-icon></td>
-                <td><x-icon name="${id}" iconset="/node_modules/xel/iconsets/fluent-outlined.svg"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/iconsets/material.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/iconsets/material-outlined.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/iconsets/fluent.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/iconsets/fluent-outlined.svg#${id}"></x-icon></td>
               </tr>
             `;
           }

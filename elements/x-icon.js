@@ -11,7 +11,7 @@ import {html, css} from "../utils/template.js";
 
 // @element x-icon
 export default class XIconElement extends HTMLElement {
-  static observedAttributes = ["name", "iconset", "size"];
+  static observedAttributes = ["href", "size"];
 
   static #shadowTemplate = html`
     <template>
@@ -53,32 +53,11 @@ export default class XIconElement extends HTMLElement {
   // @attribute
   // @type string
   // @default ""
-  get name() {
-    return this.hasAttribute("name") ? this.getAttribute("name") : "";
+  get href() {
+    return this.hasAttribute("href") ? this.getAttribute("href") : "";
   }
-  set name(name) {
-    this.setAttribute("name", name);
-  }
-
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
-  get iconset() {
-    if (this.hasAttribute("iconset") === false || this.getAttribute("iconset").trim() === "") {
-      return null;
-    }
-    else {
-      return this.getAttribute("iconset");
-    }
-  }
-  set iconset(iconset) {
-    if (iconset === null || iconset.trim() === "") {
-      this.removeAttribute("iconset");
-    }
-    else {
-      this.setAttribute("iconset", iconset);
-    }
+  set href(href) {
+    this.setAttribute("href", href);
   }
 
   // @property
@@ -152,10 +131,7 @@ export default class XIconElement extends HTMLElement {
     if (oldValue === newValue) {
       return;
     }
-    else if (name === "name") {
-      this.#update();
-    }
-    else if (name === "iconset") {
+    else if (name === "href") {
       this.#update();
     }
     else if (name === "size") {
@@ -166,33 +142,47 @@ export default class XIconElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async #update() {
-    if (this.name === "") {
-      this.#elements["svg"].innerHTML = "";
-    }
-    else {
-      let symbol = null;
+    let symbol = null;
+    let href = this.href.trim();
 
-      // Custom iconset
-      if (this.iconset) {
-        let iconsetElement = await getIconset(this.iconset);
+    if (href !== "") {
+      let path = null;
+      let id = null;
 
-        if (iconsetElement) {
-          symbol = iconsetElement.querySelector("#" + CSS.escape(this.name));
+      if (href.includes("#")) {
+        let parts = href.split("#");
+
+        if (parts[0] !== "") {
+          path = parts[0];
+        }
+        if (parts[1] !== "") {
+          id = parts[1];
         }
       }
-      // Default iconset
-      else {
-        await Xel.whenIconsetsReady;
-        symbol = Xel.queryIcon("#" + CSS.escape(this.name));
-      }
 
-      if (symbol) {
-        this.#elements["svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
-        this.#elements["svg"].innerHTML = symbol.innerHTML;
+      if (id !== null) {
+        // Default iconset
+        if (path === null) {
+          await Xel.whenIconsetsReady;
+          symbol = Xel.queryIcon("#" + CSS.escape(id));
+        }
+        // Custom iconset
+        else {
+          let iconsetElement = await getIconset(path);
+
+          if (iconsetElement) {
+            symbol = iconsetElement.querySelector("#" + CSS.escape(id));
+          }
+        }
       }
-      else {
-        this.#elements["svg"].innerHTML = "";
-      }
+    }
+
+    if (symbol) {
+      this.#elements["svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
+      this.#elements["svg"].innerHTML = symbol.innerHTML;
+    }
+    else {
+      this.#elements["svg"].innerHTML = "";
     }
   }
 

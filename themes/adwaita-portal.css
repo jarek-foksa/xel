@@ -101,6 +101,6 @@ pt-code {
   width: 100%;
 }
 
-#nav x-icon[name="open"] {
+#nav x-icon[href="#open"] {
   color: var(--accent-color);
 }

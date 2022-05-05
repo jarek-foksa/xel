@@ -102,6 +102,6 @@ pt-code {
   padding: 8px 30px;
 }
 
-#nav x-icon[name="open"] {
+#nav x-icon[href="#open"] {
   color: var(--accent-color);
 }

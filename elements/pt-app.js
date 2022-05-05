@@ -29,18 +29,18 @@ export default class PTAppElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
       <x-button id="expand-sidebar-button" icon="menu" hidden>
-        <x-icon name="menu"></x-icon>
+        <x-icon href="#menu"></x-icon>
       </x-button>
 
       <sidebar id="sidebar">
         <header id="header">
           <div id="branding">
-            <x-icon name="xel" iconset="/iconsets/other.svg"></x-icon>
+            <x-icon href="/iconsets/other.svg#xel"></x-icon>
             <h1>Xel</h1>
           </div>
 
           <x-button id="collapse-sidebar-button" hidden>
-            <x-icon name="chevron-left"></x-icon>
+            <x-icon href="#chevron-left"></x-icon>
           </x-button>
         </header>
 
@@ -50,52 +50,52 @@ export default class PTAppElement extends HTMLElement {
           <section>
             <a href="/">
               <x-button skin="nav">
-                <x-icon name="help"></x-icon>
+                <x-icon href="#help"></x-icon>
                 <x-label><x-message href="#about"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/setup">
               <x-button skin="nav">
-                <x-icon name="wrench"></x-icon>
+                <x-icon href="#wrench"></x-icon>
                 <x-label><x-message href="#setup"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/faq">
               <x-button skin="nav">
-                <x-icon name="comment"></x-icon>
+                <x-icon href="#comment"></x-icon>
                 <x-label><x-message href="#faq"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/changelog">
               <x-button skin="nav">
-                <x-icon name="calendar"></x-icon>
+                <x-icon href="#calendar"></x-icon>
                 <x-label><x-message href="#changelog"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/license">
               <x-button skin="nav">
-                <x-icon name="paste"></x-icon>
+                <x-icon href="#paste"></x-icon>
                 <x-label><x-message href="#license"></x-message></x-label>
               </x-button>
             </a>
 
             <a href="https://github.com/jarek-foksa/xel/issues" target="_blank" tabindex="-1">
               <x-button skin="nav">
-                <x-icon name="visibility-visible"></x-icon>
+                <x-icon href="#visibility-visible"></x-icon>
                 <x-label><x-message href="#issues"></x-message></x-label>
-                <x-icon name="open"></x-icon>
+                <x-icon href="#open"></x-icon>
               </x-button>
               </a>
 
             <a href="https://github.com/jarek-foksa/xel" target="_blank" tabindex="-1">
               <x-button skin="nav" role="button" aria-disabled="false" tabindex="0">
-                <x-icon name="code"></x-icon>
+                <x-icon href="#code"></x-icon>
                 <x-label><x-message href="#source-code"></x-message></x-label>
-                <x-icon name="open"></x-icon>
+                <x-icon href="#open"></x-icon>
               </x-button>
             </a>
           </section>
@@ -572,7 +572,7 @@ export default class PTAppElement extends HTMLElement {
       width: 100%;
     }
 
-    #sidebar #nav x-icon[name="open"] {
+    #sidebar #nav x-icon[href="#open"] {
       margin: 0;
       width: 20px;
       height: 20px;
@@ -1311,7 +1311,7 @@ export default class PTAppElement extends HTMLElement {
       itemsHTML += `
         <hr/>
         <x-menuitem value="custom">
-          <x-icon name="color-wheel" iconset="/iconsets/other.svg"></x-icon>
+          <x-icon href="/iconsets/other.svg#color-wheel"></x-icon>
           <x-label>Custom</x-label>
         </x-menuitem>
       `;
