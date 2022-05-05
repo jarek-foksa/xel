@@ -12,9 +12,9 @@ export default class PTAboutPageElement extends PTPage {
     <template>
       <main>
         <h1><span>X</span>el</h1>
-        <h2><x-message name="slogan-1"></x-message></h2>
-        <h2><x-message name="slogan-2"></x-message></h2>
-        <h2><x-message name="slogan-3"></x-message></h2>
+        <h2><x-message href="#slogan-1"></x-message></h2>
+        <h2><x-message href="#slogan-2"></x-message></h2>
+        <h2><x-message href="#slogan-3"></x-message></h2>
       </main>
     </template>
   `;

@@ -5,6 +5,7 @@
 //   MIT License (check LICENSE.md for details)
 
 import ColorParser from "./color-parser.js";
+import DOMPurify from "../node_modules/dompurify/dist/purify.es.js";
 import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";

@@ -45,4 +45,4 @@ color-pickers = Selektory kolorów
 indicators = Wskaźniki
 
 # Examples
-unread-emails = Masz {$count} nieprzeczytane wiadomości od dnia {$date}).
+unread-emails = Masz {$count} nieprzeczytane wiadomości od dnia {$date}.

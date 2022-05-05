@@ -4,7 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import DOMPurify from "../node_modules/dompurify/dist/purify.es.js";
 import Xel from "../classes/xel.js";
 
 import {isNumeric, isString} from "../utils/string.js";
@@ -12,7 +11,7 @@ import {html, css} from "../utils/template.js";
 
 // @element x-message
 export default class XMessageElement extends HTMLElement {
-  static observedAttributes = ["name", "args"];
+  static observedAttributes = ["href", "args"];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,11 +19,11 @@ export default class XMessageElement extends HTMLElement {
   // @attribute
   // @type string
   // @default ""
-  get name() {
-    return this.hasAttribute("name") ? this.getAttribute("name") : "";
+  get href() {
+    return this.hasAttribute("href") ? this.getAttribute("href") : "";
   }
-  set name(name) {
-    this.setAttribute("name", name);
+  set href(href) {
+    this.setAttribute("href", href);
   }
 
   // @property
@@ -79,7 +78,7 @@ export default class XMessageElement extends HTMLElement {
     if (oldValue === newValue) {
       return;
     }
-    else if (name === "name") {
+    else if (name === "href") {
       this.#update();
     }
     else if (name === "args") {
@@ -92,7 +91,7 @@ export default class XMessageElement extends HTMLElement {
   async #update() {
     await Xel.whenLocalesReady;
 
-    let message = Xel.queryMessage(this.name, this.args);
+    let message = Xel.queryMessage(this.href, this.args);
 
     if (message.format === "html") {
       this.innerHTML = message.content;
