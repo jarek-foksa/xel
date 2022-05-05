@@ -183,15 +183,7 @@ export default class XIconElement extends HTMLElement {
       // Default iconset
       else {
         await Xel.whenIconsetsReady;
-
-        for (let iconsetElement of Xel.iconsetElements) {
-          let matchedSymbol = iconsetElement.querySelector("#" + CSS.escape(this.name));
-
-          if (matchedSymbol) {
-            symbol = matchedSymbol;
-            break;
-          }
-        }
+        symbol = Xel.queryIcon("#" + CSS.escape(this.name));
       }
 
       if (symbol) {

@@ -113,36 +113,13 @@ export default class XMessageElement extends HTMLElement {
   async #update() {
     await Xel.whenLocalesReady;
 
-    let [id, attributeName] = this.name.split(".");
-    let message = Xel.localesBundle.getMessage(id);
-    let messageText = null;
+    let message = Xel.queryMessage(this.name, this.args);
 
-    if (message) {
-      if (attributeName === undefined) {
-        if (message.value) {
-          messageText = Xel.localesBundle.formatPattern(message.value, this.args);
-        }
-      }
-      else {
-        if (message.attributes?.[attributeName]) {
-          messageText = Xel.localesBundle.formatPattern(message.attributes[attributeName], this.args);
-        }
-      }
+    if (message.format === "html") {
+      this.innerHTML = message.content;
     }
-
-    // Message not found
-    if (messageText === null) {
-      this.textContent = [id, attributeName].join(".");
-    }
-    // Message contains markup
-    else if (/<|&#?\w+;/.test(messageText)) {
-      this.innerHTML = DOMPurify.sanitize(messageText, {
-        USE_PROFILES: {html: true},
-      });
-    }
-    // Message contains plain text
     else {
-      this.textContent = messageText;
+      this.textContent = message.content;
     }
   }
 }

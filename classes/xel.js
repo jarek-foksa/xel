@@ -152,16 +152,6 @@ export default new class Xel extends EventEmitter {
     return this.#themeStyleSheet;
   }
 
-  // @type Array<SVGSVGElement>
-  get iconsetElements() {
-    return this.#iconsetElements;
-  }
-
-  // @type FluentBundle
-  get localesBundle() {
-    return this.#localesBundle;
-  }
-
   // @type Object
   get presetAccentColors() {
     let colors = {};
@@ -181,6 +171,75 @@ export default new class Xel extends EventEmitter {
 
     return colors;
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @type (string) => SVGSymbolElement
+  //
+  // Get an icon matching the given selector.
+  // Selector consists from "#", followed by the icon ID.
+  // Should be called after Xel.whenIconsetsReady.
+  queryIcon(selector) {
+    selector = (selector.startsWith("#") === false) ? "#" + selector : selector;
+
+    let icon = null;
+
+    for (let iconsetElement of this.#iconsetElements) {
+      let matchedIcon = iconsetElement.querySelector(selector);
+
+      if (matchedIcon) {
+        icon = matchedIcon;
+        break;
+      }
+    }
+
+    return icon;
+  }
+
+  // @type (string, Object) => {id:string, attribute:string?, format:string, content:string}
+  //
+  // Get a localized message matching the given selector and args.
+  // Selector consists from "#", followed by the message ID, optionally followed by a dot (.) and the message attribute.
+  // Should be called after Xel.whenLocalesReady.
+  queryMessage(selector, args = {}) {
+    selector = selector.startsWith("#") ? selector.substring(1) : selector;
+
+    let [id, attribute] = selector.split(".");
+    let message = this.#localesBundle.getMessage(id);
+    let content = null;
+    let format = "text";
+
+    if (attribute === undefined) {
+      attribute = null;
+    }
+
+    if (message) {
+      if (attribute === null) {
+        if (message.value) {
+          content = this.#localesBundle.formatPattern(message.value, args);
+        }
+      }
+      else {
+        if (message.attributes?.[attribute]) {
+          content = this.#localesBundle.formatPattern(message.attributes[attribute], args);
+        }
+      }
+    }
+
+    // Show fallback text if the message was not found
+    if (content === null) {
+      content = (attribute === null) ? id : `${id}.${attribute}`;
+    }
+    // Sanitize the message if it contains markup
+    else if (/<|&#?\w+;/.test(content)) {
+      format = "html";
+      content = DOMPurify.sanitize(content, {USE_PROFILES: {html: true}});
+    }
+
+    return {id, attribute, format, content};
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #theme = null;
   #accentColor = null;

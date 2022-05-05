@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 0.14.0 (PENDING)
+
+- Add `Xel.queryIcon()` and `Xel.queryMessage()` method
+- Make `Xel.iconsetElements` and `Xel.localesBundle` properties private
+
 ## 0.13.2 (2022-05-03)
 
 - [Bugfix] `<x-message>` fails to render compound messages
