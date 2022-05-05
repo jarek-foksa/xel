@@ -14,11 +14,7 @@ import {html, css} from "../utils/template.js";
 export default class XMessageElement extends HTMLElement {
   static observedAttributes = ["name", "args"];
 
-  static #shadowTemplate = html`
-    <template>
-      <slot></slot>
-    </template>
-  `;
+  static #shadowTemplate = html`<template><slot></slot></template>`;
 
   static #shadowStyleSheet = css`
     slot {

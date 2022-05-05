@@ -5,6 +5,7 @@
 
 - Add `Xel.queryIcon()` and `Xel.queryMessage()` method
 - Make `Xel.iconsetElements` and `Xel.localesBundle` properties private
+- [Bugfix] `<x-message>` adds extra whitespace when placed inside preformatted text
 
 ## 0.13.2 (2022-05-03)
 
