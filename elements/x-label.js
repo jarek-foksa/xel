@@ -8,11 +8,7 @@ import {html, css} from "../utils/template.js";
 
 // @element x-label
 export default class XLabelElement extends HTMLElement {
-  static #shadowTemplate = html`
-    <template>
-      <slot></slot>
-    </template>
-  `;
+  static #shadowTemplate = html`<template><slot></slot></template>`;
 
   static #shadowStyleSheet = css`
     :host {
