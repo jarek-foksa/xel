@@ -1,13 +1,13 @@
 
 # CHANGELOG
 
-## 0.14.0 (PENDING)
+## 0.14.0 ((2022-05-05)
 
 - Add `Xel.queryIcon()` and `Xel.queryMessage()` method
 - Make `Xel.iconsetElements` and `Xel.localesBundle` properties private
-- [Bugfix] `<x-message>` adds extra whitespace when placed inside preformatted text
 - Change x-message API from `<x-message name="id">` to `<x-message href="#id">`
 - Change x-icon API from `<x-icon name="id" iconset="path">` to `<x-icon href="path#id">`
+- [Bugfix] `<x-message>` adds extra whitespace when placed inside preformatted text
 
 ## 0.13.2 (2022-05-03)
 
