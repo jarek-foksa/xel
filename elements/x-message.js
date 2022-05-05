@@ -14,14 +14,6 @@ import {html, css} from "../utils/template.js";
 export default class XMessageElement extends HTMLElement {
   static observedAttributes = ["name", "args"];
 
-  static #shadowTemplate = html`<template><slot></slot></template>`;
-
-  static #shadowStyleSheet = css`
-    slot {
-      text-decoration: inherit;
-    }
-  `
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @property
@@ -69,18 +61,9 @@ export default class XMessageElement extends HTMLElement {
     }
   }
 
-  #shadowRoot = null;
   #localesChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  constructor() {
-    super();
-
-    this.#shadowRoot = this.attachShadow({mode: "closed"});
-    this.#shadowRoot.adoptedStyleSheets = [XMessageElement.#shadowStyleSheet];
-    this.#shadowRoot.append(document.importNode(XMessageElement.#shadowTemplate.content, true));
-  }
 
   connectedCallback() {
     Xel.addEventListener("localeschange", this.#localesChangeListener = () => {
