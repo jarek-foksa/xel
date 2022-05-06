@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.14.0 ((2022-05-05)
+## 0.14.0 (2022-05-05)
 
 - Add `Xel.queryIcon()` and `Xel.queryMessage()` method
 - Make `Xel.iconsetElements` and `Xel.localesBundle` properties private
