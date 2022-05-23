@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.15.0 (2022-05-23)
+
+- Add `autocapitalize` boolean attribute to `<x-message>`
+
 ## 0.14.0 (2022-05-05)
 
 - Add `Xel.queryIcon()` and `Xel.queryMessage()` method

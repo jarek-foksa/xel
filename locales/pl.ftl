@@ -4,13 +4,13 @@ slogan-2 = <em>Natywny</em> wygląd i zachowanie.
 slogan-3 = Dla aplikacji <em>webowych</em>, <em>hybrydowych</em> i bazujących na <em>Electronie</em>.
 
 # Sidebar nav
-about = O Projekcie
+about = O projekcie
 setup = Konfiguracja
-faq = Najczęstsze Pytania
+faq = Najczęstsze pytania
 changelog = Historia zmian
 license = Licencja
 issues = Problemy
-source-code = Kod Źródłowy
+source-code = Kod źródłowy
 
 # Sidebar settings
 theme = Motyw

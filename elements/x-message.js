@@ -6,12 +6,12 @@
 
 import Xel from "../classes/xel.js";
 
-import {isNumeric, isString} from "../utils/string.js";
+import {isNumeric, isString, toTitleCase} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-message
 export default class XMessageElement extends HTMLElement {
-  static observedAttributes = ["href", "args"];
+  static observedAttributes = ["href", "args", "autocapitalize"];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,28 +60,55 @@ export default class XMessageElement extends HTMLElement {
     }
   }
 
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  get autocapitalize() {
+    return this.hasAttribute("autocapitalize") ? true : false;
+  }
+  set autocapitalize(autocapitalize) {
+    if (autocapitalize) {
+      this.setAttribute("autocapitalize", "");
+    }
+    else {
+      this.removeAttribute("autocapitalize");
+    }
+  }
+
   #localesChangeListener = null;
+  #themeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   connectedCallback() {
+    this.#update();
+
     Xel.addEventListener("localeschange", this.#localesChangeListener = () => {
+      this.#update();
+    });
+
+    Xel.addEventListener("themechange", this.#themeChangeListener = () => {
       this.#update();
     });
   }
 
   disconnectedCallback() {
     Xel.removeEventListener("localeschange", this.#localesChangeListener);
+    Xel.removeEventListener("themechange", this.#themeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
+    if (oldValue === newValue || this.isConnected === false) {
       return;
     }
     else if (name === "href") {
       this.#update();
     }
     else if (name === "args") {
+      this.#update();
+    }
+    else if (name === "autocapitalize") {
       this.#update();
     }
   }
@@ -97,7 +124,12 @@ export default class XMessageElement extends HTMLElement {
       this.innerHTML = message.content;
     }
     else {
-      this.textContent = message.content;
+      if (this.autocapitalize === true && Xel.autocapitalize === "titlecase") {
+        this.textContent = toTitleCase(message.content);
+      }
+      else {
+        this.textContent = message.content;
+      }
     }
   }
 }

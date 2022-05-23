@@ -7,7 +7,6 @@
 import PTPage from "./pt-page.js";
 import Xel from "../classes/xel.js";
 
-import {capitalize} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 
 export default class PTSetupPageElement extends PTPage {
@@ -386,7 +385,7 @@ export default class PTSetupPageElement extends PTPage {
       itemsHTML += `
         <x-menuitem value="${colorName}">
           <x-swatch value="${colorValue}"></x-swatch>
-          <x-label>${capitalize(colorName)}</x-label>
+          <x-label><x-message href="#accent-color-${colorName}"></x-message></x-label>
         </x-menuitem>
       `;
     }

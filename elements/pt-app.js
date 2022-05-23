@@ -20,7 +20,6 @@ import "./pt-demoblock.js";
 import "./pt-code.js";
 
 import {removeDuplicates} from "../utils/array.js";
-import {capitalize} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 import {sleep, debounce} from "../utils/time.js";
 
@@ -51,42 +50,42 @@ export default class PTAppElement extends HTMLElement {
             <a href="/">
               <x-button skin="nav">
                 <x-icon href="#help"></x-icon>
-                <x-label><x-message href="#about"></x-message></x-label>
+                <x-label><x-message href="#about" autocapitalize></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/setup">
               <x-button skin="nav">
                 <x-icon href="#wrench"></x-icon>
-                <x-label><x-message href="#setup"></x-message></x-label>
+                <x-label><x-message href="#setup" autocapitalize></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/faq">
               <x-button skin="nav">
                 <x-icon href="#comment"></x-icon>
-                <x-label><x-message href="#faq"></x-message></x-label>
+                <x-label><x-message href="#faq" autocapitalize></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/changelog">
               <x-button skin="nav">
                 <x-icon href="#calendar"></x-icon>
-                <x-label><x-message href="#changelog"></x-message></x-label>
+                <x-label><x-message href="#changelog" autocapitalize></x-message></x-label>
               </x-button>
             </a>
 
             <a href="/license">
               <x-button skin="nav">
                 <x-icon href="#paste"></x-icon>
-                <x-label><x-message href="#license"></x-message></x-label>
+                <x-label><x-message href="#license" autocapitalize></x-message></x-label>
               </x-button>
             </a>
 
             <a href="https://github.com/jarek-foksa/xel/issues" target="_blank" tabindex="-1">
               <x-button skin="nav">
                 <x-icon href="#visibility-visible"></x-icon>
-                <x-label><x-message href="#issues"></x-message></x-label>
+                <x-label><x-message href="#issues" autocapitalize></x-message></x-label>
                 <x-icon href="#open"></x-icon>
               </x-button>
               </a>
@@ -94,7 +93,7 @@ export default class PTAppElement extends HTMLElement {
             <a href="https://github.com/jarek-foksa/xel" target="_blank" tabindex="-1">
               <x-button skin="nav" role="button" aria-disabled="false" tabindex="0">
                 <x-icon href="#code"></x-icon>
-                <x-label><x-message href="#source-code"></x-message></x-label>
+                <x-label><x-message href="#source-code" autocapitalize></x-message></x-label>
                 <x-icon href="#open"></x-icon>
               </x-button>
             </a>
@@ -104,7 +103,7 @@ export default class PTAppElement extends HTMLElement {
 
           <section id="settings-section">
             <div id="theme-subsection">
-              <h3 id="theme-heading"><x-message href="#theme">Theme</x-message></h3>
+              <h3 id="theme-heading"><x-message href="#theme" autocapitalize>Theme</x-message></h3>
 
               <x-select id="theme-select">
                 <x-menu>
@@ -136,7 +135,7 @@ export default class PTAppElement extends HTMLElement {
             </div>
 
             <div id="accent-color-subsection">
-              <h3><x-message href="#accent-color"></x-message></h3>
+              <h3><x-message href="#accent-color" autocapitalize></x-message></h3>
 
               <x-box>
                 <x-select id="accent-preset-select">
@@ -152,25 +151,25 @@ export default class PTAppElement extends HTMLElement {
             </div>
 
             <div id="size-subsection">
-              <h3><x-message href="#size">Size</x-message></h3>
+              <h3><x-message href="#size" autocapitalize></x-message></h3>
 
               <x-buttons id="size-buttons" tracking="1">
                 <x-button value="small" condensed>
-                  <x-label><x-message href="#size-small">Small</x-message></x-label>
+                  <x-label><x-message href="#size-small" autocapitalize></x-message></x-label>
                 </x-button>
 
                 <x-button value="medium" condensed toggled>
-                  <x-label><x-message href="#size-medium">Medium</x-message></x-label>
+                  <x-label><x-message href="#size-medium" autocapitalize></x-message></x-label>
                 </x-button>
 
                 <x-button value="large" condensed>
-                  <x-label><x-message href="#size-large">Large</x-message></x-label>
+                  <x-label><x-message href="#size-large" autocapitalize></x-message></x-label>
                 </x-button>
               </x-buttons>
             </div>
 
             <div id="iconset-subsection">
-              <h3><x-message href="#iconset"></x-message></h3>
+              <h3><x-message href="#iconset" autocapitalize></x-message></h3>
 
               <x-select id="iconset-select">
                 <x-menu>
@@ -194,16 +193,16 @@ export default class PTAppElement extends HTMLElement {
             </div>
 
             <div id="locale-subsection">
-              <h3><x-message href="#locale"></x-message></h3>
+              <h3><x-message href="#locale" autocapitalize></x-message></h3>
 
               <x-select id="locale-select">
                 <x-menu>
                   <x-menuitem value="en" toggled>
-                    <x-label><x-message href="#locale-en"></x-message></x-label>
+                    <x-label><x-message href="#locale-en" autocapitalize></x-message></x-label>
                   </x-menuitem>
 
                   <x-menuitem value="pl">
-                    <x-label><x-message href="#locale-pl"></x-message></x-label>
+                    <x-label><x-message href="#locale-pl" autocapitalize></x-message></x-label>
                   </x-menuitem>
                 </x-menu>
               </x-select>
@@ -214,7 +213,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#containers"></x-message></h3>
+            <h3><x-message href="#containers" autocapitalize></x-message></h3>
 
             <a href="/elements/x-box">
               <x-button skin="nav">
@@ -238,7 +237,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#primitives"></x-message></h3>
+            <h3><x-message href="#primitives" autocapitalize></x-message></h3>
 
             <a href="/elements/x-icon">
               <x-button skin="nav">
@@ -280,7 +279,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#buttons"></x-message></h3>
+            <h3><x-message href="#buttons" autocapitalize></x-message></h3>
 
             <a href="/elements/x-button">
               <x-button skin="nav">
@@ -298,7 +297,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#tags"></x-message></h3>
+            <h3><x-message href="#tags" autocapitalize></x-message></h3>
 
             <a href="/elements/x-tag">
               <x-button skin="nav">
@@ -322,7 +321,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#navigation"></x-message></h3>
+            <h3><x-message href="#navigation" autocapitalize></x-message></h3>
 
             <a href="/elements/x-tab">
               <x-button skin="nav">
@@ -340,7 +339,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#menus"></x-message></h3>
+            <h3><x-message href="#menus" autocapitalize></x-message></h3>
 
             <a href="/elements/x-menu">
               <x-button skin="nav">
@@ -370,7 +369,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#popups"></x-message></h3>
+            <h3><x-message href="#popups" autocapitalize></x-message></h3>
 
             <a href="/elements/dialog">
               <x-button skin="nav">
@@ -394,7 +393,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#forms"></x-message></h3>
+            <h3><x-message href="#forms" autocapitalize></x-message></h3>
 
             <a href="/elements/x-checkbox">
               <x-button skin="nav">
@@ -460,7 +459,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#color-pickers"></x-message></h3>
+            <h3><x-message href="#color-pickers" autocapitalize></x-message></h3>
 
             <a href="/elements/x-rectcolorpicker">
               <x-button skin="nav">
@@ -484,7 +483,7 @@ export default class PTAppElement extends HTMLElement {
           <hr/>
 
           <section>
-            <h3><x-message href="#indicators"></x-message></h3>
+            <h3><x-message href="#indicators" autocapitalize></x-message></h3>
 
             <a href="/elements/x-progressbar">
               <x-button skin="nav">
@@ -1303,7 +1302,7 @@ export default class PTAppElement extends HTMLElement {
         itemsHTML += `
           <x-menuitem value="${colorName}">
             <x-swatch value="${colorValue}"></x-swatch>
-            <x-label><x-message href="#accent-color-${colorName}"></x-message></x-label>
+            <x-label><x-message href="#accent-color-${colorName}" autocapitalize></x-message></x-label>
           </x-menuitem>
         `;
       }

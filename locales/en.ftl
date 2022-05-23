@@ -10,7 +10,7 @@ faq = FAQ
 changelog = Changelog
 license = License
 issues = Issues
-source-code = Source Code
+source-code = Source code
 
 # Sidebar settings
 theme = Theme

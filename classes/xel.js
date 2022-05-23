@@ -173,6 +173,11 @@ export default new class Xel extends EventEmitter {
     return colors;
   }
 
+  // @type "none" || "titlecase"
+  get autocapitalize() {
+    return this.#autocapitalize;
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @type (string) => SVGSymbolElement
@@ -247,6 +252,7 @@ export default new class Xel extends EventEmitter {
   #size = null;
   #iconsets = [];
   #locales = [];
+  #autocapitalize = "none";
 
   #themeStyleSheet = new CSSStyleSheet();
   #iconsetElements = [];
@@ -363,6 +369,7 @@ export default new class Xel extends EventEmitter {
       let cssText = await this.#fetchTheme(url);
       await this.#themeStyleSheet.replace(cssText);
 
+      this.#updateAutocapitlizeProperty();
       this.#updateThemeAccentColor();
       this.#updateTitlebarColor();
 
@@ -428,6 +435,7 @@ export default new class Xel extends EventEmitter {
       }
 
       this.#localesBundle = bundle;
+      this.#updateAutocapitlizeProperty();
 
       for (let callback of this.#localesReadyCallbacks) {
         callback();
@@ -436,6 +444,15 @@ export default new class Xel extends EventEmitter {
       this.#localesReadyCallbacks = null;
       resolve();
     });
+  }
+
+  #updateAutocapitlizeProperty() {
+    if (this.#localesBundle?.locales[0]?.startsWith("en")) {
+      this.#autocapitalize = getComputedStyle(document.body).getPropertyValue("--autocapitalize").trim() || "none";
+    }
+    else {
+      this.#autocapitalize = "none";
+    }
   }
 
   async #updateTitlebarColor() {
