@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.16.2 (2022-05-30)
+## 0.16.3 (2022-05-30)
 
 - Make default validation messages shorter
 
