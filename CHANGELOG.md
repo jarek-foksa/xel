@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.16.0 (PENDING)
+## 0.16.0 (2022-05-30)
 
 - Add `<x-tooltip>` element
 - Change `error` property/method on `<x-input>` and `<x-texteditor>` to a read-only boolean. The new
