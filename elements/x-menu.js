@@ -5,6 +5,7 @@
 //   MIT License (check LICENSE.md for details)
 
 import {closest} from "../utils/element.js";
+import {parseTransistion} from "../utils/style.js";
 import {html, css} from "../utils/template.js";
 import {sleep, getTimeStamp} from "../utils/time.js";
 
@@ -207,7 +208,7 @@ export default class XMenuElement extends HTMLElement {
         // Animate the menu block
         {
           let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-          let [property, duration, easing] = this.#parseTransistion(transition);
+          let [property, duration, easing] = parseTransistion(transition);
 
           if (property === "transform") {
             let blockBounds = this.getBoundingClientRect();
@@ -354,7 +355,7 @@ export default class XMenuElement extends HTMLElement {
         // Animate the menu
         {
           let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-          let [property, duration, easing] = this.#parseTransistion(transition);
+          let [property, duration, easing] = parseTransistion(transition);
 
           if (property === "transform") {
             await this.animate(
@@ -469,7 +470,7 @@ export default class XMenuElement extends HTMLElement {
         // Animate the menu
         {
           let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-          let [property, duration, easing] = this.#parseTransistion(transition);
+          let [property, duration, easing] = parseTransistion(transition);
 
           if (property === "transform") {
             await this.animate(
@@ -547,7 +548,7 @@ export default class XMenuElement extends HTMLElement {
       // Animate the menu
       {
         let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-        let [property, duration, easing] = this.#parseTransistion(transition);
+        let [property, duration, easing] = parseTransistion(transition);
 
         if (property === "transform") {
           await this.animate(
@@ -589,7 +590,7 @@ export default class XMenuElement extends HTMLElement {
           this.setAttribute("animating", "");
 
           let transition = getComputedStyle(this).getPropertyValue("--close-transition");
-          let [property, duration, easing] = this.#parseTransistion(transition);
+          let [property, duration, easing] = parseTransistion(transition);
 
           if (property === "opacity") {
             await this.animate({ opacity: ["1", "0"] }, { duration, easing }).finished;
@@ -827,16 +828,6 @@ export default class XMenuElement extends HTMLElement {
   // Whether this or any ancestor menu is closing
   #isClosing() {
     return this.matches("*[closing], *[closing] x-menu");
-  }
-
-  // @type (string) => [string, number, string]
-  //
-  // Parse the value of CSS transition property.
-  #parseTransistion(string) {
-    let [rawDuration, property, ...rest] = string.trim().split(" ");
-    let duration = parseFloat(rawDuration);
-    let easing = rest.join(" ");
-    return [property, duration, easing];
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

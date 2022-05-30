@@ -1,0 +1,105 @@
+<article>
+  <section id="intro-section">
+    <h2>Tooltip</h2>
+
+    <p><strong>&lt;x-tooltip&gt;</strong> is a small box with contextual help.</p>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-tooltip.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Button</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon href="#refresh"></x-icon>
+            <x-tooltip href="#about">Refresh</x-tooltip>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Buttons</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-buttons tracking="1">
+            <x-button toggled>
+              <x-icon href="#text-align-left"></x-icon>
+              <x-tooltip>Align left</x-tooltip>
+            </x-button>
+
+            <x-button>
+              <x-icon href="#text-align-center"></x-icon>
+              <x-tooltip>Align center</x-tooltip>
+            </x-button>
+
+            <x-button>
+              <x-icon href="#text-align-right"></x-icon>
+              <x-tooltip>Align right</x-tooltip>
+            </x-button>
+          </x-buttons>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Top</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon href="#refresh"></x-icon>
+            <x-tooltip href="#about" style="--align: top;">Refresh</x-tooltip>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Left</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon href="#refresh"></x-icon>
+            <x-tooltip href="#about" style="--align: left;">Refresh</x-tooltip>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Right</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-button>
+            <x-icon href="#refresh"></x-icon>
+            <x-tooltip href="#about" style="--align: right;">Refresh</x-tooltip>
+          </x-button>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

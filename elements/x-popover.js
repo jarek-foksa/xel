@@ -6,6 +6,7 @@
 
 import {createElement, getClosestScrollableAncestor} from "../utils/element.js";
 import {roundRect} from "../utils/math.js";
+import {parseTransistion} from "../utils/style.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-popover
@@ -194,7 +195,7 @@ export default class XPopoverElement extends HTMLElement {
 
         if (animate) {
           let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-          let [property, duration, easing] = this.#parseTransistion(transition);
+          let [property, duration, easing] = parseTransistion(transition);
 
           if (property === "transform") {
             await this.animate(
@@ -229,7 +230,7 @@ export default class XPopoverElement extends HTMLElement {
 
         if (animate) {
           let transition = getComputedStyle(this).getPropertyValue("--close-transition");
-          let [property, duration, easing] = this.#parseTransistion(transition);
+          let [property, duration, easing] = parseTransistion(transition);
 
           this.setAttribute("animating", "");
 
@@ -631,7 +632,7 @@ export default class XPopoverElement extends HTMLElement {
   }
 
   #updateStyle() {
-    // Make the arrow look consistentaly with the popover
+    // Make the arrow look consistently with the popover
     {
       let {backgroundColor, borderColor, borderWidth} = getComputedStyle(this);
 
@@ -639,13 +640,6 @@ export default class XPopoverElement extends HTMLElement {
       this.#elements["arrow-path"].style.stroke = borderColor;
       this.#elements["arrow-path"].style.strokeWidth = borderWidth;
     }
-  }
-
-  #parseTransistion(string) {
-    let [rawDuration, property, ...rest] = string.trim().split(" ");
-    let duration = parseFloat(rawDuration);
-    let easing = rest.join(" ");
-    return [property, duration, easing];
   }
 }
 

@@ -7,13 +7,16 @@
 import Xel from "../classes/xel.js";
 
 import {isValidColorString} from "../utils/color.js";
+import {createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
+import {sleep} from "../utils/time.js";
 
 // @element x-input
 // @event ^input
 // @event ^change
 // @event ^textinputmodestart
 // @event ^textinputmodeend
+// @event beforevalidate
 // @part input
 export default class XInputElement extends HTMLElement {
   static observedAttributes = [
@@ -101,18 +104,6 @@ export default class XInputElement extends HTMLElement {
       color: inherit;
       background: transparent;
     }
-
-    /* Error message */
-    :host([error])::before {
-      position: absolute;
-      left: 0;
-      top: 35px;
-      white-space: pre;
-      content: attr(error);
-      font-size: 11px;
-      line-height: 1.2;
-      pointer-events: none;
-    }
   `
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,15 +139,15 @@ export default class XInputElement extends HTMLElement {
       }
 
       if (this.validation === "instant") {
-        this.validate();
+        this.reportValidity();
       }
       else if (this.validation === "auto" || this.validation === "manual") {
-        if (this.error !== null) {
-          this.validate();
+        if (this.#error || this.#customError) {
+          this.reportValidity();
         }
       }
 
-      this.#updateEmptyState();
+      this.#updateEmptyAttribute();
     }
   }
 
@@ -243,25 +234,14 @@ export default class XInputElement extends HTMLElement {
   // @type "auto" || "instant" || "manual"
   // @default "auto"
   //
-  // - <em>"auto"</em> - validate() is called when input loses focus and when user presses "Enter"<br/>
-  // - <em>"instant"</em> - validate() is called on each key press<br/>
-  // - <em>"manual"</em>  - you will call validate() manually when user submits the form<br/>
+  // - <em>"auto"</em> - validation is performed when input loses focus and when user presses "Enter"<br/>
+  // - <em>"instant"</em> - validation is performed on each key press<br/>
+  // - <em>"manual"</em>  - you will call reportValidity() manually when user submits the form<br/>
   get validation() {
     return this.hasAttribute("validation") ? this.getAttribute("validation") : "auto";
   }
   set validation(validation) {
     this.setAttribute("validation", validation);
-  }
-
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
-  get error() {
-    return this.getAttribute("error");
-  }
-  set error(error) {
-    error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
   }
 
   // @property
@@ -275,7 +255,7 @@ export default class XInputElement extends HTMLElement {
     (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
   }
 
-  // @property readOnly
+  // @property
   // @attribute
   // @type "small" || "medium" || "large"
   // @default "medium"
@@ -284,9 +264,29 @@ export default class XInputElement extends HTMLElement {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
   }
 
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  // @readOnly
+  get empty() {
+    return this.hasAttribute("empty");
+  }
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  // @readOnly
+  get error() {
+    return this.hasAttribute("error");
+  }
+
   #shadowRoot = null;
   #elements = {};
   #lastTabIndex = 0;
+  #error = null;
+  #customError = null;
   #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,6 +302,7 @@ export default class XInputElement extends HTMLElement {
       this.#elements[element.id] = element;
     }
 
+    this.addEventListener("click",  (event) => this.#onClick(event));
     this.addEventListener("focusin",  (event) => this.#onFocusIn(event));
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
     this.addEventListener("keydown",  (event) => this.#onKeyDown(event));
@@ -314,14 +315,14 @@ export default class XInputElement extends HTMLElement {
   connectedCallback() {
     this.#updateAccessabilityAttributes();
     this.#updateComputedSizeAttriubte();
-    this.#updateEmptyState();
+    this.#updateEmptyAttribute();
 
     if (this.validation === "instant") {
-      this.validate();
+      this.reportValidity();
     }
     else if (this.validation === "auto" || this.validation === "manual") {
-      if (this.error !== null) {
-        this.validate();
+      if (this.#error || this.#customError) {
+        this.reportValidity();
       }
     }
 
@@ -359,33 +360,7 @@ export default class XInputElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type () => void
-  //
-  // Override this method to validate the input value manually.
-  validate() {
-    if (this.value.length < this.minLength) {
-      this.error = "Entered text is too short";
-    }
-    else if (this.value.length > this.maxLength) {
-      this.error = "Entered text is too long";
-    }
-    else if (this.required && this.value.length === 0) {
-      this.error = "This field is required";
-    }
-    else if (this.type === "email" && this.#elements["input"].validity.valid === false) {
-      this.error = "Invalid e-mail address";
-    }
-    else if (this.type === "url" && this.#elements["input"].validity.valid === false) {
-      this.error = "Invalid URL";
-    }
-    else if (this.type === "color" && isValidColorString(this.#elements["input"].value) === false) {
-      this.error = "Invalid color";
-    }
-    else {
-      this.error = null;
-    }
-  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @method
   // @type () => void
@@ -397,12 +372,98 @@ export default class XInputElement extends HTMLElement {
   // @type () => void
   clear() {
     this.value = "";
-    this.error = null;
+    this.#error = null;
+    this.#customError = null;
+    this.#updateValidityIndicators();
+  }
+
+  // @method
+  // @type () => void
+  reportValidity() {
+    let beforeValidateEvent = new CustomEvent("beforevalidate", {bubbles: false, cancelable: true});
+    this.dispatchEvent(beforeValidateEvent);
+
+    if (beforeValidateEvent.defaultPrevented === false) {
+      if (this.value.length < this.minLength) {
+        this.#error = {href: "#entered-text-is-too-short"};
+      }
+      else if (this.value.length > this.maxLength) {
+        this.#error = {href: "#entered-text-is-too-long"};
+      }
+      else if (this.required && this.value.length === 0) {
+        this.#error = {href: "#this-field-is-required"};
+      }
+      else if (this.type === "email" && this.#elements["input"].validity.valid === false) {
+        this.#error = {href: "#invalid-email-address"};
+      }
+      else if (this.type === "url" && this.#elements["input"].validity.valid === false) {
+        this.#error = {href: "#invalid-url"};
+      }
+      else if (this.type === "color" && isValidColorString(this.#elements["input"].value) === false) {
+        this.#error = {href: "#invalid-color"};
+      }
+      else {
+        this.#error = null;
+      }
+
+      this.#updateValidityIndicators();
+    }
+  }
+
+  // @method
+  // @type (string || {href:string, args:Object}) => void
+  setCustomValidity(arg) {
+    this.#customError = arg;
+    this.#updateValidityIndicators();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  #updateEmptyState() {
+  #updateValidityIndicators() {
+    let error = this.#customError || this.#error;
+
+    // Update "error" attribute
+    {
+      if (error) {
+        this.setAttribute("error", "");
+      }
+      else {
+        this.removeAttribute("error");
+      }
+    }
+
+    // Update <x-tooltip>
+    {
+      let tooltip = this.querySelector(`:scope > x-tooltip[type="error"]`);
+
+      if (error && this.matches(":focus")) {
+        if (!tooltip) {
+          tooltip = createElement("x-tooltip");
+          tooltip.setAttribute("type", "error");
+          this.append(tooltip);
+        }
+
+        if (error.href) {
+          let args = error.args ? Object.entries(error.args).map(([key, val]) => `${key}:${val}`).join(",") : "";
+          tooltip.innerHTML = `<x-message href="${error.href}" args="${args}"></x-message>`;
+        }
+        else {
+          tooltip.innerHTML = error;
+        }
+
+        sleep(10).then(() => {
+          tooltip.open(this);
+        });
+      }
+      else {
+        if (tooltip) {
+          tooltip.close().then(() => tooltip.remove());
+        }
+      }
+    }
+  }
+
+  #updateEmptyAttribute() {
     if (this.value.length === 0) {
       this.setAttribute("empty", "");
     }
@@ -494,11 +555,11 @@ export default class XInputElement extends HTMLElement {
 
   #onValidationAttributeChnage() {
     if (this.validation === "instant") {
-      this.validate();
+      this.reportValidity();
     }
     else if (this.validation === "auto" || this.validation === "manual") {
-      if (this.error !== null) {
-        this.validate();
+      if (this.#error || this.#customError) {
+        this.reportValidity();
       }
     }
   }
@@ -507,15 +568,20 @@ export default class XInputElement extends HTMLElement {
     this.#updateComputedSizeAttriubte();
   }
 
+  #onClick() {
+    this.#updateValidityIndicators();
+  }
+
   #onFocusIn() {
+    this.#updateValidityIndicators();
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
 
   #onFocusOut() {
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
 
-    if (this.validation === "auto") {
-      this.validate();
+    if (this.validation === "auto" || this.validation === "instant") {
+      this.reportValidity();
     }
   }
 
@@ -524,28 +590,26 @@ export default class XInputElement extends HTMLElement {
       document.execCommand("selectAll");
 
       if (this.validation === "instant") {
-        this.validate();
+        this.reportValidity();
       }
       else if (this.validation === "auto" || this.validation === "manual") {
-        if (this.error !== null) {
-          this.validate();
-        }
+        this.reportValidity();
       }
     }
   }
 
   #onInputInput(event) {
     if (this.validation === "instant") {
-      this.validate();
+      this.reportValidity();
     }
     else if (this.validation === "auto" || this.validation === "manual") {
-      if (this.error !== null) {
-        this.validate();
+      if (this.#error || this.#customError) {
+        this.reportValidity();
       }
     }
 
     event.stopPropagation();
-    this.#updateEmptyState();
+    this.#updateEmptyAttribute();
     this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
   }
 

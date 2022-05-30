@@ -202,5 +202,35 @@
         </template>
       </pt-demoblock>
     </section>
+
+    <hr/>
+
+    <section>
+      <h4>Custom validity</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-input id="input">
+            <x-label>Enter "abc" here</x-label>
+          </x-input>
+
+          <script>
+            let input = document.querySelector("#input");
+
+            input.addEventListener("beforevalidate", (event) => {
+              // Prevent the default validation logic
+              event.preventDefault();
+
+              if (input.value !== "abc" && input.value.length > 0) {
+                input.setCustomValidity(`You entered "${input.value}" instead of "abc"`);
+              }
+              else {
+                input.setCustomValidity("");
+              }
+            });
+          </script>
+        </template>
+      </pt-demoblock>
+    </section>
   </section>
 </article>

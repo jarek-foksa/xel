@@ -58,10 +58,6 @@ export default class XTagsInputElement extends HTMLElement {
       color: var(--selection-color);
       background-color: var(--selection-background-color);
     }
-    :host([error]) ::selection {
-      color: white;
-      background-color: #d50000;
-    }
 
     #main {
       width: 100%;
@@ -128,21 +124,6 @@ export default class XTagsInputElement extends HTMLElement {
     #suggestions-popover x-tag:first-child {
       margin-top: 0;
     }
-
-    /**
-     * Error message
-     */
-
-    :host([error])::before {
-      position: absolute;
-      left: 0;
-      top: 35px;
-      white-space: pre;
-      content: attr(error);
-      font-size: 11px;
-      line-height: 1.2;
-      pointer-events: none;
-    }
   `
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,17 +174,6 @@ export default class XTagsInputElement extends HTMLElement {
   // @attribute
   // @type boolean
   // @default false
-  get required() {
-    return this.hasAttribute("required");
-  }
-  set required(required) {
-    required ? this.setAttribute("required", "") : this.removeAttribute("required");
-  }
-
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -222,17 +192,6 @@ export default class XTagsInputElement extends HTMLElement {
   }
   set suggestions(suggestions) {
     suggestions ? this.setAttribute("suggestions", "") : this.removeAttribute("suggestions");
-  }
-
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
-  get error() {
-    return this.getAttribute("error");
-  }
-  set error(error) {
-    error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
   }
 
   // @property
@@ -273,7 +232,6 @@ export default class XTagsInputElement extends HTMLElement {
       this.#elements[element.id] = element;
     }
 
-    this.addEventListener("focusout", (event) => this.matches(":focus-within") ? null : this.#onBlur(event));
     this.#elements["input"].addEventListener("focusin", (event) => this.#onInputFocusIn(event));
     this.#elements["input"].addEventListener("focusout", (event) => this.#onInputFocusOut(event));
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
@@ -319,8 +277,6 @@ export default class XTagsInputElement extends HTMLElement {
         tag.remove();
         this.dispatchEvent(new CustomEvent("remove", {detail: tag}));
       }
-
-      this.error = null;
 
       this.#updateSuggestions();
       this.#updatePlaceholderVisibility();
@@ -449,16 +405,6 @@ export default class XTagsInputElement extends HTMLElement {
     this.#updateComputedSizeAttriubte();
   }
 
-  #onBlur() {
-    if (this.required) {
-      let tags = [...this.children].filter(child => child.localName === "x-tag");
-
-      if (tags.length === 0) {
-        this.error = "This field is required";
-      }
-    }
-  }
-
   async #onInputFocusIn() {
     this.#elements["input"].setAttribute("contenteditable", "");
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
@@ -475,12 +421,6 @@ export default class XTagsInputElement extends HTMLElement {
     this.#commitInput();
     this.#elements["input"].removeAttribute("contenteditable");
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-
-    if (this.hasAttribute("error")) {
-      this.#elements["input"].textContent = "";
-      this.removeAttribute("error");
-    }
-
     this.#elements["suggestions-popover"].close();
   }
 
@@ -492,11 +432,6 @@ export default class XTagsInputElement extends HTMLElement {
     }
 
     this.#updatePlaceholderVisibility();
-
-    if (this.hasAttribute("error")) {
-      this.removeAttribute("error");
-    }
-
     this.dispatchEvent(new CustomEvent("input"));
     this.#updateSuggestions(event.inputType);
   }

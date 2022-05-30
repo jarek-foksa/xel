@@ -257,6 +257,12 @@ export default class PTAppElement extends HTMLElement {
               </x-button>
             </a>
 
+            <a href="/elements/x-tooltip">
+              <x-button skin="nav">
+                <x-label>x-tooltip</x-label>
+              </x-button>
+            </a>
+
             <a href="/elements/x-shortcut">
               <x-button skin="nav">
                 <x-label>x-shortcut</x-label>

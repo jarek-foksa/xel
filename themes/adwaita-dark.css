@@ -257,6 +257,20 @@ x-accordion > header > x-label {
 /*****************************************************************************************************************/
 
 /**
+ *  Tooltip
+ */
+
+x-tooltip {
+  color: var(--text-color);
+  background: var(--dark-background-color);
+  border-color: var(--border-color);
+  border-radius: 12px;
+  box-shadow: rgb(0 0 0 / 17%) 0px 3px 10px 0px;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Stepper
  */
 
@@ -617,12 +631,6 @@ x-tagsinput[error] {
 x-tagsinput > x-label {
   color: rgba(0, 0, 0, 0.4);
   font-weight: 600;
-}
-
-/* Error message */
-x-tagsinput[error]::before {
-  color: var(--error-color);
-  font-weight: 700;
 }
 
 /*****************************************************************************************************************/
@@ -990,12 +998,6 @@ x-input[computedsize="large"] > x-icon + x-label {
   padding: 2px 5px 0px 33px;
 }
 
-/* Error message */
-x-input[error]::before {
-  color: var(--error-color);
-  font-weight: 700;
-}
-
 /*****************************************************************************************************************/
 
 /**
@@ -1052,12 +1054,6 @@ x-numberinput[condensed] > x-stepper::part(decrement-arrow) {
   transform: scale(0.8);
 }
 
-/* Error message */
-x-numberinput[error]::before {
-  color: var(--error-color);
-  font-weight: 700;
-}
-
 /*****************************************************************************************************************/
 
 /**
@@ -1082,12 +1078,6 @@ x-texteditor[error] {
 x-texteditor > x-label {
   color: rgba(0, 0, 0, 0.4);
   font-weight: 600;
-}
-
-/* Error message */
-x-texteditor[error]::before {
-  color: var(--error-color);
-  font-weight: 700;
 }
 
 /*****************************************************************************************************************/

@@ -1,6 +1,15 @@
 
 # CHANGELOG
 
+## 0.16.0 (PENDING)
+
+- Add `<x-tooltip>` element
+- Change `error` property/method on `<x-input>` and `<x-texteditor>` to a read-only boolean. The new
+  `setCustomValidity()` method should be used for setting custom error messages from now on
+- Rename `validate()` on `<x-input>` and `<x-texteditor>` to `reportValidity()`. The new `beforevalidate` event
+  should be used to provide custom validation logic from now on
+- Remove `required` and `error` property/method on `<x-numberinput>` and `<x-tagsinput>`
+
 ## 0.15.0 (2022-05-23)
 
 - Add `autocapitalize` boolean attribute to `<x-message>`

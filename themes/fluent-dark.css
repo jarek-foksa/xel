@@ -220,6 +220,18 @@ x-accordion > header > x-label {
 /*****************************************************************************************************************/
 
 /**
+ *  Tooltip
+ */
+
+x-tooltip {
+  color: var(--text-color);
+  background: var(--light-background-color);
+  border-color: var(--border-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Stepper
  */
 
@@ -610,11 +622,6 @@ x-tagsinput[disabled] {
 /* Placeholder */
 x-tagsinput > x-label {
   color: var(--light-border-color);
-}
-
-/* Error message */
-x-tagsinput[error]::before {
-  color: var(--error-color);
 }
 
 /*****************************************************************************************************************/
@@ -1022,11 +1029,6 @@ x-input[computedsize="large"] > x-icon + x-label {
   padding: 2px 5px 0px 33px;
 }
 
-/* Error message */
-x-input[error]::before {
-  color: var(--error-color);
-}
-
 /*****************************************************************************************************************/
 
 /**
@@ -1080,11 +1082,6 @@ x-numberinput[condensed]:focus > x-stepper {
   display: none;
 }
 
-/* Error message */
-x-numberinput[error]::before {
-  color: var(--error-color);
-}
-
 /*****************************************************************************************************************/
 
 /**
@@ -1118,11 +1115,6 @@ x-texteditor[disabled] {
 /* Placeholder */
 x-texteditor > x-label {
   color: rgba(255, 255, 255, 0.6);
-}
-
-/* Error message */
-x-texteditor[error]::before {
-  color: var(--error-color);
 }
 
 /*****************************************************************************************************************/

@@ -284,6 +284,8 @@ export default class XButtonElement extends HTMLElement {
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("pointerenter", () => this.#onPointerEnter());
+    this.addEventListener("pointerleave", () => this.#onPointerLeave());
     this.addEventListener("click", (event) => this.#onClick(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
 
@@ -367,6 +369,11 @@ export default class XButtonElement extends HTMLElement {
     return new Promise( async (resolve) => {
       if (this.#canOpenMenu()) {
         let menu = this.querySelector(":scope > x-menu");
+        let tooltip = this.querySelector(":scope > x-tooltip");
+
+        if (tooltip) {
+          tooltip.close(false);
+        }
 
         this.#wasFocusedBeforeExpanding = this.matches(":focus");
         this.setAttribute("expanded", "");
@@ -451,6 +458,11 @@ export default class XButtonElement extends HTMLElement {
     return new Promise( async (resolve) => {
       if (this.#canOpenPopover()) {
         let popover = this.querySelector(":scope > x-popover");
+        let tooltip = this.querySelector(":scope > x-tooltip");
+
+        if (tooltip) {
+          tooltip.close(false);
+        }
 
         this.#wasFocusedBeforeExpanding = this.matches(":focus");
         this.setAttribute("expanded", "");
@@ -657,6 +669,34 @@ export default class XButtonElement extends HTMLElement {
     }
     else {
       this.#onButtonPointerDown(event);
+    }
+  }
+
+  #onPointerEnter() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip && tooltip.disabled === false) {
+      if (this.parentElement.localName === "x-buttons") {
+        for (let sibling of this.parentElement.children) {
+          if (sibling !== this && sibling.localName === "x-button") {
+            let siblingTooltip = sibling.querySelector(":scope > x-tooltip");
+
+            if (siblingTooltip) {
+              siblingTooltip.close(false);
+            }
+          }
+        }
+      }
+
+      tooltip.open(this);
+    }
+  }
+
+  #onPointerLeave() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip) {
+      tooltip.close();
     }
   }
 

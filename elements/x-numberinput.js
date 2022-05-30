@@ -62,10 +62,6 @@ export default class XNumberInputElement extends HTMLElement {
       color: var(--selection-color);
       background-color: var(--selection-background-color);
     }
-    :host([error]) ::selection {
-      color: white;
-      background-color: #d50000;
-    }
 
     #main {
       display: flex;
@@ -111,18 +107,6 @@ export default class XNumberInputElement extends HTMLElement {
     :host(:focus) #editor::before,
     :host(:focus) #editor::after {
       content: "";
-    }
-
-    /* Error message */
-    :host([error])::before {
-      position: absolute;
-      left: 0;
-      top: 35px;
-      white-space: pre;
-      content: attr(error);
-      font-size: 11px;
-      line-height: 1.2;
-      pointer-events: none;
     }
   `
 
@@ -224,17 +208,6 @@ export default class XNumberInputElement extends HTMLElement {
   // @attribute
   // @type boolean
   // @default false
-  get required() {
-    return this.hasAttribute("required");
-  }
-  set required(required) {
-    required ? this.setAttribute("required", "") : this.removeAttribute("required");
-  }
-
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
   //
   // Whether this input has "mixed" state.
   get mixed() {
@@ -270,17 +243,6 @@ export default class XNumberInputElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type string?
-  // @default null
-  get error() {
-    return this.getAttribute("error");
-  }
-  set error(error) {
-    error === null ? this.removeAttribute("error") : this.setAttribute("error", error);
-  }
-
-  // @property
-  // @attribute
   // @type "small" || "medium" || "large" || "smaller" || "larger" || null
   // @default null
   get size() {
@@ -309,7 +271,6 @@ export default class XNumberInputElement extends HTMLElement {
   #isArrowKeyDown = false;
   #isBackspaceKeyDown = false;
   #isStepperButtonDown = false;
-  #visited = false;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -329,6 +290,8 @@ export default class XNumberInputElement extends HTMLElement {
     this.#elements["editor"].addEventListener("paste", (event) => this.#onPaste(event));
     this.#elements["editor"].addEventListener("input", (event) => this.#onEditorInput(event));
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("pointerenter", () => this.#onPointerEnter());
+    this.addEventListener("pointerleave", () => this.#onPointerLeave());
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
     this.addEventListener("keyup", (event) => this.#onKeyUp(event));
     this.addEventListener("keypress", (event) => this.#onKeyPress(event));
@@ -374,25 +337,6 @@ export default class XNumberInputElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type () => void
-  //
-  // Override this method to validate the input value manually.
-  validate() {
-    if (this.value < this.min) {
-      this.error = "Value is too low";
-    }
-    else if (this.value > this.max) {
-      this.error = "Value is too high";
-    }
-    else if (this.required && this.value === null) {
-      this.error = "This field is required";
-    }
-    else {
-      this.error = null;
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #increment(large = false) {
@@ -416,7 +360,6 @@ export default class XNumberInputElement extends HTMLElement {
       document.execCommand("selectAll");
     }
 
-    this.validate();
     this.#updateEmptyState();
   }
 
@@ -441,7 +384,6 @@ export default class XNumberInputElement extends HTMLElement {
       document.execCommand("selectAll");
     }
 
-    this.validate();
     this.#updateEmptyState();
   }
 
@@ -475,17 +417,11 @@ export default class XNumberInputElement extends HTMLElement {
     else if (editorValue !== this.value) {
       this.value = normalizedEditorValue;
     }
-
-    this.validate();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #update() {
-    if (this.#visited) {
-      this.validate();
-    }
-
     this.#updateEditorTextContent();
     this.#updateEmptyState();
     this.#updateStepper();
@@ -616,7 +552,6 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onFocusIn() {
-    this.#visited = true;
     document.execCommand("selectAll");
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
@@ -630,7 +565,6 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onEditorInput() {
-    this.error = null;
     this.#updateEmptyState();
     this.#updateStepper();
   }
@@ -723,6 +657,22 @@ export default class XNumberInputElement extends HTMLElement {
           }
         });
       }
+    }
+  }
+
+  #onPointerEnter() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip && tooltip.disabled === false) {
+      tooltip.open(this);
+    }
+  }
+
+  #onPointerLeave() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip) {
+      tooltip.close();
     }
   }
 
