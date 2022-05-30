@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.16.1 (2022-05-30)
+
+- Make `reportValidity()` return a boolean with validation state
+
 ## 0.16.0 (2022-05-30)
 
 - Add `<x-tooltip>` element

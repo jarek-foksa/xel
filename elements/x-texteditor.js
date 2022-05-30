@@ -314,7 +314,7 @@ export default class XTextEditorElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @method
-  // @type () => void
+  // @type () => boolean
   reportValidity() {
     let beforeValidateEvent = new CustomEvent("beforevalidate", {bubbles: false, cancelable: true});
     this.dispatchEvent(beforeValidateEvent);
@@ -335,6 +335,8 @@ export default class XTextEditorElement extends HTMLElement {
 
       this.#updateValidityIndicators();
     }
+
+    return (this.#error === null && this.#customError === null);
   }
 
   // @method
