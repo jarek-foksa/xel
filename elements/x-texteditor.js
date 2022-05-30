@@ -484,6 +484,7 @@ export default class XTextEditorElement extends HTMLElement {
 
   #onFocusIn() {
     this.#focusInValue = this.value;
+    this.#updateValidityIndicators();
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
 

@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 0.16.2 (2022-05-30)
+
+- [Bugfix] Calling `<x-tooltip>.open()` should not throw error when the tooltip is disconnected
+- [Bugfix] `<x-texteditor>` tooltip not shown in some edge cases
+
 ## 0.16.1 (2022-05-30)
 
 - Make `reportValidity()` return a boolean with validation state

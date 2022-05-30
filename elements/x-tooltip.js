@@ -113,10 +113,9 @@ export default class XTooltipElement extends HTMLElement {
   // Returns a promise that is resolved when the tooltip finishes animating.
   open(context, animate = true) {
     return new Promise( async (resolve) => {
-      if (this.opened === false) {
+      if (this.opened === false && this.isConnected) {
         this.setAttribute("opened", "");
         this.#updatePosition(context);
-
         this.#scrollableAncestor = getClosestScrollableAncestor(this);
 
         if (this.#scrollableAncestor) {
