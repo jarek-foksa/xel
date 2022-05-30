@@ -327,7 +327,7 @@ export default class XTextEditorElement extends HTMLElement {
         this.#error = {href: "#entered-text-is-too-long"};
       }
       else if (this.required && this.value.length === 0) {
-        this.#error = {href: "#this-field-is-required"};
+        this.#error = {href: "#required-field"};
       }
       else {
         this.#error = null;

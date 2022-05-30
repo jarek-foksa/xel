@@ -47,8 +47,8 @@ indicators = Wskaźniki
 # Forms
 entered-text-is-too-short = Wprowadzony tekst jest za krótki
 entered-text-is-too-long = Wprowadzony tekst jest za długi
-this-field-is-required = To pole jest wymagane
-invalid-email-address= Nieprawidłowy adres e-mail
+required-field = Pole wymagane
+invalid-email = Nieprawidłowy adres e-mail
 invalid-url = Nieprawidłowy URL
 invalid-color = Nieprawidłowy kolor
 

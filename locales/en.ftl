@@ -47,8 +47,8 @@ indicators = Indicators
 # Forms
 entered-text-is-too-short = Entered text is too short
 entered-text-is-too-long = Entered text is too long
-this-field-is-required = This field is required
-invalid-email-address= Invalid e-mail address
+required-field = Required field
+invalid-email = Invalid e-mail address
 invalid-url = Invalid URL
 invalid-color = Invalid color
 

@@ -391,10 +391,10 @@ export default class XInputElement extends HTMLElement {
         this.#error = {href: "#entered-text-is-too-long"};
       }
       else if (this.required && this.value.length === 0) {
-        this.#error = {href: "#this-field-is-required"};
+        this.#error = {href: "#required-field"};
       }
       else if (this.type === "email" && this.#elements["input"].validity.valid === false) {
-        this.#error = {href: "#invalid-email-address"};
+        this.#error = {href: "#invalid-email"};
       }
       else if (this.type === "url" && this.#elements["input"].validity.valid === false) {
         this.#error = {href: "#invalid-url"};

@@ -3,6 +3,10 @@
 
 ## 0.16.2 (2022-05-30)
 
+- Make default validation messages shorter
+
+## 0.16.2 (2022-05-30)
+
 - [Bugfix] Calling `<x-tooltip>.open()` should not throw error when the tooltip is disconnected
 - [Bugfix] `<x-texteditor>` tooltip not shown in some edge cases
 
