@@ -342,7 +342,13 @@ export default class XTextEditorElement extends HTMLElement {
   // @method
   // @type (string || {href:string, args:Object}) => void
   setCustomValidity(arg) {
-    this.#customError = arg;
+    if (arg === "") {
+      this.#customError = null;
+    }
+    else {
+      this.#customError = arg;
+    }
+
     this.#updateValidityIndicators();
   }
 
@@ -494,6 +500,9 @@ export default class XTextEditorElement extends HTMLElement {
 
     if (this.validation === "auto" || this.validation === "instant") {
       this.reportValidity();
+    }
+    else if (this.validation === "manual") {
+      this.#updateValidityIndicators();
     }
 
     let error = (this.#error || this.#customError);
