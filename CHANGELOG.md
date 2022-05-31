@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.16.3 (2022-05-31)
+## 0.16.4 (2022-05-31)
 
 - [Bugfix] `setCustomValidity()` does not handle empty string argument correctly
 
