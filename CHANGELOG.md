@@ -3,6 +3,7 @@
 
 ## 0.17.0 (PENDING)
 
+- Add `Xel.localesIds` getter
 - [Bugfix] Invisible unicode characters added to <x-message> args
 
 ## 0.16.4 (2022-05-31)

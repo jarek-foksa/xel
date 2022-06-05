@@ -91,7 +91,7 @@ export default new class Xel extends EventEmitter {
     metaElement.setAttribute("content", urls.join(", "));
   }
 
-  // @type string? || Array<string>
+  // @type Array<string>
   //
   // URLs to files with localizations.
   // Each file name should consist from ISO 639 language code (e.g. "en"), optionally followed by "-" and ISO 3166
@@ -109,6 +109,13 @@ export default new class Xel extends EventEmitter {
     }
 
     metaElement.setAttribute("content", urls.join(", "));
+  }
+
+  // @type Array<string>
+  //
+  // An array of locale identifier currently in use, e.g. ["en-US", "en"]
+  get localesIds() {
+    return this.#localesIds;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -252,6 +259,7 @@ export default new class Xel extends EventEmitter {
   #size = null;
   #iconsets = [];
   #locales = [];
+  #localesIds = [];
   #autocapitalize = "none";
 
   #themeStyleSheet = new CSSStyleSheet();
@@ -276,6 +284,11 @@ export default new class Xel extends EventEmitter {
     this.#size = size;
     this.#iconsets = iconsets;
     this.#locales = locales;
+
+    this.#localesIds = this.#locales.map((locale) => {
+      let fileName = locale.substring(locale.lastIndexOf("/") + 1);
+      return fileName.substring(0, fileName.indexOf("."));
+    });
 
     // Load theme
     if (this.#theme !== null) {
@@ -315,6 +328,11 @@ export default new class Xel extends EventEmitter {
     this.#size = size;
     this.#iconsets = iconsets;
     this.#locales = locales;
+
+    this.#localesIds = this.#locales.map((locale) => {
+      let fileName = locale.substring(locale.lastIndexOf("/") + 1);
+      return fileName.substring(0, fileName.indexOf("."));
+    });
 
     if (this.#theme !== oldTheme) {
       this.#loadTheme(this.#theme).then(() => {
@@ -413,14 +431,17 @@ export default new class Xel extends EventEmitter {
         this.#localesReadyCallbacks = [];
       }
 
-      let languageTag = "en";
+      let ids = [];
 
       if (urls.length > 0) {
         let fileName = urls[0].substring(urls[0].lastIndexOf("/") + 1);
-        languageTag = fileName.substring(0, fileName.indexOf("."));
+        ids.push(fileName.substring(0, fileName.indexOf(".")));
+      }
+      else {
+        ids.push("en");
       }
 
-      let bundle = new FluentBundle(languageTag, {useIsolating: false});
+      let bundle = new FluentBundle(ids, {useIsolating: false});
 
       for (let i = urls.length-1; i >= 0; i -= 1) {
         let url = urls[i];
