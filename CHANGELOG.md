@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.17.0 (PENDING)
+
+- [Bugfix] Invisible unicode characters added to <x-message> args
+
 ## 0.16.4 (2022-05-31)
 
 - [Bugfix] `setCustomValidity()` does not handle empty string argument correctly

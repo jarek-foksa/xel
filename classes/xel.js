@@ -420,7 +420,7 @@ export default new class Xel extends EventEmitter {
         languageTag = fileName.substring(0, fileName.indexOf("."));
       }
 
-      let bundle = new FluentBundle(languageTag);
+      let bundle = new FluentBundle(languageTag, {useIsolating: false});
 
       for (let i = urls.length-1; i >= 0; i -= 1) {
         let url = urls[i];
