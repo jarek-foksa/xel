@@ -33,7 +33,7 @@ export let getRelDisplayDate = (date, refDate = new Date(), locales = ["en"]) =>
   let time = date.getTime();
   let refTime = refDate.getTime();
 
-  let formatter = new Intl.RelativeTimeFormat(locales, {numeric: "auto"});
+  let formatter = new Intl.RelativeTimeFormat(locales, {numeric: "always"});
   let diff = Math.round((refTime - time) / 1000);
   let sign;
 
