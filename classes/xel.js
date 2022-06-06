@@ -10,7 +10,8 @@ import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
 import {getIconset} from "../utils/icon.js";
-import {FluentBundle, FluentResource} from "../node_modules/@fluent/bundle/esm/index.js";
+import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
+import {getRelDisplayDate} from "../utils/time.js";
 
 // @singleton
 // @event themechange
@@ -431,6 +432,7 @@ export default new class Xel extends EventEmitter {
         this.#localesReadyCallbacks = [];
       }
 
+      let Xel = this;
       let ids = [];
 
       if (urls.length > 0) {
@@ -441,7 +443,26 @@ export default new class Xel extends EventEmitter {
         ids.push("en");
       }
 
-      let bundle = new FluentBundle(ids, {useIsolating: false});
+      let bundle = new FluentBundle(ids, {
+        useIsolating: false,
+        functions: {
+          RELDATETIME: (args = [], opts = {}) => {
+            let date;
+
+            if (args[0] instanceof FluentNumber) {
+              date = new Date(args[0].value);
+            }
+            else if (typeof args[0] === "string") {
+              date = new Date(parseInt(args[0]));
+            }
+            else {
+              throw new TypeError("Invalid argument to RELDATETIME");
+            }
+
+            return getRelDisplayDate(date, new Date(), Xel.localesIds);
+          }
+        }
+      });
 
       for (let i = urls.length-1; i >= 0; i -= 1) {
         let url = urls[i];
