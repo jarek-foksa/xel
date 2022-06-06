@@ -5,6 +5,7 @@
 
 - Add `Xel.localesIds` getter
 - Add `RELDATETIME` FTL function
+- Add `ellipsis` property/attribute to <x-message>
 - [Bugfix] Invisible unicode characters added to <x-message> args
 
 ## 0.16.4 (2022-05-31)

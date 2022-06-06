@@ -11,7 +11,7 @@ import {html, css} from "../utils/template.js";
 
 // @element x-message
 export default class XMessageElement extends HTMLElement {
-  static observedAttributes = ["href", "args", "autocapitalize"];
+  static observedAttributes = ["href", "args", "autocapitalize", "ellipsis"];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -76,6 +76,19 @@ export default class XMessageElement extends HTMLElement {
     }
   }
 
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether to show an ellipsis at the end of the message text.
+  get ellipsis() {
+    return this.hasAttribute("ellipsis");
+  }
+  set ellipsis(ellipsis) {
+    ellipsis ? this.setAttribute("ellipsis", "") : this.removeAttribute("ellipsis");
+  }
+
   #localesChangeListener = null;
   #themeChangeListener = null;
 
@@ -111,6 +124,9 @@ export default class XMessageElement extends HTMLElement {
     else if (name === "autocapitalize") {
       this.#update();
     }
+    else if (name === "ellipsis") {
+      this.#update();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,14 +137,14 @@ export default class XMessageElement extends HTMLElement {
     let message = Xel.queryMessage(this.href, this.args);
 
     if (message.format === "html") {
-      this.innerHTML = message.content;
+      this.innerHTML = message.content + (this.ellipsis ? "…" : "");
     }
     else {
       if (this.autocapitalize === true && Xel.autocapitalize === "titlecase") {
-        this.textContent = toTitleCase(message.content);
+        this.textContent = toTitleCase(message.content) + (this.ellipsis ? "…" : "");
       }
       else {
-        this.textContent = message.content;
+        this.textContent = message.content + (this.ellipsis ? "…" : "");
       }
     }
   }
