@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.17.0 (PENDING)
+## 0.17.0 (2022-06-14)
 
 - Add `Xel.localesIds` getter
 - Add `RELDATETIME` FTL function
