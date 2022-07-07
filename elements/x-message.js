@@ -89,8 +89,22 @@ export default class XMessageElement extends HTMLElement {
     ellipsis ? this.setAttribute("ellipsis", "") : this.removeAttribute("ellipsis");
   }
 
+  // @property
+  // @type Promise
+  get whenReady() {
+    return new Promise((resolve) => {
+      if (this.#whenReadyCallbacks === null) {
+        resolve();
+      }
+      else {
+        this.#whenReadyCallbacks.push(resolve);
+      }
+    });
+  }
+
   #localesChangeListener = null;
   #themeChangeListener = null;
+  #whenReadyCallbacks = [];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,6 +160,14 @@ export default class XMessageElement extends HTMLElement {
       else {
         this.textContent = message.content + (this.ellipsis ? "…" : "");
       }
+    }
+
+    if (this.#whenReadyCallbacks !== null) {
+      for (let callback of this.#whenReadyCallbacks) {
+        callback();
+      }
+
+      this.#whenReadyCallbacks = null;
     }
   }
 }

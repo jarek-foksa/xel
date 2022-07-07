@@ -503,9 +503,15 @@ export default class XMenuElement extends HTMLElement {
       this.setAttribute("opened", "");
       this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
 
-      let menuBounds = this.getBoundingClientRect();
       let extraLeft = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
       let extraTop = 0; // Extra offset needed when menu has fixed-positioned ancestor(s)
+
+      // Menu might contain translatable messages which are fetched asynchronously. In order to get the correct
+      // menu bounds we have to wait until the messages are ready.
+      let messageElements = [...this.querySelectorAll(":scope > x-menuitem > x-label > x-message")];
+      await Promise.all(messageElements.map($0 => $0.whenReady));
+
+      let menuBounds = this.getBoundingClientRect();
 
       // Determine extraLeft and extraTop which represent the extra offset when the menu is inside another
       // fixed-positioned element such as a popover.
