@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.17.2 (2022-07-16)
+
+- [Bugfix] Opening the context menu multiple times in short intervals causes the app to freeze
+
 ## 0.17.1 (2022-07-07)
 
 - [Bugfix] Menus containing <x-message> elements are positioned incorrectly

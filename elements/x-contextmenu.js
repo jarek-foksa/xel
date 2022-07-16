@@ -109,11 +109,12 @@ export default class XContextMenuElement extends HTMLElement {
   // Close the context menu.
   close() {
     return new Promise(async (resolve) => {
+      this.#elements["backdrop"].hide(false);
+
       let menu = this.querySelector("x-menu");
 
       if (menu && menu.opened === true) {
         await menu.close();
-        this.#elements["backdrop"].hide(false);
 
         let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
 
