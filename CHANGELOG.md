@@ -1,20 +1,24 @@
 
 # CHANGELOG
 
+## 0.17.3 (2022-08-18)
+
+- [Bugfix] `<x-tooltip>` is now shown when placed inside `<x-input>`
+
 ## 0.17.2 (2022-07-16)
 
 - [Bugfix] Opening the context menu multiple times in short intervals causes the app to freeze
 
 ## 0.17.1 (2022-07-07)
 
-- [Bugfix] Menus containing <x-message> elements are positioned incorrectly
+- [Bugfix] Menus containing `<x-message>` elements are positioned incorrectly
 
 ## 0.17.0 (2022-06-14)
 
 - Add `Xel.localesIds` getter
 - Add `RELDATETIME` FTL function
-- Add `ellipsis` property/attribute to <x-message>
-- [Bugfix] Invisible unicode characters added to <x-message> args
+- Add `ellipsis` property/attribute to `<x-message>`
+- [Bugfix] Invisible unicode characters added to `<x-message>` args
 
 ## 0.16.4 (2022-05-31)
 

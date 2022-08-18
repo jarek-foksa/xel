@@ -303,6 +303,8 @@ export default class XInputElement extends HTMLElement {
     }
 
     this.addEventListener("click",  (event) => this.#onClick(event));
+    this.addEventListener("pointerenter", () => this.#onPointerEnter());
+    this.addEventListener("pointerleave", () => this.#onPointerLeave());
     this.addEventListener("focusin",  (event) => this.#onFocusIn(event));
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
     this.addEventListener("keydown",  (event) => this.#onKeyDown(event));
@@ -578,6 +580,22 @@ export default class XInputElement extends HTMLElement {
 
   #onClick() {
     this.#updateValidityIndicators();
+  }
+
+  #onPointerEnter() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip && tooltip.disabled === false) {
+      tooltip.open(this);
+    }
+  }
+
+  #onPointerLeave() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip) {
+      tooltip.close();
+    }
   }
 
   #onFocusIn() {
