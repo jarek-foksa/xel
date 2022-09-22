@@ -42,15 +42,15 @@
   "devDependencies": {
     "@fluent/bundle": "0.17.1",
     "cantarell": "0.303.0",
-    "clean-css": "5.2.2",
-    "dompurify": "2.3.6",
-    "fs-extra": "10.0.0",
-    "glob": "7.2.0",
-    "html-minifier-terser": "6.1.0",
-    "marked": "4.0.14",
-    "prismjs": "1.28.0",
-    "rollup": "2.63.0",
-    "semver": "7.3.5",
-    "terser": "5.10.0"
+    "clean-css": "5.3.1",
+    "dompurify": "2.4.0",
+    "fs-extra": "10.1.0",
+    "glob": "8.0.3",
+    "html-minifier-terser": "7.0.0",
+    "marked": "4.1.0",
+    "prismjs": "1.29.0",
+    "rollup": "2.79.1",
+    "semver": "7.3.7",
+    "terser": "5.15.0"
   }
 }

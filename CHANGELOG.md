@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.17.4 (2022-09-22)
+
+- Update dependencies
+
 ## 0.17.3 (2022-08-18)
 
 - [Bugfix] `<x-tooltip>` is now shown when placed inside `<x-input>`
