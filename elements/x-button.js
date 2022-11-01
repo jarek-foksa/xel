@@ -676,7 +676,7 @@ export default class XButtonElement extends HTMLElement {
     let tooltip = this.querySelector(":scope > x-tooltip");
 
     if (tooltip && tooltip.disabled === false) {
-      if (this.parentElement.localName === "x-buttons") {
+      if (this.parentElement && this.parentElement.localName === "x-buttons") {
         for (let sibling of this.parentElement.children) {
           if (sibling !== this && sibling.localName === "x-button") {
             let siblingTooltip = sibling.querySelector(":scope > x-tooltip");
