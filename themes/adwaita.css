@@ -186,7 +186,8 @@ blockquote {
  * Mark
  */
 
-mark {
+mark,
+::highlight(mark) {
   color: inherit;
   background: #F6D32D;
 }

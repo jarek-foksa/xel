@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.17.6 (2022-11-08)
+
+- Add stylings for `::highlight(mark)`
+
 ## 0.17.5 (2022-11-01)
 
 - [Bugfix] Button tooltip not shown when the button is attached directly to the shadow root
