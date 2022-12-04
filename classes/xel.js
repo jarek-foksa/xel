@@ -112,11 +112,9 @@ export default new class Xel extends EventEmitter {
     metaElement.setAttribute("content", urls.join(", "));
   }
 
-  // @type Array<string>
-  //
-  // An array of locale identifier currently in use, e.g. ["en-US", "en"]
-  get localesIds() {
-    return this.#localesIds;
+  // @type string
+  get locale() {
+    return this.#localesIds[0] || "en";
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -432,18 +430,16 @@ export default new class Xel extends EventEmitter {
         this.#localesReadyCallbacks = [];
       }
 
-      let Xel = this;
-      let ids = [];
+      let ids = urls.map((url) => {
+        let fileName = url.substring(url.lastIndexOf("/") + 1);
+        return fileName.substring(0, fileName.indexOf("."));
+      });
 
-      if (urls.length > 0) {
-        let fileName = urls[0].substring(urls[0].lastIndexOf("/") + 1);
-        ids.push(fileName.substring(0, fileName.indexOf(".")));
-      }
-      else {
+      if (ids.length === 0) {
         ids.push("en");
       }
 
-      let bundle = new FluentBundle(ids, {
+      let bundle = new FluentBundle([ids[0]], {
         useIsolating: false,
         functions: {
           RELDATETIME: (args = [], opts = {}) => {
@@ -459,7 +455,7 @@ export default new class Xel extends EventEmitter {
               throw new TypeError("Invalid argument to RELDATETIME");
             }
 
-            return getRelDisplayDate(date, new Date(), Xel.localesIds);
+            return getRelDisplayDate(date, new Date(), ids);
           }
         }
       });

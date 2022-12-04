@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.18.0 (2022-12-04)
+
+- Replace `Xel.localesIds` getter with `Xel.locale` which return the resolved locale tag
+
 ## 0.17.6 (2022-11-08)
 
 - Add stylings for `::highlight(mark)`
