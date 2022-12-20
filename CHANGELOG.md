@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.18.1 (2022-12-20)
+
+- [Bugfix] `<x-numberinput>` does not look and behave consistently with `<x-input>`
+
 ## 0.18.0 (2022-12-04)
 
 - Replace `Xel.localesIds` getter with `Xel.locale` which return the resolved locale tag

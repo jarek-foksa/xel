@@ -406,7 +406,7 @@ export default class XNumberInputElement extends HTMLElement {
   #commitEditorChanges() {
     let editorTextContent = this.#elements["editor"].textContent;
     let editorValue = editorTextContent.trim() === "" ? null : parseFloat(editorTextContent);
-    let normalizedEditorValue = normalize(editorValue, this.min, this.max);
+    let normalizedEditorValue = editorValue === null ? null : normalize(editorValue, this.min, this.max);
 
     if (normalizedEditorValue !== this.value) {
       this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
