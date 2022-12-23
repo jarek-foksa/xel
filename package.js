@@ -3,6 +3,7 @@
 import ChildProcess from "child_process";
 import Fse from "fs-extra";
 import Glob from "glob";
+import OS from "os";
 import Path from "path";
 import Semver from "semver";
 
@@ -16,6 +17,11 @@ import {dirname} from "path";
 import {fileURLToPath} from "url";
 
 let projectPath = dirname(fileURLToPath(import.meta.url));
+
+// @bugfix: https://github.com/isaacs/node-glob/issues/480#issuecomment-1152960825
+if (OS.platform() === "win32") {
+  projectPath = projectPath.split(Path.sep).join("/");
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Portal

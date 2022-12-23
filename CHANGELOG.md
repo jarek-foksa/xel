@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.18.2 (2022-12-23)
+
+- [Bugfix] Packaging script is not working on Windows
+
 ## 0.18.1 (2022-12-20)
 
 - [Bugfix] `<x-numberinput>` does not look and behave consistently with `<x-input>`
