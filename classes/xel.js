@@ -11,6 +11,7 @@ import EventEmitter from "./event-emitter.js";
 import {compareArrays} from "../utils/array.js";
 import {getIconset} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
+import {getOperatingSystemName} from "../utils/system.js";
 import {getRelDisplayDate} from "../utils/time.js";
 
 // @singleton
@@ -220,6 +221,10 @@ export default new class Xel extends EventEmitter {
     let message = this.#localesBundle.getMessage(id);
     let content = null;
     let format = "text";
+
+    if (args.os === undefined) {
+      args.os = getOperatingSystemName();
+    }
 
     if (attribute === undefined) {
       attribute = null;

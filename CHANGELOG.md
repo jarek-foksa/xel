@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.19.0 (2023-01-22)
+
+- Add "os" message argument
+
 ## 0.18.2 (2022-12-23)
 
 - [Bugfix] Packaging script is not working on Windows
