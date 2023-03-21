@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.19.1 (2023-03-21)
+
+- [Bugfix] Do not animate newly connected switch elements
+
 ## 0.19.0 (2023-01-22)
 
 - Add "os" message argument

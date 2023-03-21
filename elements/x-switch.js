@@ -8,6 +8,7 @@ import Xel from "../classes/xel.js";
 
 import {createElement, closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
+import {sleep} from "../utils/time.js";
 
 // @element x-switch
 // @part indicator
@@ -22,7 +23,7 @@ export default class XSwitchElement extends HTMLElement {
       <main id="main">
         <div id="indicator" part="indicator">
           <div id="indicator-track" part="indicator-track">
-            <div id="indicator-thumb" part="indicator-thumb"></div>
+            <div id="indicator-thumb" part="indicator-thumb" style="transition: none;"></div>
           </div>
         </div>
 
@@ -178,6 +179,9 @@ export default class XSwitchElement extends HTMLElement {
   }
 
   connectedCallback() {
+    // Do not animate newly connected switch elements
+    sleep(100).then(() => this.#elements["indicator-thumb"].style.transition = null);
+
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
     this.#updateAccessabilityAttributes();
@@ -185,6 +189,7 @@ export default class XSwitchElement extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.#elements["indicator-thumb"].style.transition = "none";
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
