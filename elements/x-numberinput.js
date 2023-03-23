@@ -429,7 +429,21 @@ export default class XNumberInputElement extends HTMLElement {
 
   #updateEditorTextContent() {
     if (this.hasAttribute("value")) {
-      this.#elements["editor"].textContent = this.getAttribute("value").trim();
+      if (this.step < 1) {
+        let value = parseFloat(this.getAttribute("value"));
+        let stepPrecision = getPrecision(this.step);
+        let valuePrecision = getPrecision(value);
+
+        if (stepPrecision > 0 && valuePrecision < stepPrecision) {
+          this.#elements["editor"].textContent = value.toFixed(stepPrecision);
+        }
+        else {
+          this.#elements["editor"].textContent = this.getAttribute("value").trim();
+        }
+      }
+      else {
+        this.#elements["editor"].textContent = this.getAttribute("value").trim();
+      }
     }
     else {
       this.#elements["editor"].textContent = "";

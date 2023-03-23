@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.19.2 (2023-03-23)
+
+- Make `<x-numberinput>` use the step precision if it is bigger than the value precision
+
 ## 0.19.1 (2023-03-21)
 
 - [Bugfix] Do not animate newly connected switch elements
