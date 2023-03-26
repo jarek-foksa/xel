@@ -25,7 +25,7 @@ body {
   color: var(--text-color);
   background: var(--background-color);
   font-weight: 500;
-  font-family: "Cantarell", BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;;
+  font-family: "Cantarell", BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
   --autocapitalize: titlecase;
   --preset-accent-colors: blue #3584e4, purple #9141ac, pink #f74f9e, red #e01b24, orange #ff7800, yellow #e5a50a,
                           green #2ec27e, graphite #9a9996;

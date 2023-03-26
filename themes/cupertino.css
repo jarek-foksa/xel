@@ -23,7 +23,7 @@
 body {
   color: var(--text-color);
   background: var(--background-color);
-  font-family: BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;;
+  font-family: BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
   --autocapitalize: titlecase;
   --preset-accent-colors: blue #007aff, purple #953d96, pink #f74f9e, red #e0383e, orange #f7821b, yellow #fec726,
                           green #62ba46, graphite #989898;
@@ -953,7 +953,7 @@ x-numberinput > x-label {
 x-numberinput[condensed] > x-stepper {
   border: none;
   border-radius: 0;
-  box-shadow: 0 0 0 1px var(--border-color);;
+  box-shadow: 0 0 0 1px var(--border-color);
   margin: 0;
   width: 14px;
   min-width: 14px;

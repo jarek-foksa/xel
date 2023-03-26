@@ -34,7 +34,7 @@ export default class XTagElement extends HTMLElement {
 
   static #shadowStyleSheet = css`
     :host {
-      display: inline-block;;
+      display: inline-block;
       height: 25px;
       box-sizing: border-box;
       overflow: hidden;

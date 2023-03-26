@@ -21,7 +21,7 @@
 body {
   color: var(--text-color);
   background: var(--background-color);
-  font-family: BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;;
+  font-family: BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
   --autocapitalize: titlecase;
   --preset-accent-colors: blue #007aff, purple #953d96, pink #f74f9e, red #e0383e, orange #f7821b, yellow #fec726,
                           green #62ba46, graphite #989898;
@@ -733,7 +733,7 @@ x-checkbox:active::part(indicator) {
   background: rgba(255, 255, 255, 0.1);
 }
 x-checkbox:focus::part(indicator) {
-  box-shadow: 0 0 0px 3px var(--light-accent-color);;
+  box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
 x-checkbox[toggled]::part(indicator) {
   background: white;
@@ -759,7 +759,7 @@ x-radio:active::part(indicator) {
   filter: brightness(1.3);
 }
 x-radio:focus::part(indicator) {
-  box-shadow: 0 0 0px 3px var(--light-accent-color);;
+  box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
 x-radio[toggled]::part(indicator) {
   background: var(--accent-color);

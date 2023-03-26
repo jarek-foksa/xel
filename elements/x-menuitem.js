@@ -4,7 +4,7 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";;
+import Xel from "../classes/xel.js";
 
 import {createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";

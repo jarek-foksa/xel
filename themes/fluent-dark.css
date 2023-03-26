@@ -932,7 +932,7 @@ x-switch[toggled]::part(indicator-track) {
 }
 x-switch[toggled]:hover::part(indicator-track) {
   background: var(--light-accent-color);
-  border-color: var(--light-accent-color);;
+  border-color: var(--light-accent-color);
 }
 x-switch[toggled]:active::part(indicator-track) {
   background: var(--dark-accent-color);
