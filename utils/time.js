@@ -13,6 +13,13 @@ export let sleep = (time) => {
   });
 };
 
+// @type (() => void) => void
+export let nextTick = () => {
+  return new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+};
+
 // @type () => number
 //
 // Get timestamp in Unix format, e.g. 1348271383119 [http://en.wikipedia.org/wiki/Unix_time]
@@ -81,10 +88,6 @@ export let getRelDisplayDate = (date, refDate = new Date(), locales = ["en"]) =>
     }
   }
 };
-
-
-
-
 
 // @type (Function, number, Object) => Function
 // @src [https://github.com/documentcloud/underscore/blob/master/underscore.js#L627]

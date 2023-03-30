@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.19.3 (2023-03-30)
+
+- Resolve `<x-popover>` geometry after all "open" event listeners have been fired
+
 ## 0.19.2 (2023-03-23)
 
 - Make `<x-numberinput>` use the step precision if it is bigger than the value precision

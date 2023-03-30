@@ -8,6 +8,7 @@ import {createElement, getClosestScrollableAncestor} from "../utils/element.js";
 import {roundRect} from "../utils/math.js";
 import {parseTransistion} from "../utils/style.js";
 import {html, css} from "../utils/template.js";
+import {nextTick} from "../utils/time.js";
 
 // @element x-popover
 // @event ^open - User opened the popover.
@@ -182,6 +183,12 @@ export default class XPopoverElement extends HTMLElement {
         }
 
         this.setAttribute("opened", "");
+
+        // Dispatch the "open" event before actually showing the popover as user might want to update its content
+        // in the event listener.
+        this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
+        await nextTick();
+
         this.#updateStyle();
         this.#updatePosition(context);
 
@@ -207,8 +214,6 @@ export default class XPopoverElement extends HTMLElement {
             ).finished;
           }
         }
-
-        this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
       }
 
       resolve();
