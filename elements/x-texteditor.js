@@ -496,7 +496,11 @@ export default class XTextEditorElement extends HTMLElement {
 
   #onFocusOut() {
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-    this.#shadowRoot.getSelection().collapse(this.#elements["main"]);
+
+    // Safari 16.4 does not support ShadowRoot.prototype.getSelection
+    if (this.#shadowRoot.getSelection) {
+      this.#shadowRoot.getSelection().collapse(this.#elements["main"]);
+    }
 
     if (this.validation === "auto" || this.validation === "instant") {
       this.reportValidity();

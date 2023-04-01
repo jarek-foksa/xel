@@ -13,7 +13,7 @@ import {html, css} from "../utils/template.js";
 // @part indicator
 // @event toggle
 export default class XCheckboxElement extends HTMLElement {
-  static observedAttributes = ["toggled", "disabled", "size"];
+  static observedAttributes = ["toggled", "mixed", "disabled", "size"];
 
   static #shadowTemplate = html`
     <template>
@@ -22,7 +22,7 @@ export default class XCheckboxElement extends HTMLElement {
           <div id="ripples"></div>
 
           <svg id="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path></path>
+            <path id="checkmark-path"></path>
           </svg>
         </div>
 
@@ -66,10 +66,10 @@ export default class XCheckboxElement extends HTMLElement {
       box-sizing: border-box;
       border: 2px solid currentColor;
       overflow: hidden;
-      d: path("M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z M 95 23 L 86 13 L 37 66 L 13.6 41 L 4.5 51 L 37 85 L 95 23 Z");
+      --path-data: M -4 -4 L 100 -4 L 100 100 L -4 100 L -4 -4 Z M 95 23 L 86 13 L 37 66 L 13.6 41 L 4.5 51 L 37 85 L 95 23 Z;
     }
     :host([mixed]) #indicator {
-      d: path("M 0 0 L 100 0 L 100 100 L 0 100 Z M 87 42.6 L 13 42.6 L 13 57.4 L 87 57.4 Z");
+      --path-data: M -4 -4 L 100 -4 L 100 100 L -4 100 L -4 -4 Z M 87 42.6 L 13 42.6 L 13 57.4 L 87 57.4 L 87 42.6 Z;
     }
 
     /* Checkmark icon */
@@ -81,7 +81,7 @@ export default class XCheckboxElement extends HTMLElement {
       width: 100%;
       height: 100%;
       opacity: 0;
-      d: inherit;
+      overflow: visible;
       transition-property: opacity;
       transition-timing-function: inherit;
       transition-duration: inherit;
@@ -93,9 +93,8 @@ export default class XCheckboxElement extends HTMLElement {
       opacity: 1;
     }
 
-    #checkmark path {
+    #checkmark-path {
       fill: currentColor;
-      d: inherit;
     }
 
     /* Ripples */
@@ -203,6 +202,8 @@ export default class XCheckboxElement extends HTMLElement {
   #shadowRoot = null;
   #elements = {};
   #lastTabIndex = 0;
+
+  #xelThemeChangeListener = null;
   #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -224,19 +225,25 @@ export default class XCheckboxElement extends HTMLElement {
   }
 
   connectedCallback() {
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateCheckmarkPathData());
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
+    this.#updateCheckmarkPathData();
     this.#updateAccessabilityAttributes();
     this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "toggled") {
       this.#onToggledAttributeChange();
+    }
+    else if (name === "mixed") {
+      this.#onMixedAttributeChange();
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
@@ -247,6 +254,11 @@ export default class XCheckboxElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #updateCheckmarkPathData() {
+    let pathData = getComputedStyle(this.#elements["indicator"]).getPropertyValue("--path-data");
+    this.#elements["checkmark-path"].setAttribute("d", pathData);
+  }
 
   #updateAccessabilityAttributes() {
     this.setAttribute("role", "checkbox");
@@ -295,7 +307,12 @@ export default class XCheckboxElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onToggledAttributeChange() {
+    this.#updateCheckmarkPathData();
     this.setAttribute("aria-toggled", this.mixed ? "mixed" : this.toggled);
+  }
+
+  #onMixedAttributeChange() {
+    this.#updateCheckmarkPathData();
   }
 
   #onDisabledAttributeChange() {

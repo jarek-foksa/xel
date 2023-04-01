@@ -93,9 +93,9 @@ export default class XTagElement extends HTMLElement {
       height: 12px;
       vertical-align: middle;
       margin-left: 4px;
-      d: path("M 25 16 L 50 41 L 75 16 L 84 25 L 59 50 L 84 75 L 75 84 L 50 59 L 25 84 L 16 75 L 41 50 L 16 25 Z");
       fill: currentColor;
       color: inherit;
+      --path-data: M 25 16 L 50 41 L 75 16 L 84 25 L 59 50 L 84 75 L 75 84 L 50 59 L 25 84 L 16 75 L 41 50 L 16 25 Z;
     }
     :host([removable]) #remove-button {
       display: block;
@@ -106,7 +106,6 @@ export default class XTagElement extends HTMLElement {
     }
 
     #remove-button path {
-      d: inherit;
       fill: inherit;
       pointer-events: none;
     }
@@ -184,6 +183,8 @@ export default class XTagElement extends HTMLElement {
 
   #shadowRoot = null;
   #elements = {};
+
+  #xelThemeChangeListener = null;
   #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,9 +205,11 @@ export default class XTagElement extends HTMLElement {
   }
 
   connectedCallback() {
+    this.#updateRemoveButtonPathData();
     this.#updateComputedSizeAttriubte();
     this.#updateScopedAttribute();
 
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateRemoveButtonPathData());
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
     if (this.closest("x-tags")) {
@@ -224,6 +227,7 @@ export default class XTagElement extends HTMLElement {
   }
 
   disconnectedCallback() {
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
@@ -242,6 +246,11 @@ export default class XTagElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #updateRemoveButtonPathData() {
+    let pathData = getComputedStyle(this.#elements["remove-button"]).getPropertyValue("--path-data");
+    this.#elements["remove-button-path"].setAttribute("d", pathData);
+  }
 
   #updateComputedSizeAttriubte() {
     let defaultSize = Xel.size;

@@ -531,10 +531,10 @@ export default new class Xel extends EventEmitter {
     let [h, s, l, a] = new ColorParser().parse(serializedColor, "hsla");
     let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
 
-    rule.styleMap.set("--accent-color-h", h);
-    rule.styleMap.set("--accent-color-s", `${s}%`);
-    rule.styleMap.set("--accent-color-l", `${l}%`);
-    rule.styleMap.set("--accent-color-a", a);
+    rule.style.setProperty("--accent-color-h", h);
+    rule.style.setProperty("--accent-color-s", `${s}%`);
+    rule.style.setProperty("--accent-color-l", `${l}%`);
+    rule.style.setProperty("--accent-color-a", a);
   }
 
   #getSettings() {

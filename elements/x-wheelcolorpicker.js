@@ -52,6 +52,7 @@ export default class XWheelColorPickerElement extends HTMLElement {
       display: block;
       width: 100%;
       user-select: none;
+      -webkit-user-select: none;
       --wheel-max-width: none;
     }
     :host([hidden]) {

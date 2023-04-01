@@ -67,21 +67,9 @@ export default class XPopoverElement extends HTMLElement {
       transform: translate(0, -50%);
     }
 
-    #arrow path {
+    #arrow-path {
       stroke-width: 1;
       vector-effect: non-scaling-stroke;
-    }
-    #arrow[data-align="bottom"] path {
-      d: path("M 0 100, L 50 0, L 100 100");
-    }
-    #arrow[data-align="top"] path {
-      d: path("M 0 0, L 50 100, L 100 0");
-    }
-    #arrow[data-align="left"] path {
-      d: path("M 0 0, L 100 50, L 00 100");
-    }
-    #arrow[data-align="right"] path {
-      d: path("M 100 0, L 0 50, L 100 100");
     }
 
     #slot {
@@ -298,6 +286,7 @@ export default class XPopoverElement extends HTMLElement {
         let positionBottom = (reduceHeight = false) => {
           this.style.maxHeight = null;
           this.#elements["arrow"].setAttribute("data-align", "bottom");
+          this.#elements["arrow-path"].setAttribute("d", "M 0 100, L 50 0, L 100 100");
 
           let popoverRect = roundRect(this.getBoundingClientRect());
           let arrowRect = roundRect(this.#elements["arrow"].getBoundingClientRect());
@@ -322,6 +311,7 @@ export default class XPopoverElement extends HTMLElement {
         let positionTop = (reduceHeight = false) => {
           this.style.maxHeight = null;
           this.#elements["arrow"].setAttribute("data-align", "top");
+          this.#elements["arrow-path"].setAttribute("d", "M 0 0, L 50 100, L 100 0");
 
           let popoverRect = roundRect(this.getBoundingClientRect());
           let arrowRect = roundRect(this.#elements["arrow"].getBoundingClientRect());
@@ -468,6 +458,7 @@ export default class XPopoverElement extends HTMLElement {
         let positionRight = (reduceWidth = false) => {
           this.style.maxWidth = null;
           this.#elements["arrow"].setAttribute("data-align", "right");
+          this.#elements["arrow-path"].setAttribute("d", "M 100 0, L 0 50, L 100 100");
 
           let popoverRect = roundRect(this.getBoundingClientRect());
           let arrowRect = roundRect(this.#elements["arrow"].getBoundingClientRect());
@@ -492,6 +483,7 @@ export default class XPopoverElement extends HTMLElement {
         let positionLeft = (reduceWidth = false) => {
           this.style.maxWidth = null;
           this.#elements["arrow"].setAttribute("data-align", "left");
+          this.#elements["arrow-path"].setAttribute("d", "M 0 0, L 100 50, L 00 100");
 
           let popoverRect = roundRect(this.getBoundingClientRect());
           let arrowRect = roundRect(this.#elements["arrow"].getBoundingClientRect());

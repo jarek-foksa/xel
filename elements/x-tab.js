@@ -38,6 +38,7 @@ export default class XTabElement extends HTMLElement {
       box-sizing: border-box;
       cursor: default;
       user-select: none;
+      -webkit-user-select: none;
       box-sizing: border-box;
       font-size: 14px;
       --trigger-effect: none; /* ripple, none */

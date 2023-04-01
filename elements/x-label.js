@@ -14,7 +14,9 @@ export default class XLabelElement extends HTMLElement {
     :host {
       display: block;
       line-height: 1.2;
+      cursor: default;
       user-select: none;
+      -webkit-user-select: none;
       box-sizing: border-box;
     }
     :host([disabled]) {

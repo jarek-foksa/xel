@@ -429,6 +429,7 @@ x-button > x-label {
   max-width: 100%;
   text-align: center;
   min-width: 1px;
+  pointer-events: none;
 }
 x-button > x-label ~ x-icon,
 x-button > x-icon ~ x-label {
@@ -787,6 +788,10 @@ x-tabs:not(:defined) {
 
 x-menu:not(:defined) {
   display: none;
+}
+x-menu:has(x-menu[opened]) {
+  /* @bugfix: Menu fails to render if its ancestor is scrollable (https://bugs.webkit.org/show_bug.cgi?id=160953) */
+  overflow: -webkit-paged-x;
 }
 
 /* Separator */

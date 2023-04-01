@@ -70,12 +70,11 @@ export default class XButtonElement extends HTMLElement {
       height: 8px;
       min-width: 8px;
       margin: 0 0 0 4px;
-      d: path("M 11.7 19.9 L 49.8 57.9 L 87.9 19.9 L 99.7 31.6 L 49.8 81.4 L -0.0 31.6 Z");
+      --path-data: M 11.7 19.9 L 49.8 57.9 L 87.9 19.9 L 99.7 31.6 L 49.8 81.4 L -0.0 31.6 Z;
     }
 
     #arrow path {
       fill: currentColor;
-      d: inherit;
     }
     #arrow[hidden] {
       display: none;
@@ -268,6 +267,8 @@ export default class XButtonElement extends HTMLElement {
   #wasFocusedBeforeExpanding = false;
   #lastPointerDownEvent = null;
   #lastTabIndex = 0;
+
+  #xelThemeChangeListener = null;
   #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,15 +303,18 @@ export default class XButtonElement extends HTMLElement {
       this.parentElement.tabIndex = -1;
     }
 
+    this.#updateArrowPathData();
     this.#updateArrowVisibility();
     this.#updateAccessabilityAttributes();
     this.#updateSkinAttribute();
     this.#updateComputedSizeAttriubte();
 
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
@@ -587,6 +591,11 @@ export default class XButtonElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #updateArrowPathData() {
+    let arrowPathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
+    this.#elements["arrow-path"].setAttribute("d", arrowPathData);
+  }
 
   #updateArrowVisibility() {
     let popup = this.querySelector(":scope > x-menu, :scope > x-popover");

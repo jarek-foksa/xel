@@ -20,7 +20,7 @@ export default class XAccordionElement extends HTMLElement {
       <main id="main">
         <div id="arrow-container">
           <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none" tabindex="1">
-            <path></path>
+            <path id="arrow-path"></path>
           </svg>
         </div>
 
@@ -65,10 +65,10 @@ export default class XAccordionElement extends HTMLElement {
       display: flex;
       width: 16px;
       height: 16px;
-      d: path("M 26 20 L 26 80 L 74 50 Z");
       transform: rotate(0deg);
       transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       color: currentColor;
+      --path-data: M 26 20 L 26 80 L 74 50 Z;
     }
     #arrow:focus {
       background: transparent;
@@ -78,9 +78,8 @@ export default class XAccordionElement extends HTMLElement {
       transform: rotate(90deg);
     }
 
-    #arrow path {
+    #arrow-path {
       fill: currentColor;
-      d: inherit;
     }
   `
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,8 +124,10 @@ export default class XAccordionElement extends HTMLElement {
   #elements = {};
   #shadowRoot = null;
   #resizeObserver = null;
-  #xelSizeChangeListener = null;
   #currentAnimation = null;
+
+  #xelThemeChangeListener = null;
+  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -148,14 +149,19 @@ export default class XAccordionElement extends HTMLElement {
   }
 
   connectedCallback() {
+    this.#updateArrowPathData();
     this.#updateComputedSizeAttriubte();
 
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
+
     this.#resizeObserver.observe(this);
   }
 
   disconnectedCallback() {
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
+
     this.#resizeObserver.unobserve(this);
   }
 
@@ -264,6 +270,11 @@ export default class XAccordionElement extends HTMLElement {
     else {
       this.#elements["arrow-container"].style.height = null;
     }
+  }
+
+  #updateArrowPathData() {
+    let pathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
+    this.#elements["arrow-path"].setAttribute("d", pathData);
   }
 
   #updateComputedSizeAttriubte() {

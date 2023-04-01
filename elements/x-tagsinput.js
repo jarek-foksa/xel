@@ -94,6 +94,7 @@ export default class XTagsInputElement extends HTMLElement {
       white-space: pre;
       cursor: text;
       user-select: text;
+      -webkit-user-select: none;
       pointer-events: none;
     }
     #input[contenteditable]:focus {
@@ -359,7 +360,6 @@ export default class XTagsInputElement extends HTMLElement {
     }
     else if (event.target === this.#elements["input"]) {
       this.#elements["input"].setAttribute("contenteditable", "");
-      this.#updateSuggestions();
     }
     else if (event.target.closest("x-popover")) {
       event.preventDefault();
@@ -517,8 +517,13 @@ export default class XTagsInputElement extends HTMLElement {
 
           // Update input
           {
-            let startOffset = this.#shadowRoot.getSelection().getRangeAt(0).startOffset;
+            let startOffset = 0;
             let text = nextTag.querySelector("x-label").textContent;
+
+            // Safari 16.4 does not support ShadowRoot.prototype.getSelection
+            if (this.#shadowRoot.getSelection) {
+              startOffset = this.#shadowRoot.getSelection().getRangeAt(0).startOffset;
+            }
 
             this.#elements["input"].textContent = text;
             this.#updateInputSelection(startOffset, text.length);
@@ -557,8 +562,13 @@ export default class XTagsInputElement extends HTMLElement {
 
           // Update input
           {
-            let startOffset = this.#shadowRoot.getSelection().getRangeAt(0).startOffset;
+            let startOffset = 0;
             let text = prevTag.querySelector("x-label").textContent;
+
+            // Safari 16.4 does not support ShadowRoot.prototype.getSelection
+            if (this.#shadowRoot.getSelection) {
+              startOffset = this.#shadowRoot.getSelection().getRangeAt(0).startOffset;
+            }
 
             this.#elements["input"].textContent = text;
             this.#updateInputSelection(startOffset, text.length);
@@ -644,10 +654,14 @@ export default class XTagsInputElement extends HTMLElement {
   #updateSuggestions(inputType = "insertText") {
     if (this.suggestions) {
       let text = this.#elements["input"].textContent;
-      let range = this.#shadowRoot.getSelection().getRangeAt(0);
 
-      if (range.collapsed === false) {
-        text = text.substring(0, range.startOffset);
+      // Safari 16.4 does not support ShadowRoot.prototype.getSelection
+      if (this.#shadowRoot.getSelection) {
+        let range = this.#shadowRoot.getSelection().getRangeAt(0);
+
+        if (range.collapsed === false) {
+          text = text.substring(0, range.startOffset);
+        }
       }
 
       let suggestedTags = this.getSuggestions(text);

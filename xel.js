@@ -4,9 +4,10 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
+import "./polyfills.js";
+
 import Xel from "./classes/xel.js";
 
-import "./polyfills.js";
 import "./elements/dialog.js";
 import "./elements/x-accordion.js";
 import "./elements/x-backdrop.js";

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.20.0 (2023-04-01)
+
+- WebKit-based browsers support
+
 ## 0.19.3 (2023-03-30)
 
 - Resolve `<x-popover>` geometry after all "open" event listeners have been fired

@@ -28,19 +28,20 @@ if (Element.prototype.setPointerCapture) {
     setPointerCapture.call(this, pointerId);
 
     let cursor = getComputedStyle(this).cursor;
+    let cssText = `* {cursor: ${cursor} !important; user-select: none !important; -webkit-user-select: none !important;}`;
     let styleElements = [];
 
     {
       for (let node = this.parentNode || this.host; node && node !== document; node = node.parentNode || node.host) {
         if (node.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
           let styleElement = document.createElementNS(node.host.namespaceURI, "style");
-          styleElement.textContent = `* { cursor: ${cursor} !important; user-select: none !important; }`;
+          styleElement.textContent = cssText;
           node.append(styleElement);
           styleElements.push(styleElement);
         }
         else if (node.nodeType === document.DOCUMENT_NODE) {
           let styleElement = document.createElement("style");
-          styleElement.textContent = `* { cursor: ${cursor} !important; user-select: none !important; }`;
+          styleElement.textContent = cssText;
           node.head.append(styleElement);
           styleElements.push(styleElement);
         }
@@ -78,6 +79,30 @@ if (Element.prototype.setPointerCapture) {
       });
     }
   });
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+// window.requestIdleCallback polyfill
+//
+
+if (!window.requestIdleCallback) {
+  window.requestIdleCallback = (callback, options = {}) => {
+    let timeout = options.timeout || 1;
+    let startTime = performance.now();
+
+    return setTimeout(() => {
+      callback({
+        get didTimeout() {
+          return options.timeout ? false : (performance.now() - startTime) - 1 > timeout;
+        },
+        timeRemaining() {
+          return Math.max(0, 1 + (performance.now() - startTime));
+        }
+      });
+    }, 1);
+  };
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -8,7 +8,6 @@
   var isSupportedBrowser = (
     window.customElements                        !== undefined &&
     window.customElements.define                 !== undefined &&
-    window.requestIdleCallback                   !== undefined &&
     window.Animation                             !== undefined &&
     window.CSSStyleSheet                         !== undefined &&
     window.CSSStyleSheet.prototype.replaceSync   !== undefined &&
@@ -21,8 +20,7 @@
     window.ResizeObserver                        !== undefined &&
     window.ShadowRoot                            !== undefined &&
     window.CSS                                   !== undefined &&
-    window.CSS.supports("color", "var(--test)")                &&
-    window.CSS.supports("d", "path('M 0 0 H 10')")
+    window.CSS.supports("color", "var(--test)")
   );
 
   window.addEventListener("load", function(event) {

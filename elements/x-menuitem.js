@@ -24,13 +24,13 @@ export default class XMenuItemElement extends HTMLElement {
       <div id="ripples"></div>
 
       <svg id="checkmark" part="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path></path>
+        <path id="checkmark-path"></path>
       </svg>
 
       <slot></slot>
 
       <svg id="arrow" part="arrow" viewBox="0 0 100 100" hidden>
-        <path></path>
+        <path id="arrow-path"></path>
       </svg>
     </template>
   `;
@@ -46,6 +46,7 @@ export default class XMenuItemElement extends HTMLElement {
       box-sizing: border-box;
       cursor: default;
       user-select: none;
+      -webkit-user-select: none;
       --trigger-effect: blink; /* ripple, blink, none */
     }
     :host([hidden]) {
@@ -104,8 +105,8 @@ export default class XMenuItemElement extends HTMLElement {
       width: 18px;
       height: 18px;
       margin: 0 2px 0 -20px;
-      d: path("M 44 61 L 29 47 L 21 55 L 46 79 L 79 27 L 70 21 L 44 61 Z");
       color: inherit;
+      --path-data: M 44 61 L 29 47 L 21 55 L 46 79 L 79 27 L 70 21 L 44 61 Z;
     }
     :host([togglable]) #checkmark {
       display: flex;
@@ -117,8 +118,7 @@ export default class XMenuItemElement extends HTMLElement {
       transform: scale(1);
     }
 
-    #checkmark path {
-      d: inherit;
+    #checkmark-path {
       fill: currentColor;
     }
 
@@ -133,16 +133,15 @@ export default class XMenuItemElement extends HTMLElement {
       transform: scale(1.1);
       align-self: center;
       margin-left: 8px;
-      d: path("M 26 20 L 26 80 L 74 50 Z");
       opacity: 1;
       color: inherit;
+      --path-data: M 26 20 L 26 80 L 74 50 Z;
     }
     #arrow[hidden] {
       display: none;
     }
 
     #arrow path {
-      d: inherit;
       fill: currentColor;
     }
   `
@@ -238,6 +237,7 @@ export default class XMenuItemElement extends HTMLElement {
   #triggering = false;
   #triggerEndCallbacks = [];
   #wasFocused = false;
+  #xelThemeChangeListener = null;
   #xelSizeChangeListener = null;
   #observer = new MutationObserver(() => this.#updateArrowIconVisibility());
 
@@ -260,16 +260,22 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   connectedCallback() {
+    this.#updateCheckmarkPathData();
+    this.#updateArrowPathData();
     this.#updateArrowIconVisibility();
     this.#updateAccessabilityAttributes();
     this.#updateComputedSizeAttriubte();
 
     this.#observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
+
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#onThemeChange());
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
     this.#observer.disconnect();
+
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
@@ -283,6 +289,16 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #updateCheckmarkPathData() {
+    let pathData = getComputedStyle(this.#elements["checkmark"]).getPropertyValue("--path-data");
+    this.#elements["checkmark-path"].setAttribute("d", pathData);
+  }
+
+  #updateArrowPathData() {
+    let pathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
+    this.#elements["arrow-path"].setAttribute("d", pathData);
+  }
 
   #updateArrowIconVisibility() {
     if (this.parentElement.localName === "x-menubar") {
@@ -344,6 +360,11 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onThemeChange() {
+    this.#updateCheckmarkPathData();
+    this.#updateArrowPathData();
+  }
 
   async #onPointerDown(pointerDownEvent) {
     this.#wasFocused = this.matches(":focus");

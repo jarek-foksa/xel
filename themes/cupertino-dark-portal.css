@@ -93,6 +93,7 @@ pt-code {
   font-size: 13px;
   font-weight: 700;
   user-select: none;
+  -webkit-user-select: none;
   cursor: default;
 }
 

@@ -206,7 +206,7 @@ x-card {
 
 x-accordion::part(arrow) {
   color: rgba(255, 255, 255, 0.8);
-  d: path("M 35 80 L 65 50 L 35 20 L 40 15 L 75 50 L 40 85 Z");
+  --path-data: M 35 80 L 65 50 L 35 20 L 40 15 L 75 50 L 40 85 Z;
 }
 x-accordion::part(arrow):focus {
   outline: 2px solid white;
@@ -577,7 +577,7 @@ x-tag[toggled]:active {
 
 /* Remove button */
 x-tag::part(remove-button) {
-  d: path("M 21 16 L 50 45 L 79 16 L 84 21 L 55 50 L 84 79 L 79 84 L 50 55 L 21 84 L 16 79 L 45 50 L 16 21 Z");
+  --path-data: M 21 16 L 50 45 L 79 16 L 84 21 L 55 50 L 84 79 L 79 84 L 50 55 L 21 84 L 16 79 L 45 50 L 16 21 Z;
 }
 x-tag::part(remove-button):hover {
   background: none;
@@ -695,12 +695,12 @@ x-menuitem[pressed]:active {
 
 /* Checkmark icon */
 x-menuitem::part(checkmark) {
-  d: path("M 22 49 L 38 65 L 78 26 L 83 31 L 38 75 L 17 54 L 22 49 Z");
+  --path-data: M 22 49 L 38 65 L 78 26 L 83 31 L 38 75 L 17 54 L 22 49 Z;
 }
 
 /* Arrow icon */
 x-menuitem::part(arrow) {
-  d: path("M 35 80 L 65 50 L 35 20 L 40 15 L 75 50 L 40 85 Z");
+  --path-data: M 35 80 L 65 50 L 35 20 L 40 15 L 75 50 L 40 85 Z;
 }
 
 /* Shortcut */
@@ -791,10 +791,10 @@ x-checkbox::part(indicator) {
   color: var(--light-border-color);
   border: 1px solid var(--light-border-color);
   border-radius: 2px;
-  d: path("M -1 104 Z M 89 31 L 36 83 L 9 56 L 15 50 L 36 71 L 83 25 L 89 31 Z");
+  --path-data: M -1 104 Z M 89 31 L 36 83 L 9 56 L 15 50 L 36 71 L 83 25 L 89 31 Z;
 }
 x-checkbox[mixed]::part(indicator) {
-  d: path("M 30 30 L 70 30 L 70 70 L 30 70 L 30 30 Z");
+  --path-data: M 30 30 L 70 30 L 70 70 L 30 70 L 30 30 Z;
 }
 x-checkbox:hover::part(indicator) {
   color: rgba(255, 255, 255, 0.8);
@@ -967,7 +967,7 @@ x-select[disabled] {
 /* Arrow icon */
 x-select::part(arrow) {
   margin: 0 8px;
-  d: path("M 6.46 32.74 L 12.4 26.82 L 49.96 64.39 L 87.55 26.82 L 93.48 32.74 L 49.85 75.99 L 6.46 32.74 Z");
+  --path-data: M 6.46 32.74 L 12.4 26.82 L 49.96 64.39 L 87.55 26.82 L 93.48 32.74 L 49.85 75.99 L 6.46 32.74 Z;
 }
 
 /*****************************************************************************************************************/
@@ -1074,10 +1074,10 @@ x-numberinput[condensed] > x-stepper {
   display: flex;
 }
 x-numberinput[condensed] > x-stepper::part(increment-arrow) {
-  d: path("M 10 66 L 50 25 L 90 66 L 82 75 L 50 43 L 19 75 L 10 66 Z" );
+  --path-data: M 10 66 L 50 25 L 90 66 L 82 75 L 50 43 L 19 75 L 10 66 Z;
 }
 x-numberinput[condensed] > x-stepper::part(decrement-arrow) {
-  d: path("M 10 34 L 50 75 L 90 34 L 82 25 L 50 57 L 19 25 L 10 34 Z" );
+  --path-data: M 10 34 L 50 75 L 90 34 L 82 25 L 50 57 L 19 25 L 10 34 Z;
 }
 x-numberinput[condensed]:focus > x-stepper {
   display: none;

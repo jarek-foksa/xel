@@ -26,7 +26,7 @@ export default class XSelectElement extends HTMLElement {
       <div id="button">
         <div id="arrow-container">
           <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path></path>
+            <path id="arrow-path"></path>
           </svg>
         </div>
       </div>
@@ -47,6 +47,7 @@ export default class XSelectElement extends HTMLElement {
       outline: none;
       font-size: 14px;
       user-select: none;
+      -webkit-user-select: none;
     }
     :host([disabled]) {
       pointer-events: none;
@@ -80,6 +81,9 @@ export default class XSelectElement extends HTMLElement {
     }
 
     #button > #arrow-container {
+      display: flex;
+      align-content: center;
+      justify-content: center;
       margin: 0 0 0 auto;
       z-index: 999;
     }
@@ -91,12 +95,12 @@ export default class XSelectElement extends HTMLElement {
       min-width: 13px;
       margin: 0 2px 0 11px;
       color: currentColor;
-      d: path("M 25 41 L 50 16 L 75 41 L 83 34 L 50 1 L 17 34 Z M 17 66 L 50 100 L 83 66 L 75 59 L 50 84 L 25 59 Z");
+      --text-color: 50%;
+      --path-data: M 25 41 L 50 16 L 75 41 L 83 34 L 50 1 L 17 34 Z M 17 66 L 50 100 L 83 66 L 75 59 L 50 84 L 25 59 Z;
     }
 
     #button > #arrow-container #arrow path {
       fill: currentColor;
-      d: inherit;
     }
   `
 
@@ -166,6 +170,7 @@ export default class XSelectElement extends HTMLElement {
 
   #resizeListener = null;
   #blurListener = null;
+  #xelThemeChangeListener = null;
   #xelSizeChangeListener = null;
 
   #mutationObserver = new MutationObserver((args) => this.#onMutation(args));
@@ -200,6 +205,7 @@ export default class XSelectElement extends HTMLElement {
     this.#resizeObserver.observe(this);
 
     this.#updateButton();
+    this.#updateArrowPathData();
     this.#updateAccessabilityAttributes();
     this.#updateComputedSizeAttriubte();
 
@@ -207,6 +213,7 @@ export default class XSelectElement extends HTMLElement {
       this.setAttribute("debug", "");
     }
 
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
     Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
@@ -214,6 +221,7 @@ export default class XSelectElement extends HTMLElement {
     this.#mutationObserver.disconnect();
     this.#resizeObserver.disconnect();
 
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
@@ -394,6 +402,11 @@ export default class XSelectElement extends HTMLElement {
         buttonChild.style.border = border;
       }
     }
+  }
+
+  #updateArrowPathData() {
+    let pathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
+    this.#elements["arrow-path"].setAttribute("d", pathData);
   }
 
   #updateAccessabilityAttributes() {

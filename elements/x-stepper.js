@@ -4,6 +4,8 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
+import Xel from "../classes/xel.js";
+
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
@@ -63,6 +65,7 @@ export default class XStepperElement extends HTMLElement {
       width: 100%;
       height: 100%;
       user-select: none;
+      -webkit-user-select: none;
       box-sizing: border-box;
       color: inherit;
       border-left: none;
@@ -81,18 +84,17 @@ export default class XStepperElement extends HTMLElement {
       width: 11px;
       height: 11px;
       pointer-events: none;
-      d: path("M 24 69 L 50 43 L 76 69 L 69 76 L 50 58 L 31 76 L 24 69 Z" );
+      --path-data: M 24 69 L 50 43 L 76 69 L 69 76 L 50 58 L 31 76 L 24 69 Z;
     }
     #decrement-arrow {
       width: 11px;
       height: 11px;
       pointer-events: none;
-      d: path("M 24 32 L 50 58 L 76 32 L 69 25 L 50 44 L 31 25 L 24 32 Z" );
+      --path-data: M 24 32 L 50 58 L 76 32 L 69 25 L 50 44 L 31 25 L 24 32 Z;
     }
 
     #increment-arrow-path,
     #decrement-arrow-path {
-      d: inherit;
       fill: currentColor;
     }
   `
@@ -138,6 +140,8 @@ export default class XStepperElement extends HTMLElement {
   #elements = {};
   #parentInput = null;
 
+  #xelThemeChangeListener = null;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
@@ -155,6 +159,10 @@ export default class XStepperElement extends HTMLElement {
   }
 
   connectedCallback() {
+    this.#updatePathData();
+
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updatePathData());
+
     if (this.parentElement.localName === "x-numberinput") {
       this.#parentInput = this.parentElement;
       this.#parentInput.setAttribute("hasstepper", "");
@@ -162,6 +170,8 @@ export default class XStepperElement extends HTMLElement {
   }
 
   disconnectedCallback() {
+    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
+
     if (this.#parentInput) {
       if (this.#parentInput.querySelector(":scope > x-stepper") === null) {
         this.#parentInput.removeAttribute("hasstepper", "");
@@ -175,6 +185,16 @@ export default class XStepperElement extends HTMLElement {
     if (name === "disabled") {
       this.#onDisabledAttributeChange();
     }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #updatePathData() {
+    let incrementPathData = getComputedStyle(this.#elements["increment-arrow"]).getPropertyValue("--path-data");
+    let decrementPathData = getComputedStyle(this.#elements["decrement-arrow"]).getPropertyValue("--path-data");
+
+    this.#elements["increment-arrow-path"].setAttribute("d", incrementPathData);
+    this.#elements["decrement-arrow-path"].setAttribute("d", decrementPathData);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
