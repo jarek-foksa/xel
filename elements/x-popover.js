@@ -135,6 +135,11 @@ export default class XPopoverElement extends HTMLElement {
       if (this.hasAttribute("animating")) {
         event.stopPropagation();
       }
+      else {
+        if (this.parentElement && this.parentElement.localeName !== "x-button") {
+          this.close();
+        }
+      }
     });
   }
 

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.20.1 (2023-04-05)
+
+- [Bugfix] Automatically close standalone modal `<x-popover>` when user clicks the backdrop
+
 ## 0.20.0 (2023-04-01)
 
 - WebKit-based browsers support
