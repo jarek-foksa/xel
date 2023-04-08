@@ -136,7 +136,7 @@ export default class XPopoverElement extends HTMLElement {
         event.stopPropagation();
       }
       else {
-        if (this.parentElement && this.parentElement.localeName !== "x-button") {
+        if (this.parentNode && this.parentNode.localName !== "x-button") {
           this.close();
         }
       }

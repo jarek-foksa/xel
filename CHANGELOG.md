@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.20.3 (2023-04-08)
+
+- [Bugfix] `<x-popover>` misbehaves when placed inside shadowRoot
+
 ## 0.20.2 (2023-04-08)
 
 - [Bugfix] `<x-stepper>` stuck after pressing the left and right mouse buttons simultaneously
