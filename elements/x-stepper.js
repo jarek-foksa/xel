@@ -156,6 +156,9 @@ export default class XStepperElement extends HTMLElement {
     }
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+
+    // @bugfix: https://boxy-svg.com/bugs/289
+    this.addEventListener("contextmenu", (event) => event.preventDefault());
   }
 
   connectedCallback() {
