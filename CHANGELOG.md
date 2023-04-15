@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.20.4 (2023-04-15)
+
+- [Bugfix] `<x-colorselect>` fails to open
+
 ## 0.20.3 (2023-04-08)
 
 - [Bugfix] `<x-popover>` misbehaves when placed inside shadowRoot

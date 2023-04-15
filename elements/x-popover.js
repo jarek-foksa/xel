@@ -135,10 +135,12 @@ export default class XPopoverElement extends HTMLElement {
       if (this.hasAttribute("animating")) {
         event.stopPropagation();
       }
-      else {
-        if (this.parentNode && this.parentNode.localName !== "x-button") {
-          this.close();
-        }
+      else if (
+        this.parentNode &&
+        this.parentNode.localName !== "x-button" &&
+        this.parentNode.localName !== "x-colorselect"
+      ) {
+        this.close();
       }
     });
   }
