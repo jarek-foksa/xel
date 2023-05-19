@@ -23,7 +23,7 @@
 body {
   color: var(--text-color);
   background: var(--background-color);
-  font-family: BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
+  font-family: BlinkMacSystemFont, -apple-system, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
   --autocapitalize: titlecase;
   --preset-accent-colors: blue #007aff, purple #953d96, pink #f74f9e, red #e0383e, orange #f7821b, yellow #fec726,
                           green #62ba46, graphite #989898;

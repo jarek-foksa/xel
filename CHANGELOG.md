@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.20.5 (2023-05-19)
+
+- [Bugfix] Adwaita and Cupertino themes use ugly fonts when on Safari
+
 ## 0.20.4 (2023-04-15)
 
 - [Bugfix] `<x-colorselect>` fails to open
