@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+
+## 0.20.6 (2023-05-19)
+
+- [Bugfix] Opening a dialog causes layout shift on Safari
+
 ## 0.20.5 (2023-05-19)
 
 - [Bugfix] Adwaita and Cupertino themes use ugly fonts when on Safari
