@@ -8,7 +8,7 @@ import Xel from "../classes/xel.js";
 
 import {closest, createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
-import {throttle} from "../utils/time.js";
+import {sleep, throttle} from "../utils/time.js";
 
 const DEBUG = false;
 const WINDOW_PADDING = 7;
@@ -470,14 +470,16 @@ export default class XSelectElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  #onMutation(records) {
+  async #onMutation(records) {
     for (let record of records) {
       if (
         record.type === "attributes" &&
         record.target.localName === "x-menuitem" &&
         record.attributeName === "toggled"
       ) {
+        await sleep(10);
         this.#updateButtonThrottled();
+        break;
       }
     }
   }
