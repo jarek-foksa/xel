@@ -708,7 +708,6 @@ export default class XNumberInputElement extends HTMLElement {
       this.#increment(event.detail.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-      this.#update();
     });
 
     this.addEventListener("incrementend", incrementEndListener = (event) => {
@@ -732,8 +731,6 @@ export default class XNumberInputElement extends HTMLElement {
       this.#decrement(event.detail.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-
-      this.#update();
     });
 
     this.addEventListener("decrementend", decrementEndListener = (event) => {
@@ -752,8 +749,6 @@ export default class XNumberInputElement extends HTMLElement {
       this.#decrement(event.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-
-      this.#update();
     }
 
     else if (event.code === "ArrowUp") {
@@ -764,8 +759,6 @@ export default class XNumberInputElement extends HTMLElement {
       this.#increment(event.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-
-      this.#update();
     }
 
     else if (event.code === "Backspace") {
@@ -795,7 +788,12 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onKeyPress(event) {
-    if (NUMERIC_KEYS.includes(event.key) === false) {
+    if (
+      event.ctrlKey === false &&
+      event.altKey  === false &&
+      event.metaKey === false &&
+      NUMERIC_KEYS.includes(event.key) === false
+    ) {
       event.preventDefault();
     }
   }
