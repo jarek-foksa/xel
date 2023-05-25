@@ -6,7 +6,7 @@
 
 import Xel from "../classes/xel.js";
 
-import {createElement, closest} from "../utils/element.js";
+import {createElement, closest, isPointerInsideElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
@@ -289,6 +289,7 @@ export default class XButtonElement extends HTMLElement {
     this.addEventListener("pointerleave", () => this.#onPointerLeave());
     this.addEventListener("click", (event) => this.#onClick(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.addEventListener("close", (event) => this.#onClose(event));
 
     (async () => {
       await customElements.whenDefined("x-backdrop");
@@ -681,10 +682,23 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
+  #dismissTooltip = false;
+
+  #onClose(event) {
+    if (
+      event.target.parentElement === this &&
+      ["x-menu", "x-popover"].includes(event.target.localName) &&
+      this.#lastPointerDownEvent &&
+      isPointerInsideElement(this.#lastPointerDownEvent, this) === false
+    ) {
+      this.#dismissTooltip = false;
+    }
+  }
+
   #onPointerEnter() {
     let tooltip = this.querySelector(":scope > x-tooltip");
 
-    if (tooltip && tooltip.disabled === false) {
+    if (tooltip && tooltip.disabled === false && this.expanded === false && this.#dismissTooltip === false) {
       if (this.parentElement && this.parentElement.localName === "x-buttons") {
         for (let sibling of this.parentElement.children) {
           if (sibling !== this && sibling.localName === "x-button") {
@@ -707,6 +721,8 @@ export default class XButtonElement extends HTMLElement {
     if (tooltip) {
       tooltip.close();
     }
+
+    this.#dismissTooltip = false;
   }
 
   #onClick(event) {
@@ -733,6 +749,7 @@ export default class XButtonElement extends HTMLElement {
       return;
     }
     else {
+      this.#dismissTooltip = true;
       this.#onButtonClick(event);
     }
   }

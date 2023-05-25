@@ -4,6 +4,8 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
+import {isPointerInsideElement} from "../utils/element.js";
+
 let showModal = HTMLDialogElement.prototype.showModal;
 let close = HTMLDialogElement.prototype.close;
 let openDialogs = [];
@@ -153,19 +155,8 @@ let DialogElementMixin = {
         let closeListener;
         let closeOnClick = true;
 
-        let isPointerInsideDialog = (event) => {
-          let dialogRect = this.getBoundingClientRect();
-
-          return (
-            event.clientX >= dialogRect.x &&
-            event.clientX <= dialogRect.x + dialogRect.width &&
-            event.clientY >= dialogRect.y &&
-            event.clientY <= dialogRect.y + dialogRect.height
-          );
-        };
-
         this.addEventListener("pointerdown", pointerDownListener = (event) => {
-          closeOnClick = (isPointerInsideDialog(event) === false);
+          closeOnClick = (isPointerInsideElement(event, this) === false);
         });
 
         this.addEventListener("click", clickListener = (event) => {
@@ -174,7 +165,7 @@ let DialogElementMixin = {
             event.isTrusted === true && // Click event was not triggered by keyboard
             event.defaultPrevented === false &&
             closeOnClick === true &&
-            isPointerInsideDialog(event) === false &&
+            isPointerInsideElement(event, this) === false &&
             this.hasAttribute("open") === true
           ) {
             this.close();
