@@ -311,8 +311,14 @@ export default class XTagsInputElement extends HTMLElement {
   }
 
   #commitInput() {
-    let tagText = this.#elements["input"].textContent.trim();
+    let tagText = this.#elements["input"].textContent;
     this.#elements["input"].textContent = "";
+
+    if (tagText.endsWith(this.delimiter)) {
+      tagText = tagText.substring(0, tagText.length-1);
+    }
+
+    tagText = tagText.trim();
 
     if (tagText.length > 0) {
       if (this.value.includes(tagText) === false) {

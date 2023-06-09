@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.20.8 (2023-06-09)
+
+- [Bugfix] `<x-tagsinput>` leaves a trailing comma
+
 ## 0.20.7 (2023-05-25)
 
 - [Bugfix] Keyboard shortcuts are not working when <x-numberinput> is focused
