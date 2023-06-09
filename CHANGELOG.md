@@ -7,8 +7,8 @@
 
 ## 0.20.7 (2023-05-25)
 
-- [Bugfix] Keyboard shortcuts are not working when <x-numberinput> is focused
-- [Bugfix] Incorrect selection on Safari after incrementing or decrementing <x-numberinput> value
+- [Bugfix] Keyboard shortcuts are not working when `<x-numberinput>` is focused
+- [Bugfix] Incorrect selection on Safari after incrementing or decrementing `<x-numberinput>` value
 - [Bugfix] Tooltips should not be shown when a button is expanded
 
 ## 0.20.6 (2023-05-19)
