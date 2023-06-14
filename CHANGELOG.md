@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.20.9 (2023-06-14)
+
+- [Bugfix] Outlines shown around focused dialogs
+
 ## 0.20.8 (2023-06-09)
 
 - [Bugfix] `<x-tagsinput>` leaves a trailing comma

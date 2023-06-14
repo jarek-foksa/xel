@@ -905,6 +905,9 @@ dialog {
   padding: 0;
   box-sizing: border-box;
 }
+dialog:focus {
+  outline: none;
+}
 dialog:not(:defined) {
   display: none;
 }

@@ -714,9 +714,6 @@ export default class PTAppElement extends HTMLElement {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
     }
-    #sidebar-dialog:focus {
-      outline: none;
-    }
     #sidebar-dialog:not([open]) {
       display: none;
     }
