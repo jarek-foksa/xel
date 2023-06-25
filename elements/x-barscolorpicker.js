@@ -60,6 +60,10 @@ export default class XBarsColorPickerElement extends HTMLElement {
       user-select: none;
       -webkit-user-select: none;
     }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
     :host([hidden]) {
       display: none;
     }
@@ -300,6 +304,16 @@ export default class XBarsColorPickerElement extends HTMLElement {
   // Resolved widget size, used for theming purposes.
   get computedSize() {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
   #h = 0;  // Hue (0 ~ 360)

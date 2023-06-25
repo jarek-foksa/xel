@@ -51,6 +51,10 @@ export default class XRectColorPickerElement extends HTMLElement {
       user-select: none;
       -webkit-user-select: none;
     }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
     :host([hidden]) {
       display: none;
     }
@@ -228,6 +232,16 @@ export default class XRectColorPickerElement extends HTMLElement {
   // @readOnly
   get computedSize() {
     return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
   #shadowRoot = null;

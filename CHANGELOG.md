@@ -1,6 +1,14 @@
 
 # CHANGELOG
 
+## 0.21.1 (2023-06-25)
+
+- Bugfix: `<x-slider>` should not be focusable when disabled
+
+## 0.21.0 (2023-06-23)
+
+- Add `disabled` property to color pickers
+
 ## 0.20.9 (2023-06-14)
 
 - [Bugfix] Outlines shown around focused dialogs

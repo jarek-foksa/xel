@@ -27,7 +27,7 @@ let getClosestMultiple = (number, step) => round(round(number / step) * step, ge
 // @part range-track
 // @part tick
 export default class XSliderElement extends HTMLElement {
-  static observedAttributes = ["value", "buffer", "min", "max", "size"];
+  static observedAttributes = ["value", "buffer", "min", "max", "size", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -465,6 +465,9 @@ export default class XSliderElement extends HTMLElement {
     else if (name === "size") {
       this.#onSizeAttributeChange();
     }
+    else if (name === "disabled") {
+      this.#onDisabledAttributeChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -492,6 +495,10 @@ export default class XSliderElement extends HTMLElement {
 
   #onSizeAttributeChange() {
     this.#updateComputedSizeAttriubte();
+  }
+
+  #onDisabledAttributeChange() {
+    this.#updateAccessabilityAttributes();
   }
 
   #onMutation(records) {
@@ -921,6 +928,9 @@ export default class XSliderElement extends HTMLElement {
 
       this.#lastTabIndex = 0;
     }
+
+    this.#elements["start-thumb"].tabIndex = this.tabIndex;
+    this.#elements["end-thumb"].tabIndex = this.tabIndex;
   }
 
   #updateComputedSizeAttriubte() {
