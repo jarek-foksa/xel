@@ -90,6 +90,7 @@ export default class XNumberInputElement extends HTMLElement {
       font-size: inherit;
       line-height: 10;
       white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
     #editor::-webkit-scrollbar {
       display: none;

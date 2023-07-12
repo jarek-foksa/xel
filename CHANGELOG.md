@@ -1,9 +1,13 @@
 
 # CHANGELOG
 
+## 0.21.2 (2023-07-12)
+
+- [Bugfix]: Numeric glyphs inside `<x-numberinput>` have inconsistent width
+
 ## 0.21.1 (2023-06-25)
 
-- Bugfix: `<x-slider>` should not be focusable when disabled
+- [Bugfix]: `<x-slider>` should not be focusable when disabled
 
 ## 0.21.0 (2023-06-23)
 
