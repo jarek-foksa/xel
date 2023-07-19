@@ -15,7 +15,11 @@ export default class XThrobberElement extends HTMLElement {
   static #ringTemplate = html`
     <template>
       <svg data-type="ring" viewBox="0 0 100 100">
-        <ellipse ry="40" rx="40" cy="50" cx="50" stroke-width="10"/>
+        <circle cx="50" cy="50" r="40">
+          <animate attributeName="stroke-dasharray" values="0,1000; 200,1000; 245,1000" begin="0s" dur="2s" calcMode="spline" keyTimes="0; 0.5; 1" keySplines="0.8 0.25 0.25 0.9; 0.8 0.25 0.25 0.9" repeatCount="indefinite"></animate>
+          <animate attributeName="stroke-dashoffset" values="0px;0px;-260px" begin="0s" dur="2s" keyTimes="0; 0.5; 1" repeatCount="indefinite"></animate>
+          <animateTransform type="rotate" additive="sum" attributeName="transform" values="0;360" begin="0s" dur="2s" fill="freeze" repeatCount="indefinite" keyTimes="0; 1"></animateTransform>
+        </circle>
       </svg>
     </template>
   `;
@@ -66,31 +70,14 @@ export default class XThrobberElement extends HTMLElement {
      * Ring
      */
 
-    svg[data-type="ring"] ellipse {
+    svg[data-type="ring"] circle {
       fill: none;
       stroke: currentColor;
       stroke-linecap: round;
+      stroke-width: 10px;
       stroke-dasharray: 10, 1000;
-      animation: ring-dash-animation 2s cubic-bezier(0.8, 0.25, 0.25, 0.9) infinite,
-                 ring-rotate-animation 2s linear infinite;
-      transform-origin: center;
-    }
-
-    @keyframes ring-rotate-animation {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes ring-dash-animation {
-      50% {
-        stroke-dasharray: 200;
-        stroke-dashoffset: 0;
-      }
-      100% {
-        stroke-dasharray: 245;
-        stroke-dashoffset: -260;
-      }
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
     }
 
     /**

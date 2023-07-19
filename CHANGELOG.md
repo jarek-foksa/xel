@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.21.3 (2023-07-19)
+
+- [Bugfix] Ring throbber animation is no rendered properly by WebKit
+
 ## 0.21.2 (2023-07-12)
 
 - [Bugfix]: Numeric glyphs inside `<x-numberinput>` have inconsistent width
