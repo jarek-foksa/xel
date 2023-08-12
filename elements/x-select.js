@@ -496,14 +496,20 @@ export default class XSelectElement extends HTMLElement {
     if (event.defaultPrevented === false) {
       let menu = this.querySelector(":scope > x-menu");
 
-      if (event.key === "Enter" || event.key === "Space" || event.key === "ArrowUp" || event.key === "ArrowDown") {
+      if (
+        event.code === "Enter" ||
+        event.code === "NumpadEnter" ||
+        event.code === "Space" ||
+        event.code === "ArrowUp" ||
+        event.code === "ArrowDown"
+      ) {
         if (this.#canExpand()) {
           event.preventDefault();
           this.#expand();
         }
       }
 
-      else if (event.key === "Escape") {
+      else if (event.code === "Escape") {
         if (this.#canCollapse()) {
           event.preventDefault();
           this.#collapse();

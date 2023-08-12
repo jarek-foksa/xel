@@ -295,7 +295,7 @@ export default class XColorSelectElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    if (event.code === "Enter" || event.code === "Space") {
+    if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
       let popover = this.querySelector("x-popover");
 
       event.preventDefault();

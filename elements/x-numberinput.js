@@ -717,7 +717,7 @@ export default class XNumberInputElement extends HTMLElement {
       this.#isBackspaceKeyDown = true;
     }
 
-    else if (event.code === "Enter") {
+    else if (event.code === "Enter" || event.code === "NumpadEnter") {
       this.#commitEditorChanges();
       document.execCommand("selectAll");
     }

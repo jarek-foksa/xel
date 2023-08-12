@@ -71,9 +71,7 @@ export default class XRadiosElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    let {key} = event;
-
-    if (key === "ArrowDown" || key === "ArrowRight") {
+    if (event.code === "ArrowDown" || event.code === "ArrowRight") {
       let radios = [...this.querySelectorAll("x-radio")];
       let contextRadios = radios.filter($0 => $0.disabled === false && $0.closest("x-radios") === this);
       let focusedRadio = radios.find(radio => radio.matches(":focus"));
@@ -92,7 +90,7 @@ export default class XRadiosElement extends HTMLElement {
       }
     }
 
-    else if (key === "ArrowUp" || key === "ArrowLeft") {
+    else if (event.code === "ArrowUp" || event.code === "ArrowLeft") {
       let radios = [...this.querySelectorAll("x-radio")];
       let contextRadios = radios.filter($0 => $0.disabled === false && $0.closest("x-radios") === this);
       let focusedRadio = radios.find(radio => radio.matches(":focus"));

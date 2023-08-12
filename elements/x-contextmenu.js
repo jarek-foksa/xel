@@ -185,7 +185,7 @@ export default class XContextMenuElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    if (event.key === "Escape") {
+    if (event.code === "Escape") {
       let menu = this.querySelector("x-menu");
 
       if (menu.opened) {
@@ -194,7 +194,7 @@ export default class XContextMenuElement extends HTMLElement {
       }
     }
 
-    else if (event.key === "Tab") {
+    else if (event.code === "Tab") {
       event.preventDefault();
       event.stopPropagation();
 

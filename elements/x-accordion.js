@@ -261,7 +261,7 @@ export default class XAccordionElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onArrowKeyDown(event) {
-    if (event.key === "Enter") {
+    if (event.code === "Enter" || event.code === "NumpadEnter") {
       this.querySelector("header").click();
     }
   }

@@ -214,9 +214,7 @@ export default class XButtonsElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    let {key} = event;
-
-    if (key === "ArrowRight") {
+    if (event.code === "ArrowRight") {
       let element = [...this.children].find(child => child.matches(":focus"));
 
       if (element) {
@@ -229,7 +227,7 @@ export default class XButtonsElement extends HTMLElement {
       }
     }
 
-    else if (key === "ArrowLeft") {
+    else if (event.code === "ArrowLeft") {
       let element = [...this.children].find(child => child.matches(":focus"));
 
       if (element) {

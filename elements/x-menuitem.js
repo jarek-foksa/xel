@@ -513,7 +513,7 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    if (event.code === "Enter" || event.code === "Space") {
+    if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
       event.preventDefault();
 
       if (!this.querySelector("x-menu")) {

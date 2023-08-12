@@ -420,13 +420,13 @@ export default class XTagsInputElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    if (event.key === "Enter") {
+    if (event.code === "Enter" || event.code === "NumpadEnter") {
       if (event.target === this.#elements["input"]) {
         event.preventDefault();
         this.#commitInput();
       }
     }
-    else if (event.key === "Backspace") {
+    else if (event.code === "Backspace") {
       if (event.target === this.#elements["input"]) {
         let value = this.#elements["input"].textContent;
 
@@ -469,7 +469,7 @@ export default class XTagsInputElement extends HTMLElement {
         this.dispatchEvent(new CustomEvent("change"));
       }
     }
-    else if (event.key === "ArrowDown") {
+    else if (event.code === "ArrowDown") {
       if (this.#elements["suggestions-popover"].opened) {
         let suggestedTags = [...this.#elements["suggested-tags"].children];
 
@@ -514,7 +514,7 @@ export default class XTagsInputElement extends HTMLElement {
         }
       }
     }
-    else if (event.key === "ArrowUp") {
+    else if (event.code === "ArrowUp") {
       if (this.#elements["suggestions-popover"].opened) {
         let suggestedTags = [...this.#elements["suggested-tags"].children];
 

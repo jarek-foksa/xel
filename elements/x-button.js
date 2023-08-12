@@ -1043,7 +1043,7 @@ export default class XButtonElement extends HTMLElement {
 
   #onKeyDown(event) {
     if (event.defaultPrevented === false) {
-      if (event.code === "Enter" || event.code === "Space") {
+      if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
         if (this.#canOpenMenu()) {
           event.preventDefault();
           this.#openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());

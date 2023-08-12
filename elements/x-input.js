@@ -564,7 +564,7 @@ export default class XInputElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    if (event.key === "Enter") {
+    if (event.code === "Enter" || event.code === "NumpadEnter") {
       document.execCommand("selectAll");
 
       if (this.validation === "instant") {

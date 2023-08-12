@@ -125,13 +125,13 @@ let DialogElementMixin = {
         let closeListener;
 
         this.addEventListener("keydown", keyDownListener = (event) => {
-          if (event.key === "Escape") {
+          if (event.code === "Escape") {
             event.preventDefault();
           }
         });
 
         document.addEventListener("keydown", documentKeyDownListener = (event) => {
-          if (event.key === "Escape" && event.target === document.body) {
+          if (event.code === "Escape" && event.target === document.body) {
             // Don't close the dialog if focus is outside the dialog
             event.preventDefault();
           }

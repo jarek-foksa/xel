@@ -1057,19 +1057,24 @@ export default class XMenuElement extends HTMLElement {
       event.stopPropagation();
     }
 
-    else if (event.key === "ArrowUp") {
+    else if (event.code === "ArrowUp") {
       event.preventDefault();
       event.stopPropagation();
       this.focusPreviousMenuItem();
     }
 
-    else if (event.key === "ArrowDown") {
+    else if (event.code === "ArrowDown") {
       event.preventDefault();
       event.stopPropagation();
       this.focusNextMenuItem();
     }
 
-    else if (event.code === "ArrowRight" || event.code === "Enter" || event.code === "Space") {
+    else if (
+      event.code === "ArrowRight" ||
+      event.code === "Enter" ||
+      event.code === "NumpadEnter" ||
+      event.code === "Space"
+    ) {
       let focusedItem = this.querySelector("x-menuitem:focus");
 
       if (focusedItem) {

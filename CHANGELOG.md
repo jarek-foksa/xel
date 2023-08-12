@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.22.1 (2023-08-12)
+
+- [Bugfix] Enter key from the numeric keypad is not detected correctly
+
 ## 0.22.0 (2023-08-12)
 
 - Remove global size setting (`<meta name="xel-size">` tag, `Xel.size` getter/setter and corresponding

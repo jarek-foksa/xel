@@ -316,7 +316,7 @@ export default class XMenuBarElement extends HTMLElement {
       event.preventDefault();
     }
 
-    else if (event.code === "Enter" || event.code === "Space") {
+    else if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
       let focusedMenubarItem = this.querySelector(":scope > x-menuitem:focus");
 
       if (focusedMenubarItem) {
