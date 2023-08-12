@@ -12,8 +12,6 @@ import {html, css} from "../utils/template.js";
 // @part main scope remove-button
 // @event ^remove - User clicked the remove button of a removable tag.
 export default class XTagElement extends HTMLElement {
-  static observedAttributes = ["disabled", "size"];
-
   static #shadowTemplate = html`
     <template>
       <div id="container">
@@ -159,33 +157,20 @@ export default class XTagElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
-  //
-  // Custom widget size.
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  //
-  // Resolved widget size, used for theming purposes.
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
   #elements = {};
 
   #xelThemeChangeListener = null;
-  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -206,11 +191,9 @@ export default class XTagElement extends HTMLElement {
 
   connectedCallback() {
     this.#updateRemoveButtonPathData();
-    this.#updateComputedSizeAttriubte();
     this.#updateScopedAttribute();
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateRemoveButtonPathData());
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
     if (this.closest("x-tags")) {
       this.tabIndex = 0;
@@ -228,13 +211,6 @@ export default class XTagElement extends HTMLElement {
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
-  }
-
-  attributeChangedCallback(name) {
-    if (name === "size") {
-      this.#updateComputedSizeAttriubte();
-    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -250,32 +226,6 @@ export default class XTagElement extends HTMLElement {
   #updateRemoveButtonPathData() {
     let pathData = getComputedStyle(this.#elements["remove-button"]).getPropertyValue("--path-data");
     this.#elements["remove-button-path"].setAttribute("d", pathData);
-  }
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
   }
 
   #updateScopedAttribute() {

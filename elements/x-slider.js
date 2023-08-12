@@ -27,7 +27,7 @@ let getClosestMultiple = (number, step) => round(round(number / step) * step, ge
 // @part range-track
 // @part tick
 export default class XSliderElement extends HTMLElement {
-  static observedAttributes = ["value", "buffer", "min", "max", "size", "disabled"];
+  static observedAttributes = ["value", "buffer", "min", "max", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -364,22 +364,14 @@ export default class XSliderElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   // @property readOnly
@@ -397,7 +389,6 @@ export default class XSliderElement extends HTMLElement {
   #elements = {};
   #lastTabIndex = 0;
 
-  #xelSizeChangeListener = null;
   #mutationObserver = new MutationObserver((args) => this.#onMutation(args));
   #thumbResizeObserver = new ResizeObserver(() => this.#onThumbResize());
 
@@ -422,7 +413,6 @@ export default class XSliderElement extends HTMLElement {
   connectedCallback() {
     this.setAttribute("value", this.value);
 
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
     this.#thumbResizeObserver.observe(this.#elements["start-thumb"]);
 
     this.#mutationObserver.observe(this, {
@@ -437,11 +427,9 @@ export default class XSliderElement extends HTMLElement {
     this.#updateThumbs();
     this.#updateLabelsAndTicks();
     this.#updateAccessabilityAttributes();
-    this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
     this.#thumbResizeObserver.unobserve(this.#elements["start-thumb"]);
     this.#mutationObserver.disconnect();
   }
@@ -461,9 +449,6 @@ export default class XSliderElement extends HTMLElement {
     }
     else if (name === "max") {
       this.#onMaxAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
@@ -491,10 +476,6 @@ export default class XSliderElement extends HTMLElement {
     this.#updateTracks();
     this.#updateThumbs();
     this.#updateLabelsAndTicks();
-  }
-
-  #onSizeAttributeChange() {
-    this.#updateComputedSizeAttriubte();
   }
 
   #onDisabledAttributeChange() {
@@ -931,32 +912,6 @@ export default class XSliderElement extends HTMLElement {
 
     this.#elements["start-thumb"].tabIndex = this.tabIndex;
     this.#elements["end-thumb"].tabIndex = this.tabIndex;
-  }
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
   }
 }
 

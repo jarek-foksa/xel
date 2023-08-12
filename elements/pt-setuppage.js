@@ -89,39 +89,9 @@ export default class PTSetupPageElement extends PTPage {
           </main>
         </x-card>
 
-        <x-card>
-          <main>
-            <h3><strong>5</strong> Set widgets size</h3>
-
-            <p>Add to the <code>&lt;head&gt;</code> to use widgets with
-            <x-select id="size-select">
-              <x-menu>
-                <x-menuitem value="small">
-                  <x-label>Small</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="medium" toggled>
-                  <x-label>Medium</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="large">
-                  <x-label>Large</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-select>
-            size:</p>
-            <pt-code id="size-code"></pt-code>
-
-            <p><strong>Note:</strong> You can also adjust the size of an individual Xel widget by setting the
-            <code>"size"</code> attribute on it to either <code>"small"</code>, <code>"medium"</code>, <code>"large"</code>,
-            <code>"smaller"</code> or <code>"larger"</code>.</p>
-
-          </main>
-        </x-card>
-
         <x-card id="iconset-card">
           <main>
-            <h3><strong>6</strong> Set iconset</h3>
+            <h3><strong>5</strong> Set iconset</h3>
 
             <p>Add to the <code>&lt;head&gt;</code> to use
             <x-select id="iconset-select">
@@ -153,7 +123,7 @@ export default class PTSetupPageElement extends PTPage {
 
         <x-card id="locale-card">
           <main>
-            <h3><strong>7</strong> Set locale (optional)</h3>
+            <h3><strong>6</strong> Set locale (optional)</h3>
 
             <p>Add to the <code>&lt;head&gt;</code> to use
             <x-select id="locale-select">
@@ -228,7 +198,6 @@ export default class PTSetupPageElement extends PTPage {
 
     #theme-select,
     #accent-preset-select,
-    #size-select,
     #iconset-select,
     #locale-select {
       display: inline-block;
@@ -241,7 +210,6 @@ export default class PTSetupPageElement extends PTPage {
 
   #xelThemeChangeListener;
   #xelAccentColorChangeListener;
-  #xelSizeChangeListener;
   #xelIconsetsChangeListener;
   #xelLocalesChangeListener;
 
@@ -252,7 +220,6 @@ export default class PTSetupPageElement extends PTPage {
 
     this._elements["theme-select"].addEventListener("change", () => this.#onThemeSelectChange());
     this._elements["accent-preset-select"].addEventListener("change", () => this.#onAccentPresetSelectChange());
-    this._elements["size-select"].addEventListener("change", () => this.#onSizeSelectChange());
     this._elements["iconset-select"].addEventListener("change", () => this.#onIconsetSelectChange());
     this._elements["locale-select"].addEventListener("change", () => this.#onLocaleSelectChange());
   }
@@ -262,7 +229,6 @@ export default class PTSetupPageElement extends PTPage {
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#onXelThemeChange());
     Xel.addEventListener("accentcolorchange", this.#xelAccentColorChangeListener = () => this.#onXelAccentColorChange());
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#onXelSizeChange());
     Xel.addEventListener("iconsetschange", this.#xelIconsetsChangeListener = () => this.#onXelIconsetsChange());
     Xel.addEventListener("localeschange", this.#xelLocalesChangeListener = () => this.#onXelLocalesChange());
 
@@ -274,7 +240,6 @@ export default class PTSetupPageElement extends PTPage {
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("accentcolorchange", this.#xelAccentColorChangeListener);
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
     Xel.removeEventListener("iconsetschange", this.#xelIconsetsChangeListener);
     Xel.removeEventListener("localeschange", this.#xelLocalesChangeListener);
   }
@@ -287,10 +252,6 @@ export default class PTSetupPageElement extends PTPage {
   }
 
   #onXelAccentColorChange() {
-    this.#update();
-  }
-
-  #onXelSizeChange() {
     this.#update();
   }
 
@@ -311,10 +272,6 @@ export default class PTSetupPageElement extends PTPage {
   #onAccentPresetSelectChange() {
     let value = this._elements["accent-preset-select"].value;
     Xel.accentColor = (value === "custom") ? Xel.presetAccentColors[Xel.accentColor] : value;
-  }
-
-  #onSizeSelectChange() {
-    Xel.size = this._elements["size-select"].value;
   }
 
   #onIconsetSelectChange() {
@@ -349,12 +306,6 @@ export default class PTSetupPageElement extends PTPage {
         this._elements["accent-preset-select"].value = "custom";
         this._elements["accent-code"].textContent = `<meta name="xel-accent-color" content="${Xel.accentColor}">`;
       }
-    }
-
-    // Size
-    {
-      this._elements["size-select"].value = Xel.size;
-      this._elements["size-code"].textContent = `<meta name="xel-size" content="${Xel.size}">`;
     }
 
     // Iconset

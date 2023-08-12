@@ -13,7 +13,7 @@ import {html, css} from "../utils/template.js";
 // @part indicator
 // @event toggle
 export default class XCheckboxElement extends HTMLElement {
-  static observedAttributes = ["toggled", "mixed", "disabled", "size"];
+  static observedAttributes = ["toggled", "mixed", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -181,22 +181,14 @@ export default class XCheckboxElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
@@ -204,7 +196,6 @@ export default class XCheckboxElement extends HTMLElement {
   #lastTabIndex = 0;
 
   #xelThemeChangeListener = null;
-  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -226,16 +217,13 @@ export default class XCheckboxElement extends HTMLElement {
 
   connectedCallback() {
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateCheckmarkPathData());
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
     this.#updateCheckmarkPathData();
     this.#updateAccessabilityAttributes();
-    this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -247,9 +235,6 @@ export default class XCheckboxElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
-    }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -275,32 +260,6 @@ export default class XCheckboxElement extends HTMLElement {
       }
 
       this.#lastTabIndex = 0;
-    }
-  }
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
     }
   }
 

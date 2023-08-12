@@ -13,7 +13,7 @@ import {html, css} from "../utils/template.js";
 // @event expand - User expanded the accordion by clicking the arrow icon.
 // @event collapse - User collapsed the accordion by clicking the arrow icon.
 export default class XAccordionElement extends HTMLElement {
-  static observedAttributes = ["expanded", "size"];
+  static observedAttributes = ["expanded"];
 
   static #shadowTemplate = html`
     <template>
@@ -99,26 +99,14 @@ export default class XAccordionElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
-  //
-  // Custom widget size.
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  //
-  // Resolved widget size, used for theming purposes.
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #elements = {};
@@ -127,7 +115,6 @@ export default class XAccordionElement extends HTMLElement {
   #currentAnimation = null;
 
   #xelThemeChangeListener = null;
-  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -150,17 +137,14 @@ export default class XAccordionElement extends HTMLElement {
 
   connectedCallback() {
     this.#updateArrowPathData();
-    this.#updateComputedSizeAttriubte();
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
     this.#resizeObserver.observe(this);
   }
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
 
     this.#resizeObserver.unobserve(this);
   }
@@ -171,9 +155,6 @@ export default class XAccordionElement extends HTMLElement {
     }
     else if (name === "expanded") {
       this.#updateArrowPosition();
-    }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -275,32 +256,6 @@ export default class XAccordionElement extends HTMLElement {
   #updateArrowPathData() {
     let pathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
     this.#elements["arrow-path"].setAttribute("d", pathData);
-  }
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

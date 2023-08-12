@@ -1,6 +1,13 @@
 
 # CHANGELOG
 
+## 0.22.0 (2023-08-12)
+
+- Remove global size setting (`<meta name="xel-size">` tag, `Xel.size` getter/setter and corresponding
+  `sizechange` event)
+- Remove `Element.computedSize`  getter and corresponding attribute
+- Remove support for relative size values (`smaller` and `larger`)
+
 ## 0.21.3 (2023-07-19)
 
 - [Bugfix] Ring throbber animation is no rendered properly by WebKit

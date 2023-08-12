@@ -19,7 +19,7 @@ const DEBUG = false;
 // @event changestart
 // @event changeend
 export default class XRectColorPickerElement extends HTMLElement {
-  static observedAttributes = ["value", "size"];
+  static observedAttributes = ["value"];
 
   static #shadowTemplate = html`
     <template>
@@ -74,10 +74,10 @@ export default class XRectColorPickerElement extends HTMLElement {
       --marker-width: 18px;
       background: red;
     }
-    :host([computedsize="small"]) #hue-slider {
+    :host([size="small"]) #hue-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #hue-slider {
+    :host([size="large"]) #hue-slider {
       height: 35px;
     }
 
@@ -164,10 +164,10 @@ export default class XRectColorPickerElement extends HTMLElement {
     :host([alphaslider]) #alpha-slider {
       display: block;
     }
-    :host([computedsize="small"]) #alpha-slider {
+    :host([size="small"]) #alpha-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #alpha-slider {
+    :host([size="large"]) #alpha-slider {
       height: 35px;
     }
 
@@ -216,22 +216,14 @@ export default class XRectColorPickerElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   // @type boolean
@@ -246,7 +238,6 @@ export default class XRectColorPickerElement extends HTMLElement {
 
   #shadowRoot = null;
   #elements = {};
-  #xelSizeChangeListener = null;
 
   // Note that HSVA color model is used only internally
   #h = 0;   // Hue (0 ~ 360)
@@ -278,13 +269,6 @@ export default class XRectColorPickerElement extends HTMLElement {
 
   connectedCallback() {
     this.#update();
-    this.#updateComputedSizeAttriubte();
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -293,9 +277,6 @@ export default class XRectColorPickerElement extends HTMLElement {
     }
     else if (name === "value") {
       this.#onValueAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
   }
 
@@ -342,32 +323,6 @@ export default class XRectColorPickerElement extends HTMLElement {
     `;
   }
 
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onValueAttributeChange() {
@@ -389,10 +344,6 @@ export default class XRectColorPickerElement extends HTMLElement {
     if (DEBUG) {
       console.log(`%c ${this.value}`, `background: ${this.value};`);
     }
-  }
-
-  #onSizeAttributeChange() {
-    this.#updateComputedSizeAttriubte();
   }
 
   #onSatlightSliderPointerDown(pointerDownEvent) {

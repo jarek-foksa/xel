@@ -21,7 +21,7 @@ const DEBUG = false;
 // @event changeend
 // @part slider
 export default class XWheelColorPickerElement extends HTMLElement {
-  static observedAttributes = ["value", "size"];
+  static observedAttributes = ["value"];
 
   static #shadowTemplate = html`
     <template>
@@ -113,10 +113,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
       touch-action: pan-y;
       --marker-width: 18px;
     }
-    :host([computedsize="small"]) #value-slider {
+    :host([size="small"]) #value-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #value-slider {
+    :host([size="large"]) #value-slider {
       height: 35px;
     }
 
@@ -167,10 +167,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
     :host([alphaslider]) #alpha-slider {
       display: block;
     }
-    :host([computedsize="small"]) #alpha-slider {
+    :host([size="small"]) #alpha-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #alpha-slider {
+    :host([size="large"]) #alpha-slider {
       height: 35px;
     }
 
@@ -219,22 +219,14 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   // @type boolean
@@ -249,7 +241,6 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
   #shadowRoot = null;
   #elements = {};
-  #xelSizeChangeListener = null;
 
   // Note that HSVA color model is used only internally
   #h = 0;   // Hue (0 ~ 360)
@@ -281,17 +272,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
   async connectedCallback() {
     this.#update();
-    this.#updateComputedSizeAttriubte();
 
     if (this.#elements["huesat-image"].src === "") {
       this.#elements["huesat-image"].src = await getColorWheelImageURL();
     }
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -300,9 +284,6 @@ export default class XWheelColorPickerElement extends HTMLElement {
     }
     else if (name === "value") {
       this.#onValueAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
   }
 
@@ -354,32 +335,6 @@ export default class XWheelColorPickerElement extends HTMLElement {
     `;
   }
 
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onValueAttributeChange() {
@@ -401,10 +356,6 @@ export default class XWheelColorPickerElement extends HTMLElement {
     if (DEBUG) {
       console.log(`%c ${this.value}`, `background: ${this.value};`);
     }
-  }
-
-  #onSizeAttributeChange() {
-    this.#updateComputedSizeAttriubte();
   }
 
   #onHuesatSliderPointerDown(pointerDownEvent) {

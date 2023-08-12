@@ -17,7 +17,7 @@ let {max} = Math;
 // @part checkmark - Checkmark icon shown when the menu item is toggled.
 // @part arrow - Arrow icon shown when the menu item contains a submenu.
 export default class XMenuItemElement extends HTMLElement {
-  static observedAttributes = ["disabled", "size"];
+  static observedAttributes = ["disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -198,22 +198,14 @@ export default class XMenuItemElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   // @property
@@ -238,7 +230,6 @@ export default class XMenuItemElement extends HTMLElement {
   #triggerEndCallbacks = [];
   #wasFocused = false;
   #xelThemeChangeListener = null;
-  #xelSizeChangeListener = null;
   #observer = new MutationObserver(() => this.#updateArrowIconVisibility());
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,27 +255,21 @@ export default class XMenuItemElement extends HTMLElement {
     this.#updateArrowPathData();
     this.#updateArrowIconVisibility();
     this.#updateAccessabilityAttributes();
-    this.#updateComputedSizeAttriubte();
 
     this.#observer.observe(this, {childList: true, attributes: false, characterData: false, subtree: false});
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#onThemeChange());
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
     this.#observer.disconnect();
 
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
     if (name === "disabled") {
       this.#updateAccessabilityAttributes();
-    }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -330,32 +315,6 @@ export default class XMenuItemElement extends HTMLElement {
       }
 
       this.#lastTabIndex = 0;
-    }
-  }
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
     }
   }
 
