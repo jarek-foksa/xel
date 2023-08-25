@@ -211,6 +211,9 @@ export default class XStepperElement extends HTMLElement {
   }
 
   #onPointerDown(pointerDownEvent) {
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
+
     let button = pointerDownEvent.target.closest(".button");
     let action = null;
 

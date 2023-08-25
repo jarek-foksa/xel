@@ -447,6 +447,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
       return;
     }
 
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
+
     let trackBounds = this.#elements["hue-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;
 
@@ -490,6 +493,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
     if (pointerDownEvent.buttons > 1) {
       return;
     }
+
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
 
     let trackBounds = this.#elements["saturation-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;
@@ -535,6 +541,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
       return;
     }
 
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
+
     let trackBounds = this.#elements["lightness-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;
 
@@ -578,6 +587,9 @@ export default class XBarsColorPickerElement extends HTMLElement {
     if (pointerDownEvent.buttons > 1) {
       return;
     }
+
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;

@@ -363,6 +363,9 @@ export default class XWheelColorPickerElement extends HTMLElement {
       return;
     }
 
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
+
     let pointerMoveListener, pointerUpListener;
     let wheelBounds = this.#elements["huesat-slider"].getBoundingClientRect();
 
@@ -418,6 +421,9 @@ export default class XWheelColorPickerElement extends HTMLElement {
       return;
     }
 
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
+
     let trackBounds = this.#elements["value-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;
 
@@ -461,6 +467,9 @@ export default class XWheelColorPickerElement extends HTMLElement {
     if (pointerDownEvent.buttons > 1) {
       return;
     }
+
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;

@@ -332,6 +332,9 @@ export default class XMenuItemElement extends HTMLElement {
       return false;
     }
 
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
+
     if (this.matches("[closing] x-menuitem")) {
       pointerDownEvent.preventDefault();
       pointerDownEvent.stopPropagation();

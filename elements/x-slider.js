@@ -517,6 +517,9 @@ export default class XSliderElement extends HTMLElement {
       return;
     }
 
+    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
+    pointerDownEvent.preventDefault();
+
     let draggedThumb = null;
     let {width: thumbWidth, height: thumbHeight} = this.#elements["start-thumb"].getBoundingClientRect();
     let containerBounds = this.#elements["main"].getBoundingClientRect();
