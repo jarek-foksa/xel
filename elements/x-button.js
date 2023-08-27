@@ -20,7 +20,6 @@ export default class XButtonElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <div id="ripples"></div>
       <slot></slot>
 
       <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -41,7 +40,6 @@ export default class XButtonElement extends HTMLElement {
       box-sizing: border-box;
       opacity: 1;
       position: relative;
-      --trigger-effect: none; /* ripple, unbounded-ripple, none */
     }
     :host(:focus) {
       outline: none;
@@ -78,35 +76,6 @@ export default class XButtonElement extends HTMLElement {
     }
     #arrow[hidden] {
       display: none;
-    }
-
-    /**
-     * Ripples
-     */
-
-    #ripples {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      border-radius: inherit;
-    }
-
-    #ripples .ripple {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 200px;
-      background: currentColor;
-      opacity: 0.2;
-      border-radius: 999px;
-      transform: none;
-      transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: opacity, transform;
-      pointer-events: none;
     }
   `
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -826,108 +795,6 @@ export default class XButtonElement extends HTMLElement {
     else if (this.#canClosePopover()) {
       this.#closePopover();
     }
-
-    // Ripple
-    {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let rect = this.#elements["ripples"].getBoundingClientRect();
-        let size = max(rect.width, rect.height) * 1.5;
-        let top  = pointerDownEvent.clientY - rect.y - size/2;
-        let left = pointerDownEvent.clientX - rect.x - size/2;
-        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
-        let delay = true;
-
-        if (this.expandable === false) {
-          if (this.ownerButtons) {
-            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
-              delay = false;
-            }
-            else if (this.ownerButtons.tracking === 1 && this.toggled === false) {
-              delay = false;
-            }
-            else if (this.ownerButtons.tracking === 3) {
-              let buttons = [...this.ownerButtons.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
-              let toggledButtons = buttons.filter(button => button.toggled);
-
-              if (this.toggled === false || toggledButtons.length > 1 ) {
-                delay = false;
-              }
-            }
-
-          }
-          else if (this.togglable) {
-            delay = false;
-          }
-        }
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple pointer-down-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "strict";
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale3d(0, 0, 0)", "none"]},
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await whenPointerUp;
-
-        if (delay) {
-          await inAnimation.finished;
-
-          let outAnimation = ripple.animate(
-            { opacity: [getComputedStyle(ripple).opacity || "0", "0"]},
-            { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-          );
-
-          await outAnimation.finished;
-        }
-
-        ripple.remove();
-      }
-
-      else if (triggerEffect === "unbounded-ripple") {
-        let bounds = this.#elements["ripples"].getBoundingClientRect();
-        let size = bounds.height * 1.25;
-        let top  = (bounds.y + bounds.height/2) - bounds.y - size/2;
-        let left = (bounds.x + bounds.width/2)  - bounds.x - size/2;
-        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple pointer-down-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "none";
-
-        // Workaround for buttons that change their color when toggled on/off.
-        ripple.hidden = true;
-        await sleep(20);
-        ripple.hidden = false;
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale(0)", "scale(1)"] },
-          { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await whenPointerUp;
-        await inAnimation.finished;
-
-        let outAnimation = ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
-          { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await outAnimation.finished;
-        ripple.remove();
-      }
-    }
   }
 
   async #onButtonClick(event) {
@@ -965,84 +832,6 @@ export default class XButtonElement extends HTMLElement {
       this.removeAttribute("pressed");
       this.toggled = !this.toggled;
       this.dispatchEvent(new CustomEvent("toggle"));
-    }
-
-    // Ripple
-    if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let rect = this.#elements["ripples"].getBoundingClientRect();
-        let size = max(rect.width, rect.height) * 1.5;
-        let top  = (rect.y + rect.height/2) - rect.y - size/2;
-        let left = (rect.x + rect.width/2) - rect.x - size/2;
-        let delay = true;
-
-        if (this.ownerButtons) {
-          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2 || this.ownerButtons.tracking === 3) {
-            delay = false;
-          }
-          else if (this.ownerButtons.tracking === 1 && this.toggled === true) {
-            delay = false;
-          }
-        }
-        else if (this.togglable) {
-          delay = false;
-        }
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple click-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "strict";
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale3d(0, 0, 0)", "none"]},
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        if (delay) {
-          await inAnimation.finished;
-
-          let outAnimation = ripple.animate(
-            { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
-            { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-          );
-
-          await outAnimation.finished;
-        }
-
-        ripple.remove();
-      }
-
-      else if (triggerEffect === "unbounded-ripple") {
-        let rect = this.#elements["ripples"].getBoundingClientRect();
-        let size = rect.height * 1.35;
-        let top  = (rect.y + rect.height/2) - rect.y - size/2;
-        let left = (rect.x + rect.width/2) - rect.x - size/2;
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "none";
-
-        await ripple.animate(
-          { transform: ["scale3d(0, 0, 0)", "none"] },
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        ).finished;
-
-        await ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        ).finished;
-
-        ripple.remove();
-      }
     }
   }
 

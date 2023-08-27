@@ -566,7 +566,6 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #sidebar #nav x-button[skin="nav"] {
-      --ripple-background: white;
       --min-pressed-time: 0ms;
     }
 
