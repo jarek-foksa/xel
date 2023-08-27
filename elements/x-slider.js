@@ -520,7 +520,7 @@ export default class XSliderElement extends HTMLElement {
     let draggedThumb = null;
     let {width: thumbWidth, height: thumbHeight} = this.#elements["start-thumb"].getBoundingClientRect();
     let containerBounds = this.#elements["main"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
     let changeStarted = false;
 
     // Determine the thumb to be dragged
@@ -636,10 +636,10 @@ export default class XSliderElement extends HTMLElement {
       }
     });
 
-    draggedThumb.addEventListener("pointerup", pointerUpListener = () => {
+    draggedThumb.addEventListener("pointerup", pointerUpOrCancelListener = () => {
       draggedThumb.removeEventListener("pointermove", pointerMoveListener);
-      draggedThumb.removeEventListener("pointerup", pointerUpListener);
-      draggedThumb.removeEventListener("lostpointercapture", pointerUpListener);
+      draggedThumb.removeEventListener("pointerup", pointerUpOrCancelListener);
+      draggedThumb.removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.removeAttribute("dragging");
 
       if (changeStarted) {
@@ -647,8 +647,7 @@ export default class XSliderElement extends HTMLElement {
       }
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    draggedThumb.addEventListener("lostpointercapture", pointerUpListener);
+    draggedThumb.addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onKeyDown(event) {

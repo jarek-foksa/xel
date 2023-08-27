@@ -216,13 +216,13 @@ export default class XTabElement extends HTMLElement {
     // Provide "pressed" attribute for theming purposes
     {
       let pointerDownTimeStamp = Date.now();
-      let pointerUpListener;
+      let pointerUpOrCancelListener;
 
       this.setAttribute("pressed", "");
 
-      this.addEventListener("pointerup", pointerUpListener = async () => {
-        this.removeEventListener("pointerup", pointerUpListener);
-        this.removeEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
 
         if (this.selected === true) {
           let pressedTime = Date.now() - pointerDownTimeStamp;
@@ -236,8 +236,7 @@ export default class XTabElement extends HTMLElement {
         this.removeAttribute("pressed");
       });
 
-      // @bugfix: https://boxy-svg.com/bugs/224
-      this.addEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
     }
   }
 }

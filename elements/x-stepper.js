@@ -231,14 +231,14 @@ export default class XStepperElement extends HTMLElement {
     // to last at least 100ms.
     {
       let pointerDownTimeStamp = Date.now();
-      let pointerUpListener;
+      let pointerUpOrCancelListener;
 
       button.setAttribute("data-pressed", "");
       this.setAttribute("pressed", action);
 
-      this.addEventListener("pointerup", pointerUpListener = async () => {
-        this.removeEventListener("pointerup", pointerUpListener);
-        this.removeEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
 
         let pressedTime = Date.now() - pointerDownTimeStamp;
         let minPressedTime = 100;
@@ -251,30 +251,28 @@ export default class XStepperElement extends HTMLElement {
         this.removeAttribute("pressed");
       }, {once: true});
 
-      // @bugfix: https://boxy-svg.com/bugs/224
-      this.addEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
     }
 
     // Dispatch events
     {
       let intervalID = null;
       let pointerDownTimeStamp = Date.now();
-      let pointerUpListener;
+      let pointerUpOrCancelListener;
       let {shiftKey} = pointerDownEvent;
 
       this.dispatchEvent(new CustomEvent(action + "start", {bubbles: true}));
       this.dispatchEvent(new CustomEvent(action, {bubbles: true, detail: {shiftKey}}));
 
-      this.addEventListener("pointerup", pointerUpListener = () => {
-        this.removeEventListener("pointerup", pointerUpListener);
-        this.removeEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointerup", pointerUpOrCancelListener = () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
 
         clearInterval(intervalID);
         this.dispatchEvent(new CustomEvent(action + "end", {bubbles: true}));
       });
 
-      // @bugfix: https://boxy-svg.com/bugs/224
-      this.addEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
 
       intervalID = setInterval(() => {
         if (Date.now() - pointerDownTimeStamp > 500) {

@@ -27,11 +27,55 @@ if (Element.prototype.setPointerCapture) {
   Element.prototype.setPointerCapture = function(pointerId) {
     setPointerCapture.call(this, pointerId);
 
-    let cursor = getComputedStyle(this).cursor;
-    let cssText = `* {cursor: ${cursor} !important; user-select: none !important; -webkit-user-select: none !important;}`;
-    let styleElements = [];
-
+    // @bugfix: Make sure that "pointerup" or "pointercancel" event is always fired when element loses the pointer
+    // capture (https://boxy-svg.com/bugs/224);
     {
+      let pointerUpListener;
+      let pointerCancelListener;
+      let lostPointerCaptureListener;
+
+      let poinerUpEventFired = false;
+      let poinerCancelEventFired = false;
+
+      let removeListeners = () => {
+        this.removeEventListener("pointerup", pointerUpListener);
+        this.removeEventListener("pointercancel", pointerCancelListener);
+        this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+      };
+
+      this.addEventListener("pointerup", pointerUpListener = (event) => {
+        if (event.pointerId === pointerId) {
+          poinerUpEventFired = true;
+          removeListeners();
+        }
+      });
+
+      this.addEventListener("pointercancel", pointerCancelListener = (event) => {
+        if (event.pointerId === pointerId) {
+          poinerCancelEventFired = true;
+          removeListeners();
+        }
+      });
+
+      this.addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
+        if (event.pointerId === pointerId) {
+          removeListeners();
+
+          if (poinerUpEventFired === false && poinerCancelEventFired === false) {
+            let pointerCancelEvent = new PointerEvent("pointercancel", {pointerId});
+            this.dispatchEvent(pointerCancelEvent);
+          }
+        }
+      });
+    }
+
+    // Change the cursor appearance
+    {
+      let cursor = getComputedStyle(this).cursor;
+      let cssText = `* {cursor: ${cursor} !important; user-select: none !important; -webkit-user-select: none !important;}`;
+      let styleElements = [];
+      let lostPointerCaptureListener;
+
       for (let node = this.parentNode || this.host; node && node !== document; node = node.parentNode || node.host) {
         if (node.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
           let styleElement = document.createElementNS(node.host.namespaceURI, "style");
@@ -46,19 +90,17 @@ if (Element.prototype.setPointerCapture) {
           styleElements.push(styleElement);
         }
       }
+
+      this.addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
+        if (event.pointerId === pointerId) {
+          this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+
+          for (let styleElement of styleElements) {
+            styleElement.remove();
+          }
+        }
+      });
     }
-
-    let finish = () => {
-      window.removeEventListener("pointerup", finish, true);
-      this.removeEventListener("lostpointercapture", finish);
-
-      for (let styleElement of styleElements) {
-        styleElement.remove();
-      }
-    };
-
-    window.addEventListener("pointerup", finish, true);
-    this.addEventListener("lostpointercapture", finish);
   };
 }
 

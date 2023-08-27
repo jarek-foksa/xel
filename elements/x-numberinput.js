@@ -581,7 +581,7 @@ export default class XNumberInputElement extends HTMLElement {
         let initialValue = this.value;
         let cachedClientX = pointerDownEvent.clientX;
         let pointerDownPoint = new DOMPoint(pointerDownEvent.clientX, pointerDownEvent.clientY);
-        let pointerMoveListener, pointerUpListener;
+        let pointerMoveListener, pointerUpOrCancelListener;
 
         this.style.cursor = "col-resize";
         this.#elements["editor"].setPointerCapture(pointerDownEvent.pointerId);
@@ -610,10 +610,10 @@ export default class XNumberInputElement extends HTMLElement {
           }
         });
 
-        this.#elements["editor"].addEventListener("pointerup",  pointerUpListener = () => {
+        this.#elements["editor"].addEventListener("pointerup",  pointerUpOrCancelListener = () => {
           this.#elements["editor"].removeEventListener("pointermove", pointerMoveListener);
-          this.#elements["editor"].removeEventListener("pointerup", pointerUpListener);
-          this.#elements["editor"].removeEventListener("lostpointercapture", pointerUpListener);
+          this.#elements["editor"].removeEventListener("pointerup", pointerUpOrCancelListener);
+          this.#elements["editor"].removeEventListener("pointercancel", pointerUpOrCancelListener);
 
           this.style.cursor = null;
 
@@ -628,8 +628,7 @@ export default class XNumberInputElement extends HTMLElement {
           }
         });
 
-        // @bugfix: https://boxy-svg.com/bugs/224
-        this.#elements["editor"].addEventListener("lostpointercapture", pointerUpListener);
+        this.#elements["editor"].addEventListener("pointercancel", pointerUpOrCancelListener);
       }
     }
   }

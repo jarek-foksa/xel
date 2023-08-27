@@ -70,7 +70,7 @@ export default class XRectColorPickerElement extends HTMLElement {
       margin-bottom: 14px;
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
       background: red;
     }
@@ -151,7 +151,7 @@ export default class XRectColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
       /* Checkerboard pattern */
       background-size: 10px 10px;
@@ -347,12 +347,12 @@ export default class XRectColorPickerElement extends HTMLElement {
   }
 
   #onSatlightSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingSatlightMarker) {
       return;
     }
 
     let sliderBounds = this.#elements["satlight-slider"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingSatlightMarker = true;
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
@@ -382,25 +382,24 @@ export default class XRectColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
     });
 
-    this.#elements["satlight-slider"].addEventListener("pointerup", pointerUpListener = (pointerUpEvent) => {
+    this.#elements["satlight-slider"].addEventListener("pointerup", pointerUpOrCancelListener = (pointerUpEvent) => {
       this.#elements["satlight-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["satlight-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["satlight-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["satlight-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["satlight-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingSatlightMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["satlight-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["satlight-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onHueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingHueSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["hue-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingHueSliderMarker = true;
     this.#elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -429,26 +428,25 @@ export default class XRectColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["hue-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["hue-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingHueSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["hue-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["hue-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingAlphaSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingAlphaSliderMarker = true;
     this.#elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -472,17 +470,16 @@ export default class XRectColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["alpha-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingAlphaSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["alpha-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 };
 

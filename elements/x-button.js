@@ -711,11 +711,11 @@ export default class XButtonElement extends HTMLElement {
 
       if (this.matches(":focus") === false) {
         let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
-        let pointerUpListener;
+        let pointerUpOrCancelListener;
 
-        this.addEventListener("pointerup", pointerUpListener = () => {
-          this.removeEventListener("pointerup", pointerUpListener);
-          this.removeEventListener("lostpointercapture", pointerUpListener);
+        this.addEventListener("pointerup", pointerUpOrCancelListener = () => {
+          this.removeEventListener("pointerup", pointerUpOrCancelListener);
+          this.removeEventListener("pointercancel", pointerUpOrCancelListener);
 
           if (ancestorFocusableElement) {
             ancestorFocusableElement.focus();
@@ -725,8 +725,7 @@ export default class XButtonElement extends HTMLElement {
           }
         });
 
-        // @bugfix: https://boxy-svg.com/bugs/224
-        this.addEventListener("lostpointercapture", pointerUpListener);
+        this.addEventListener("pointercancel", pointerUpOrCancelListener);
       }
     }
 
@@ -736,11 +735,11 @@ export default class XButtonElement extends HTMLElement {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
       let minPressedTime = parseInt(getComputedStyle(this).getPropertyValue("--min-pressed-time") || "150ms");
-      let pointerUpListener;
+      let pointerUpOrCancelListener;
 
-      this.addEventListener("pointerup", pointerUpListener = async () => {
-        this.removeEventListener("pointerup", pointerUpListener);
-        this.removeEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
 
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
@@ -752,8 +751,7 @@ export default class XButtonElement extends HTMLElement {
         this.removeAttribute("pressed");
       });
 
-      // @bugfix: https://boxy-svg.com/bugs/224
-      this.addEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
 
       (async () => {
         if (this.ownerButtons) {

@@ -110,7 +110,7 @@ export default class XWheelColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
     }
     :host([size="small"]) #value-slider {
@@ -154,7 +154,7 @@ export default class XWheelColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
       /* Checkerboard pattern */
       background-size: 10px 10px;
@@ -359,11 +359,11 @@ export default class XWheelColorPickerElement extends HTMLElement {
   }
 
   #onHuesatSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingHuesatMarker) {
       return;
     }
 
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
     let wheelBounds = this.#elements["huesat-slider"].getBoundingClientRect();
 
     this.#isDraggingHuesatMarker = true;
@@ -403,27 +403,26 @@ export default class XWheelColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
     });
 
-    this.#elements["huesat-slider"].addEventListener("pointerup", pointerUpListener = (event) => {
+    this.#elements["huesat-slider"].addEventListener("pointerup", pointerUpOrCancelListener = (event) => {
       this.#elements["huesat-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["huesat-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["huesat-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["huesat-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["huesat-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.#elements["huesat-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingHuesatMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["huesat-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["huesat-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onValueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingValueSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["value-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingValueSliderMarker = true;
     this.#elements["value-slider"].style.cursor = "default";
@@ -451,27 +450,26 @@ export default class XWheelColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["value-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["value-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["value-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["value-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["value-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["value-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["value-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.#elements["value-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingValueSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["value-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["value-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingAlphaSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingAlphaSliderMarker = true;
     this.#elements["alpha-slider"].style.cursor = "default";
@@ -496,18 +494,17 @@ export default class XWheelColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["alpha-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.#elements["alpha-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingAlphaSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["alpha-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 };
 

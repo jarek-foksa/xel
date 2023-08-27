@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.22.4 (2023-08-27)
+
+- [Bugfix] Handle `pointercancel` events
+
 ## 0.22.3 (2023-08-27)
 
 - [Bugfix] Pointer is not properly released in some edge cases

@@ -316,11 +316,11 @@ export default class XMenuItemElement extends HTMLElement {
     {
       let isDown = true;
       let pointerDownTimeStamp = Date.now();
-      let pointerUpListener;
+      let pointerUpOrCancelListener;
 
-      this.addEventListener("pointerup", pointerUpListener = async () => {
-        this.removeEventListener("pointerup", pointerUpListener);
-        this.removeEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
 
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
@@ -333,8 +333,7 @@ export default class XMenuItemElement extends HTMLElement {
         this.removeAttribute("pressed");
       });
 
-      // @bugfix: https://boxy-svg.com/bugs/224
-      this.addEventListener("lostpointercapture", pointerUpListener);
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
 
       if (isDown) {
         this.setAttribute("pressed", "");

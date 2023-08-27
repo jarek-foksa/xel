@@ -78,7 +78,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       background: red;
       --marker-width: 18px;
     }
@@ -130,7 +130,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
     }
     :host([size="small"]) #saturation-slider {
@@ -172,7 +172,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
     }
     :host([size="small"]) #lightness-slider {
@@ -217,7 +217,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
       position: relative;
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
       /* Checkerboard pattern */
       background-size: 10px 10px;
@@ -443,12 +443,12 @@ export default class XBarsColorPickerElement extends HTMLElement {
   }
 
   #onHueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingHueSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["hue-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingHueSliderMarker = true;
     this.#elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -474,29 +474,30 @@ export default class XBarsColorPickerElement extends HTMLElement {
     onPointerMove(pointerDownEvent.clientX);
 
     this.#elements["hue-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      onPointerMove(pointerMoveEvent.clientX);
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
     });
 
-    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["hue-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["hue-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingHueSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["hue-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["hue-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onSaturationSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingSaturationSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["saturation-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingSaturationSliderMarker = true;
     this.#elements["saturation-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -525,26 +526,25 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["saturation-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["saturation-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["saturation-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["saturation-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["saturation-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["saturation-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["saturation-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingSaturationSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["saturation-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["saturation-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onLightnessSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingLightnessSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["lightness-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingLightnessSliderMarker = true;
     this.#elements["lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -573,26 +573,25 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["lightness-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["lightness-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["lightness-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["lightness-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["lightness-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["lightness-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingLightnessSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["lightness-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["lightness-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingAlphaSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingAlphaSliderMarker = true;
     this.#elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -616,17 +615,16 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
-      this.#elements["alpha-slider"].removeEventListener("lostpointercapture", pointerUpListener);
+      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingAlphaSliderMarker = false;
     });
 
-    // @bugfix: https://boxy-svg.com/bugs/224
-    this.#elements["alpha-slider"].addEventListener("lostpointercapture", pointerUpListener);
+    this.#elements["alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 };
 
