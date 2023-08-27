@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.22.5 (2023-08-28)
+
+- [Bugfix] Incorrect cursor image when clicking elements with pointer capture very fast
+
 ## 0.22.4 (2023-08-27)
 
 - [Bugfix] Handle `pointercancel` events

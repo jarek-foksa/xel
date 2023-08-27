@@ -27,6 +27,11 @@ if (Element.prototype.setPointerCapture) {
   Element.prototype.setPointerCapture = function(pointerId) {
     setPointerCapture.call(this, pointerId);
 
+    // Element was clicked very fast, we have to exit here as "lostpointercapture" event won't be fired
+    if (this.hasPointerCapture(pointerId) === false) {
+      return;
+    }
+
     // @bugfix: Make sure that "pointerup" or "pointercancel" event is always fired when element loses the pointer
     // capture (https://boxy-svg.com/bugs/224);
     {
