@@ -363,9 +363,6 @@ export default class XWheelColorPickerElement extends HTMLElement {
       return;
     }
 
-    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
-    pointerDownEvent.preventDefault();
-
     let pointerMoveListener, pointerUpListener;
     let wheelBounds = this.#elements["huesat-slider"].getBoundingClientRect();
 
@@ -409,20 +406,21 @@ export default class XWheelColorPickerElement extends HTMLElement {
     this.#elements["huesat-slider"].addEventListener("pointerup", pointerUpListener = (event) => {
       this.#elements["huesat-slider"].removeEventListener("pointermove", pointerMoveListener);
       this.#elements["huesat-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["huesat-slider"].removeEventListener("lostpointercapture", pointerUpListener);
       this.#elements["huesat-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingHuesatMarker = false;
     });
+
+    // @bugfix: https://boxy-svg.com/bugs/224
+    this.#elements["huesat-slider"].addEventListener("lostpointercapture", pointerUpListener);
   }
 
   #onValueSliderPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons > 1) {
       return;
     }
-
-    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
-    pointerDownEvent.preventDefault();
 
     let trackBounds = this.#elements["value-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;
@@ -456,20 +454,21 @@ export default class XWheelColorPickerElement extends HTMLElement {
     this.#elements["value-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["value-slider"].removeEventListener("pointermove", pointerMoveListener);
       this.#elements["value-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["value-slider"].removeEventListener("lostpointercapture", pointerUpListener);
       this.#elements["value-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingValueSliderMarker = false;
     });
+
+    // @bugfix: https://boxy-svg.com/bugs/224
+    this.#elements["value-slider"].addEventListener("lostpointercapture", pointerUpListener);
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons > 1) {
       return;
     }
-
-    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
-    pointerDownEvent.preventDefault();
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpListener;
@@ -500,11 +499,15 @@ export default class XWheelColorPickerElement extends HTMLElement {
     this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
       this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["alpha-slider"].removeEventListener("lostpointercapture", pointerUpListener);
       this.#elements["alpha-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingAlphaSliderMarker = false;
     });
+
+    // @bugfix: https://boxy-svg.com/bugs/224
+    this.#elements["alpha-slider"].addEventListener("lostpointercapture", pointerUpListener);
   }
 };
 

@@ -284,9 +284,6 @@ export default class XCheckboxElement extends HTMLElement {
       return;
     }
 
-    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
-    event.preventDefault();
-
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
     if (this.matches(":focus") === false) {
       event.preventDefault();

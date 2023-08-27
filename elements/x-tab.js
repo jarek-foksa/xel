@@ -244,14 +244,19 @@ export default class XTabElement extends HTMLElement {
       return;
     }
 
+    this.setPointerCapture(pointerDownEvent.pointerId);
+
     // Provide "pressed" attribute for theming purposes
     {
       let pointerDownTimeStamp = Date.now();
+      let pointerUpListener;
 
       this.setAttribute("pressed", "");
-      this.setPointerCapture(pointerDownEvent.pointerId);
 
-      this.addEventListener("pointerup", async (event) => {
+      this.addEventListener("pointerup", pointerUpListener = async () => {
+        this.removeEventListener("pointerup", pointerUpListener);
+        this.removeEventListener("lostpointercapture", pointerUpListener);
+
         if (this.selected === true) {
           let pressedTime = Date.now() - pointerDownTimeStamp;
           let minPressedTime = 100;
@@ -262,7 +267,10 @@ export default class XTabElement extends HTMLElement {
         }
 
         this.removeAttribute("pressed");
-      }, {once: true});
+      });
+
+      // @bugfix: https://boxy-svg.com/bugs/224
+      this.addEventListener("lostpointercapture", pointerUpListener);
     }
 
     // Ripple
@@ -281,8 +289,6 @@ export default class XTabElement extends HTMLElement {
         ripple.setAttribute("class", "ripple pointer-down-ripple");
         ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
         this.#elements["ripples"].append(ripple);
-
-        this.setPointerCapture(pointerDownEvent.pointerId);
 
         // Workaround for tabs that that change their color when selected
         ripple.hidden = true;

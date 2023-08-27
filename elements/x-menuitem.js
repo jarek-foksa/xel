@@ -332,9 +332,6 @@ export default class XMenuItemElement extends HTMLElement {
       return false;
     }
 
-    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
-    pointerDownEvent.preventDefault();
-
     if (this.matches("[closing] x-menuitem")) {
       pointerDownEvent.preventDefault();
       pointerDownEvent.stopPropagation();
@@ -350,10 +347,14 @@ export default class XMenuItemElement extends HTMLElement {
     // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
     // to last at least 150ms.
     {
-      let pointerDownTimeStamp = Date.now();
       let isDown = true;
+      let pointerDownTimeStamp = Date.now();
+      let pointerUpListener;
 
-      this.addEventListener("pointerup", async () => {
+      this.addEventListener("pointerup", pointerUpListener = async () => {
+        this.removeEventListener("pointerup", pointerUpListener);
+        this.removeEventListener("lostpointercapture", pointerUpListener);
+
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
         let minPressedTime = (pointerDownEvent.pointerType === "touch") ? 600 : 150;
@@ -363,7 +364,10 @@ export default class XMenuItemElement extends HTMLElement {
         }
 
         this.removeAttribute("pressed");
-      }, {once: true});
+      });
+
+      // @bugfix: https://boxy-svg.com/bugs/224
+      this.addEventListener("lostpointercapture", pointerUpListener);
 
       if (isDown) {
         this.setAttribute("pressed", "");

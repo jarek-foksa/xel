@@ -517,9 +517,6 @@ export default class XSliderElement extends HTMLElement {
       return;
     }
 
-    // @bugfix: https://bugs.chromium.org/p/chromium/issues/detail?id=1166044
-    pointerDownEvent.preventDefault();
-
     let draggedThumb = null;
     let {width: thumbWidth, height: thumbHeight} = this.#elements["start-thumb"].getBoundingClientRect();
     let containerBounds = this.#elements["main"].getBoundingClientRect();
@@ -642,12 +639,16 @@ export default class XSliderElement extends HTMLElement {
     draggedThumb.addEventListener("pointerup", pointerUpListener = () => {
       draggedThumb.removeEventListener("pointermove", pointerMoveListener);
       draggedThumb.removeEventListener("pointerup", pointerUpListener);
+      draggedThumb.removeEventListener("lostpointercapture", pointerUpListener);
       this.removeAttribute("dragging");
 
       if (changeStarted) {
         this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       }
     });
+
+    // @bugfix: https://boxy-svg.com/bugs/224
+    draggedThumb.addEventListener("lostpointercapture", pointerUpListener);
   }
 
   #onKeyDown(event) {

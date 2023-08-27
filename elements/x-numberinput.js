@@ -613,6 +613,7 @@ export default class XNumberInputElement extends HTMLElement {
         this.#elements["editor"].addEventListener("pointerup",  pointerUpListener = () => {
           this.#elements["editor"].removeEventListener("pointermove", pointerMoveListener);
           this.#elements["editor"].removeEventListener("pointerup", pointerUpListener);
+          this.#elements["editor"].removeEventListener("lostpointercapture", pointerUpListener);
 
           this.style.cursor = null;
 
@@ -626,6 +627,9 @@ export default class XNumberInputElement extends HTMLElement {
             document.execCommand("selectAll");
           }
         });
+
+        // @bugfix: https://boxy-svg.com/bugs/224
+        this.#elements["editor"].addEventListener("lostpointercapture", pointerUpListener);
       }
     }
   }

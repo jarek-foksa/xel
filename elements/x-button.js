@@ -742,15 +742,22 @@ export default class XButtonElement extends HTMLElement {
 
       if (this.matches(":focus") === false) {
         let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
+        let pointerUpListener;
 
-        this.addEventListener("pointerup", () => {
+        this.addEventListener("pointerup", pointerUpListener = () => {
+          this.removeEventListener("pointerup", pointerUpListener);
+          this.removeEventListener("lostpointercapture", pointerUpListener);
+
           if (ancestorFocusableElement) {
             ancestorFocusableElement.focus();
           }
           else {
             this.blur();
           }
-        }, {once: true});
+        });
+
+        // @bugfix: https://boxy-svg.com/bugs/224
+        this.addEventListener("lostpointercapture", pointerUpListener);
       }
     }
 
@@ -760,8 +767,12 @@ export default class XButtonElement extends HTMLElement {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
       let minPressedTime = parseInt(getComputedStyle(this).getPropertyValue("--min-pressed-time") || "150ms");
+      let pointerUpListener;
 
-      this.addEventListener("pointerup", async () => {
+      this.addEventListener("pointerup", pointerUpListener = async () => {
+        this.removeEventListener("pointerup", pointerUpListener);
+        this.removeEventListener("lostpointercapture", pointerUpListener);
+
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
 
@@ -770,7 +781,10 @@ export default class XButtonElement extends HTMLElement {
         }
 
         this.removeAttribute("pressed");
-      }, {once: true});
+      });
+
+      // @bugfix: https://boxy-svg.com/bugs/224
+      this.addEventListener("lostpointercapture", pointerUpListener);
 
       (async () => {
         if (this.ownerButtons) {

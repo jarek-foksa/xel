@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.22.3 (2023-08-27)
+
+- [Bugfix] Pointer is not properly released in some edge cases
+
 ## 0.22.2 (2023-08-25)
 
 - [Bugfix] "pointerup" event is not fired in some edge cases due to Chromium bug #1166044
