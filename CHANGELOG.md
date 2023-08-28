@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.22.6 (2023-08-28)
+
+- [Bugfix] Frozen cursor image when clicking elements with pointer capture
+
 ## 0.22.5 (2023-08-28)
 
 - [Bugfix] Incorrect cursor image when clicking elements with pointer capture very fast

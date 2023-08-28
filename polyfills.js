@@ -79,7 +79,7 @@ if (Element.prototype.setPointerCapture) {
       let cursor = getComputedStyle(this).cursor;
       let cssText = `* {cursor: ${cursor} !important; user-select: none !important; -webkit-user-select: none !important;}`;
       let styleElements = [];
-      let lostPointerCaptureListener;
+      let lostPointerCaptureListener, pointerUpListener;
 
       for (let node = this.parentNode || this.host; node && node !== document; node = node.parentNode || node.host) {
         if (node.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
@@ -99,12 +99,24 @@ if (Element.prototype.setPointerCapture) {
       this.addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
         if (event.pointerId === pointerId) {
           this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+          window.removeEventListener("pointerup", pointerUpListener, true);
 
           for (let styleElement of styleElements) {
             styleElement.remove();
           }
         }
       });
+
+      window.addEventListener("pointerup", pointerUpListener = (event) => {
+        if (event.pointerId === pointerId) {
+          this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+          window.removeEventListener("pointerup", pointerUpListener, true);
+
+          for (let styleElement of styleElements) {
+            styleElement.remove();
+          }
+        }
+      }, true);
     }
   };
 }
