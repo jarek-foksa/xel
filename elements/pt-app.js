@@ -150,24 +150,6 @@ export default class PTAppElement extends HTMLElement {
               </x-box>
             </div>
 
-            <div id="size-subsection">
-              <h3><x-message href="#size" autocapitalize></x-message></h3>
-
-              <x-buttons id="size-buttons" tracking="1">
-                <x-button value="small" condensed>
-                  <x-label><x-message href="#size-small" autocapitalize></x-message></x-label>
-                </x-button>
-
-                <x-button value="medium" condensed toggled>
-                  <x-label><x-message href="#size-medium" autocapitalize></x-message></x-label>
-                </x-button>
-
-                <x-button value="large" condensed>
-                  <x-label><x-message href="#size-large" autocapitalize></x-message></x-label>
-                </x-button>
-              </x-buttons>
-            </div>
-
             <div id="iconset-subsection">
               <h3><x-message href="#iconset" autocapitalize></x-message></h3>
 
@@ -584,7 +566,6 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #sidebar #nav x-button[skin="nav"] {
-      --ripple-background: white;
       --min-pressed-time: 0ms;
     }
 
@@ -633,18 +614,6 @@ export default class PTAppElement extends HTMLElement {
     }
     #settings-section #accent-color-select {
       margin-left: 8px;
-    }
-
-    /* Size */
-
-    #settings-section #size-subsection {
-      margin-top: 14px;
-    }
-    #settings-section #size-buttons {
-      width: 100%;
-    }
-    #settings-section #size-buttons x-button {
-      flex: 1;
     }
 
     /* Iconset */
@@ -714,9 +683,6 @@ export default class PTAppElement extends HTMLElement {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
     }
-    #sidebar-dialog:focus {
-      outline: none;
-    }
     #sidebar-dialog:not([open]) {
       display: none;
     }
@@ -758,7 +724,6 @@ export default class PTAppElement extends HTMLElement {
   async connectedCallback() {
     Xel.theme = "/themes/" + (localStorage.getItem("theme") || "adwaita") + "-portal.css";
     Xel.accentColor = localStorage.getItem("accentColor") || "blue";
-    Xel.size = localStorage.getItem("size") || "medium";
     Xel.iconsets = ["/iconsets/" + (localStorage.getItem("iconset") || "material") + ".svg"];
 
     // Load locales
@@ -795,7 +760,6 @@ export default class PTAppElement extends HTMLElement {
 
     Xel.addEventListener("themechange", () => this.#onXelThemeChange());
     Xel.addEventListener("accentcolorchange", () => this.#onXelAccentColorChange());
-    Xel.addEventListener("sizechange", () => this.#onXelSizeChange());
     Xel.addEventListener("iconsetschange", () => this.#onXelIconsetsChange());
     Xel.addEventListener("localeschange", () => this.#onXelLocalesChange());
 
@@ -806,7 +770,6 @@ export default class PTAppElement extends HTMLElement {
     this.#elements["theme-select"].addEventListener("change", (e) => this.#onThemeSelectChange(e));
     this.#elements["accent-preset-select"].addEventListener("change", (e) => this.#onAccentPresetSelectChange(e));
     this.#elements["accent-color-select"].addEventListener("change", (e) => this.#onAccentColorSelectChange(e));
-    this.#elements["size-buttons"].addEventListener("toggle", (e) => this.#onSizeButtonsToggle(e));
     this.#elements["iconset-select"].addEventListener("change", (e) => this.#onIconsetSelectChange(e));
     this.#elements["locale-select"].addEventListener("change", (e) => this.#onLocaleSelectChange(e));
     this.#elements["main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
@@ -852,11 +815,6 @@ export default class PTAppElement extends HTMLElement {
     }
 
     localStorage.setItem("accentColor", color);
-  }
-
-  #onXelSizeChange() {
-    this.#updateSidebarSettingsSection();
-    localStorage.setItem("size", this.#elements["size-buttons"].value);
   }
 
   #onXelIconsetsChange() {
@@ -1032,10 +990,6 @@ export default class PTAppElement extends HTMLElement {
 
   #onAccentColorSelectChange() {
     Xel.accentColor = this.#elements["accent-color-select"].value;
-  }
-
-  #onSizeButtonsToggle() {
-    Xel.size = this.#elements["size-buttons"].value;
   }
 
   #onIconsetSelectChange() {
@@ -1333,11 +1287,6 @@ export default class PTAppElement extends HTMLElement {
         this.#elements["accent-preset-select"].value = "custom";
         this.#elements["accent-color-select"].value = Xel.accentColor;
       }
-    }
-
-    // Update size subsection
-    {
-      this.#elements["size-buttons"].value = Xel.size;
     }
 
     // Update iconset subsection

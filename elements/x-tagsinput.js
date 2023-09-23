@@ -19,7 +19,7 @@ import {sleep} from "../utils/time.js";
 // @part input
 // @part suggestions
 export default class XTagsInputElement extends HTMLElement {
-  static observedAttributes = ["spellcheck", "disabled", "size"];
+  static observedAttributes = ["spellcheck", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -197,28 +197,19 @@ export default class XTagsInputElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
   #elements = {};
   #lastTabIndex = 0;
-  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -244,13 +235,6 @@ export default class XTagsInputElement extends HTMLElement {
   connectedCallback() {
     this.#updatePlaceholderVisibility();
     this.#updateAccessabilityAttributes();
-    this.#updateComputedSizeAttriubte();
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -262,9 +246,6 @@ export default class XTagsInputElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
   }
 
@@ -311,8 +292,14 @@ export default class XTagsInputElement extends HTMLElement {
   }
 
   #commitInput() {
-    let tagText = this.#elements["input"].textContent.trim();
+    let tagText = this.#elements["input"].textContent;
     this.#elements["input"].textContent = "";
+
+    if (tagText.endsWith(this.delimiter)) {
+      tagText = tagText.substring(0, tagText.length-1);
+    }
+
+    tagText = tagText.trim();
 
     if (tagText.length > 0) {
       if (this.value.includes(tagText) === false) {
@@ -401,10 +388,6 @@ export default class XTagsInputElement extends HTMLElement {
     this.#updateAccessabilityAttributes();
   }
 
-  #onSizeAttributeChange() {
-    this.#updateComputedSizeAttriubte();
-  }
-
   async #onInputFocusIn() {
     this.#elements["input"].setAttribute("contenteditable", "");
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
@@ -437,13 +420,13 @@ export default class XTagsInputElement extends HTMLElement {
   }
 
   #onKeyDown(event) {
-    if (event.key === "Enter") {
+    if (event.code === "Enter" || event.code === "NumpadEnter") {
       if (event.target === this.#elements["input"]) {
         event.preventDefault();
         this.#commitInput();
       }
     }
-    else if (event.key === "Backspace") {
+    else if (event.code === "Backspace") {
       if (event.target === this.#elements["input"]) {
         let value = this.#elements["input"].textContent;
 
@@ -486,7 +469,7 @@ export default class XTagsInputElement extends HTMLElement {
         this.dispatchEvent(new CustomEvent("change"));
       }
     }
-    else if (event.key === "ArrowDown") {
+    else if (event.code === "ArrowDown") {
       if (this.#elements["suggestions-popover"].opened) {
         let suggestedTags = [...this.#elements["suggested-tags"].children];
 
@@ -531,7 +514,7 @@ export default class XTagsInputElement extends HTMLElement {
         }
       }
     }
-    else if (event.key === "ArrowUp") {
+    else if (event.code === "ArrowUp") {
       if (this.#elements["suggestions-popover"].opened) {
         let suggestedTags = [...this.#elements["suggested-tags"].children];
 
@@ -606,32 +589,6 @@ export default class XTagsInputElement extends HTMLElement {
       }
 
       this.#lastTabIndex = 0;
-    }
-  }
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
     }
   }
 

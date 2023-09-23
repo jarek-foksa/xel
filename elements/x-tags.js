@@ -99,7 +99,7 @@ export default class XTagsElement extends HTMLElement {
 
   #onKeyDown(event) {
     if (event.defaultPrevented === false) {
-      if (event.code === "Enter" || event.code === "Space") {
+      if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
         let focusedTag = this.querySelector("x-tag:focus");
 
         if (focusedTag) {
@@ -108,7 +108,7 @@ export default class XTagsElement extends HTMLElement {
         }
       }
 
-      else if (event.key === "ArrowRight") {
+      else if (event.code === "ArrowRight") {
         let focusedTag = this.querySelector("x-tag:focus");
 
         if (focusedTag) {
@@ -121,7 +121,7 @@ export default class XTagsElement extends HTMLElement {
         }
       }
 
-      else if (event.key === "ArrowLeft") {
+      else if (event.code === "ArrowLeft") {
         let focusedTag = this.querySelector("x-tag:focus");
 
         if (focusedTag) {

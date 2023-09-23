@@ -6,7 +6,7 @@
 
 import Xel from "../classes/xel.js";
 
-import {createElement, closest} from "../utils/element.js";
+import {createElement, closest, isPointerInsideElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
@@ -16,11 +16,10 @@ let {max} = Math;
 // @event toggle - User toggled the button on or off by clicking it.
 // @part arrow - The arrow icon shown when the button contains <code>x-popover</code> or <code>x-menu</code>.
 export default class XButtonElement extends HTMLElement {
-  static observedAttributes = ["disabled", "size", "skin"];
+  static observedAttributes = ["disabled", "skin"];
 
   static #shadowTemplate = html`
     <template>
-      <div id="ripples"></div>
       <slot></slot>
 
       <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -41,7 +40,6 @@ export default class XButtonElement extends HTMLElement {
       box-sizing: border-box;
       opacity: 1;
       position: relative;
-      --trigger-effect: none; /* ripple, unbounded-ripple, none */
     }
     :host(:focus) {
       outline: none;
@@ -78,35 +76,6 @@ export default class XButtonElement extends HTMLElement {
     }
     #arrow[hidden] {
       display: none;
-    }
-
-    /**
-     * Ripples
-     */
-
-    #ripples {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      border-radius: inherit;
-    }
-
-    #ripples .ripple {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 200px;
-      background: currentColor;
-      opacity: 0.2;
-      border-radius: 999px;
-      transform: none;
-      transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: opacity, transform;
-      pointer-events: none;
     }
   `
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,22 +171,14 @@ export default class XButtonElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   // @property readOnly
@@ -269,7 +230,6 @@ export default class XButtonElement extends HTMLElement {
   #lastTabIndex = 0;
 
   #xelThemeChangeListener = null;
-  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -289,6 +249,7 @@ export default class XButtonElement extends HTMLElement {
     this.addEventListener("pointerleave", () => this.#onPointerLeave());
     this.addEventListener("click", (event) => this.#onClick(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.addEventListener("close", (event) => this.#onClose(event));
 
     (async () => {
       await customElements.whenDefined("x-backdrop");
@@ -307,15 +268,12 @@ export default class XButtonElement extends HTMLElement {
     this.#updateArrowVisibility();
     this.#updateAccessabilityAttributes();
     this.#updateSkinAttribute();
-    this.#updateComputedSizeAttriubte();
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
   }
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -324,9 +282,6 @@ export default class XButtonElement extends HTMLElement {
     }
     else if (name === "skin") {
       this.#updateSkinAttribute();
-    }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -625,32 +580,6 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onPointerDown(event) {
@@ -681,10 +610,23 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
+  #dismissTooltip = false;
+
+  #onClose(event) {
+    if (
+      event.target.parentElement === this &&
+      ["x-menu", "x-popover"].includes(event.target.localName) &&
+      this.#lastPointerDownEvent &&
+      isPointerInsideElement(this.#lastPointerDownEvent, this) === false
+    ) {
+      this.#dismissTooltip = false;
+    }
+  }
+
   #onPointerEnter() {
     let tooltip = this.querySelector(":scope > x-tooltip");
 
-    if (tooltip && tooltip.disabled === false) {
+    if (tooltip && tooltip.disabled === false && this.expanded === false && this.#dismissTooltip === false) {
       if (this.parentElement && this.parentElement.localName === "x-buttons") {
         for (let sibling of this.parentElement.children) {
           if (sibling !== this && sibling.localName === "x-button") {
@@ -707,6 +649,8 @@ export default class XButtonElement extends HTMLElement {
     if (tooltip) {
       tooltip.close();
     }
+
+    this.#dismissTooltip = false;
   }
 
   #onClick(event) {
@@ -733,6 +677,7 @@ export default class XButtonElement extends HTMLElement {
       return;
     }
     else {
+      this.#dismissTooltip = true;
       this.#onButtonClick(event);
     }
   }
@@ -766,15 +711,21 @@ export default class XButtonElement extends HTMLElement {
 
       if (this.matches(":focus") === false) {
         let ancestorFocusableElement = closest(this.parentNode, "*[tabindex]:not(a)");
+        let pointerUpOrCancelListener;
 
-        this.addEventListener("pointerup", () => {
+        this.addEventListener("pointerup", pointerUpOrCancelListener = () => {
+          this.removeEventListener("pointerup", pointerUpOrCancelListener);
+          this.removeEventListener("pointercancel", pointerUpOrCancelListener);
+
           if (ancestorFocusableElement) {
             ancestorFocusableElement.focus();
           }
           else {
             this.blur();
           }
-        }, {once: true});
+        });
+
+        this.addEventListener("pointercancel", pointerUpOrCancelListener);
       }
     }
 
@@ -784,8 +735,12 @@ export default class XButtonElement extends HTMLElement {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
       let minPressedTime = parseInt(getComputedStyle(this).getPropertyValue("--min-pressed-time") || "150ms");
+      let pointerUpOrCancelListener;
 
-      this.addEventListener("pointerup", async () => {
+      this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
+
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
 
@@ -794,7 +749,9 @@ export default class XButtonElement extends HTMLElement {
         }
 
         this.removeAttribute("pressed");
-      }, {once: true});
+      });
+
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
 
       (async () => {
         if (this.ownerButtons) {
@@ -836,108 +793,6 @@ export default class XButtonElement extends HTMLElement {
     else if (this.#canClosePopover()) {
       this.#closePopover();
     }
-
-    // Ripple
-    {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let rect = this.#elements["ripples"].getBoundingClientRect();
-        let size = max(rect.width, rect.height) * 1.5;
-        let top  = pointerDownEvent.clientY - rect.y - size/2;
-        let left = pointerDownEvent.clientX - rect.x - size/2;
-        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
-        let delay = true;
-
-        if (this.expandable === false) {
-          if (this.ownerButtons) {
-            if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2) {
-              delay = false;
-            }
-            else if (this.ownerButtons.tracking === 1 && this.toggled === false) {
-              delay = false;
-            }
-            else if (this.ownerButtons.tracking === 3) {
-              let buttons = [...this.ownerButtons.querySelectorAll(":scope > x-button, :scope > x-box > x-button")];
-              let toggledButtons = buttons.filter(button => button.toggled);
-
-              if (this.toggled === false || toggledButtons.length > 1 ) {
-                delay = false;
-              }
-            }
-
-          }
-          else if (this.togglable) {
-            delay = false;
-          }
-        }
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple pointer-down-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "strict";
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale3d(0, 0, 0)", "none"]},
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await whenPointerUp;
-
-        if (delay) {
-          await inAnimation.finished;
-
-          let outAnimation = ripple.animate(
-            { opacity: [getComputedStyle(ripple).opacity || "0", "0"]},
-            { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-          );
-
-          await outAnimation.finished;
-        }
-
-        ripple.remove();
-      }
-
-      else if (triggerEffect === "unbounded-ripple") {
-        let bounds = this.#elements["ripples"].getBoundingClientRect();
-        let size = bounds.height * 1.25;
-        let top  = (bounds.y + bounds.height/2) - bounds.y - size/2;
-        let left = (bounds.x + bounds.width/2)  - bounds.x - size/2;
-        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple pointer-down-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "none";
-
-        // Workaround for buttons that change their color when toggled on/off.
-        ripple.hidden = true;
-        await sleep(20);
-        ripple.hidden = false;
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale(0)", "scale(1)"] },
-          { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await whenPointerUp;
-        await inAnimation.finished;
-
-        let outAnimation = ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
-          { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await outAnimation.finished;
-        ripple.remove();
-      }
-    }
   }
 
   async #onButtonClick(event) {
@@ -976,84 +831,6 @@ export default class XButtonElement extends HTMLElement {
       this.toggled = !this.toggled;
       this.dispatchEvent(new CustomEvent("toggle"));
     }
-
-    // Ripple
-    if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let rect = this.#elements["ripples"].getBoundingClientRect();
-        let size = max(rect.width, rect.height) * 1.5;
-        let top  = (rect.y + rect.height/2) - rect.y - size/2;
-        let left = (rect.x + rect.width/2) - rect.x - size/2;
-        let delay = true;
-
-        if (this.ownerButtons) {
-          if (this.ownerButtons.tracking === 0 || this.ownerButtons.tracking === 2 || this.ownerButtons.tracking === 3) {
-            delay = false;
-          }
-          else if (this.ownerButtons.tracking === 1 && this.toggled === true) {
-            delay = false;
-          }
-        }
-        else if (this.togglable) {
-          delay = false;
-        }
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple click-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "strict";
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale3d(0, 0, 0)", "none"]},
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        if (delay) {
-          await inAnimation.finished;
-
-          let outAnimation = ripple.animate(
-            { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
-            { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-          );
-
-          await outAnimation.finished;
-        }
-
-        ripple.remove();
-      }
-
-      else if (triggerEffect === "unbounded-ripple") {
-        let rect = this.#elements["ripples"].getBoundingClientRect();
-        let size = rect.height * 1.35;
-        let top  = (rect.y + rect.height/2) - rect.y - size/2;
-        let left = (rect.x + rect.width/2) - rect.x - size/2;
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-
-        this.#elements["ripples"].append(ripple);
-        this.#elements["ripples"].style.contain = "none";
-
-        await ripple.animate(
-          { transform: ["scale3d(0, 0, 0)", "none"] },
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        ).finished;
-
-        await ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity || "0", "0"] },
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        ).finished;
-
-        ripple.remove();
-      }
-    }
   }
 
   #onMenuItemClick(event) {
@@ -1067,7 +844,7 @@ export default class XButtonElement extends HTMLElement {
 
   #onKeyDown(event) {
     if (event.defaultPrevented === false) {
-      if (event.code === "Enter" || event.code === "Space") {
+      if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
         if (this.#canOpenMenu()) {
           event.preventDefault();
           this.#openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());

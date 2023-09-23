@@ -20,7 +20,7 @@ const DEBUG = false;
 // @part slider
 // @part marker
 export default class XBarsColorPickerElement extends HTMLElement {
-  static observedAttributes = ["value", "size"];
+  static observedAttributes = ["value"];
 
   static #shadowTemplate = html`
     <template>
@@ -60,6 +60,10 @@ export default class XBarsColorPickerElement extends HTMLElement {
       user-select: none;
       -webkit-user-select: none;
     }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
     :host([hidden]) {
       display: none;
     }
@@ -74,14 +78,14 @@ export default class XBarsColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       background: red;
       --marker-width: 18px;
     }
-    :host([computedsize="small"]) #hue-slider {
+    :host([size="small"]) #hue-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #hue-slider {
+    :host([size="large"]) #hue-slider {
       height: 35px;
     }
 
@@ -126,13 +130,13 @@ export default class XBarsColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
     }
-    :host([computedsize="small"]) #saturation-slider {
+    :host([size="small"]) #saturation-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #saturation-slider {
+    :host([size="large"]) #saturation-slider {
       height: 35px;
     }
 
@@ -168,13 +172,13 @@ export default class XBarsColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
     }
-    :host([computedsize="small"]) #lightness-slider {
+    :host([size="small"]) #lightness-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #lightness-slider {
+    :host([size="large"]) #lightness-slider {
       height: 35px;
     }
 
@@ -213,7 +217,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
       position: relative;
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
       /* Checkerboard pattern */
       background-size: 10px 10px;
@@ -226,10 +230,10 @@ export default class XBarsColorPickerElement extends HTMLElement {
     :host([alphaslider]) #alpha-slider {
       display: block;
     }
-    :host([computedsize="small"]) #alpha-slider {
+    :host([size="small"]) #alpha-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #alpha-slider {
+    :host([size="large"]) #alpha-slider {
       height: 35px;
     }
 
@@ -280,26 +284,24 @@ export default class XBarsColorPickerElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
-  //
-  // Custom widget size.
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property readOnly
+  // @type boolean
+  // @default false
   // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  //
-  // Resolved widget size, used for theming purposes.
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
   #h = 0;  // Hue (0 ~ 360)
@@ -309,7 +311,6 @@ export default class XBarsColorPickerElement extends HTMLElement {
 
   #shadowRoot = null;
   #elements = {};
-  #xelSizeChangeListener = null;
 
   #isDraggingHueSliderMarker = false;
   #isDraggingSaturationSliderMarker = false;
@@ -348,13 +349,6 @@ export default class XBarsColorPickerElement extends HTMLElement {
 
   connectedCallback() {
     this.#update();
-    this.#updateComputedSizeAttriubte();
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -363,9 +357,6 @@ export default class XBarsColorPickerElement extends HTMLElement {
     }
     else if (name === "value") {
       this.#onValueAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
   }
 
@@ -427,32 +418,6 @@ export default class XBarsColorPickerElement extends HTMLElement {
     `;
   }
 
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onValueAttributeChange() {
@@ -477,17 +442,13 @@ export default class XBarsColorPickerElement extends HTMLElement {
     }
   }
 
-  #onSizeAttributeChange() {
-    this.#updateComputedSizeAttriubte();
-  }
-
   #onHueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingHueSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["hue-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingHueSliderMarker = true;
     this.#elements["hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -513,25 +474,30 @@ export default class XBarsColorPickerElement extends HTMLElement {
     onPointerMove(pointerDownEvent.clientX);
 
     this.#elements["hue-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      onPointerMove(pointerMoveEvent.clientX);
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
     });
 
-    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["hue-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["hue-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["hue-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["hue-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingHueSliderMarker = false;
     });
+
+    this.#elements["hue-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onSaturationSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingSaturationSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["saturation-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingSaturationSliderMarker = true;
     this.#elements["saturation-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -560,22 +526,25 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["saturation-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["saturation-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["saturation-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["saturation-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["saturation-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["saturation-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingSaturationSliderMarker = false;
     });
+
+    this.#elements["saturation-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onLightnessSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingLightnessSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["lightness-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingLightnessSliderMarker = true;
     this.#elements["lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -604,22 +573,25 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["lightness-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["lightness-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["lightness-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["lightness-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["lightness-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingLightnessSliderMarker = false;
     });
+
+    this.#elements["lightness-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingAlphaSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingAlphaSliderMarker = true;
     this.#elements["alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
@@ -643,13 +615,16 @@ export default class XBarsColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
 
       this.#isDraggingAlphaSliderMarker = false;
     });
+
+    this.#elements["alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 };
 

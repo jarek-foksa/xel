@@ -15,11 +15,10 @@ let {max} = Math;
 // @element x-tab
 // @part selection-indicator - Horizontal line indicating that the tab is selected.
 export default class XTabElement extends HTMLElement {
-  static observedAttributes = ["selected", "disabled", "size"];
+  static observedAttributes = ["selected", "disabled"];
 
   static #shadowTemplate = html`
     <template>
-      <div id="ripples"></div>
       <div id="selection-indicator" part="selection-indicator"></div>
       <div id="content">
         <slot></slot>
@@ -41,7 +40,6 @@ export default class XTabElement extends HTMLElement {
       -webkit-user-select: none;
       box-sizing: border-box;
       font-size: 14px;
-      --trigger-effect: none; /* ripple, none */
     }
     :host(:focus) {
       z-index: 10;
@@ -53,36 +51,6 @@ export default class XTabElement extends HTMLElement {
       flex-flow:inherit;
       align-items: inherit;
       z-index: 100;
-    }
-
-    /**
-     * Ripples
-     */
-
-    #ripples {
-      position: absolute;
-      z-index: 0;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    #ripples .ripple {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 200px;
-      background: currentColor;
-      opacity: 0.2;
-      border-radius: 999px;
-      transform: none;
-      transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: opacity, transform;
-      pointer-events: none;
     }
 
     /**
@@ -140,27 +108,18 @@ export default class XTabElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
   #elements = {};
-  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -176,18 +135,10 @@ export default class XTabElement extends HTMLElement {
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
-    this.addEventListener("click", (event) => this.#onClick(event));
   }
 
   connectedCallback() {
     this.#updateAccessabilityAttributes();
-    this.#updateComputedSizeAttriubte();
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -196,9 +147,6 @@ export default class XTabElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#updateAccessabilityAttributes();
-    }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -245,32 +193,6 @@ export default class XTabElement extends HTMLElement {
     this.setAttribute("tabindex", this.selected ? "0" : "-1");
   }
 
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async #onPointerDown(pointerDownEvent) {
@@ -289,14 +211,19 @@ export default class XTabElement extends HTMLElement {
       return;
     }
 
+    this.setPointerCapture(pointerDownEvent.pointerId);
+
     // Provide "pressed" attribute for theming purposes
     {
       let pointerDownTimeStamp = Date.now();
+      let pointerUpOrCancelListener;
 
       this.setAttribute("pressed", "");
-      this.setPointerCapture(pointerDownEvent.pointerId);
 
-      this.addEventListener("pointerup", async (event) => {
+      this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
+
         if (this.selected === true) {
           let pressedTime = Date.now() - pointerDownTimeStamp;
           let minPressedTime = 100;
@@ -307,90 +234,9 @@ export default class XTabElement extends HTMLElement {
         }
 
         this.removeAttribute("pressed");
-      }, {once: true});
-    }
+      });
 
-    // Ripple
-    {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let bounds = this.#elements["ripples"].getBoundingClientRect();
-        let size = max(bounds.width, bounds.height) * 1.5;
-        let top  = pointerDownEvent.clientY - bounds.y - size/2;
-        let left = pointerDownEvent.clientX - bounds.x - size/2;
-        let whenPointerUp = new Promise((r) => this.addEventListener("pointerup", r, {once: true}));
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple pointer-down-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this.#elements["ripples"].append(ripple);
-
-        this.setPointerCapture(pointerDownEvent.pointerId);
-
-        // Workaround for tabs that that change their color when selected
-        ripple.hidden = true;
-        await sleep(10);
-        ripple.hidden = false;
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale(0)", "scale(1)"]},
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await whenPointerUp;
-        await inAnimation.finished;
-
-        let fromOpacity = getComputedStyle(ripple).opacity;
-
-        let outAnimation = ripple.animate(
-          { opacity: [fromOpacity, "0"]},
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await outAnimation.finished;
-
-        ripple.remove();
-      }
-    }
-  }
-
-  async #onClick(event) {
-    // Ripple
-    if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let bounds = this.#elements["ripples"].getBoundingClientRect();
-        let size = max(bounds.width, bounds.height) * 1.5;
-        let top  = (bounds.y + bounds.height/2) - bounds.y - size/2;
-        let left = (bounds.x + bounds.width/2) - bounds.x - size/2;
-
-        let ripple = createElement("div");
-        ripple.setAttribute("part", "ripple");
-        ripple.setAttribute("class", "ripple click-ripple");
-        ripple.setAttribute("style", `width: ${size}px; height: ${size}px; top: ${top}px; left: ${left}px;`);
-        this.#elements["ripples"].append(ripple);
-
-        let inAnimation = ripple.animate(
-          { transform: ["scale(0)", "scale(1)"]},
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await inAnimation.finished;
-
-        let fromOpacity = getComputedStyle(ripple).opacity;
-
-        let outAnimation = ripple.animate(
-          { opacity: [fromOpacity, "0"] },
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        await outAnimation.finished;
-
-        ripple.remove();
-      }
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
     }
   }
 }

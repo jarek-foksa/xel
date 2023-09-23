@@ -11,7 +11,7 @@ const DEBUG = false;
 
 // @element x-menubar
 export default class XMenuBarElement extends HTMLElement {
-  static observedAttributes = ["disabled", "size"];
+  static observedAttributes = ["disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -76,28 +76,19 @@ export default class XMenuBarElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
   #elements = {};
   #expanded = false;
-  #xelSizeChangeListener = null;
   #orientationChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,19 +115,12 @@ export default class XMenuBarElement extends HTMLElement {
     this.setAttribute("role", "menubar");
     this.setAttribute("aria-disabled", this.disabled);
 
-    this.#updateComputedSizeAttriubte();
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => {
-      this.#updateComputedSizeAttriubte();
-    });
-
     window.addEventListener("orientationchange", this.#orientationChangeListener = () => {
       this.#onOrientationChange();
     });
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
     window.removeEventListener("orientationchange", this.#orientationChangeListener);
   }
 
@@ -144,38 +128,9 @@ export default class XMenuBarElement extends HTMLElement {
     if (name === "disabled") {
       this.#onDisabledAttributeChange();
     }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
-    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
 
   #expandMenubarItem(item) {
     let menu = item.querySelector(":scope > x-menu");
@@ -361,7 +316,7 @@ export default class XMenuBarElement extends HTMLElement {
       event.preventDefault();
     }
 
-    else if (event.code === "Enter" || event.code === "Space") {
+    else if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
       let focusedMenubarItem = this.querySelector(":scope > x-menuitem:focus");
 
       if (focusedMenubarItem) {

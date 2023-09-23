@@ -1,6 +1,79 @@
 
 # CHANGELOG
 
+## 0.22.6 (2023-08-28)
+
+- [Bugfix] Frozen cursor image when clicking elements with pointer capture
+
+## 0.22.5 (2023-08-28)
+
+- [Bugfix] Incorrect cursor image when clicking elements with pointer capture very fast
+
+## 0.22.4 (2023-08-27)
+
+- [Bugfix] Handle `pointercancel` events
+
+## 0.22.3 (2023-08-27)
+
+- [Bugfix] Pointer is not properly released in some edge cases
+
+## 0.22.2 (2023-08-25)
+
+- [Bugfix] "pointerup" event is not fired in some edge cases due to Chromium bug #1166044
+
+## 0.22.1 (2023-08-12)
+
+- [Bugfix] Enter key from the numeric keypad is not detected correctly
+
+## 0.22.0 (2023-08-12)
+
+- Remove global size setting (`<meta name="xel-size">` tag, `Xel.size` getter/setter and corresponding
+  `sizechange` event)
+- Remove `Element.computedSize`  getter and corresponding attribute
+- Remove support for relative size values (`smaller` and `larger`)
+
+## 0.21.3 (2023-07-19)
+
+- [Bugfix] Ring throbber animation is no rendered properly by WebKit
+
+## 0.21.2 (2023-07-12)
+
+- [Bugfix]: Numeric glyphs inside `<x-numberinput>` have inconsistent width
+
+## 0.21.1 (2023-06-25)
+
+- [Bugfix]: `<x-slider>` should not be focusable when disabled
+
+## 0.21.0 (2023-06-23)
+
+- Add `disabled` property to color pickers
+
+## 0.20.9 (2023-06-14)
+
+- [Bugfix] Outlines shown around focused dialogs
+
+## 0.20.8 (2023-06-09)
+
+- [Bugfix] `<x-tagsinput>` leaves a trailing comma
+
+## 0.20.7 (2023-05-25)
+
+- [Bugfix] Keyboard shortcuts are not working when `<x-numberinput>` is focused
+- [Bugfix] Incorrect selection on Safari after incrementing or decrementing `<x-numberinput>` value
+- [Bugfix] Tooltips should not be shown when a button is expanded
+
+## 0.20.6 (2023-05-19)
+
+- [Bugfix] Opening a dialog causes layout shift on Safari
+
+## 0.20.5 (2023-05-19)
+
+- [Bugfix] Adwaita and Cupertino themes use ugly fonts when on Safari
+
+## 0.20.4 (2023-04-15)
+
+- [Bugfix] `<x-colorselect>` fails to open
+
 ## 0.20.3 (2023-04-08)
 
 - [Bugfix] `<x-popover>` misbehaves when placed inside shadowRoot

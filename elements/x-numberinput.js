@@ -22,7 +22,7 @@ const NUMERIC_KEYS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+"
 // @event ^textinputmodestart
 // @event ^textinputmodeend
 export default class XNumberInputElement extends HTMLElement {
-  static observedAttributes = ["value", "min", "max", "prefix", "suffix", "disabled", "size"];
+  static observedAttributes = ["value", "min", "max", "prefix", "suffix", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -90,6 +90,7 @@ export default class XNumberInputElement extends HTMLElement {
       font-size: inherit;
       line-height: 10;
       white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
     #editor::-webkit-scrollbar {
       display: none;
@@ -243,28 +244,19 @@ export default class XNumberInputElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
   #elements = {};
   #lastTabIndex = 0;
-  #xelSizeChangeListener = null;
 
   #isDragging = false;
   #isChangeStart = false;
@@ -303,14 +295,7 @@ export default class XNumberInputElement extends HTMLElement {
 
   connectedCallback() {
     this.#updateAccessabilityAttributes();
-    this.#updateComputedSizeAttriubte();
     this.#update();
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -331,9 +316,6 @@ export default class XNumberInputElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
   }
 
@@ -508,32 +490,6 @@ export default class XNumberInputElement extends HTMLElement {
     }
   }
 
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onValueAttributeChange() {
@@ -559,10 +515,6 @@ export default class XNumberInputElement extends HTMLElement {
   #onDisabledAttributeChange() {
     this.#elements["editor"].disabled = this.disabled;
     this.#updateAccessabilityAttributes();
-  }
-
-  #onSizeAttributeChange() {
-    this.#updateComputedSizeAttriubte();
   }
 
   #onFocusIn() {
@@ -629,7 +581,7 @@ export default class XNumberInputElement extends HTMLElement {
         let initialValue = this.value;
         let cachedClientX = pointerDownEvent.clientX;
         let pointerDownPoint = new DOMPoint(pointerDownEvent.clientX, pointerDownEvent.clientY);
-        let pointerMoveListener, pointerUpListener;
+        let pointerMoveListener, pointerUpOrCancelListener;
 
         this.style.cursor = "col-resize";
         this.#elements["editor"].setPointerCapture(pointerDownEvent.pointerId);
@@ -658,9 +610,10 @@ export default class XNumberInputElement extends HTMLElement {
           }
         });
 
-        this.#elements["editor"].addEventListener("pointerup",  pointerUpListener = () => {
+        this.#elements["editor"].addEventListener("pointerup",  pointerUpOrCancelListener = () => {
           this.#elements["editor"].removeEventListener("pointermove", pointerMoveListener);
-          this.#elements["editor"].removeEventListener("pointerup", pointerUpListener);
+          this.#elements["editor"].removeEventListener("pointerup", pointerUpOrCancelListener);
+          this.#elements["editor"].removeEventListener("pointercancel", pointerUpOrCancelListener);
 
           this.style.cursor = null;
 
@@ -674,6 +627,8 @@ export default class XNumberInputElement extends HTMLElement {
             document.execCommand("selectAll");
           }
         });
+
+        this.#elements["editor"].addEventListener("pointercancel", pointerUpOrCancelListener);
       }
     }
   }
@@ -708,7 +663,6 @@ export default class XNumberInputElement extends HTMLElement {
       this.#increment(event.detail.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-      this.#update();
     });
 
     this.addEventListener("incrementend", incrementEndListener = (event) => {
@@ -732,8 +686,6 @@ export default class XNumberInputElement extends HTMLElement {
       this.#decrement(event.detail.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-
-      this.#update();
     });
 
     this.addEventListener("decrementend", decrementEndListener = (event) => {
@@ -752,8 +704,6 @@ export default class XNumberInputElement extends HTMLElement {
       this.#decrement(event.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-
-      this.#update();
     }
 
     else if (event.code === "ArrowUp") {
@@ -764,15 +714,13 @@ export default class XNumberInputElement extends HTMLElement {
       this.#increment(event.shiftKey);
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       this.#maybeDispatchChangeEndEvent();
-
-      this.#update();
     }
 
     else if (event.code === "Backspace") {
       this.#isBackspaceKeyDown = true;
     }
 
-    else if (event.code === "Enter") {
+    else if (event.code === "Enter" || event.code === "NumpadEnter") {
       this.#commitEditorChanges();
       document.execCommand("selectAll");
     }
@@ -795,7 +743,12 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onKeyPress(event) {
-    if (NUMERIC_KEYS.includes(event.key) === false) {
+    if (
+      event.ctrlKey === false &&
+      event.altKey  === false &&
+      event.metaKey === false &&
+      NUMERIC_KEYS.includes(event.key) === false
+    ) {
       event.preventDefault();
     }
   }

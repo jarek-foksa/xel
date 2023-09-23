@@ -23,7 +23,7 @@
 body {
   color: var(--text-color);
   background: var(--background-color);
-  font-family: BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
+  font-family: BlinkMacSystemFont, -apple-system, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
   --autocapitalize: titlecase;
   --preset-accent-colors: blue #007aff, purple #953d96, pink #f74f9e, red #e0383e, orange #f7821b, yellow #fec726,
                           green #62ba46, graphite #989898;
@@ -809,19 +809,19 @@ x-switch[toggled]::part(indicator-thumb) {
 x-switch:focus::part(indicator-thumb) {
   box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
-x-switch[computedsize="small"]::part(indicator-thumb) {
+x-switch[size="small"]::part(indicator-thumb) {
   width: 12px;
   height: 12px;
 }
-x-switch[computedsize="small"][toggled]::part(indicator-thumb) {
+x-switch[size="small"][toggled]::part(indicator-thumb) {
   left: calc(100% - 12px);
 }
-x-switch[computedsize="large"]::part(indicator-thumb) {
+x-switch[size="large"]::part(indicator-thumb) {
   width: 18px;
   height: 18px;
   left: 1px;
 }
-x-switch[computedsize="large"][toggled]::part(indicator-thumb) {
+x-switch[size="large"][toggled]::part(indicator-thumb) {
   left: calc(100% - 19px);
 }
 
@@ -918,10 +918,10 @@ x-input > x-label {
 x-input > x-icon + x-label {
   padding: 2px 5px 0px 29px;
 }
-x-input[computedsize="small"] > x-icon + x-label {
+x-input[size="small"] > x-icon + x-label {
   padding: 2px 5px 0px 29px;
 }
-x-input[computedsize="large"] > x-icon + x-label {
+x-input[size="large"] > x-icon + x-label {
   padding: 2px 5px 0px 33px;
 }
 

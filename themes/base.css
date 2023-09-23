@@ -19,7 +19,7 @@ html {
 }
 
 body {
-  width: 100%;
+  width: 100vw;
   height: 100%;
   margin: 0;
   overflow-y: overlay;
@@ -281,11 +281,11 @@ x-accordion:not(:defined) {
 }
 
 /* Arrow */
-x-accordion[computedsize="small"]::part(arrow) {
+x-accordion[size="small"]::part(arrow) {
   width: 14px;
   height: 14px;
 }
-x-accordion[computedsize="large"]::part(arrow) {
+x-accordion[size="large"]::part(arrow) {
   width: 18px;
   height: 18px;
 }
@@ -298,10 +298,10 @@ x-accordion > header {
   width: 100%;
   padding: 7px 0 7px 20px;
 }
-x-accordion[computedsize="small"] > header {
+x-accordion[size="small"] > header {
   padding-left: 18px;
 }
-x-accordion[computedsize="large"] > header {
+x-accordion[size="large"] > header {
   padding-left: 22px;
 }
 
@@ -327,11 +327,11 @@ x-accordion:not([expanded]):not([animating]) > main {
  * Icon
  */
 
-x-icon[computedsize="small"] {
+x-icon[size="small"] {
   width: 15px;
   height: 15px;
 }
-x-icon[computedsize="large"] {
+x-icon[size="large"] {
   width: 21px;
   height: 21px;
 }
@@ -378,11 +378,11 @@ x-stepper:not(:defined) {
  * Swatch
  */
 
-x-swatch[computedsize="small"] {
+x-swatch[size="small"] {
   width: 16px;
   height: 16px;
 }
-x-swatch[computedsize="large"] {
+x-swatch[size="large"] {
   width: 20px;
   height: 20px;
 }
@@ -407,10 +407,10 @@ x-button {
 x-button[condensed] {
   padding: 2px 7px;
 }
-x-button[computedsize="small"] {
+x-button[size="small"] {
   min-height: 24px;
 }
-x-button[computedsize="large"] {
+x-button[size="large"] {
   min-height: 38px;
 }
 x-buttons[vertical] > x-button {
@@ -448,13 +448,13 @@ x-button[skin="flat"] {
 x-buttons:not([vertical]) > x-button[skin="flat"]:not(:first-of-type) {
   margin-left: 10px;
 }
-x-buttons:not([vertical]) > x-button[skin="flat"][computedsize="small"]:not(:first-of-type) {
+x-buttons:not([vertical]) > x-button[skin="flat"][size="small"]:not(:first-of-type) {
   margin-left: 5px;
 }
 x-buttons[vertical] > x-button[skin="flat"]:not(:first-of-type) {
   margin-top: 10px;
 }
-x-buttons[vertical] > x-button[skin="flat"][computedsize="small"]:not(:first-of-type) {
+x-buttons[vertical] > x-button[skin="flat"][size="small"]:not(:first-of-type) {
   margin-top: 5px;
 }
 
@@ -472,11 +472,11 @@ x-button[skin="flat"] > x-icon {
   width: 26px;
   height: 26px;
 }
-x-button[skin="flat"][computedsize="small"] > x-icon {
+x-button[skin="flat"][size="small"] > x-icon {
   width: 22px;
   height: 22px;
 }
-x-button[skin="flat"][computedsize="large"] > x-icon {
+x-button[skin="flat"][size="large"] > x-icon {
   width: 30px;
   height: 30px;
 }
@@ -491,10 +491,10 @@ x-button[skin="recessed"] {
   min-height: 18px;
   padding: 4px 8px;
 }
-x-button[skin="recessed"][computedsize="small"] {
+x-button[skin="recessed"][size="small"] {
   padding: 2px 8px;
 }
-x-button[skin="recessed"][computedsize="large"] {
+x-button[skin="recessed"][size="large"] {
   padding: 6px 8px;
 }
 
@@ -514,12 +514,12 @@ x-button[skin="nav"] x-icon {
   height: 22px;
   margin-right: 10px;
 }
-x-button[skin="nav"][computedsize="small"] > x-icon {
+x-button[skin="nav"][size="small"] > x-icon {
   width: 18px;
   height: 18px;
   margin-right: 8px;
 }
-x-button[skin="nav"][computedsize="large"] > x-icon {
+x-button[skin="nav"][size="large"] > x-icon {
   width: 26px;
   height: 26px;
   margin-right: 12px;
@@ -551,14 +551,14 @@ x-buttons[vertical] > x-button[skin="dock"] {
   padding: 0;
   justify-content: center;
 }
-x-button[skin="dock"][computedsize="small"],
-x-buttons[vertical] > x-button[skin="dock"][computedsize="small"] {
+x-button[skin="dock"][size="small"],
+x-buttons[vertical] > x-button[skin="dock"][size="small"] {
   width: 30px;
   height: 30px;
   min-height: 30px;
 }
-x-button[skin="dock"][computedsize="large"],
-x-buttons[vertical] > x-button[skin="dock"][computedsize="large"] {
+x-button[skin="dock"][size="large"],
+x-buttons[vertical] > x-button[skin="dock"][size="large"] {
   width: 45px;
   height: 45px;
   min-height: 45px;
@@ -576,12 +576,12 @@ x-button[skin="circular"] {
   min-height: 32px;
   padding: 0;
 }
-x-button[skin="circular"][computedsize="small"] {
+x-button[skin="circular"][size="small"] {
   width: 24px;
   height: 24px;
   min-height: 24px;
 }
-x-button[skin="circular"][computedsize="large"] {
+x-button[skin="circular"][size="large"] {
   width: 38px;
   height: 38px;
   min-height: 38px;
@@ -592,11 +592,11 @@ x-button[skin="circular"] > x-icon {
   width: 18px;
   height: 18px;
 }
-x-button[skin="circular"][computedsize="small"] > x-icon {
+x-button[skin="circular"][size="small"] > x-icon {
   width: 14px;
   height: 14px;
 }
-x-button[skin="circular"][computedsize="large"] > x-icon {
+x-button[skin="circular"][size="large"] > x-icon {
   width: 22px;
   height: 22px;
 }
@@ -622,10 +622,10 @@ x-buttons:not(:defined) {
  * Tag
  */
 
-x-tag[computedsize="small"] {
+x-tag[size="small"] {
   height: 20px;
 }
-x-tag[computedsize="large"] {
+x-tag[size="large"] {
   height: 30px;
 }
 x-tag:not(:defined) {
@@ -637,11 +637,11 @@ x-tag > x-swatch {
   width: 14px;
   height: 14px;
 }
-x-tag[computedsize="small"] > x-swatch {
+x-tag[size="small"] > x-swatch {
   width: 12px;
   height: 12px;
 }
-x-tag[computedsize="large"] > x-swatch {
+x-tag[size="large"] > x-swatch {
   width: 16px;
   height: 16px;
 }
@@ -679,20 +679,20 @@ x-tags x-tag {
  * Tags input
  */
 
-x-tagsinput[computedsize="small"] {
+x-tagsinput[size="small"] {
   min-height: 24px;
 }
-x-tagsinput[computedsize="large"] {
+x-tagsinput[size="large"] {
   min-height: 34px;
 }
 x-tagsinput:focus-within {
   z-index: 10;
 }
-x-tagsinput[computedsize="small"]::part(input) {
+x-tagsinput[size="small"]::part(input) {
   height: 20px;
   line-height: 20px;
 }
-x-tagsinput[computedsize="large"]::part(input) {
+x-tagsinput[size="large"]::part(input) {
   height: 30px;
   line-height: 30px;
 }
@@ -716,10 +716,10 @@ x-tagsinput > x-label {
 }
 
 /* Error message */
-x-tagsinput[computedsize="small"][error]::before {
+x-tagsinput[size="small"][error]::before {
   top: 27px;
 }
-x-tagsinput[computedsize="large"][error]::before {
+x-tagsinput[size="large"][error]::before {
   top: 41px;
 }
 
@@ -729,10 +729,10 @@ x-tagsinput[computedsize="large"][error]::before {
  * Tab
  */
 
-x-tab[computedsize="small"] {
+x-tab[size="small"] {
   min-height: 24px;
 }
-x-tab[computedsize="large"] {
+x-tab[size="large"] {
   min-height: 38px;
 }
 x-tab:not(:defined) {
@@ -746,12 +746,12 @@ x-tab x-icon {
   min-width: 17px;
   color: inherit;
 }
-x-tab[computedsize="small"] x-icon {
+x-tab[size="small"] x-icon {
   width: 15px;
   height: 15px;
   min-width: 15px
 }
-x-tab[computedsize="large"] x-icon {
+x-tab[size="large"] x-icon {
   width: 19px;
   height: 19px;
   min-width: 19px
@@ -812,10 +812,10 @@ x-menu hr:last-child {
  * Menu item
  */
 
-x-menuitem[computedsize="small"] {
+x-menuitem[size="small"] {
   min-height: 24px;
 }
-x-menuitem[computedsize="large"] {
+x-menuitem[size="large"] {
   min-height: 38px;
 }
 x-menuitem:not(:defined) {
@@ -863,10 +863,10 @@ x-menuitem x-label + x-shortcut {
  * Menubar
  */
 
-x-menubar[computedsize="small"] {
+x-menubar[size="small"] {
   height: 30px;
 }
-x-menubar[computedsize="large"] {
+x-menubar[size="large"] {
   height: 42px;
 }
 x-menubar:not(:defined) {
@@ -904,6 +904,9 @@ dialog {
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
+}
+dialog:focus {
+  outline: none;
 }
 dialog:not(:defined) {
   display: none;
@@ -960,10 +963,10 @@ x-popover > main {
  * Notification
  */
 
-x-notification[computedsize="small"] {
+x-notification[size="small"] {
   padding: 3px 12px;
 }
-x-notification[computedsize="large"] {
+x-notification[size="large"] {
   padding: 8px 12px;
 }
 x-notification:not(:defined) {
@@ -989,11 +992,11 @@ x-checkbox + x-checkbox {
 }
 
 /* Indicator */
-x-checkbox[computedsize="small"]::part(indicator) {
+x-checkbox[size="small"]::part(indicator) {
   width: 17px;
   height: 17px
 }
-x-checkbox[computedsize="large"]::part(indicator) {
+x-checkbox[size="large"]::part(indicator) {
   width: 21px;
   height: 21px;
 }
@@ -1019,11 +1022,11 @@ x-radio:not(:defined) {
 }
 
 /* Indicator */
-x-radio[computedsize="small"]::part(indicator) {
+x-radio[size="small"]::part(indicator) {
   width: 17px;
   height: 17px
 }
-x-radio[computedsize="large"]::part(indicator) {
+x-radio[size="large"]::part(indicator) {
   width: 21px;
   height: 21px;
 }
@@ -1033,10 +1036,10 @@ x-radio > x-label {
   margin: 0 0 0 8px;
   padding: 1px 0;
 }
-x-radio[computedsize="small"] > x-label {
+x-radio[size="small"] > x-label {
   margin-left: 6px;
 }
-x-radio[computedsize="large"] > x-label {
+x-radio[size="large"] > x-label {
   margin-left: 10px;
 }
 
@@ -1064,11 +1067,11 @@ x-switch:not(:defined) {
 }
 
 /* Indicator */
-x-switch[computedsize="large"]::part(indicator) {
+x-switch[size="large"]::part(indicator) {
   width: 42px;
   height: 20px;
 }
-x-switch[computedsize="small"]::part(indicator) {
+x-switch[size="small"]::part(indicator) {
   width: 28px;
   height: 12px;
 }
@@ -1078,10 +1081,10 @@ x-switch > x-label {
   margin: 0 0 0 8px;
   padding: 1px 0;
 }
-x-switch[computedsize="small"] > x-label {
+x-switch[size="small"] > x-label {
   margin-left: 6px;
 }
-x-switch[computedsize="large"] > x-label {
+x-switch[size="large"] > x-label {
   margin-left: 10px;
 }
 
@@ -1091,10 +1094,10 @@ x-switch[computedsize="large"] > x-label {
  * Select
  */
 
-x-select[computedsize="small"] {
+x-select[size="small"] {
   height: 24px;
 }
-x-select[computedsize="large"] {
+x-select[size="large"] {
   height: 38px;
 }
 x-select:not(:defined) {
@@ -1107,11 +1110,11 @@ x-select:not(:defined) {
  * Color select
  */
 
-x-colorselect[computedsize="small"] {
+x-colorselect[size="small"] {
   width: 24px;
   height: 24px;
 }
-x-colorselect[computedsize="large"] {
+x-colorselect[size="large"] {
   width: 38px;
   height: 38px;
 }
@@ -1125,10 +1128,10 @@ x-colorselect:not(:defined) {
  * Input
  */
 
-x-input[computedsize="small"] {
+x-input[size="small"] {
   height: 24px;
 }
-x-input[computedsize="large"] {
+x-input[size="large"] {
   height: 38px;
 }
 x-input:not(:defined) {
@@ -1173,10 +1176,10 @@ x-input > x-icon + x-label {
 }
 
 /* Error message */
-x-input[computedsize="small"][error]::before {
+x-input[size="small"][error]::before {
   top: 27px;
 }
-x-input[computedsize="large"][error]::before {
+x-input[size="large"][error]::before {
   top: 41px;
 }
 
@@ -1186,10 +1189,10 @@ x-input[computedsize="large"][error]::before {
  * Number input
  */
 
-x-numberinput[computedsize="small"] {
+x-numberinput[size="small"] {
   height: 24px;
 }
-x-numberinput[computedsize="large"] {
+x-numberinput[size="large"] {
   height: 38px;
 }
 x-numberinput:not([condensed])[hasstepper] {
@@ -1231,10 +1234,10 @@ x-numberinput[empty] > x-label {
 }
 
 /* Error message */
-x-numberinput[computedsize="small"][error]::before {
+x-numberinput[size="small"][error]::before {
   top: 27px;
 }
-x-numberinput[computedsize="large"][error]::before {
+x-numberinput[size="large"][error]::before {
   top: 41px;
 }
 
@@ -1274,11 +1277,11 @@ x-texteditor[empty] > x-label {
  * Slider
  */
 
-x-slider[computedsize="small"]::part(thumb) {
+x-slider[size="small"]::part(thumb) {
   width: 17px;
   height: 17px;
 }
-x-slider[computedsize="large"]::part(thumb) {
+x-slider[size="large"]::part(thumb) {
   width: 23px;
   height: 23px;
 }
@@ -1287,16 +1290,16 @@ x-slider:not(:defined) {
 }
 
 /* Track */
-x-slider:not([vertical])[computedsize="small"]::part(track) {
+x-slider:not([vertical])[size="small"]::part(track) {
   height: 2px;
 }
-x-slider[vertical][computedsize="small"]::part(track) {
+x-slider[vertical][size="small"]::part(track) {
   width: 2px;
 }
-x-slider:not([vertical])[computedsize="large"]::part(track) {
+x-slider:not([vertical])[size="large"]::part(track) {
   height: 6px;
 }
-x-slider[vertical][computedsize="large"]::part(track) {
+x-slider[vertical][size="large"]::part(track) {
   width: 6px;
 }
 
@@ -1323,10 +1326,10 @@ x-wheelcolorpicker:not(:defined) {
  * Progressbar
  */
 
-x-progressbar[computedsize="small"] {
+x-progressbar[size="small"] {
   height: 6px;
 }
-x-progressbar[computedsize="large"] {
+x-progressbar[size="large"] {
   height: 10px;
 }
 x-progressbar:not(:defined) {
@@ -1339,11 +1342,11 @@ x-progressbar:not(:defined) {
  * Throbber
  */
 
-x-throbber[computedsize="small"] {
+x-throbber[size="small"] {
   width: 26px;
   height: 26px;
 }
-x-throbber[computedsize="large"] {
+x-throbber[size="large"] {
   width: 34px;
   height: 34px;
 }

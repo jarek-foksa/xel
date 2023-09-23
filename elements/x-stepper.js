@@ -225,16 +225,21 @@ export default class XStepperElement extends HTMLElement {
       return;
     }
 
+    this.setPointerCapture(pointerDownEvent.pointerId);
+
     // Provide "pressed" attribute for theming purposes which acts like :active pseudo-class, but is guaranteed
     // to last at least 100ms.
     {
       let pointerDownTimeStamp = Date.now();
+      let pointerUpOrCancelListener;
 
       button.setAttribute("data-pressed", "");
       this.setAttribute("pressed", action);
-      this.setPointerCapture(pointerDownEvent.pointerId);
 
-      this.addEventListener("pointerup", async (event) => {
+      this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
+
         let pressedTime = Date.now() - pointerDownTimeStamp;
         let minPressedTime = 100;
 
@@ -245,21 +250,29 @@ export default class XStepperElement extends HTMLElement {
         button.removeAttribute("data-pressed");
         this.removeAttribute("pressed");
       }, {once: true});
+
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
     }
 
     // Dispatch events
     {
       let intervalID = null;
       let pointerDownTimeStamp = Date.now();
+      let pointerUpOrCancelListener;
       let {shiftKey} = pointerDownEvent;
 
       this.dispatchEvent(new CustomEvent(action + "start", {bubbles: true}));
       this.dispatchEvent(new CustomEvent(action, {bubbles: true, detail: {shiftKey}}));
 
-      this.addEventListener("pointerup", (event) => {
+      this.addEventListener("pointerup", pointerUpOrCancelListener = () => {
+        this.removeEventListener("pointerup", pointerUpOrCancelListener);
+        this.removeEventListener("pointercancel", pointerUpOrCancelListener);
+
         clearInterval(intervalID);
         this.dispatchEvent(new CustomEvent(action + "end", {bubbles: true}));
-      }, {once: true});
+      });
+
+      this.addEventListener("pointercancel", pointerUpOrCancelListener);
 
       intervalID = setInterval(() => {
         if (Date.now() - pointerDownTimeStamp > 500) {

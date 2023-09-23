@@ -17,7 +17,6 @@ import {getRelDisplayDate} from "../utils/time.js";
 // @singleton
 // @event themechange
 // @event accentcolorchange
-// @event sizechange
 // @event iconsetschange
 // @event localeschange
 export default new class Xel extends EventEmitter {
@@ -51,24 +50,6 @@ export default new class Xel extends EventEmitter {
     if (!meta) {
       meta = document.createElement("meta");
       meta.setAttribute("name", "xel-accent-color");
-      document.head.append(meta);
-    }
-
-    meta.setAttribute("content", value);
-  }
-
-  // @type "small" || "medium" || "large"
-  //
-  // Widgets size.
-  get size() {
-    return this.#size;
-  }
-  set size(value) {
-    let meta = document.head.querySelector(`:scope > meta[name="xel-size"]`);
-
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "xel-size");
       document.head.append(meta);
     }
 
@@ -259,7 +240,6 @@ export default new class Xel extends EventEmitter {
 
   #theme = null;
   #accentColor = null;
-  #size = null;
   #iconsets = [];
   #locales = [];
   #localesIds = [];
@@ -280,11 +260,10 @@ export default new class Xel extends EventEmitter {
 
     document.adoptedStyleSheets = [this.#themeStyleSheet];
 
-    let {theme, accentColor, size, iconsets, locales} = this.#getSettings();
+    let {theme, accentColor, iconsets, locales} = this.#getSettings();
 
     this.#theme = theme;
     this.#accentColor = accentColor;
-    this.#size = size;
     this.#iconsets = iconsets;
     this.#locales = locales;
 
@@ -320,15 +299,13 @@ export default new class Xel extends EventEmitter {
   #onHeadChange(mutations) {
     let oldTheme = this.#theme;
     let oldAccentColor = this.#accentColor;
-    let oldSize = this.#size;
     let oldIconsets = this.#iconsets;
     let oldLocales = this.#locales;
 
-    let {theme, accentColor, size, iconsets, locales} = this.#getSettings();
+    let {theme, accentColor, iconsets, locales} = this.#getSettings();
 
     this.#theme = theme;
     this.#accentColor = accentColor;
-    this.#size = size;
     this.#iconsets = iconsets;
     this.#locales = locales;
 
@@ -346,10 +323,6 @@ export default new class Xel extends EventEmitter {
     if (this.#accentColor !== oldAccentColor) {
       this.#updateThemeAccentColor();
       this.dispatchEvent(new CustomEvent("accentcolorchange"));
-    }
-
-    if (this.#size !== oldSize) {
-      this.dispatchEvent(new CustomEvent("sizechange"));
     }
 
     if (compareArrays(this.#iconsets, oldIconsets, true) === false) {
@@ -539,14 +512,12 @@ export default new class Xel extends EventEmitter {
   #getSettings() {
     let themeMeta       = document.head.querySelector(`:scope > meta[name="xel-theme"]`);
     let accentColorMeta = document.head.querySelector(`:scope > meta[name="xel-accent-color"]`);
-    let sizeMeta        = document.head.querySelector(`:scope > meta[name="xel-size"]`);
     let iconsetsMeta    = document.head.querySelector(`:scope > meta[name="xel-iconsets"]`);
     let localesMeta     = document.head.querySelector(`:scope > meta[name="xel-locales"]`);
 
     return {
       theme       : (themeMeta       && themeMeta.content       !== "") ? themeMeta.content       : null,
       accentColor : (accentColorMeta && accentColorMeta.content !== "") ? accentColorMeta.content : null,
-      size        : (sizeMeta        && sizeMeta.content        !== "") ? sizeMeta.content        : null,
       iconsets    : iconsetsMeta ? iconsetsMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : [],
       locales     : localesMeta  ?  localesMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : []
     };

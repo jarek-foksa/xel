@@ -21,7 +21,7 @@ const DEBUG = false;
 // @event changeend
 // @part slider
 export default class XWheelColorPickerElement extends HTMLElement {
-  static observedAttributes = ["value", "size"];
+  static observedAttributes = ["value"];
 
   static #shadowTemplate = html`
     <template>
@@ -54,6 +54,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
       user-select: none;
       -webkit-user-select: none;
       --wheel-max-width: none;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
     }
     :host([hidden]) {
       display: none;
@@ -106,13 +110,13 @@ export default class XWheelColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
     }
-    :host([computedsize="small"]) #value-slider {
+    :host([size="small"]) #value-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #value-slider {
+    :host([size="large"]) #value-slider {
       height: 35px;
     }
 
@@ -150,7 +154,7 @@ export default class XWheelColorPickerElement extends HTMLElement {
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       border-radius: 2px;
-      touch-action: pan-y;
+      touch-action: pinch-zoom;
       --marker-width: 18px;
       /* Checkerboard pattern */
       background-size: 10px 10px;
@@ -163,10 +167,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
     :host([alphaslider]) #alpha-slider {
       display: block;
     }
-    :host([computedsize="small"]) #alpha-slider {
+    :host([size="small"]) #alpha-slider {
       height: 24px;
     }
-    :host([computedsize="large"]) #alpha-slider {
+    :host([size="large"]) #alpha-slider {
       height: 35px;
     }
 
@@ -215,27 +219,28 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property readOnly
+  // @type boolean
+  // @default false
   // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
   #shadowRoot = null;
   #elements = {};
-  #xelSizeChangeListener = null;
 
   // Note that HSVA color model is used only internally
   #h = 0;   // Hue (0 ~ 360)
@@ -267,17 +272,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
   async connectedCallback() {
     this.#update();
-    this.#updateComputedSizeAttriubte();
 
     if (this.#elements["huesat-image"].src === "") {
       this.#elements["huesat-image"].src = await getColorWheelImageURL();
     }
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -286,9 +284,6 @@ export default class XWheelColorPickerElement extends HTMLElement {
     }
     else if (name === "value") {
       this.#onValueAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
   }
 
@@ -340,32 +335,6 @@ export default class XWheelColorPickerElement extends HTMLElement {
     `;
   }
 
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
-    }
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onValueAttributeChange() {
@@ -389,16 +358,12 @@ export default class XWheelColorPickerElement extends HTMLElement {
     }
   }
 
-  #onSizeAttributeChange() {
-    this.#updateComputedSizeAttriubte();
-  }
-
   #onHuesatSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingHuesatMarker) {
       return;
     }
 
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
     let wheelBounds = this.#elements["huesat-slider"].getBoundingClientRect();
 
     this.#isDraggingHuesatMarker = true;
@@ -438,23 +403,26 @@ export default class XWheelColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
     });
 
-    this.#elements["huesat-slider"].addEventListener("pointerup", pointerUpListener = (event) => {
+    this.#elements["huesat-slider"].addEventListener("pointerup", pointerUpOrCancelListener = (event) => {
       this.#elements["huesat-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["huesat-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["huesat-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["huesat-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.#elements["huesat-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingHuesatMarker = false;
     });
+
+    this.#elements["huesat-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onValueSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingValueSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["value-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingValueSliderMarker = true;
     this.#elements["value-slider"].style.cursor = "default";
@@ -482,23 +450,26 @@ export default class XWheelColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["value-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["value-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["value-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["value-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["value-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["value-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.#elements["value-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingValueSliderMarker = false;
     });
+
+    this.#elements["value-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.buttons > 1) {
+    if (pointerDownEvent.buttons > 1 || this.#isDraggingAlphaSliderMarker) {
       return;
     }
 
     let trackBounds = this.#elements["alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpListener;
+    let pointerMoveListener, pointerUpOrCancelListener;
 
     this.#isDraggingAlphaSliderMarker = true;
     this.#elements["alpha-slider"].style.cursor = "default";
@@ -523,14 +494,17 @@ export default class XWheelColorPickerElement extends HTMLElement {
       onPointerMove(pointerMoveEvent.clientX);
     });
 
-    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpListener = () => {
+    this.#elements["alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
       this.#elements["alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpListener);
+      this.#elements["alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this.#elements["alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
       this.#elements["alpha-slider"].style.cursor = null;
 
       this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       this.#isDraggingAlphaSliderMarker = false;
     });
+
+    this.#elements["alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 };
 

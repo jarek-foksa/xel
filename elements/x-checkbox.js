@@ -13,14 +13,12 @@ import {html, css} from "../utils/template.js";
 // @part indicator
 // @event toggle
 export default class XCheckboxElement extends HTMLElement {
-  static observedAttributes = ["toggled", "mixed", "disabled", "size"];
+  static observedAttributes = ["toggled", "mixed", "disabled"];
 
   static #shadowTemplate = html`
     <template>
       <main id="main">
         <div id="indicator" part="indicator">
-          <div id="ripples"></div>
-
           <svg id="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path id="checkmark-path"></path>
           </svg>
@@ -37,7 +35,6 @@ export default class XCheckboxElement extends HTMLElement {
     :host {
       display: block;
       width: fit-content;
-      --trigger-effect: none; /* none, ripple */
     }
     :host([disabled]) {
       opacity: 0.4;
@@ -95,31 +92,6 @@ export default class XCheckboxElement extends HTMLElement {
 
     #checkmark-path {
       fill: currentColor;
-    }
-
-    /* Ripples */
-
-    #ripples {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    #ripples .ripple {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: currentColor;
-      opacity: 0.15;
-      z-index: -1;
-      will-change: opacity, transform;
-      border-radius: 999px;
-      transform: scale(2.6);
     }
 
     /**
@@ -181,22 +153,14 @@ export default class XCheckboxElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
@@ -204,7 +168,6 @@ export default class XCheckboxElement extends HTMLElement {
   #lastTabIndex = 0;
 
   #xelThemeChangeListener = null;
-  #xelSizeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -226,16 +189,13 @@ export default class XCheckboxElement extends HTMLElement {
 
   connectedCallback() {
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateCheckmarkPathData());
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
 
     this.#updateCheckmarkPathData();
     this.#updateAccessabilityAttributes();
-    this.#updateComputedSizeAttriubte();
   }
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -247,9 +207,6 @@ export default class XCheckboxElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
-    }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
     }
   }
 
@@ -275,32 +232,6 @@ export default class XCheckboxElement extends HTMLElement {
       }
 
       this.#lastTabIndex = 0;
-    }
-  }
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
     }
   }
 
@@ -335,37 +266,6 @@ export default class XCheckboxElement extends HTMLElement {
         ancestorFocusableElement.focus();
       }
     }
-
-    // Ripple
-    {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let ripple = createElement("div");
-        ripple.setAttribute("class", "ripple pointer-down-ripple");
-        this.#elements["ripples"].append(ripple);
-
-        let transformAnimation = ripple.animate(
-          { transform: ["scale(0)", "scale(2.6)"] },
-          { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        );
-
-        this.setPointerCapture(event.pointerId);
-
-        this.addEventListener("pointerup", async () => {
-          await transformAnimation.finished;
-
-          let opacityAnimation = ripple.animate(
-            { opacity: [getComputedStyle(ripple).opacity, "0"] },
-            { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-          );
-
-          await opacityAnimation.finished;
-
-          ripple.remove();
-        }, {once: true});
-      }
-    }
   }
 
   async #onClick(event) {
@@ -380,33 +280,10 @@ export default class XCheckboxElement extends HTMLElement {
 
       this.dispatchEvent(new CustomEvent("toggle", {bubbles: true}));
     }
-
-    // Ripple
-    if (this.#elements["ripples"].querySelector(".pointer-down-ripple") === null) {
-      let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
-
-      if (triggerEffect === "ripple") {
-        let ripple = createElement("div");
-        ripple.setAttribute("class", "ripple");
-        this.#elements["ripples"].append(ripple);
-
-        await ripple.animate(
-          { transform: ["scale(0)", "scale(2.6)"] },
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        ).finished;
-
-        await ripple.animate(
-          { opacity: [getComputedStyle(ripple).opacity, "0"] },
-          { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-        ).finished;
-
-        ripple.remove();
-      }
-    }
   }
 
   #onKeyDown(event) {
-    if (event.code === "Enter" || event.code === "Space") {
+    if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
       event.preventDefault();
       this.click();
     }

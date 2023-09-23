@@ -66,6 +66,18 @@ export let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
   return element;
 };
 
+// @type (PointerEvent, Element) => boolean
+export let isPointerInsideElement = (pointerEvent, element) => {
+  let bounds = element.getBoundingClientRect();
+
+  return (
+    pointerEvent.clientX >= bounds.x &&
+    pointerEvent.clientX <= bounds.x + bounds.width &&
+    pointerEvent.clientY >= bounds.y &&
+    pointerEvent.clientY <= bounds.y + bounds.height
+  );
+};
+
 // @type (Element, string, boolean) => Element?
 //
 // Same as the standard element.closest() method but can also walk the shadow DOM.

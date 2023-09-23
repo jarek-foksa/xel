@@ -12,7 +12,7 @@ import {getTimeStamp} from "../utils/time.js";
 
 // @element x-notification
 export default class XNotificationElement extends HTMLElement {
-  static observedAttributes = ["opened", "size"];
+  static observedAttributes = ["opened"];
 
   static #shadowTemplate = html`
     <template>
@@ -80,28 +80,19 @@ export default class XNotificationElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "small" || "medium" || "large" || "smaller" || "larger" || null
+  // @type "small" || "large" || null
   // @default null
   get size() {
-    return this.hasAttribute("size") ? this.getAttribute("size") : null;
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
-    (size === null) ? this.removeAttribute("size") : this.setAttribute("size", size);
-  }
-
-  // @property readOnly
-  // @attribute
-  // @type "small" || "medium" || "large"
-  // @default "medium"
-  // @readOnly
-  get computedSize() {
-    return this.hasAttribute("computedsize") ? this.getAttribute("computedsize") : "medium";
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot = null;
   #time = 0;
   #intervalID = null;
-  #xelSizeChangeListener = null;
   #windowPointerDownListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,13 +107,6 @@ export default class XNotificationElement extends HTMLElement {
 
   connectedCallback() {
     this.setAttribute("tabindex", "0");
-    this.#updateComputedSizeAttriubte();
-
-    Xel.addEventListener("sizechange", this.#xelSizeChangeListener = () => this.#updateComputedSizeAttriubte());
-  }
-
-  disconnectedCallback() {
-    Xel.removeEventListener("sizechange", this.#xelSizeChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -131,37 +115,6 @@ export default class XNotificationElement extends HTMLElement {
     }
     else if (name === "opened") {
       this.opened ? this.#onOpen() : this.#onClose();
-    }
-    else if (name === "size") {
-      this.#updateComputedSizeAttriubte();
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #updateComputedSizeAttriubte() {
-    let defaultSize = Xel.size;
-    let customSize = this.size;
-    let computedSize = "medium";
-
-    if (customSize === null) {
-      computedSize = defaultSize;
-    }
-    else if (customSize === "smaller") {
-      computedSize = (defaultSize === "large") ? "medium" : "small";
-    }
-    else if (customSize === "larger") {
-      computedSize = (defaultSize === "small") ? "medium" : "large";
-    }
-    else {
-      computedSize = customSize;
-    }
-
-    if (computedSize === "medium") {
-      this.removeAttribute("computedsize");
-    }
-    else {
-      this.setAttribute("computedsize", computedSize);
     }
   }
 

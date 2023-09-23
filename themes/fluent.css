@@ -891,26 +891,26 @@ x-switch[mixed]::part(indicator-thumb) {
 x-switch[toggled][disabled]::part(indicator-thumb) {
   background: black;
 }
-x-switch[computedsize="small"]::part(indicator-thumb) {
+x-switch[size="small"]::part(indicator-thumb) {
   width: 8px;
   height: 8px;
   left: 2px;
 }
-x-switch[computedsize="small"][toggled]::part(indicator-thumb) {
+x-switch[size="small"][toggled]::part(indicator-thumb) {
   left: calc(100% - 10px);
 }
-x-switch[computedsize="small"][mixed]::part(indicator-thumb) {
+x-switch[size="small"][mixed]::part(indicator-thumb) {
   left: calc(50% - 8px / 2);
 }
-x-switch[computedsize="large"]::part(indicator-thumb) {
+x-switch[size="large"]::part(indicator-thumb) {
   width: 14px;
   height: 14px;
   left: 4px;
 }
-x-switch[computedsize="large"][toggled]::part(indicator-thumb) {
+x-switch[size="large"][toggled]::part(indicator-thumb) {
   left: calc(100% - 18px);
 }
-x-switch[computedsize="large"][mixed]::part(indicator-thumb) {
+x-switch[size="large"][mixed]::part(indicator-thumb) {
   left: calc(50% - 14px / 2);
 }
 
@@ -1024,10 +1024,10 @@ x-input > x-label {
 x-input > x-icon + x-label {
   padding: 2px 5px 0px 29px;
 }
-x-input[computedsize="small"] > x-icon + x-label {
+x-input[size="small"] > x-icon + x-label {
   padding: 2px 5px 0px 29px;
 }
-x-input[computedsize="large"] > x-icon + x-label {
+x-input[size="large"] > x-icon + x-label {
   padding: 2px 5px 0px 33px;
 }
 
