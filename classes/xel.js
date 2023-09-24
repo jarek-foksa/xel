@@ -146,15 +146,14 @@ export default new class Xel extends EventEmitter {
     let colors = {};
 
     for (let rule of this.#themeStyleSheet.cssRules) {
-      if (rule.type === 1 && rule.selectorText === "body" && rule.styleMap.has("--preset-accent-colors")) {
-        let unparsedValue = rule.styleMap.get("--preset-accent-colors");
+      if (rule.type === 1 && rule.selectorText === "body") {
+        let unparsedValue = rule.style.getPropertyValue("--preset-accent-colors");
 
-        if (unparsedValue && unparsedValue[0]) {
-          let entries = unparsedValue[0].split(",").map($0 => $0.trim()).map($0 => $0.split(" "))
+        if (unparsedValue !== "") {
+          let entries = unparsedValue.split(",").map($0 => $0.trim()).map($0 => $0.split(" "));
           colors = Object.fromEntries(entries);
+          break;
         }
-
-        break;
       }
     }
 
@@ -362,7 +361,7 @@ export default new class Xel extends EventEmitter {
       }
 
       let cssText = await this.#fetchTheme(url);
-      await this.#themeStyleSheet.replace(cssText);
+      this.#themeStyleSheet.replaceSync(cssText);
 
       this.#updateAutocapitlizeProperty();
       this.#updateThemeAccentColor();

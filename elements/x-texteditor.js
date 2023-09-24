@@ -8,6 +8,7 @@ import Xel from "../classes/xel.js";
 
 import {createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
+import {getBrowserEngine} from "../utils/system.js";
 import {sleep} from "../utils/time.js";
 
 // @element x-texteditor
@@ -261,6 +262,24 @@ export default class XTextEditorElement extends HTMLElement {
 
     this.#elements["editor"].addEventListener("click", (event) => this.#onEditorClick(event));
     this.#elements["editor"].addEventListener("input", (event) => this.#onEditorInput(event));
+
+    // @bugfix: https://bugzilla.mozilla.org/show_bug.cgi?id=1291467
+    if (getBrowserEngine() === "gecko") {
+      this.#elements["editor"].setAttribute("contenteditable", "");
+
+      this.#elements["editor"].addEventListener("beforeinput", (event) => {
+        if (event.inputType === "insertFromPaste" && event.dataTransfer.types.includes("text/plain")) {
+          event.preventDefault();
+
+          let selection = window.getSelection();
+          let range = selection.getRangeAt(0);
+
+          range.deleteContents();
+          range.insertNode(document.createTextNode(event.dataTransfer.getData("text/plain")));
+          selection.collapseToEnd();
+        }
+      });
+    }
   }
 
   connectedCallback() {

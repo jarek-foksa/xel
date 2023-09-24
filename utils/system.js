@@ -3,6 +3,27 @@
 //   © 2012-2022 Jarosław Foksa
 
 let os;
+let engine;
+
+// @type () => "chromium" || "webkit" || "gecko" || "other"
+export let getBrowserEngine = () => {
+  if (engine === undefined) {
+    if (navigator.userAgent.indexOf("Firefox/") > -1) {
+      engine = "gecko";
+    }
+    else if (navigator.userAgent.indexOf("Chrome") > -1) {
+      engine = "chromium";
+    }
+    else if (navigator.userAgent.indexOf("Safari/") > -1) {
+      engine = "webkit";
+    }
+    else {
+      engine = "other";
+    }
+  }
+
+  return engine;
+};
 
 // @type () => "macos" || "windows" || "linux" || "chromeos" || "android" || "ios" || null
 export let getOperatingSystemName = () => {

@@ -8,6 +8,7 @@ import Xel from "../classes/xel.js";
 
 import {isNumeric} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
+import {getBrowserEngine} from "../utils/system.js";
 import {debounce, sleep} from "../utils/time.js";
 import {normalize, getPrecision, getDistanceBetweenPoints} from "../utils/math.js";
 
@@ -291,6 +292,24 @@ export default class XNumberInputElement extends HTMLElement {
     this.addEventListener("decrementstart", (event) => this.#onStepperDecrementStart(event));
     this.addEventListener("focusin", (event) => this.#onFocusIn(event));
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
+
+    // @bugfix: https://bugzilla.mozilla.org/show_bug.cgi?id=1291467
+    if (getBrowserEngine() === "gecko") {
+      this.#elements["editor"].setAttribute("contenteditable", "");
+
+      this.#elements["editor"].addEventListener("beforeinput", (event) => {
+        if (event.inputType === "insertFromPaste" && event.dataTransfer.types.includes("text/plain")) {
+          event.preventDefault();
+
+          let selection = window.getSelection();
+          let range = selection.getRangeAt(0);
+
+          range.deleteContents();
+          range.insertNode(document.createTextNode(event.dataTransfer.getData("text/plain")));
+          selection.collapseToEnd();
+        }
+      });
+    }
   }
 
   connectedCallback() {

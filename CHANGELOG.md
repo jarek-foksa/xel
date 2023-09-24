@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.23.0 (2023-09-24)
+
+- Initial support for Firefox 119
+
 ## 0.22.6 (2023-08-28)
 
 - [Bugfix] Frozen cursor image when clicking elements with pointer capture
