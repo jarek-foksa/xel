@@ -5,9 +5,8 @@
 //   MIT License (check LICENSE.md for details)
 
 import Xel from "../classes/xel.js";
-import ColorParser from "../classes/color-parser.js";
 
-import {formatColorString, serializeColor} from "../utils/color.js";
+import {convertColor, parseColor, serializeColor} from "../utils/color.js";
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {debounce} from "../utils/time.js";
@@ -141,7 +140,7 @@ export default class XColorSelectElement extends HTMLElement {
     let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker, x-barscolorpicker");
 
     if (picker) {
-      picker.setAttribute("value", formatColorString(this.value, "rgba"));
+      picker.setAttribute("value", this.value);
     }
 
     this.#updateAccessabilityAttributes();
@@ -201,9 +200,15 @@ export default class XColorSelectElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateInput() {
-    let [r, g, b, a] = new ColorParser().parse(this.value, "rgba");
-    this.#elements["input"].value = serializeColor([r, g, b, a], "rgba", "hex");
-    this.#elements["input"].style.opacity = a;
+    let color = parseColor(this.value);
+    let rgbColor = convertColor(color, "srgb");
+    let [r, g, b] = rgbColor.coords;
+    let alpha = rgbColor.alpha;
+
+    rgbColor.alpha = 1;
+
+    this.#elements["input"].value = serializeColor(rgbColor, {format: "hex"});
+    this.#elements["input"].style.opacity = alpha;
   }
 
   #updateAccessabilityAttributes() {
@@ -242,7 +247,7 @@ export default class XColorSelectElement extends HTMLElement {
 
   #onChange(event) {
     if (event.target !== this) {
-      this.value = formatColorString(event.target.value, "rgba");
+      this.value = event.target.value;
       this.#updateInput();
     }
   }

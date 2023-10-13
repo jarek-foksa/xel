@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.24.0 (PENDING)
+
+- Allow colors to be specified in any valid CSS format
+
 ## 0.23.0 (2023-09-24)
 
 - Initial support for Firefox 119

@@ -4,11 +4,11 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import ColorParser from "./color-parser.js";
 import DOMPurify from "../node_modules/dompurify/dist/purify.es.js";
 import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
+import {convertColor, parseColor, serializeColor} from "../utils/color.js";
 import {getIconset} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
@@ -550,13 +550,15 @@ export default new class Xel extends EventEmitter {
       serializedColor = this.presetAccentColors[serializedColor];
     }
 
-    let [h, s, l, a] = new ColorParser().parse(serializedColor, "hsla");
+    let color = convertColor(parseColor(serializedColor), "hsl");
+    let [h, s, l] = color.coords;
+
     let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
 
     rule.style.setProperty("--accent-color-h", h);
     rule.style.setProperty("--accent-color-s", `${s}%`);
     rule.style.setProperty("--accent-color-l", `${l}%`);
-    rule.style.setProperty("--accent-color-a", a);
+    rule.style.setProperty("--accent-color-a", color.alpha);
   }
 
   #getSettings() {

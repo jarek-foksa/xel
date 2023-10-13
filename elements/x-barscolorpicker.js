@@ -5,11 +5,10 @@
 //   MIT License (check LICENSE.md for details)
 
 import Xel from "../classes/xel.js";
-import ColorParser from "../classes/color-parser.js";
 
-import {serializeColor} from "../utils/color.js";
 import {normalize} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
+import {convertColor, parseColor, serializeColor} from "../utils/color.js";
 
 const DEBUG = false;
 
@@ -427,12 +426,14 @@ export default class XBarsColorPickerElement extends HTMLElement {
       this.#isDraggingLightnessSliderMarker === false &&
       this.#isDraggingAlphaSliderMarker === false
     ) {
-      let [h, s, l, a] = new ColorParser().parse(this.value, "hsla");
+      let color = parseColor(this.value);
+      let hslColor = convertColor(color, "hsl");
+      let [h, s, l] = hslColor.coords;
 
       this.#h = h;
       this.#s = s;
       this.#l = l;
-      this.#a = a;
+      this.#a = hslColor.alpha;
 
       this.#update();
     }
@@ -460,7 +461,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
 
       if (h !== this.#h) {
         this.#h = h;
-        this.value = serializeColor([this.#h, this.#s, this.#l, this.#a], "hsla", "hsla");
+        this.value = serializeColor({space: "hsl", coords: [this.#h, this.#s, this.#l], alpha: this.#a});
 
         this.#updateHueSliderMarker();
         this.#updateSaturationSliderBackground();
@@ -509,7 +510,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
 
       if (s !== this.#s) {
         this.#s = s;
-        this.value = serializeColor([this.#h, this.#s, this.#l, this.#a], "hsla", "hsla");
+        this.value = serializeColor({space: "hsl", coords: [this.#h, this.#s, this.#l], alpha: this.#a});
 
         this.#updateSaturationSliderMarker();
         this.#updateSaturationSliderBackground();
@@ -556,7 +557,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
 
       if (l !== this.#l) {
         this.#l = l;
-        this.value = serializeColor([this.#h, this.#s, this.#l, this.#a], "hsla", "hsla");
+        this.value = serializeColor({space: "hsl", coords: [this.#h, this.#s, this.#l], alpha: this.#a});
 
         this.#updateLightnessSliderMarker();
         this.#updateSaturationSliderBackground();
@@ -603,7 +604,7 @@ export default class XBarsColorPickerElement extends HTMLElement {
 
       if (a !== this.#a) {
         this.#a = a;
-        this.value = serializeColor([this.#h, this.#s, this.#l, this.#a], "hsla", "hsla");
+        this.value = serializeColor({space: "hsl", coords: [this.#h, this.#s, this.#l], alpha: this.#a});
         this.#updateAlphaSliderMarker();
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }

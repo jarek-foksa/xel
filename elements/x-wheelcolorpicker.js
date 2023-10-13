@@ -4,14 +4,70 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import ColorParser from "../classes/color-parser.js";
 import Xel from "../classes/xel.js";
 
-import {serializeColor, hsvToRgb, getColorWheelImageURL} from "../utils/color.js";
+import {convertColor, parseColor, serializeColor} from "../utils/color.js";
 import {html, css} from "../utils/template.js";
 import {round, normalize, degToRad} from "../utils/math.js";
 
 let {PI, sqrt, atan2, sin, cos, pow} = Math;
+
+// @type () => string
+//
+// Get blob URL for color wheel image (HSV spectrum) used by the color pickers.
+let getColorWheelImageURL = () => {
+  return new Promise((resolve) => {
+    if (getColorWheelImageURL.url) {
+      resolve(getColorWheelImageURL.url);
+    }
+    else if (getColorWheelImageURL.callbacks) {
+      getColorWheelImageURL.callbacks.push(resolve);
+    }
+    else {
+      getColorWheelImageURL.callbacks = [resolve];
+
+      let size = 300;
+      let canvas = document.createElement("canvas");
+      let context = canvas.getContext("2d");
+      let imageData = context.createImageData(size, size);
+      let data = imageData.data;
+      let radius = size / 2;
+      let i = 0;
+
+      canvas.width = size;
+      canvas.height = size;
+
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          let rx = x - radius;
+          let ry = y - radius;
+          let d = pow(rx, 2) + pow(ry, 2);
+
+          let h = ((atan2(ry, rx) + PI) / (PI * 2)) * 360;
+          let s = (sqrt(d) / radius) * 100;
+
+          let [r, g, b] = convertColor({space: "hsv", coords: [h, s, 100]}, "srgb").coords;
+          let a = (d > pow(radius, 2)) ? 0 : 255;
+
+          data[i++] = r*255;
+          data[i++] = g*255;
+          data[i++] = b*255;
+          data[i++] = a;
+        }
+      }
+
+      context.putImageData(imageData, 0, 0);
+
+      canvas.toBlob((blob) => {
+        getColorWheelImageURL.url = URL.createObjectURL(blob);
+
+        for (let callback of getColorWheelImageURL.callbacks) {
+          callback(getColorWheelImageURL.url);
+        }
+      });
+    }
+  });
+};
 
 const DEBUG = false;
 
@@ -319,7 +375,11 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
   #updateValueSliderBackground() {
     let gradientBackground = "linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,1))";
-    let solidBackground = serializeColor([this.#h, this.#s, 100, 1], "hsva", "hex");
+
+    let solidBackground = serializeColor(
+      convertColor({space: "hsv", coords: [this.#h, this.#s, 100]}, "hsl")
+    );
+
     this.#elements["value-slider"].style.background = `${gradientBackground}, ${solidBackground}`;
   }
 
@@ -328,10 +388,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
   }
 
   #updateAlphaSliderBackground() {
-    let [r, g, b] = hsvToRgb(this.#h, this.#s, this.#v).map($0 => round($0, 0));
+    let [r, g, b] = convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v]}, "srgb").coords;
 
     this.#elements["alpha-slider-gradient"].style.background = `
-      linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))
+      linear-gradient(to right, rgba(${r*255}, ${g*255}, ${b*255}, 1), rgba(${r*255}, ${g*255}, ${b*255}, 0))
     `;
   }
 
@@ -343,12 +403,14 @@ export default class XWheelColorPickerElement extends HTMLElement {
       this.#isDraggingValueSliderMarker === false &&
       this.#isDraggingAlphaSliderMarker === false
     ) {
-      let [h, s, v, a] = new ColorParser().parse(this.value, "hsva");
+      let color = parseColor(this.value);
+      let hsvColor = convertColor(color, "hsv");
+      let [h, s, v] = hsvColor.coords;
 
       this.#h = h;
       this.#s = s;
       this.#v = v;
-      this.#a = a;
+      this.#a = hsvColor.alpha;
 
       this.#update();
     }
@@ -389,7 +451,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
       this.#h = round(((theta + PI) / (PI * 2)) * 360, 3);
       this.#s = round((sqrt(d) / radius) * 100, 3)
 
-      this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+      this.value = serializeColor(
+        convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v], alpha: this.#a}, "hsl")
+      );
+
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 
       this.#updateHuesatMarker();
@@ -435,7 +500,10 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
       if (v !== this.#v) {
         this.#v = v;
-        this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+
+        this.value = serializeColor(
+          convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v], alpha: this.#a}, "hsl")
+        );
 
         this.#updateValueSliderMarker();
         this.#updateAlphaSliderBackground();
@@ -482,7 +550,11 @@ export default class XWheelColorPickerElement extends HTMLElement {
 
       if (a !== this.#a) {
         this.#a = a;
-        this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+
+        this.value = serializeColor(
+          convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v], alpha: this.#a}, "hsl")
+        );
+
         this.#updateAlphaSliderMarker();
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }

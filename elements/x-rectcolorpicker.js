@@ -5,9 +5,8 @@
 //   MIT License (check LICENSE.md for details)
 
 import Xel from "../classes/xel.js";
-import ColorParser from "../classes/color-parser.js";
 
-import {serializeColor, hsvToRgb} from "../utils/color.js";
+import {convertColor, parseColor, serializeColor} from "../utils/color.js";
 import {round, normalize} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 
@@ -305,7 +304,9 @@ export default class XRectColorPickerElement extends HTMLElement {
   }
 
   #updateSatlightSliderBackground() {
-    let background1 = serializeColor([this.#h, 100, 50, 1], "hsla", "hex");
+    // let background1 = serializeColor([this.#h, 100, 50, 1], "hsla", "hex");
+    let background1 = serializeColor({space: "hsl", coords: [this.#h, 100, 50]});
+
     let background2 = "linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,1))";
     let background3 = "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1))";
     this.#elements["satlight-slider"].style.background = `${background3}, ${background2}, ${background1}`;
@@ -316,10 +317,10 @@ export default class XRectColorPickerElement extends HTMLElement {
   }
 
   #updateAlphaSliderBackground() {
-    let [r, g, b] = hsvToRgb(this.#h, this.#s, this.#v).map($0 => round($0, 0));
+    let [r, g, b] = convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v]}, "srgb").coords;
 
     this.#elements["alpha-slider-gradient"].style.background = `
-      linear-gradient(to right, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))
+      linear-gradient(to right, rgba(${r*255}, ${g*255}, ${b*255}, 1), rgba(${r*255}, ${g*255}, ${b*255}, 0))
     `;
   }
 
@@ -331,12 +332,14 @@ export default class XRectColorPickerElement extends HTMLElement {
       this.#isDraggingSatlightMarker === false &&
       this.#isDraggingAlphaSliderMarker === false
     ) {
-      let [h, s, v, a] = new ColorParser().parse(this.value, "hsva");
+      let color = parseColor(this.value);
+      let hsvColor = convertColor(color, "hsv");
+      let [h, s, v] = hsvColor.coords;
 
       this.#h = h;
       this.#s = s;
       this.#v = v;
-      this.#a = a;
+      this.#a = hsvColor.alpha;
 
       this.#update();
     }
@@ -368,7 +371,11 @@ export default class XRectColorPickerElement extends HTMLElement {
       this.#s = x;
       this.#v = 100 - y;
 
-      this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+      // this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+      this.value = serializeColor(
+        convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v], alpha: this.#a}, "hsl")
+      );
+
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 
       this.#updateSatlightSliderMarker();
@@ -411,7 +418,11 @@ export default class XRectColorPickerElement extends HTMLElement {
 
       if (h !== this.#h) {
         this.#h = h;
-        this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+
+        // this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+        this.value = serializeColor(
+          convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v], alpha: this.#a}, "hsl")
+        );
 
         this.#updateHueSliderMarker();
         this.#updateSatlightSliderBackground();
@@ -458,7 +469,12 @@ export default class XRectColorPickerElement extends HTMLElement {
 
       if (a !== this.#a) {
         this.#a = a;
-        this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+
+        // this.value = serializeColor([this.#h, this.#s, this.#v, this.#a], "hsva", "hsla");
+        this.value = serializeColor(
+          convertColor({space: "hsv", coords: [this.#h, this.#s, this.#v], alpha: this.#a}, "hsl")
+        );
+
         this.#updateAlphaSliderMarker();
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
