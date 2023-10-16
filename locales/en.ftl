@@ -41,7 +41,6 @@ navigation = Navigation
 menus = Menus
 popups = Popups
 forms = Forms
-color-pickers = Color pickers
 indicators = Indicators
 
 # Forms

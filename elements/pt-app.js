@@ -34,7 +34,7 @@ export default class PTAppElement extends HTMLElement {
       <sidebar id="sidebar">
         <header id="header">
           <div id="branding">
-            <x-icon href="/iconsets/other.svg#xel"></x-icon>
+            <x-icon href="/iconsets/portal.svg#xel"></x-icon>
             <h1>Xel</h1>
           </div>
 
@@ -142,11 +142,7 @@ export default class PTAppElement extends HTMLElement {
                   <x-menu id="accent-preset-menu"></x-menu>
                 </x-select>
 
-                <x-colorselect id="accent-color-select">
-                  <x-popover modal>
-                    <x-wheelcolorpicker></x-wheelcolorpicker>
-                  </x-popover>
-                </x-colorselect>
+                <x-colorselect id="accent-color-select"></x-colorselect>
               </x-box>
             </div>
 
@@ -413,6 +409,12 @@ export default class PTAppElement extends HTMLElement {
               </x-button>
             </a>
 
+            <a href="/elements/x-colorpicker">
+              <x-button skin="nav">
+                <x-label>x-colorpicker</x-label>
+              </x-button>
+            </a>
+
             <a href="/elements/x-colorselect">
               <x-button skin="nav">
                 <x-label>x-colorselect</x-label>
@@ -440,30 +442,6 @@ export default class PTAppElement extends HTMLElement {
             <a href="/elements/x-slider">
               <x-button skin="nav">
                 <x-label>x-slider</x-label>
-              </x-button>
-            </a>
-          </section>
-
-          <hr/>
-
-          <section>
-            <h3><x-message href="#color-pickers" autocapitalize></x-message></h3>
-
-            <a href="/elements/x-rectcolorpicker">
-              <x-button skin="nav">
-                <x-label>x-rectcolorpicker</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-wheelcolorpicker">
-              <x-button skin="nav">
-                <x-label>x-wheelcolorpicker</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-barscolorpicker">
-              <x-button skin="nav">
-                <x-label>x-barscolorpicker</x-label>
               </x-button>
             </a>
           </section>
@@ -722,13 +700,18 @@ export default class PTAppElement extends HTMLElement {
   }
 
   async connectedCallback() {
-    Xel.theme = "/themes/" + (localStorage.getItem("theme") || "adwaita") + "-portal.css";
-    Xel.accentColor = localStorage.getItem("accentColor") || "blue";
-    Xel.iconsets = ["/iconsets/" + (localStorage.getItem("iconset") || "material") + ".svg"];
+    let theme       = Xel.getConfig("pt-app:theme", "adwaita");
+    let accentColor = Xel.getConfig("pt-app:accentColor", "blue");
+    let iconset     = Xel.getConfig("pt-app:iconset", "material");
+    let locale      = Xel.getConfig("pt-app:locale", "en");
+
+    Xel.theme = `/themes/${theme}-portal.css`;
+    Xel.accentColor = accentColor;
+    Xel.iconsets = [`/iconsets/${iconset}.svg`];
 
     // Load locales
     {
-      let [languageCode, territory] = (localStorage.getItem("locale") || "en").split("-");
+      let [languageCode, territory] = locale.split("-");
 
       if (territory === undefined) {
         Xel.locales = [`/locales/${languageCode}.ftl`];
@@ -797,7 +780,7 @@ export default class PTAppElement extends HTMLElement {
     this.#updateSidebarSettingsSection();
 
     let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
-    localStorage.setItem("theme", themeName);
+    Xel.setConfig("pt-app:theme", themeName);
   }
 
   #onXelAccentColorChange() {
@@ -814,17 +797,17 @@ export default class PTAppElement extends HTMLElement {
       this.#elements["accent-color-select"].value = Xel.presetAccentColors[color];
     }
 
-    localStorage.setItem("accentColor", color);
+    Xel.setConfig("pt-app:accentColor", color);
   }
 
   #onXelIconsetsChange() {
     this.#updateSidebarSettingsSection();
-    localStorage.setItem("iconset", this.#elements["iconset-select"].value);
+    Xel.setConfig("pt-app:iconset", this.#elements["iconset-select"].value);
   }
 
   #onXelLocalesChange() {
     this.#updateSidebarSettingsSection();
-    localStorage.setItem("locale", this.#elements["locale-select"].value);
+    Xel.setConfig("pt-app:locale", this.#elements["locale-select"].value);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1270,7 +1253,7 @@ export default class PTAppElement extends HTMLElement {
       itemsHTML += `
         <hr/>
         <x-menuitem value="custom">
-          <x-icon href="/iconsets/other.svg#color-wheel"></x-icon>
+          <x-icon href="/iconsets/portal.svg#color-wheel"></x-icon>
           <x-label>Custom</x-label>
         </x-menuitem>
       `;

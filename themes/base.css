@@ -1311,12 +1311,10 @@ x-slider > x-label {
 /*****************************************************************************************************************/
 
 /**
- * Color pickers
+ * Color picker
  */
 
-x-barscolorpicker:not(:defined),
-x-rectcolorpicker:not(:defined),
-x-wheelcolorpicker:not(:defined) {
+x-colorpicker:not(:defined) {
   display: none;
 }
 

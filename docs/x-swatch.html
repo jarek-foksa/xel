@@ -32,11 +32,35 @@
     <hr/>
 
     <section>
-      <h4>Value</h4>
+      <h4>Hex color value</h4>
 
       <pt-demoblock>
         <template>
           <x-swatch value="#bada55"></x-swatch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Wide gamut color value</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-swatch value="color(display-p3 1 0 0)"></x-swatch>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Semi-transparent color value</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-swatch value="rgb(100% 0% 0% / 30%)"></x-swatch>
         </template>
       </pt-demoblock>
     </section>

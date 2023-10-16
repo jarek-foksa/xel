@@ -1029,12 +1029,10 @@ x-slider::part(thumb):focus {
 /*****************************************************************************************************************/
 
 /**
- * Color pickers
+ * Color picker
  */
 
-x-barscolorpicker::part(slider),
-x-rectcolorpicker::part(slider),
-x-wheelcolorpicker::part(slider) {
+x-colorpicker::part(slider) {
   border-radius: 4px;
 }
 

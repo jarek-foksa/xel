@@ -9,15 +9,16 @@ import ColorSpace from "../node_modules/colorjs.io/src/space.js";
 import convertColor from "../node_modules/colorjs.io/src/to.js";
 import parseColor from "../node_modules/colorjs.io/src/parse.js";
 import serializeColor from "../node_modules/colorjs.io/src/serialize.js";
+import {normalize} from "../utils/math.js";
 
 import a98rgb from "../node_modules/colorjs.io/src/spaces/a98rgb.js";
 import hsl from "../node_modules/colorjs.io/src/spaces/hsl.js";
 import hsv from "../node_modules/colorjs.io/src/spaces/hsv.js";
-import hwb from "../node_modules/colorjs.io/src/spaces/hsv.js";
+import hwb from "../node_modules/colorjs.io/src/spaces/hwb.js";
 import lch from "../node_modules/colorjs.io/src/spaces/lch.js";
 import lab from "../node_modules/colorjs.io/src/spaces/lab.js";
 import oklab from "../node_modules/colorjs.io/src/spaces/oklab.js";
-import oklch from "../node_modules/colorjs.io/src/spaces/oklab.js";
+import oklch from "../node_modules/colorjs.io/src/spaces/oklch.js";
 import p3 from "../node_modules/colorjs.io/src/spaces/p3.js";
 import prophoto from "../node_modules/colorjs.io/src/spaces/prophoto.js";
 import rec2020 from "../node_modules/colorjs.io/src/spaces/rec2020.js";

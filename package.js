@@ -256,7 +256,7 @@ let createNpmPackage = (minify = true, publish = false) => {
         let paths = Glob.sync(`${projectPath}/iconsets/*.svg`);
 
         for (let path of paths) {
-          if (path.endsWith("other.svg") === false) {
+          if (path.endsWith("portal.svg") === false) {
             let relPath = path.substring(projectPath.length);
             let iconsetSVG = Fse.readFileSync(path, "utf8");
 

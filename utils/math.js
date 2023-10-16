@@ -40,6 +40,24 @@ export let normalize = (number, min, max = Infinity, precision = null) => {
   return number;
 };
 
+// @type (number, number) => number
+//
+// Round a number to a specified number of significant digits.
+export let toPrecision = (n, precision) => {
+  n = +n;
+  precision = +precision;
+
+  let integerLength = (Math.floor(n) + "").length;
+
+  if (precision > integerLength) {
+    return +n.toFixed(precision - integerLength);
+  }
+  else {
+    let p10 = 10 ** (integerLength - precision);
+    return Math.round(n / p10) * p10;
+  }
+};
+
 // @type (number) => number
 export let getPrecision = (number) => {
   if (!isFinite(number)) {

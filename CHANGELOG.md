@@ -3,6 +3,7 @@
 
 ## 0.24.0 (PENDING)
 
+- Replace `<x-barscolorpicker>`, `<x-rectcolorpicker>` and `<x-wheelcolorpicker>` with unified `<x-colorpicker>`
 - Allow colors to be specified in any valid CSS format
 
 ## 0.23.0 (2023-09-24)

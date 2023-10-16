@@ -41,7 +41,6 @@ navigation = Nawigacja
 menus = Menu
 popups = Okienka
 forms = Formularze
-color-pickers = Selektory kolorów
 indicators = Wskaźniki
 
 # Forms
