@@ -1086,6 +1086,46 @@ x-numberinput[condensed]:focus > x-stepper {
 /*****************************************************************************************************************/
 
 /**
+ * Color input
+ */
+
+x-colorinput {
+  background: black;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+}
+x-colorinput:hover {
+  border-color: var(--light-border-color);
+}
+x-colorinput:focus {
+  border-color: var(--accent-color);
+  border-radius: 0;
+  outline: 1px solid var(--accent-color);
+}
+x-colorinput[error] {
+  border-color: var(--error-color);
+}
+x-colorinput[error]:focus {
+  outline-color: var(--error-color);
+}
+x-colorinput[disabled] {
+  filter: contrast(0.6) opacity(0.6);
+}
+
+/* Arrow */
+x-colorinput::part(arrow) {
+  padding-right: 4px;
+  --path-data: M 6.46 32.74 L 12.4 26.82 L 49.96 64.39 L 87.55 26.82 L 93.48 32.74 L 49.85 75.99 L 6.46 32.74 Z;
+}
+
+/* Placeholder */
+x-colorinput > x-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Text editor
  */
 

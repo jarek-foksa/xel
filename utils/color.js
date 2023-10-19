@@ -9,7 +9,7 @@ import ColorSpace from "../node_modules/colorjs.io/src/space.js";
 import convertColor from "../node_modules/colorjs.io/src/to.js";
 import parseColor from "../node_modules/colorjs.io/src/parse.js";
 import serializeColor from "../node_modules/colorjs.io/src/serialize.js";
-import {normalize} from "../utils/math.js";
+import {normalize, toPrecision} from "../utils/math.js";
 
 import a98rgb from "../node_modules/colorjs.io/src/spaces/a98rgb.js";
 import hsl from "../node_modules/colorjs.io/src/spaces/hsl.js";
@@ -1254,6 +1254,188 @@ ColorSpace.register(xyzabsd65);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// @type
+//   format = "hex" ||
+//            "hsl" || "hwb" || "rgb" || "color" || "oklch" ||
+//            "hsl-compact" || "hwb-compact" || "rgb-compact" || "color-compact" || "oklch-compact"
+//   (format) => string
+let prettySerializeColor = (color, format = "hex", precision = 3) => {
+  // Hexadecimal, e.g."#bada5580"
+  if (format === "hex") {
+    return serializeColor(convertColor(color, "srgb"), {format: "hex"});
+  }
+
+  // HSL function, e.g. "hsl(74.4deg 64.3% 59.4% / 50%)" or "hsl(74.4 64.3% 59.4% / 0.5)"
+  else if (format === "hsl" || format === "hsl-compact") {
+    let [h, s, l] = convertColor(color, "hsl").coords;
+    let a = color.alpha;
+
+    if (Number.isNaN(h)) {
+      h = 0;
+    }
+
+    h = toPrecision(h, precision);
+    s = toPrecision(s, precision);
+    l = toPrecision(l, precision);
+
+    if (format === "hsl") {
+      a = toPrecision(a * 100, precision);
+      return (a === 100) ? `hsl(${h}deg ${s}% ${l}%)` : `hsl(${h}deg ${s}% ${l}% / ${a}%)`;
+    }
+    else if (format === "hsl-compact") {
+      a = toPrecision(a, precision);
+      return (a === 1) ? `hsl(${h} ${s}% ${l}%)` : `hsl(${h} ${s}% ${l}% / ${a})`;
+    }
+  }
+
+  // HWB function, e.g. "hwb(74.4deg 33.3% 14.5% / 50%)" or "hwb(74.4 33.3% 14.5% / 0.5)"
+  else if (format === "hwb" || format === "hwb-compact") {
+    let [h, w, b] = convertColor(color, "hwb").coords;
+    let a = color.alpha;
+
+    if (Number.isNaN(h)) {
+      h = 0;
+    }
+
+    h = toPrecision(h, precision);
+    w = toPrecision(w, precision);
+    b = toPrecision(b, precision);
+
+    if (format === "hwb") {
+      a = toPrecision(a * 100, precision);
+      return (a === 100) ? `hwb(${h}deg ${w}% ${b}%)` : `hwb(${h}deg ${w}% ${b}% / ${a}%)`;
+    }
+    else if (format === "hwb-compact") {
+      a = toPrecision(a, precision);
+      return (a === 1) ? `hwb(${h} ${w}% ${b}%)` : `hwb(${h} ${w}% ${b}% / ${a})`;
+    }
+  }
+
+  // RGB function e.g. "rgb(72.9% 85.5% 33.3% / 50%)" or "rgb(186 218 85 / 0.5)"
+  else if (format === "rgb" || format === "rgb-compact") {
+    let [r, g, b] = convertColor(color, "srgb").coords;
+    let a = color.alpha;
+
+    if (format === "rgb") {
+      r = toPrecision(r * 100, precision);
+      g = toPrecision(g * 100, precision);
+      b = toPrecision(b * 100, precision);
+      a = toPrecision(a * 100, precision);
+
+      return (a === 100) ? `rgb(${r}% ${g}% ${b}%)` : `rgb(${r}% ${g}% ${b}% / ${a}%)`
+    }
+    else if (format === "rgb-compact") {
+      r = toPrecision(r * 255, precision);
+      g = toPrecision(g * 255, precision);
+      b = toPrecision(b * 255, precision);
+      a = toPrecision(a, precision);
+
+      return (a === 1) ? `rgb(${r} ${g} ${b})` : `rgb(${r} ${g} ${b} / ${a})`;
+    }
+  }
+
+  // Color function e.g. "color(srgb 72.9% 85.5% 33.3% / 50.2%)" or  "color(srgb 0.73 0.85 0.33 / 0.5)"
+  else if (format === "color" || format === "color-compact") {
+    if (color.spaceId === undefined) {
+      color.spaceId = color.space.id;
+    }
+
+    if (["srgb", "srgb-linear", "a98rgb", "prophoto", "p3", "rec2020", "hsl", "hwb"].includes(color.spaceId)) {
+      if (color.spaceId === "hsl" || color.spaceId === "hwb") {
+        color = convertColor(color, "srgb");
+
+        if (color.spaceId === undefined) {
+          color.spaceId = color.space.id;
+        }
+      }
+
+      let [r, g, b] = color.coords;
+      let a = color.alpha;
+      let space = color.spaceId;
+
+      // Adjust names returned by Color.js to match CSS names
+      if (color.spaceId === "p3") {
+        space = "display-p3";
+      }
+      else if (color.spaceId === "a98rgb") {
+        space = "a98-rgb";
+      }
+      else if (color.spaceId === "prophoto") {
+        space = "prophoto-rgb";
+      }
+
+      if (format === "color") {
+        r = toPrecision(r * 100, precision);
+        g = toPrecision(g * 100, precision);
+        b = toPrecision(b * 100, precision);
+        a = toPrecision(a * 100, precision);
+
+        return (a === 100) ? `color(${space} ${r}% ${g}% ${b}%)` : `color(${space} ${r}% ${g}% ${b}% / ${a}%)`;
+      }
+      else if (format === "color-compact") {
+        r = toPrecision(r, precision);
+        g = toPrecision(g, precision);
+        b = toPrecision(b, precision);
+        a = toPrecision(a, precision);
+
+        return (a === 1) ? `color(${space} ${r} ${g} ${b})` : `color(${space} ${r} ${g} ${b} / ${a})`;
+      }
+    }
+    else if (["xyz", "xyz-d50", "xyz-d65"].includes(color.spaceId)) {
+      let [x, y, z] = color.coords;
+      let a = color.alpha;
+      let space = color.spaceId;
+
+      if (format === "color") {
+        x = toPrecision(x * 100, precision);
+        y = toPrecision(y * 100, precision);
+        z = toPrecision(z * 100, precision);
+        a = toPrecision(a * 100, precision);
+
+        return (a === 100) ? `color(${space} ${x}% ${y}% ${z}%)` : `color(${space} ${x}% ${y}% ${z}% / ${a}%)`;
+      }
+      else if (format === "color-compact") {
+        x = toPrecision(x, precision);
+        y = toPrecision(y, precision);
+        z = toPrecision(z, precision);
+        a = toPrecision(a, precision);
+
+        return (a === 1) ? `color(${space} ${x} ${y} ${z})` : `color(${space} ${x} ${y} ${z} / ${a})`;
+      }
+    }
+    else {
+      throw new Error(`"Color in "${color.spaceId}" space can't be serialized to "${format}" format.`);
+    }
+  }
+
+  // okLCH function, e.g. "oklch(84% 0.16 121.47deg / 50%)" or "oklch(0.84 0.16 121.47 / 0.5)"
+  else if (format === "oklch" || format === "oklch-compact") {
+    let [l, c, h] = convertColor(color, "srgb").coords;
+    let a = color.alpha;
+
+    if (format === "oklch") {
+      l = toPrecision(l * 100, precision);
+      c = toPrecision(c, precision);
+      h = toPrecision(h, precision);
+      a = toPrecision(a * 100, precision);
+
+      return (a === 100) ? `oklch(${l}% ${c} ${h}deg)` : `oklch(${l}% ${c} ${h}deg / ${a}%)`;
+    }
+    else if (format === "oklch-compact") {
+      l = toPrecision(l, precision);
+      c = toPrecision(c, precision);
+      h = toPrecision(h, precision);
+      a = toPrecision(a, precision);
+
+      return (a === 1) ? `oklch(${l} ${c} ${h})` : `oklch(${l} ${c} ${h} / ${a})`;
+    }
+  }
+
+  else {
+    throw new Error(`Unknown color format "${format}".`);
+  }
+};
+
 // @type (string) => boolean
 //
 // Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
@@ -1270,4 +1452,4 @@ let isValidColorString = (string) => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export {parseColor, convertColor, serializeColor, isValidColorString};
+export {parseColor, convertColor, serializeColor, prettySerializeColor, isValidColorString};

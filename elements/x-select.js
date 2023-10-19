@@ -40,7 +40,7 @@ export default class XSelectElement extends HTMLElement {
       display: block;
       width: fit-content;
       height: 32px;
-      padding: 0 0 0 9px;
+      padding: 0 0 0 8px;
       max-width: 100%;
       box-sizing: border-box;
       position: relative;
@@ -58,6 +58,9 @@ export default class XSelectElement extends HTMLElement {
     }
     :host(:hover) {
       cursor: default;
+    }
+    :host([size="small"]) {
+      font-size: 12.5px;
     }
 
     #button {

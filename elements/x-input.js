@@ -19,7 +19,9 @@ import {sleep} from "../utils/time.js";
 // @event beforevalidate
 // @part input
 export default class XInputElement extends HTMLElement {
-  static observedAttributes = ["type", "value", "spellcheck", "maxlength", "readonly", "disabled", "validation"];
+  static observedAttributes = [
+    "type", "value", "spellcheck", "minlength", "maxlength", "readonly", "disabled", "validation"
+  ];
 
   static #shadowTemplate = html`
     <template>
@@ -327,6 +329,9 @@ export default class XInputElement extends HTMLElement {
     else if (name === "spellcheck") {
       this.#onSpellcheckAttributeChange();
     }
+    else if (name === "minlength") {
+      this.#onMinLengthAttributeChange();
+    }
     else if (name === "maxlength") {
       this.#onMaxLengthAttributeChange();
     }
@@ -500,6 +505,10 @@ export default class XInputElement extends HTMLElement {
 
   #onSpellcheckAttributeChange() {
     this.#elements["input"].spellcheck = this.spellcheck;
+  }
+
+  #onMinLengthAttributeChange() {
+    this.#elements["input"].minLength = this.minLength;
   }
 
   #onMaxLengthAttributeChange() {

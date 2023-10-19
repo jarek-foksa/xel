@@ -16,6 +16,7 @@ import "./elements/x-button.js";
 import "./elements/x-buttons.js";
 import "./elements/x-card.js";
 import "./elements/x-checkbox.js";
+import "./elements/x-colorinput.js";
 import "./elements/x-colorpicker.js";
 import "./elements/x-colorselect.js";
 import "./elements/x-contextmenu.js";

@@ -1058,6 +1058,38 @@ x-numberinput[condensed] > x-stepper::part(decrement-arrow) {
 /*****************************************************************************************************************/
 
 /**
+ * Color input
+ */
+
+x-colorinput {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+x-colorinput:focus {
+  outline: 2px solid var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-colorinput[error] {
+  background: var(--error-background-color);
+  outline: 2px solid var(--error-color);
+  outline-offset: -1px;
+}
+
+/* Arrow */
+x-colorinput::part(arrow) {
+  padding-right: 4px;
+  --path-data: M 6 30 L 93 30 L 50 76 L 6 30 Z;
+}
+
+/* Placeholder */
+x-colorinput > x-label {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Text editor
  */
 

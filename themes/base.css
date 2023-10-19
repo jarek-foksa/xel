@@ -841,7 +841,7 @@ x-menuitem x-label {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
+  font-size: inherit;
 }
 x-menuitem img + x-label,
 x-menuitem x-swatch + x-label,

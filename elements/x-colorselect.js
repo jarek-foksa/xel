@@ -16,7 +16,7 @@ import {html, css} from "../utils/template.js";
 // @event collapse
 // @part popover
 export default class XColorSelectElement extends HTMLElement {
-  static observedAttributes = ["value", "alpha", "spaces", "disabled"];
+  static observedAttributes = ["value", "alpha", "spaces", "disabled", "size"];
 
   static #shadowTemplate = html`
     <template>
@@ -59,7 +59,6 @@ export default class XColorSelectElement extends HTMLElement {
     }
 
     #popover {
-      width: 190px;
       height: auto;
       padding: 12px 12px;
     }
@@ -93,7 +92,7 @@ export default class XColorSelectElement extends HTMLElement {
   // @property
   // @attribute
   // @type Array<string>
-  // @default ["srgb", "p3", "rec2020", "oklch"]
+  // @default ["srgb", "p3"]
   //
   // Allowed color spaces. Value that does not match any of the provided spaces will be converted to the last space.
   get spaces() {
@@ -101,7 +100,7 @@ export default class XColorSelectElement extends HTMLElement {
       return this.getAttribute("spaces").replace(/\s+/g, " ").split(" ");
     }
     else {
-      return ["srgb"/*, "p3", "rec2020", "oklch"*/]; // @todo: uncomment this when sliders for other spaces are done
+      return ["srgb", "p3"];
     }
   }
   set spaces(spaces) {
@@ -176,6 +175,9 @@ export default class XColorSelectElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
+    }
+    else if (name === "size") {
+      this.#onSizeAttributeChange();
     }
   }
 
@@ -257,6 +259,12 @@ export default class XColorSelectElement extends HTMLElement {
   #onDisabledAttributeChange() {
     this.#updateAccessabilityAttributes();
   }
+
+  #onSizeAttributeChange() {
+    this["#color-picker"].size = this.size;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onColorPickerChangeStart() {
     this.#isChangingColorPicker = true;

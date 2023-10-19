@@ -552,8 +552,12 @@ export default new class Xel extends EventEmitter {
 
     let color = convertColor(parseColor(serializedColor), "hsl");
     let [h, s, l] = color.coords;
-
     let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
+
+    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
+    if (Number.isNaN(h)) {
+      h = 0;
+    }
 
     rule.style.setProperty("--accent-color-h", h);
     rule.style.setProperty("--accent-color-s", `${s}%`);

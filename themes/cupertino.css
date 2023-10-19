@@ -967,6 +967,38 @@ x-numberinput[condensed]:focus > x-stepper {
 /*****************************************************************************************************************/
 
 /**
+ * Color input
+ */
+
+x-colorinput {
+  background: white;
+  border: 1px solid var(--border-color);
+}
+x-colorinput:focus {
+  border-color: var(--accent-color);
+  outline: 3px solid var(--lightest-accent-color);
+}
+x-colorinput[error] {
+  border-color: var(--error-color);
+  outline: 3px solid rgba(255, 0, 0, 0.49);
+}
+
+/* Arrow */
+x-colorinput::part(arrow) {
+  color: white;
+  background: linear-gradient(to bottom, var(--light-accent-color), var(--accent-color));
+  border: 1px solid var(--dark-accent-color);
+  border-radius: 4px;
+}
+
+/* Placeholder */
+x-colorinput > x-label {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Text editor
  */
 

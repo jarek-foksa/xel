@@ -6,7 +6,7 @@
 
 import Xel from "../classes/xel.js";
 
-import {convertColor, parseColor, serializeColor} from "../utils/color.js";
+import {convertColor, parseColor, serializeColor, prettySerializeColor} from "../utils/color.js";
 import {degToRad, normalize, round} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {throttle} from "../utils/time.js";
@@ -21,31 +21,33 @@ const COLOR_PRECISION = 3;
 // @event ^changestart
 // @event ^changeend
 class XColorPickerElement extends HTMLElement {
-  static observedAttributes = ["value", "alpha", "spaces", "disabled"];
+  static observedAttributes = ["value", "alpha", "spaces", "disabled", "size"];
 
   static #shadowTemplate = html`
     <template>
       <header id="header">
-        <x-select id="space-select" condensed size="small">
+        <x-select id="space-select" condensed>
           <x-menu id="space-select-menu">
             <x-menuitem value="srgb" toggled><x-label>sRGB</x-label></x-menuitem>
             <x-menuitem value="p3"><x-label>Display P3</x-label></x-menuitem>
+            <!-- TO BE IMPLEMENTED LATER
             <x-menuitem value="rec2020"><x-label>Rec. 2020</x-label></x-menuitem>
             <hr/>
             <x-menuitem value="oklch"><x-label>okLCH</x-label></x-menuitem>
+            -->
           </x-menu>
         </x-select>
 
         <x-buttons id="type-buttons" tracking="1">
-          <x-button value="planar" skin="flat" size="small">
+          <x-button value="planar" skin="flat">
             <x-icon href="#square"></x-icon>
           </x-button>
 
-          <x-button value="polar" skin="flat" size="small">
+          <x-button value="polar" skin="flat">
             <x-icon href="#circle"></x-icon>
           </x-button>
 
-          <x-button value="linear" skin="flat" size="small">
+          <x-button value="linear" skin="flat">
             <x-icon href="#bars"></x-icon>
           </x-button>
         </x-buttons>
@@ -54,9 +56,9 @@ class XColorPickerElement extends HTMLElement {
       <main id="main"></main>
 
       <footer id="footer">
-        <x-input id="input" size="small"></x-input>
+        <x-colorinput id="input" space="srgb"></x-colorinput>
 
-        <x-button id="grab-button" size="small" condensed togglable>
+        <x-button id="grab-button" condensed togglable>
           <x-icon href="#eye-dropper"></x-icon>
         </x-button>
       </footer>
@@ -66,8 +68,14 @@ class XColorPickerElement extends HTMLElement {
   static #shadowStyleSheet = css`
     :host {
       display: block;
-      width: 180px;
+      width: 200px;
       box-sizing: border-box;
+    }
+    :host([size="small"]) {
+      width: 180px;
+    }
+    :host([size="large"]) {
+      width: 210px;
     }
     :host([hidden]) {
       display: none;
@@ -79,17 +87,13 @@ class XColorPickerElement extends HTMLElement {
 
     #header {
       display: flex;
+      align-items: center;
     }
 
     /* Space select */
 
     #space-select {
-      min-width: 102px;
-      font-size: 12.5px;
-    }
-
-    #space-select x-label {
-      font-size: inherit;
+      min-width: 110px;
     }
 
     /* Type buttons */
@@ -103,12 +107,16 @@ class XColorPickerElement extends HTMLElement {
     }
 
     #type-buttons x-button x-icon {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
     }
     #type-buttons x-button[size="small"] x-icon {
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
+    }
+    #type-buttons x-button[size="large"] x-icon {
+      width: 22px;
+      height: 22px;
     }
 
     /**
@@ -133,8 +141,6 @@ class XColorPickerElement extends HTMLElement {
     #input {
       max-width: none;
       flex: 1;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
     }
     #input:focus {
       z-index: 1;
@@ -144,10 +150,18 @@ class XColorPickerElement extends HTMLElement {
 
     #grab-button {
       margin: 0 0 0 5px;
+      padding: 0;
+      aspect-ratio: auto 1;
     }
-    #grab-button x-icon {
+    :host([size="small"]) #grab-button {
+      padding: 0 3px;
+    }
+
+    :host([size="small"]) #grab-button x-icon {
       width: 14px;
       height: 14px;
+    }
+    :host([size="large"]) #grab-button x-icon {
     }
   `;
 
@@ -180,15 +194,15 @@ class XColorPickerElement extends HTMLElement {
   // @property
   // @attribute
   // @type Array<string>
-  // @default ["srgb", "p3", "rec2020", "oklch"]
+  // @default ["srgb", "p3"]
   //
-  // Allowed color spaces. Value that does not match any of the provided spaces will be converted to the last space.
+  // Available color spaces.
   get spaces() {
     if (this.hasAttribute("spaces")) {
       return this.getAttribute("spaces").replace(/\s+/g, " ").split(" ");
     }
     else {
-      return ["srgb"/*, "p3", "rec2020", "oklch"*/]; // @todo: uncomment this when sliders for other spaces are done
+      return ["srgb", "p3"];
     }
   }
   set spaces(spaces) {
@@ -204,6 +218,18 @@ class XColorPickerElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  // @property
+  // @attribute
+  // @type "small" || "large" || null
+  // @default null
+  get size() {
+    let size = this.getAttribute("size");
+    return (size === "small" || size === "large") ? size : null;
+  }
+  set size(size) {
+    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
   #shadowRoot;
@@ -266,6 +292,9 @@ class XColorPickerElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
+    }
+    else if (name === "size") {
+      this.#onSizeAttributeChange();
     }
   }
 
@@ -334,6 +363,13 @@ class XColorPickerElement extends HTMLElement {
     if (this.isConnected) {
       this.#update();
     }
+  }
+
+  #onSizeAttributeChange() {
+    this["#space-select"].size = this.size;
+    [...this["#type-buttons"].children].forEach(button => button.size = this.size);
+    this["#input"].size = this.size;
+    this["#grab-button"].size = this.size;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -438,7 +474,14 @@ class XColorPickerElement extends HTMLElement {
   }
 
   #onInputChange(event) {
-    // @todo
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    this.value = serializeColor(
+      convertColor(parseColor(this["#input"].value), this["#space-select"].value, {inGamut: true})
+    );
+
+    this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+    this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
   }
 
   #onInputKeyDown(event) {
@@ -457,7 +500,11 @@ class XColorPickerElement extends HTMLElement {
 
       if (color !== null) {
         this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-        this.value = color;
+
+        this.value = serializeColor(
+          convertColor(parseColor(color), this["#space-select"].value, {inGamut: true})
+        );
+
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
         this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
       }
@@ -577,27 +624,12 @@ class XColorPickerElement extends HTMLElement {
   }
 
   #updateInput(color = this.#getColor()) {
-    if (color.spaceId === "srgb") {
-      let format = "hex"; // @todo: format should be user-configurable
-
-      if (format === "hex") {
-        this["#input"].value = serializeColor(color, {format: "hex"});
-      }
-      else if (format === "rgb") {
-        this["#input"].value = serializeColor(color, {precision: COLOR_PRECISION});
-      }
-      else if (format === "hsl") {
-        this["#input"].value = serializeColor(convertColor(color, "hsl"), {precision: COLOR_PRECISION});
-      }
-      else if (format === "hwb") {
-        this["#input"].value = serializeColor(convertColor(color, "hwb"), {precision: COLOR_PRECISION});
-      }
-    }
-
+    this["#input"].space = color.spaceId;
+    this["#input"].value = serializeColor(color);
     this["#input"].disabled = this.disabled;
   }
 
-  #updateInputThrottled = throttle(this.#updateInput, 80, this);
+  #updateInputThrottled = throttle(this.#updateInput, 50, this);
 
   #updateGrabButton() {
     this["#grab-button"].disabled = this.disabled;
@@ -608,9 +640,13 @@ class XColorPickerElement extends HTMLElement {
   #getColor() {
     let color = parseColor(this.value);
 
-    // If color is using unsupported space, convert it
     if (this.spaces.includes(color.spaceId) === false) {
-      color = convertColor(color, this.spaces.at(-1), {inGamut: true});
+      if (color.spaceId === "hsl" || color.spaceId === "hwb") {
+        color = convertColor(color, "srgb", {inGamut: true});
+      }
+      else {
+        color = convertColor(color, "p3", {inGamut: true});
+      }
     }
 
     if (color.spaceId === undefined) {
