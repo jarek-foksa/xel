@@ -8,6 +8,7 @@ import Xel from "../classes/xel.js";
 
 import {isValidColorString, convertColor, parseColor, prettySerializeColor} from "../utils/color.js";
 import {closest, createElement} from "../utils/element.js";
+import {round} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
@@ -29,9 +30,11 @@ export default class XColorInputElement extends HTMLElement {
 
         <input id="input" type="text" spellcheck="false" autocomplete="false" part="input"></input>
 
-        <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path id="arrow-path"></path>
-        </svg>
+        <div id="arrow-container">
+          <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path id="arrow-path"></path>
+          </svg>
+        </div>
 
         <slot></slot>
       </main>
@@ -114,14 +117,21 @@ export default class XColorInputElement extends HTMLElement {
      * Arrow
      */
 
+    #arrow-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      margin-left: 6px;
+      min-width: fit-content;
+    }
+
     #arrow {
       display: block;
       box-sizing: border-box;
       width: auto;
       min-width: fit-content;
       height: calc(100% - 4px);
-      margin-left: 6px;
-      padding: 5px 2px;
       color: currentColor;
       cursor: default;
       --text-color: 50%;
@@ -149,7 +159,9 @@ export default class XColorInputElement extends HTMLElement {
     return this.#value;
   }
   set value(value) {
-    if (this.#value !== value) {
+    value = prettySerializeColor(convertColor(parseColor(value), this.space), this.#format);
+
+    if (this.#value !== value && !this.matches(":focus")) {
       this.#value = value;
 
       if (this.isConnected) {
@@ -172,6 +184,19 @@ export default class XColorInputElement extends HTMLElement {
   }
   set space(space) {
     this.setAttribute("space", space);
+  }
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether to allow manipulation of the alpha channel.
+  get alpha() {
+    return this.hasAttribute("alpha");
+  }
+  set alpha(alpha) {
+    alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
   // @property
@@ -280,8 +305,8 @@ export default class XColorInputElement extends HTMLElement {
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
     this.addEventListener("keydown",  (event) => this.#onKeyDown(event));
 
-    this["#input"].addEventListener("change", (event) => this.#onInputChange(event));
     this["#input"].addEventListener("input",  (event) => this.#onInputInput(event));
+    this["#input"].addEventListener("blur",  (event) => this.#onInputBlur(event));
     this["#input"].addEventListener("search", (event) => this.#onInputSearch(event));
     this["#arrow"].addEventListener("pointerdown", (event) => this.#onArrowPointerDown(event));
     this["#arrow"].addEventListener("click", (event) => this.#onArrowClick(event));
@@ -307,8 +332,11 @@ export default class XColorInputElement extends HTMLElement {
     Xel.removeEventListener("themechange", this.#themeChangeListener);
   }
 
-  attributeChangedCallback(name) {
-    if (name === "value") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
       this.#onValueAttributeChange();
     }
     else if (name === "space") {
@@ -338,7 +366,7 @@ export default class XColorInputElement extends HTMLElement {
   // @method
   // @type () => boolean
   reportValidity() {
-    if (this.required && this.value.length === 0) {
+    if (this.required && this["#input"].value.length === 0) {
       this.#error = {href: "#required-field"};
     }
     else if (isValidColorString(this["#input"].value) === false) {
@@ -473,7 +501,6 @@ export default class XColorInputElement extends HTMLElement {
 
       if (menuBounds.right - hostPaddingRight < buttonBounds.right) {
         menu.style.minWidth = (buttonBounds.right - menuBounds.left + hostPaddingRight) + "px";
-        console.log("min width", menu.style.minWidth);
       }
     }
 
@@ -539,11 +566,169 @@ export default class XColorInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // Change numeric color function argument at the current caret position by step
+  #changeNumericArgValueAtCaretPositionByStep(type = "increment", multiplier = 1) {
+    let {value} = this["#input"];
+    let numericArgRange = this.#getNumericArgRangeAtCaretPosition();
+
+    if (numericArgRange) {
+      let [numericArgStart, numericArgEnd] = numericArgRange;
+      let numericArgValue = value.substring(numericArgStart, numericArgEnd);
+      let unit = "";
+      let step = 1;
+
+      // Determine the unit
+      {
+        if (numericArgValue.endsWith("%")) {
+          unit = "%";
+        }
+        else if (numericArgValue.endsWith("deg")) {
+          unit = "deg";
+        }
+      }
+
+      // Determine the step
+      {
+        if (unit === "%" || unit === "deg") {
+          step = 1;
+        }
+        else {
+          if (value.indexOf("/") > -1 && value.indexOf("/") < numericArgStart) {
+            // Value after "/" represents opacity
+            step = 0.01;
+          }
+          else if (this.#format === "color-compact") {
+            step = 0.01;
+          }
+          else {
+            step = 1;
+          }
+        }
+
+        step = step * multiplier;
+
+        if (type === "decrement") {
+          step = step * -1;
+        }
+      }
+
+      let changedNumericArgValue = round(parseFloat(numericArgValue) + step, 5) + unit;
+
+      this["#input"].value = value.substring(0, numericArgStart) + changedNumericArgValue +
+                             value.substring(numericArgEnd);
+      this["#input"].selectionStart = numericArgStart;
+      this["#input"].selectionEnd = numericArgStart + changedNumericArgValue.length;
+
+      this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
+    }
+  }
+
+    #getHexValueRangeAtCaretPosition() {
+    let {value, selectionStart, selectionEnd} = this["#input"];
+    let allowedChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
+
+    let hexValueStart = -1;
+    let hexValueEnd = -1;
+
+    value = value.toLowerCase();
+
+    for (let i = selectionStart-1; i >= 0; i -= 1) {
+      let char = value[i];
+
+      if (allowedChars.includes(char)) {
+        hexValueStart = i;
+      }
+      else if (char === "#") {
+        hexValueStart = i;
+        break;
+      }
+      else {
+        return null;
+      }
+    }
+
+    for (let i = selectionStart; i < value.length; i += 1) {
+      let char = value[i];
+
+      if (allowedChars.includes(char)) {
+        hexValueEnd = i+1;
+      }
+      else {
+        if (char !== " " || selectionEnd > i) {
+          return null;
+        }
+
+        break;
+      }
+    }
+
+    if (hexValueStart === -1 && hexValueEnd !== -1) {
+      hexValueStart = selectionStart;
+    }
+    else if (hexValueEnd === -1 && hexValueStart !== -1) {
+      hexValueEnd = selectionEnd;
+    }
+
+    return [hexValueStart, hexValueEnd];
+  }
+
+  #getNumericArgRangeAtCaretPosition() {
+    let {value, selectionStart, selectionEnd} = this["#input"];
+    let allowedChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "%", "d", "e", "g"];
+
+    let numericArgStart = -1;
+    let numericArgEnd = -1;
+
+    value = value.toLowerCase();
+
+    for (let i = selectionStart-1; i >= 0; i -= 1) {
+      let char = value[i];
+
+      if (allowedChars.includes(char)) {
+        numericArgStart = i;
+      }
+      else {
+        if ([" ", "(", "/"].includes(char) === false) {
+          return null;
+        }
+
+        break;
+      }
+    }
+
+    for (let i = selectionStart; i <= value.length; i += 1) {
+      let char = value[i];
+
+      if (allowedChars.includes(char)) {
+        numericArgEnd = i+1;
+      }
+      else {
+        if ([" ", ")", "/"].includes(char) === false || selectionEnd > i) {
+          return null;
+        }
+
+        break;
+      }
+    }
+
+    if (numericArgStart === -1 && numericArgEnd !== -1) {
+      numericArgStart = selectionStart;
+    }
+    else if (numericArgEnd === -1 && numericArgStart !== -1) {
+      numericArgEnd = selectionEnd;
+    }
+
+    return [numericArgStart, numericArgEnd];
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   #onConfigChange(event) {
     let {key, value, origin} = event.detail;
 
     if (key === `x-colorinput:${this.space}Format`) {
       this.#format = value;
+      this.#value = prettySerializeColor(convertColor(parseColor(this["#input"].value), this.space), this.#format);
       this.#updateInput();
     }
   }
@@ -571,7 +756,22 @@ export default class XColorInputElement extends HTMLElement {
     this.#updateAccessabilityAttributes();
   }
 
-  #onClick() {
+  #onClick(event) {
+    if (event.detail === 2) {
+      let numericArgRange = this.#getNumericArgRangeAtCaretPosition();
+      let hexValueRange = this.#getHexValueRangeAtCaretPosition();
+
+      // Double-click to select the entire numeric or hex value
+      if (numericArgRange) {
+        let [numericArgStart, numericArgEnd] = numericArgRange;
+        this["#input"].setSelectionRange(numericArgStart, numericArgEnd);
+      }
+      else if (hexValueRange) {
+        let [hexValueStart, hexValueEnd] = hexValueRange;
+        this["#input"].setSelectionRange(hexValueStart, hexValueEnd);
+      }
+    }
+
     this.#updateValidityIndicators();
   }
 
@@ -607,8 +807,57 @@ export default class XColorInputElement extends HTMLElement {
 
   #onKeyDown(event) {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
-      document.execCommand("selectAll");
+      event.preventDefault();
       this.reportValidity();
+
+      if (this.#error === null) {
+        let color = parseColor(this["#input"].value);
+
+        if (this.alpha === false) {
+          color.alpha = 1;
+        }
+
+        let value = prettySerializeColor(convertColor(color, this.space), this.#format);
+
+        if (value !== this.#value) {
+          this.#value = value;
+          this.#updateInput();
+          this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+        }
+
+        this.#updateInput();
+        document.execCommand("selectAll");
+      }
+    }
+    else if (event.code === "ArrowUp") {
+      event.preventDefault();
+      this.#changeNumericArgValueAtCaretPositionByStep("increment", event.shiftKey ? 10 : 1);
+    }
+    else if (event.code === "ArrowDown") {
+      event.preventDefault();
+      this.#changeNumericArgValueAtCaretPositionByStep("decrement", event.shiftKey ? 10 : 1);
+    }
+  }
+
+  #onInputBlur() {
+    this.reportValidity();
+
+    if (this.#error === null) {
+      let color = parseColor(this["#input"].value);
+
+      if (this.alpha === false) {
+        color.alpha = 1;
+      }
+
+      let value = prettySerializeColor(convertColor(color, this.space), this.#format);
+
+      if (value !== this.#value) {
+        this.#value = value;
+        this.#updateInput();
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+
+      this.#updateInput();
     }
   }
 
@@ -620,11 +869,6 @@ export default class XColorInputElement extends HTMLElement {
     event.stopPropagation();
     this.#updateEmptyAttribute();
     this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
-  }
-
-  #onInputChange() {
-    this.value = this["#input"].value;
-    this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
   }
 
   #onInputSearch() {

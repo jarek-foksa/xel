@@ -1114,8 +1114,11 @@ x-colorinput[disabled] {
 
 /* Arrow */
 x-colorinput::part(arrow) {
-  padding-right: 4px;
+  padding: 6px 4px 6px 2px;
   --path-data: M 6.46 32.74 L 12.4 26.82 L 49.96 64.39 L 87.55 26.82 L 93.48 32.74 L 49.85 75.99 L 6.46 32.74 Z;
+}
+x-colorinput[size="small"]::part(arrow) {
+  padding: 2px;
 }
 
 /* Placeholder */

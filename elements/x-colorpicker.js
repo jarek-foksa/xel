@@ -253,6 +253,7 @@ class XColorPickerElement extends HTMLElement {
     this["#space-select"].addEventListener("change", () => this.#onSpaceSelectChange());
     this["#type-buttons"].addEventListener("toggle", (event) => this.#onTypeButtonsToggle());
 
+    this["#main"].addEventListener("pointerdown", (event) => this.#onSlidersPointerDown(event), true);
     this["#main"].addEventListener("changestart", (event) => this.#onSlidersChangeStart(event));
     this["#main"].addEventListener("change", (event) => this.#onSlidersChange(event));
     this["#main"].addEventListener("changeend", (event) => this.#onSlidersChangeEnd(event));
@@ -341,15 +342,20 @@ class XColorPickerElement extends HTMLElement {
   }
 
   #onAlphaAttributeChange() {
-    if (this.isConnected) {
-      for (let sliders of this["#main"].children) {
-        if (this.alpha) {
-          sliders.setAttribute("alpha", "");
-        }
-        else {
-          sliders.removeAttribute("alpha");
-        }
+    for (let sliders of this["#main"].children) {
+      if (this.alpha) {
+        sliders.setAttribute("alpha", "");
       }
+      else {
+        sliders.removeAttribute("alpha");
+      }
+    }
+
+    if (this.alpha) {
+      this["#input"].setAttribute("alpha", "");
+    }
+    else {
+      this["#input"].removeAttribute("alpha");
     }
   }
 
@@ -422,6 +428,12 @@ class XColorPickerElement extends HTMLElement {
   #onTypeButtonsToggle(event) {
     Xel.setConfig(`${this.localName}:type`, this["#type-buttons"].value);
     this.#update();
+  }
+
+  #onSlidersPointerDown(event) {
+    if (this["#input"].matches(":focus")) {
+      event.stopImmediatePropagation();
+    }
   }
 
   #onSlidersChangeStart(event) {
@@ -552,7 +564,7 @@ class XColorPickerElement extends HTMLElement {
       supportedTypes = ["planar", "linear"];
     }
     else if (color.spaceId === "oklch") {
-      supportedTypes = ["planar", "triangle", "linear"];
+      supportedTypes = ["planar", "linear"];
     }
 
     if (supportedTypes.includes(this["#type-buttons"].value) === false) {

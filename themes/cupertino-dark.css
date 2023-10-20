@@ -980,6 +980,10 @@ x-colorinput::part(arrow) {
   background: linear-gradient(to bottom, var(--light-accent-color), var(--accent-color));
   border: 1px solid var(--dark-accent-color);
   border-radius: 4px;
+  padding: 5px 2px;
+}
+x-colorinput[size="small"]::part(arrow) {
+  padding: 2px;
 }
 
 /* Placeholder */

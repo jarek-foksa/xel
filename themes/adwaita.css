@@ -1079,8 +1079,11 @@ x-colorinput[error] {
 
 /* Arrow */
 x-colorinput::part(arrow) {
-  padding-right: 4px;
+  padding: 8px 4px 8px 2px;
   --path-data: M 6 30 L 93 30 L 50 76 L 6 30 Z;
+}
+x-colorinput[size="small"]::part(arrow) {
+  padding: 4px 4px 4px 0;
 }
 
 /* Placeholder */
