@@ -104,6 +104,7 @@ class XColorPickerElement extends HTMLElement {
 
     #type-buttons x-button {
       margin-left: 4px;
+      min-height: 1px;;
     }
 
     #type-buttons x-button x-icon {
@@ -117,14 +118,6 @@ class XColorPickerElement extends HTMLElement {
     #type-buttons x-button[size="large"] x-icon {
       width: 22px;
       height: 22px;
-    }
-
-    /**
-     * Main
-     */
-
-    #main {
-      margin-top: 10px;
     }
 
     /**
@@ -680,11 +673,18 @@ if (customElements.get("x-colorpicker") === undefined) {
 class XSlidersElement extends HTMLElement {
   static #shadowStyleSheet = css`
     :host {
-      display: block;
+      display: flex;
+      flex-flow: column;
       width: 100%;
       user-select: none;
       -webkit-user-select: none;
       --marker-width: 18px;
+    }
+    :host-context(x-popover) {
+      height: 250px;
+    }
+    :host-context(x-popover):host([alpha]) {
+      height: 300px;
     }
     :host([disabled]) {
       pointer-events: none;
@@ -697,7 +697,7 @@ class XSlidersElement extends HTMLElement {
 
     .linear-slider {
       width: 100%;
-      height: 30px;
+      height: 34px;
       margin-top: 10px;
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
@@ -730,7 +730,7 @@ class XSlidersElement extends HTMLElement {
 
     .planar-slider {
       width: 100%;
-      height: 174px;
+      height: 200px;
       margin-top: 10px;
       position: relative;
       touch-action: pinch-zoom;
@@ -758,8 +758,8 @@ class XSlidersElement extends HTMLElement {
     .polar-slider {
       display: flex;
       position: relative;
-      width: 100%;
-      max-width: 210px;
+      width: 200px;
+      height: 200px;
       margin: 10px auto 0 auto;
       border-radius: 999px !important;
       aspect-ratio: 1 / 1;

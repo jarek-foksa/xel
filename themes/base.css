@@ -953,7 +953,7 @@ x-popover:not(:defined) {
 /* Main */
 x-popover > main {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   overflow: auto;
 }
 

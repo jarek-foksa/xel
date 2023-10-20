@@ -118,5 +118,5 @@ export let getClosestScrollableAncestor = (element) => {
     }
   };
 
-  return walk(element);
+  return walk(element.parentElement || element.parentNode.host);
 };

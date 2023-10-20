@@ -35,6 +35,7 @@ export default class XPopoverElement extends HTMLElement {
       z-index: 1001;
       box-sizing: border-box;
       background: white;
+      overflow: auto;
       -webkit-app-region: no-drag;
       --align: bottom;
       --arrow-size: 20px;
@@ -107,6 +108,10 @@ export default class XPopoverElement extends HTMLElement {
 
   #scrollableAncestor = null;
   #ancestorScrollListener = null;
+  #windowResizeListener = null;
+  #popoverResizeObserver = new ResizeObserver(() => this.#onResize());
+
+  #context = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -165,6 +170,10 @@ export default class XPopoverElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  #onResize() {
+    this.#updatePosition(this.#context);
+  }
+
   // @method
   // @type (DOMPoint || DOMRect || Element) => Promise
   //
@@ -172,12 +181,16 @@ export default class XPopoverElement extends HTMLElement {
   // Returns a promise that is resolved when the popover finishes animating.
   open(context, animate = true) {
     return new Promise( async (resolve) => {
+      this.#context = context;
+
       if (this.opened === false) {
         if (this.modal) {
           this.#elements["backdrop"].show(false);
         }
 
         this.setAttribute("opened", "");
+        this.#popoverResizeObserver.observe(this);
+        window.addEventListener("resize", this.#windowResizeListener = () => this.#onResize());
 
         // Dispatch the "open" event before actually showing the popover as user might want to update its content
         // in the event listener.
@@ -224,6 +237,8 @@ export default class XPopoverElement extends HTMLElement {
     return new Promise(async (resolve) => {
       if (this.opened === true) {
         this.removeAttribute("opened");
+        this.#popoverResizeObserver.disconnect();
+        window.removeEventListener("resize", this.#windowResizeListener);
         this.#elements["backdrop"].hide();
         this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
         this.#scrollableAncestor.removeEventListener("scroll", this.#ancestorScrollListener);

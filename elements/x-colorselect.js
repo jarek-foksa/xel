@@ -23,7 +23,9 @@ export default class XColorSelectElement extends HTMLElement {
       <div id="preview"></div>
 
       <x-popover id="popover" part="popover" modal>
-        <x-colorpicker id="color-picker"></x-colorpicker>
+        <main>
+          <x-colorpicker id="color-picker"></x-colorpicker>
+        </main>
       </x-popover>
     </template>
   `;
@@ -56,11 +58,6 @@ export default class XColorSelectElement extends HTMLElement {
     #preview {
       width: 100%;
       height: 100%;
-    }
-
-    #popover {
-      height: auto;
-      padding: 12px 12px;
     }
   `
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
