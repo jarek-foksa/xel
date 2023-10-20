@@ -623,7 +623,7 @@ export default class XColorInputElement extends HTMLElement {
     }
   }
 
-    #getHexValueRangeAtCaretPosition() {
+  #getHexValueRangeAtCaretPosition() {
     let {value, selectionStart, selectionEnd} = this["#input"];
     let allowedChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
 
