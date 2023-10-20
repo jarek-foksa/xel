@@ -757,13 +757,20 @@ class XSlidersElement extends HTMLElement {
 
     .polar-slider {
       display: flex;
-      position: relative;
-      width: 200px;
+      align-items: center;
+      width: 100%;
+      max-width: 200px;
       height: 200px;
       margin: 10px auto 0 auto;
-      border-radius: 999px !important;
-      aspect-ratio: 1 / 1;
+    }
+
+    .polar-slider-circle {
       touch-action: pinch-zoom;
+      position: relative;
+      width: 100%;
+      height: fit-content;
+      aspect-ratio: 1 / 1;
+      border-radius: 999px !important;
     }
 
     .polar-slider-marker {
@@ -1966,7 +1973,9 @@ class XSRGBPolarSlidersElement extends XSlidersElement {
   static _shadowTemplate = html`
     <template>
       <div id="polar-slider" class="polar-slider" part="slider">
-        <div id="polar-slider-marker" class="polar-slider-marker"></div>
+        <div id="polar-slider-circle" class="polar-slider-circle">
+          <div id="polar-slider-marker" class="polar-slider-marker"></div>
+        </div>
       </div>
 
       <div id="linear-slider" class="linear-slider" part="slider">
@@ -2314,12 +2323,12 @@ class XSRGBPolarSlidersElement extends XSlidersElement {
         { space: "srgb", coords: [1, 0, 0] }
       ];
 
-      this["#polar-slider"].style.background = `
+      this["#polar-slider-circle"].style.background = `
         radial-gradient(circle closest-side, ${overlayColors.map(c => serializeColor(c)).join(",")} 90%),
         conic-gradient(from -90deg in srgb, ${backgroundColors.map(c => serializeColor(c)).join(",")})
       `;
 
-      this["#polar-slider"].style.backgroundBlendMode = "screen, normal";
+      this["#polar-slider-circle"].style.backgroundBlendMode = "screen, normal";
     }
     else if (this._model === "hsl") {
       let overlayColors = [
@@ -2337,12 +2346,12 @@ class XSRGBPolarSlidersElement extends XSlidersElement {
         { space: "srgb", coords: [1, 0, 0] }
       ];
 
-      this["#polar-slider"].style.background = `
+      this["#polar-slider-circle"].style.background = `
         radial-gradient(circle closest-side, ${overlayColors.map(c => serializeColor(c)).join(",")}),
         conic-gradient(from -90deg in srgb, ${backgroundColors.map(c => serializeColor(c)).join(",")})
       `;
 
-      this["#polar-slider"].style.backgroundBlendMode = "normal, normal";
+      this["#polar-slider-circle"].style.backgroundBlendMode = "normal, normal";
     }
   }
 
