@@ -409,8 +409,8 @@ export default class XColorInputElement extends HTMLElement {
             <x-label>${prettySerializeColor(color, "color")}</x-label>
           </x-menuitem>
 
-          <x-menuitem value="color-compact">
-            <x-label>${prettySerializeColor(color, "color-compact")}</x-label>
+          <x-menuitem value="color-alt">
+            <x-label>${prettySerializeColor(color, "color-alt")}</x-label>
           </x-menuitem>
 
           <hr/>
@@ -419,8 +419,8 @@ export default class XColorInputElement extends HTMLElement {
             <x-label>${prettySerializeColor(color, "rgb")}</x-label>
           </x-menuitem>
 
-          <x-menuitem value="rgb-compact">
-            <x-label>${prettySerializeColor(color, "rgb-compact")}</x-label>
+          <x-menuitem value="rgb-alt">
+            <x-label>${prettySerializeColor(color, "rgb-alt")}</x-label>
           </x-menuitem>
 
           <hr/>
@@ -429,8 +429,8 @@ export default class XColorInputElement extends HTMLElement {
             <x-label>${prettySerializeColor(color, "hsl")}</x-label>
           </x-menuitem>
 
-          <x-menuitem value="hsl-compact">
-            <x-label>${prettySerializeColor(color, "hsl-compact")}</x-label>
+          <x-menuitem value="hsl-alt">
+            <x-label>${prettySerializeColor(color, "hsl-alt")}</x-label>
           </x-menuitem>
 
           <hr/>
@@ -439,8 +439,8 @@ export default class XColorInputElement extends HTMLElement {
             <x-label>${prettySerializeColor(color, "hwb")}</x-label>
           </x-menuitem>
 
-          <x-menuitem value="hwb-compact">
-            <x-label>${prettySerializeColor(color, "hwb-compact")}</x-label>
+          <x-menuitem value="hwb-alt">
+            <x-label>${prettySerializeColor(color, "hwb-alt")}</x-label>
           </x-menuitem>
         `;
       }
@@ -451,8 +451,8 @@ export default class XColorInputElement extends HTMLElement {
             <x-label>${prettySerializeColor(color, "color")}</x-label>
           </x-menuitem>
 
-          <x-menuitem value="color-compact">
-            <x-label>${prettySerializeColor(color, "color-compact")}</x-label>
+          <x-menuitem value="color-alt">
+            <x-label>${prettySerializeColor(color, "color-alt")}</x-label>
           </x-menuitem>
         `;
       }
@@ -463,8 +463,8 @@ export default class XColorInputElement extends HTMLElement {
             <x-label>${prettySerializeColor(color, "oklch")}</x-label>
           </x-menuitem>
 
-          <x-menuitem value="oklch-compact">
-            <x-label>${prettySerializeColor(color, "oklch-compact")}</x-label>
+          <x-menuitem value="oklch-alt">
+            <x-label>${prettySerializeColor(color, "oklch-alt")}</x-label>
           </x-menuitem>
         `;
       }
@@ -526,6 +526,7 @@ export default class XColorInputElement extends HTMLElement {
 
     if (this.#wasFocusedBeforeExpanding) {
       this.focus();
+      this.selectAll();
     }
     else {
       let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
@@ -597,7 +598,7 @@ export default class XColorInputElement extends HTMLElement {
             // Value after "/" represents opacity
             step = 0.01;
           }
-          else if (this.#format === "color-compact") {
+          else if (this.#format === "color-alt") {
             step = 0.01;
           }
           else {
@@ -826,7 +827,7 @@ export default class XColorInputElement extends HTMLElement {
         }
 
         this.#updateInput();
-        document.execCommand("selectAll");
+        this.selectAll();
       }
     }
     else if (event.code === "ArrowUp") {
@@ -914,7 +915,13 @@ export default class XColorInputElement extends HTMLElement {
   }
 
   #updateInput() {
-    let displayValue = prettySerializeColor(convertColor(parseColor(this.#value), this.space), this.#format);
+    let color = parseColor(this.#value)
+
+    if (this.alpha === false) {
+      color.alpha = 1;
+    }
+
+    let displayValue = prettySerializeColor(convertColor(color, this.space), this.#format);
 
     if (this.matches(":focus")) {
       // https://goo.gl/s1UnHh

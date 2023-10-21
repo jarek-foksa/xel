@@ -376,10 +376,13 @@ class XColorPickerElement extends HTMLElement {
   #onConfigChange(event) {
     let {key, value, origin} = event.detail;
 
-    if (key === `${this.localName}:type`) {
-      if (this["#type-buttons"].value !== value && origin === "self") {
-        this["#type-buttons"].value = value;
-        this.#update();
+    if (key === `${this.localName}:type` ) {
+      // If element is not current visible on the screen
+      if (this.offsetParent === null) {
+        if (this["#type-buttons"].value !== value) {
+          this["#type-buttons"].value = value;
+          this.#update();
+        }
       }
     }
   }

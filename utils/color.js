@@ -1257,7 +1257,7 @@ ColorSpace.register(xyzabsd65);
 // @type
 //   format = "hex" ||
 //            "hsl" || "hwb" || "rgb" || "color" || "oklch" ||
-//            "hsl-compact" || "hwb-compact" || "rgb-compact" || "color-compact" || "oklch-compact"
+//            "hsl-alt" || "hwb-alt" || "rgb-alt" || "color-alt" || "oklch-alt"
 //   (format) => string
 let prettySerializeColor = (color, format = "hex", precision = 3) => {
   // Hexadecimal, e.g."#bada5580"
@@ -1266,7 +1266,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
   }
 
   // HSL function, e.g. "hsl(74.4deg 64.3% 59.4% / 50%)" or "hsl(74.4 64.3% 59.4% / 0.5)"
-  else if (format === "hsl" || format === "hsl-compact") {
+  else if (format === "hsl" || format === "hsl-alt") {
     let [h, s, l] = convertColor(color, "hsl").coords;
     let a = color.alpha;
 
@@ -1282,14 +1282,14 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
       a = toPrecision(a * 100, precision);
       return (a === 100) ? `hsl(${h}deg ${s}% ${l}%)` : `hsl(${h}deg ${s}% ${l}% / ${a}%)`;
     }
-    else if (format === "hsl-compact") {
+    else if (format === "hsl-alt") {
       a = toPrecision(a, precision);
       return (a === 1) ? `hsl(${h} ${s}% ${l}%)` : `hsl(${h} ${s}% ${l}% / ${a})`;
     }
   }
 
   // HWB function, e.g. "hwb(74.4deg 33.3% 14.5% / 50%)" or "hwb(74.4 33.3% 14.5% / 0.5)"
-  else if (format === "hwb" || format === "hwb-compact") {
+  else if (format === "hwb" || format === "hwb-alt") {
     let [h, w, b] = convertColor(color, "hwb").coords;
     let a = color.alpha;
 
@@ -1305,14 +1305,14 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
       a = toPrecision(a * 100, precision);
       return (a === 100) ? `hwb(${h}deg ${w}% ${b}%)` : `hwb(${h}deg ${w}% ${b}% / ${a}%)`;
     }
-    else if (format === "hwb-compact") {
+    else if (format === "hwb-alt") {
       a = toPrecision(a, precision);
       return (a === 1) ? `hwb(${h} ${w}% ${b}%)` : `hwb(${h} ${w}% ${b}% / ${a})`;
     }
   }
 
   // RGB function e.g. "rgb(72.9% 85.5% 33.3% / 50%)" or "rgb(186 218 85 / 0.5)"
-  else if (format === "rgb" || format === "rgb-compact") {
+  else if (format === "rgb" || format === "rgb-alt") {
     let [r, g, b] = convertColor(color, "srgb").coords;
     let a = color.alpha;
 
@@ -1324,7 +1324,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
 
       return (a === 100) ? `rgb(${r}% ${g}% ${b}%)` : `rgb(${r}% ${g}% ${b}% / ${a}%)`
     }
-    else if (format === "rgb-compact") {
+    else if (format === "rgb-alt") {
       r = toPrecision(r * 255, precision);
       g = toPrecision(g * 255, precision);
       b = toPrecision(b * 255, precision);
@@ -1335,7 +1335,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
   }
 
   // Color function e.g. "color(srgb 72.9% 85.5% 33.3% / 50.2%)" or  "color(srgb 0.73 0.85 0.33 / 0.5)"
-  else if (format === "color" || format === "color-compact") {
+  else if (format === "color" || format === "color-alt") {
     if (color.spaceId === undefined) {
       color.spaceId = color.space.id;
     }
@@ -1372,7 +1372,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
 
         return (a === 100) ? `color(${space} ${r}% ${g}% ${b}%)` : `color(${space} ${r}% ${g}% ${b}% / ${a}%)`;
       }
-      else if (format === "color-compact") {
+      else if (format === "color-alt") {
         r = toPrecision(r, precision);
         g = toPrecision(g, precision);
         b = toPrecision(b, precision);
@@ -1394,7 +1394,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
 
         return (a === 100) ? `color(${space} ${x}% ${y}% ${z}%)` : `color(${space} ${x}% ${y}% ${z}% / ${a}%)`;
       }
-      else if (format === "color-compact") {
+      else if (format === "color-alt") {
         x = toPrecision(x, precision);
         y = toPrecision(y, precision);
         z = toPrecision(z, precision);
@@ -1409,7 +1409,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
   }
 
   // okLCH function, e.g. "oklch(84% 0.16 121.47deg / 50%)" or "oklch(0.84 0.16 121.47 / 0.5)"
-  else if (format === "oklch" || format === "oklch-compact") {
+  else if (format === "oklch" || format === "oklch-alt") {
     let [l, c, h] = convertColor(color, "srgb").coords;
     let a = color.alpha;
 
@@ -1421,7 +1421,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
 
       return (a === 100) ? `oklch(${l}% ${c} ${h}deg)` : `oklch(${l}% ${c} ${h}deg / ${a}%)`;
     }
-    else if (format === "oklch-compact") {
+    else if (format === "oklch-alt") {
       l = toPrecision(l, precision);
       c = toPrecision(c, precision);
       h = toPrecision(h, precision);
