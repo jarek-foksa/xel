@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -97,7 +97,6 @@ export default class XShortcutElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -109,7 +108,7 @@ export default class XShortcutElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XShortcutElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -189,7 +188,7 @@ export default class XShortcutElement extends HTMLElement {
       displayValue = parts.join("+");
     }
 
-    this.#elements["main"].textContent = displayValue;
+    this["#main"].textContent = displayValue;
   }
 }
 

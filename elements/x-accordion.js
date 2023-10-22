@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -109,7 +109,6 @@ export default class XAccordionElement extends HTMLElement {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  #elements = {};
   #shadowRoot = null;
   #resizeObserver = null;
   #currentAnimation = null;
@@ -126,13 +125,13 @@ export default class XAccordionElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XAccordionElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.#resizeObserver = new ResizeObserver(() => this.#updateArrowPosition());
 
     this.addEventListener("click", (event) => this.#onClick(event));
-    this.#elements["arrow"].addEventListener("keydown", (event) => this.#onArrowKeyDown(event));
+    this["#arrow"].addEventListener("keydown", (event) => this.#onArrowKeyDown(event));
   }
 
   connectedCallback() {
@@ -246,16 +245,16 @@ export default class XAccordionElement extends HTMLElement {
     let header = this.querySelector(":scope > header");
 
     if (header) {
-      this.#elements["arrow-container"].style.height = header.getBoundingClientRect().height + "px";
+      this["#arrow-container"].style.height = header.getBoundingClientRect().height + "px";
     }
     else {
-      this.#elements["arrow-container"].style.height = null;
+      this["#arrow-container"].style.height = null;
     }
   }
 
   #updateArrowPathData() {
-    let pathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
-    this.#elements["arrow-path"].setAttribute("d", pathData);
+    let pathData = getComputedStyle(this["#arrow"]).getPropertyValue("--path-data");
+    this["#arrow-path"].setAttribute("d", pathData);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

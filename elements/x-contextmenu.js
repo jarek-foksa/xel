@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -40,7 +40,6 @@ export default class XContextMenuElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #parentElement = null;
 
   #windowBlurListener = null;
@@ -55,10 +54,10 @@ export default class XContextMenuElement extends HTMLElement {
     this.#shadowRoot.adoptedStyleSheets = [XContextMenuElement.#shadowStyleSheet];
     this.#shadowRoot.append(document.importNode(XContextMenuElement.#shadowTemplate.content, true));
 
-    this.#elements["backdrop"] = createElement("x-backdrop");
-    this.#elements["backdrop"].style.background =  "rgba(0, 0, 0, 0)";
-    this.#elements["backdrop"].addEventListener("contextmenu", (event) => this.#onBackdropContextMenu(event));
-    this.#elements["backdrop"].addEventListener("pointerdown", (event) => this.#onBackdropPointerDown(event));
+    this["#backdrop"] = createElement("x-backdrop");
+    this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+    this["#backdrop"].addEventListener("contextmenu", (event) => this.#onBackdropContextMenu(event));
+    this["#backdrop"].addEventListener("pointerdown", (event) => this.#onBackdropPointerDown(event));
 
     this.addEventListener("blur", (event) => this.#onBlur());
     this.addEventListener("keydown", (event) => this.#onKeyDown(event), true);
@@ -96,8 +95,8 @@ export default class XContextMenuElement extends HTMLElement {
     if (menu.opened === false) {
       menu.openAtPoint(clientX, clientY);
 
-      this.#elements["backdrop"].ownerElement = menu;
-      this.#elements["backdrop"].show(false);
+      this["#backdrop"].ownerElement = menu;
+      this["#backdrop"].show(false);
 
       menu.focus();
     }
@@ -109,7 +108,7 @@ export default class XContextMenuElement extends HTMLElement {
   // Close the context menu.
   close() {
     return new Promise(async (resolve) => {
-      this.#elements["backdrop"].hide(false);
+      this["#backdrop"].hide(false);
 
       let menu = this.querySelector("x-menu");
 

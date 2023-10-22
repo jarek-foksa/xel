@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -62,7 +62,6 @@ export default class PTCodeElement extends HTMLElement {
 
   #value = "";
   #shadowRoot = null;
-  #elements = {};
   #themeChangeListener = null;
   #observer = new MutationObserver(() => this.#updateCode());
   #prismStyleSheet = new CSSStyleSheet();
@@ -77,7 +76,7 @@ export default class PTCodeElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(PTCodeElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -86,7 +85,7 @@ export default class PTCodeElement extends HTMLElement {
       this.#updateTheme();
     });
 
-    this.#elements["code"].setAttribute("class", "language-" + (this.getAttribute("lang") || "html"));
+    this["#code"].setAttribute("class", "language-" + (this.getAttribute("lang") || "html"));
     this.#observer.observe(this, {childList: true, attributes: false, characterData: true, subtree: true});
 
     this.#updateTheme();
@@ -101,10 +100,10 @@ export default class PTCodeElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateCode() {
-    this.#elements["code"].textContent = this.textContent;
+    this["#code"].textContent = this.textContent;
 
-    if (this.#elements["code"].textContent !== "") {
-      Prism.highlightElement(this.#elements["code"], true);
+    if (this["#code"].textContent !== "") {
+      Prism.highlightElement(this["#code"], true);
     }
   }
 

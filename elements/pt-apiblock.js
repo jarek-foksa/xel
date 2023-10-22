@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -124,7 +124,6 @@ export default class PTApiBlockElement extends HTMLElement {
 
   #readyCallbacks = [];
   #shadowRoot = null;
-  #elements = {};
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -136,7 +135,7 @@ export default class PTApiBlockElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(PTApiBlockElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -177,13 +176,13 @@ export default class PTApiBlockElement extends HTMLElement {
           </tr>
         `;
 
-        this.#elements["element-table"].innerHTML = tableHTML;
+        this["#element-table"].innerHTML = tableHTML;
       }
 
       // Properties
       {
         if (api.properties.length === 0) {
-          this.#elements["properties-section"].hidden = true;
+          this["#properties-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -231,14 +230,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this.#elements["properties-tables"].innerHTML = tablesHTML;
+          this["#properties-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Events
       {
         if (api.events.length === 0) {
-          this.#elements["events-section"].hidden = true;
+          this["#events-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -262,14 +261,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this.#elements["events-tables"].innerHTML = tablesHTML;
+          this["#events-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Methods
       {
         if (api.methods.length === 0) {
-          this.#elements["methods-section"].hidden = true;
+          this["#methods-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -293,14 +292,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this.#elements["methods-tables"].innerHTML = tablesHTML;
+          this["#methods-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Parts
       {
         if (api.parts.length === 0) {
-          this.#elements["parts-section"].hidden = true;
+          this["#parts-section"].hidden = true;
         }
         else {
           let tablesHTML = "";
@@ -324,14 +323,14 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this.#elements["parts-tables"].innerHTML = tablesHTML;
+          this["#parts-tables"].innerHTML = tablesHTML;
         }
       }
 
       // Icons
       {
         if (api.elementName !== "x-icon") {
-          this.#elements["icons-section"].hidden = true;
+          this["#icons-section"].hidden = true;
         }
         else {
           let materialIconset = await getIconset("/node_modules/xel/iconsets/material.svg");
@@ -359,7 +358,7 @@ export default class PTApiBlockElement extends HTMLElement {
             `;
           }
 
-          this.#elements["icons-table"].innerHTML = rowsHTML;
+          this["#icons-table"].innerHTML = rowsHTML;
         }
       }
 

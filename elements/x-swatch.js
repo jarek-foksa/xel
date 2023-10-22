@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -71,7 +71,6 @@ export default class XSwatchElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,7 +82,7 @@ export default class XSwatchElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XSwatchElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -100,7 +99,7 @@ export default class XSwatchElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updatePreview() {
-    this.#elements["preview"].style.background = this.value;
+    this["#preview"].style.background = this.value;
   }
 }
 

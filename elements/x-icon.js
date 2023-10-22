@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -84,7 +84,6 @@ export default class XIconElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #defaultIconsetsChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +96,7 @@ export default class XIconElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XIconElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -159,11 +158,11 @@ export default class XIconElement extends HTMLElement {
     }
 
     if (symbol) {
-      this.#elements["svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
-      this.#elements["svg"].innerHTML = symbol.innerHTML;
+      this["#svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
+      this["#svg"].innerHTML = symbol.innerHTML;
     }
     else {
-      this.#elements["svg"].innerHTML = "";
+      this["#svg"].innerHTML = "";
     }
   }
 }

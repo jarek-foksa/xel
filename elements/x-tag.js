@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -168,8 +168,6 @@ export default class XTagElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
-
   #xelThemeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,11 +180,11 @@ export default class XTagElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XTagElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
-    this.#elements["scope-slot"].addEventListener("slotchange", () => this.#updateScopedAttribute());
-    this.#elements["remove-button"].addEventListener("click", (event) => this.#onRemoveButtonClick(event));
+    this["#scope-slot"].addEventListener("slotchange", () => this.#updateScopedAttribute());
+    this["#remove-button"].addEventListener("click", (event) => this.#onRemoveButtonClick(event));
   }
 
   connectedCallback() {
@@ -224,12 +222,12 @@ export default class XTagElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateRemoveButtonPathData() {
-    let pathData = getComputedStyle(this.#elements["remove-button"]).getPropertyValue("--path-data");
-    this.#elements["remove-button-path"].setAttribute("d", pathData);
+    let pathData = getComputedStyle(this["#remove-button"]).getPropertyValue("--path-data");
+    this["#remove-button-path"].setAttribute("d", pathData);
   }
 
   #updateScopedAttribute() {
-    if (this.#elements["scope-slot"].assignedElements().length === 0) {
+    if (this["#scope-slot"].assignedElements().length === 0) {
       this.removeAttribute("scoped");
     }
     else {

@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -191,7 +191,6 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #lastTabIndex = 0;
   #triggering = false;
   #triggerEndCallbacks = [];
@@ -213,7 +212,7 @@ export default class XMenuItemElement extends HTMLElement {
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -243,27 +242,27 @@ export default class XMenuItemElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateCheckmarkPathData() {
-    let pathData = getComputedStyle(this.#elements["checkmark"]).getPropertyValue("--path-data");
-    this.#elements["checkmark-path"].setAttribute("d", pathData);
+    let pathData = getComputedStyle(this["#checkmark"]).getPropertyValue("--path-data");
+    this["#checkmark-path"].setAttribute("d", pathData);
   }
 
   #updateArrowPathData() {
-    let pathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
-    this.#elements["arrow-path"].setAttribute("d", pathData);
+    let pathData = getComputedStyle(this["#arrow"]).getPropertyValue("--path-data");
+    this["#arrow-path"].setAttribute("d", pathData);
   }
 
   #updateArrowIconVisibility() {
     if (this.parentElement.localName === "x-menubar") {
-      this.#elements["arrow"].setAttribute("hidden", "");
+      this["#arrow"].setAttribute("hidden", "");
     }
     else {
       let menu = this.querySelector("x-menu");
 
       if (menu) {
-        this.#elements["arrow"].removeAttribute("hidden");
+        this["#arrow"].removeAttribute("hidden");
       }
       else {
-        this.#elements["arrow"].setAttribute("hidden", "");
+        this["#arrow"].setAttribute("hidden", "");
       }
     }
   }

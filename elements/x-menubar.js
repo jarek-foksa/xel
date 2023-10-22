@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -88,7 +88,6 @@ export default class XMenuBarElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #expanded = false;
   #orientationChangeListener = null;
 
@@ -102,7 +101,7 @@ export default class XMenuBarElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XMenuBarElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
@@ -159,7 +158,7 @@ export default class XMenuBarElement extends HTMLElement {
       {
         let {x, y, width, height} = this.getBoundingClientRect();
 
-        this.#elements["backdrop-path"].setAttribute("d", `
+        this["#backdrop-path"].setAttribute("d", `
           M 0 0
           L ${window.innerWidth} 0
           L ${window.innerWidth} ${window.innerHeight}
@@ -171,7 +170,7 @@ export default class XMenuBarElement extends HTMLElement {
           L ${x} ${y + height}
         `);
 
-        this.#elements["backdrop"].removeAttribute("hidden");
+        this["#backdrop"].removeAttribute("hidden");
       }
     }
   }
@@ -183,8 +182,8 @@ export default class XMenuBarElement extends HTMLElement {
 
       // Hide the backdrop
       {
-        this.#elements["backdrop"].setAttribute("hidden", "");
-        this.#elements["backdrop-path"].setAttribute("d", "");
+        this["#backdrop"].setAttribute("hidden", "");
+        this["#backdrop-path"].setAttribute("d", "");
       }
 
       // Close all opened menus
@@ -285,7 +284,7 @@ export default class XMenuBarElement extends HTMLElement {
       }
     }
 
-    else if (event.target === this.#elements["backdrop-path"]) {
+    else if (event.target === this["#backdrop-path"]) {
       this.#collapseMenubarItems();
       event.preventDefault();
       event.stopPropagation();

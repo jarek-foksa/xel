@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -256,7 +256,6 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #lastTabIndex = 0;
 
   #isDragging = false;
@@ -275,13 +274,13 @@ export default class XNumberInputElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XNumberInputElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("wheel", (event) => this.#onWheel(event));
-    this.#elements["editor"].addEventListener("paste", (event) => this.#onPaste(event));
-    this.#elements["editor"].addEventListener("input", (event) => this.#onEditorInput(event));
+    this["#editor"].addEventListener("paste", (event) => this.#onPaste(event));
+    this["#editor"].addEventListener("input", (event) => this.#onEditorInput(event));
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
     this.addEventListener("pointerenter", () => this.#onPointerEnter());
     this.addEventListener("pointerleave", () => this.#onPointerLeave());
@@ -295,9 +294,9 @@ export default class XNumberInputElement extends HTMLElement {
 
     // @bugfix: https://bugzilla.mozilla.org/show_bug.cgi?id=1291467
     if (getBrowserEngine() === "gecko") {
-      this.#elements["editor"].setAttribute("contenteditable", "");
+      this["#editor"].setAttribute("contenteditable", "");
 
-      this.#elements["editor"].addEventListener("beforeinput", (event) => {
+      this["#editor"].addEventListener("beforeinput", (event) => {
         if (event.inputType === "insertFromPaste" && event.dataTransfer.types.includes("text/plain")) {
           event.preventDefault();
 
@@ -405,7 +404,7 @@ export default class XNumberInputElement extends HTMLElement {
   }, 500);
 
   #commitEditorChanges() {
-    let editorTextContent = this.#elements["editor"].textContent;
+    let editorTextContent = this["#editor"].textContent;
     let editorValue = editorTextContent.trim() === "" ? null : parseFloat(editorTextContent);
     let normalizedEditorValue = editorValue === null ? null : normalize(editorValue, this.min, this.max);
 
@@ -436,18 +435,18 @@ export default class XNumberInputElement extends HTMLElement {
         let valuePrecision = getPrecision(value);
 
         if (stepPrecision > 0 && valuePrecision < stepPrecision) {
-          this.#elements["editor"].textContent = value.toFixed(stepPrecision);
+          this["#editor"].textContent = value.toFixed(stepPrecision);
         }
         else {
-          this.#elements["editor"].textContent = this.getAttribute("value").trim();
+          this["#editor"].textContent = this.getAttribute("value").trim();
         }
       }
       else {
-        this.#elements["editor"].textContent = this.getAttribute("value").trim();
+        this["#editor"].textContent = this.getAttribute("value").trim();
       }
     }
     else {
-      this.#elements["editor"].textContent = "";
+      this["#editor"].textContent = "";
     }
   }
 
@@ -455,7 +454,7 @@ export default class XNumberInputElement extends HTMLElement {
     let value = null;
 
     if (this.matches(":focus")) {
-      let textContent = this.#elements["editor"].textContent;
+      let textContent = this["#editor"].textContent;
       value = textContent.trim() === "" ? null : parseFloat(textContent);
     }
     else {
@@ -524,15 +523,15 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onPrefixAttributeChange() {
-    this.#elements["editor"].setAttribute("data-prefix", this.prefix);
+    this["#editor"].setAttribute("data-prefix", this.prefix);
   }
 
   #onSuffixAttributeChange() {
-    this.#elements["editor"].setAttribute("data-suffix", this.suffix);
+    this["#editor"].setAttribute("data-suffix", this.suffix);
   }
 
   #onDisabledAttributeChange() {
-    this.#elements["editor"].disabled = this.disabled;
+    this["#editor"].disabled = this.disabled;
     this.#updateAccessabilityAttributes();
   }
 
@@ -544,10 +543,10 @@ export default class XNumberInputElement extends HTMLElement {
   #onFocusOut() {
     // Safari 16.4 does not support ShadowRoot.prototype.getSelection
     if (this.#shadowRoot.getSelection) {
-      this.#shadowRoot.getSelection().collapse(this.#elements["main"]);
+      this.#shadowRoot.getSelection().collapse(this["#main"]);
     }
 
-    this.#elements["editor"].scrollLeft = 0;
+    this["#editor"].scrollLeft = 0;
 
     this.#commitEditorChanges();
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
@@ -593,8 +592,8 @@ export default class XNumberInputElement extends HTMLElement {
       return;
     }
 
-    if (pointerDownEvent.target === this.#elements["editor"]) {
-      if (this.#elements["editor"].matches(":focus") === false) {
+    if (pointerDownEvent.target === this["#editor"]) {
+      if (this["#editor"].matches(":focus") === false) {
         pointerDownEvent.preventDefault();
 
         let initialValue = this.value;
@@ -603,9 +602,9 @@ export default class XNumberInputElement extends HTMLElement {
         let pointerMoveListener, pointerUpOrCancelListener;
 
         this.style.cursor = "col-resize";
-        this.#elements["editor"].setPointerCapture(pointerDownEvent.pointerId);
+        this["#editor"].setPointerCapture(pointerDownEvent.pointerId);
 
-        this.#elements["editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+        this["#editor"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
           let pointerMovePoint = new DOMPoint(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
           let deltaTime = pointerMoveEvent.timeStamp - pointerDownEvent.timeStamp;
           let isDistinct = pointerMoveEvent.clientX !== cachedClientX;
@@ -629,10 +628,10 @@ export default class XNumberInputElement extends HTMLElement {
           }
         });
 
-        this.#elements["editor"].addEventListener("pointerup",  pointerUpOrCancelListener = () => {
-          this.#elements["editor"].removeEventListener("pointermove", pointerMoveListener);
-          this.#elements["editor"].removeEventListener("pointerup", pointerUpOrCancelListener);
-          this.#elements["editor"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+        this["#editor"].addEventListener("pointerup",  pointerUpOrCancelListener = () => {
+          this["#editor"].removeEventListener("pointermove", pointerMoveListener);
+          this["#editor"].removeEventListener("pointerup", pointerUpOrCancelListener);
+          this["#editor"].removeEventListener("pointercancel", pointerUpOrCancelListener);
 
           this.style.cursor = null;
 
@@ -642,12 +641,12 @@ export default class XNumberInputElement extends HTMLElement {
             this.dispatchEvent(new CustomEvent("changeend", {detail: this.value !== initialValue, bubbles: true}));
           }
           else {
-            this.#elements["editor"].focus();
+            this["#editor"].focus();
             document.execCommand("selectAll");
           }
         });
 
-        this.#elements["editor"].addEventListener("pointercancel", pointerUpOrCancelListener);
+        this["#editor"].addEventListener("pointercancel", pointerUpOrCancelListener);
       }
     }
   }

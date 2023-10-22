@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -474,7 +474,7 @@ export default class PTAppElement extends HTMLElement {
             <a id="terms-anchor" href="/terms">Terms</a>
           </section>
 
-          <p id="copyright">© 2016-2022 Jarosław Foksa</p>
+          <p id="copyright">© 2016-2023 Jarosław Foksa</p>
         </footer>
       </sidebar>
 
@@ -676,7 +676,6 @@ export default class PTAppElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #authReadyCallbacks = [];
   #currentLocation = null;
   #oldLocation = null;
@@ -735,7 +734,7 @@ export default class PTAppElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(PTAppElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     window.addEventListener("popstate", (event) => this.#onPopState(event));
@@ -748,14 +747,14 @@ export default class PTAppElement extends HTMLElement {
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
-    this.#elements["expand-sidebar-button"].addEventListener("click", (e) => this.#onExpandSidebarButtonClick(e));
-    this.#elements["collapse-sidebar-button"].addEventListener("click", (e) => this.#onCollapseSidebarButtonClick(e));
-    this.#elements["theme-select"].addEventListener("change", (e) => this.#onThemeSelectChange(e));
-    this.#elements["accent-preset-select"].addEventListener("change", (e) => this.#onAccentPresetSelectChange(e));
-    this.#elements["accent-color-select"].addEventListener("change", (e) => this.#onAccentColorSelectChange(e));
-    this.#elements["iconset-select"].addEventListener("change", (e) => this.#onIconsetSelectChange(e));
-    this.#elements["locale-select"].addEventListener("change", (e) => this.#onLocaleSelectChange(e));
-    this.#elements["main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
+    this["#expand-sidebar-button"].addEventListener("click", (e) => this.#onExpandSidebarButtonClick(e));
+    this["#collapse-sidebar-button"].addEventListener("click", (e) => this.#onCollapseSidebarButtonClick(e));
+    this["#theme-select"].addEventListener("change", (e) => this.#onThemeSelectChange(e));
+    this["#accent-preset-select"].addEventListener("change", (e) => this.#onAccentPresetSelectChange(e));
+    this["#accent-color-select"].addEventListener("change", (e) => this.#onAccentColorSelectChange(e));
+    this["#iconset-select"].addEventListener("change", (e) => this.#onIconsetSelectChange(e));
+    this["#locale-select"].addEventListener("change", (e) => this.#onLocaleSelectChange(e));
+    this["#main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
 
     // Sidebar
     {
@@ -788,13 +787,13 @@ export default class PTAppElement extends HTMLElement {
 
     // Custom color
     if (Xel.presetAccentColors[color] === undefined) {
-      this.#elements["accent-preset-select"].value = "custom";
-      this.#elements["accent-color-select"].value = color;
+      this["#accent-preset-select"].value = "custom";
+      this["#accent-color-select"].value = color;
     }
     // Preset color
     else {
-      this.#elements["accent-preset-select"].value = color;
-      this.#elements["accent-color-select"].value = Xel.presetAccentColors[color];
+      this["#accent-preset-select"].value = color;
+      this["#accent-color-select"].value = Xel.presetAccentColors[color];
     }
 
     Xel.setConfig("pt-app:accentColor", color);
@@ -802,12 +801,12 @@ export default class PTAppElement extends HTMLElement {
 
   #onXelIconsetsChange() {
     this.#updateSidebarSettingsSection();
-    Xel.setConfig("pt-app:iconset", this.#elements["iconset-select"].value);
+    Xel.setConfig("pt-app:iconset", this["#iconset-select"].value);
   }
 
   #onXelLocalesChange() {
     this.#updateSidebarSettingsSection();
-    Xel.setConfig("pt-app:locale", this.#elements["locale-select"].value);
+    Xel.setConfig("pt-app:locale", this["#locale-select"].value);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -863,7 +862,7 @@ export default class PTAppElement extends HTMLElement {
 
         if (toValue === null) {
           let param = fromValue.split("→")[0];
-          let fromDialog = this.#elements["dialogs"].querySelector(`:scope > dialog[data-param="${param}"]`);
+          let fromDialog = this["#dialogs"].querySelector(`:scope > dialog[data-param="${param}"]`);
 
           if (fromDialog && fromDialog.open) {
             fromDialog.close();
@@ -909,7 +908,7 @@ export default class PTAppElement extends HTMLElement {
   #onMainWheel(event) {
     if (location.hash) {
       history.pushState(
-        {index: history.state.index+1, scrollTop: this.#elements["main"].scrollTop}, null, location.href.split("#")[0]
+        {index: history.state.index+1, scrollTop: this["#main"].scrollTop}, null, location.href.split("#")[0]
       );
 
       this.#maybeDispatchLocationChangeEvent("push");
@@ -926,13 +925,13 @@ export default class PTAppElement extends HTMLElement {
 
   #onExpandSidebarButtonClick(event) {
     if (event.buttons <= 1) {
-      this.#elements["sidebar-dialog"].showModal();
+      this["#sidebar-dialog"].showModal();
     }
   }
 
   #onCollapseSidebarButtonClick(event) {
     if (event.buttons <= 1) {
-      this.#elements["sidebar-dialog"].close();
+      this["#sidebar-dialog"].close();
     }
   }
 
@@ -953,7 +952,7 @@ export default class PTAppElement extends HTMLElement {
     }
 
     dialog.remove();
-    delete this.#elements[dialog.id];
+    delete this["#" + dialog.id];
 
     if (dialog.dataset.param === dialogName) {
       params.delete("dialog");
@@ -963,24 +962,24 @@ export default class PTAppElement extends HTMLElement {
   }
 
   #onThemeSelectChange() {
-    Xel.theme = "/themes/" + this.#elements["theme-select"].value + "-portal.css";
+    Xel.theme = "/themes/" + this["#theme-select"].value + "-portal.css";
   }
 
   #onAccentPresetSelectChange() {
-    let value = this.#elements["accent-preset-select"].value;
+    let value = this["#accent-preset-select"].value;
     Xel.accentColor = (value === "custom") ? Xel.presetAccentColors[Xel.accentColor] : value;
   }
 
   #onAccentColorSelectChange() {
-    Xel.accentColor = this.#elements["accent-color-select"].value;
+    Xel.accentColor = this["#accent-color-select"].value;
   }
 
   #onIconsetSelectChange() {
-    Xel.iconsets = ["/iconsets/" + this.#elements["iconset-select"].value + ".svg"];
+    Xel.iconsets = ["/iconsets/" + this["#iconset-select"].value + ".svg"];
   }
 
   #onLocaleSelectChange() {
-    let [languageCode, territory] = this.#elements["locale-select"].value.split("-");
+    let [languageCode, territory] = this["#locale-select"].value.split("-");
 
     if (territory === undefined) {
       Xel.locales = [`/locales/${languageCode}.ftl`];
@@ -1005,7 +1004,7 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  storeMainScrollOffset(offset = this.#elements["main"].scrollTop) {
+  storeMainScrollOffset(offset = this["#main"].scrollTop) {
     history.replaceState({index: history.state.index, scrollTop: offset}, null, location.href);
   }
 
@@ -1013,17 +1012,17 @@ export default class PTAppElement extends HTMLElement {
     let offset = 0;
 
     if (location.hash) {
-      let page = this.#elements["main"].firstElementChild;
+      let page = this["#main"].firstElementChild;
       let elementID = location.hash.substring(1);
       page.scrollElementIntoView(elementID);
     }
     else {
-      this.#elements["main"].scrollTop = history.state.scrollTop;
+      this["#main"].scrollTop = history.state.scrollTop;
     }
   }
 
   resetMainScrollOffset() {
-    this.#elements["main"].scrollTop = 0;
+    this["#main"].scrollTop = 0;
   }
 
   #maybeDispatchLocationChangeEvent(method = "pop") {
@@ -1062,21 +1061,21 @@ export default class PTAppElement extends HTMLElement {
   // @type "normal" || "overlay"
   #toggleSidebarMode(mode) {
     if (mode === "overlay") {
-      if (!this.#elements["sidebar-dialog"]) {
-        this.#elements["sidebar-dialog"] = html`<dialog id="sidebar-dialog" tabindex="0"></dialog>`;
-        this.#elements["sidebar-dialog"].append(this.#elements["sidebar"]);
-        this.#elements["dialogs"].append(this.#elements["sidebar-dialog"]);
-        this.#elements["expand-sidebar-button"].hidden = false;
-        this.#elements["collapse-sidebar-button"].hidden = false;
+      if (!this["#sidebar-dialog"]) {
+        this["#sidebar-dialog"] = html`<dialog id="sidebar-dialog" tabindex="0"></dialog>`;
+        this["#sidebar-dialog"].append(this["#sidebar"]);
+        this["#dialogs"].append(this["#sidebar-dialog"]);
+        this["#expand-sidebar-button"].hidden = false;
+        this["#collapse-sidebar-button"].hidden = false;
       }
     }
     else if (mode === "normal") {
-      if (this.#elements["sidebar-dialog"]) {
-        this.#elements["sidebar-dialog"].remove();
-        this.#elements["sidebar-dialog"] = null;
-        this.#elements["main"].before(this.#elements["sidebar"]);
-        this.#elements["expand-sidebar-button"].hidden = true;
-        this.#elements["collapse-sidebar-button"].hidden = true;
+      if (this["#sidebar-dialog"]) {
+        this["#sidebar-dialog"].remove();
+        this["#sidebar-dialog"] = null;
+        this["#main"].before(this["#sidebar"]);
+        this["#expand-sidebar-button"].hidden = true;
+        this["#collapse-sidebar-button"].hidden = true;
       }
     }
   }
@@ -1086,7 +1085,7 @@ export default class PTAppElement extends HTMLElement {
   // @type (boolean) => Promise
   #closeDialog(immidiate = false) {
     return new Promise( async (resolve) => {
-      let dialog = this.#elements["dialogs"].querySelector("dialog:not(#sidebar-dialog)");
+      let dialog = this["#dialogs"].querySelector("dialog:not(#sidebar-dialog)");
 
       if (dialog && dialog.id) {
         if (immidiate) {
@@ -1145,48 +1144,48 @@ export default class PTAppElement extends HTMLElement {
       let path = location.pathname;
       let title = document.querySelector("title");
 
-      if (this.#elements["main"].dataset.path !== path) {
+      if (this["#main"].dataset.path !== path) {
         if (path === "/") {
           title.textContent = "Xel";
-          this.#elements["main"].innerHTML = "<pt-aboutpage></pt-aboutpage>";
+          this["#main"].innerHTML = "<pt-aboutpage></pt-aboutpage>";
         }
         else if (path === "/setup") {
           title.textContent = "Xel | Setup";
-          this.#elements["main"].innerHTML = "<pt-setuppage></pt-setuppage>";
+          this["#main"].innerHTML = "<pt-setuppage></pt-setuppage>";
         }
         else if (path === "/faq") {
           title.textContent = "Xel | FAQ";
-          this.#elements["main"].innerHTML = "<pt-faqpage></pt-faqpage>";
+          this["#main"].innerHTML = "<pt-faqpage></pt-faqpage>";
         }
         else if (path === "/changelog") {
           title.textContent = "Xel | Changelog";
-          this.#elements["main"].innerHTML = "<pt-changelogpage></pt-changelogpage>";
+          this["#main"].innerHTML = "<pt-changelogpage></pt-changelogpage>";
         }
         else if (path === "/license") {
           title.textContent = "Xel | License";
-          this.#elements["main"].innerHTML = "<pt-licensepage></pt-licensepage>";
+          this["#main"].innerHTML = "<pt-licensepage></pt-licensepage>";
         }
         else if (path === "/privacy") {
           title.textContent = "Xel | Privacy";
-          this.#elements["main"].innerHTML = "<pt-privacypage></pt-privacypage>";
+          this["#main"].innerHTML = "<pt-privacypage></pt-privacypage>";
         }
         else if (path === "/terms") {
           title.textContent = "Xel | Terms";
-          this.#elements["main"].innerHTML = "<pt-termspage></pt-termspage>";
+          this["#main"].innerHTML = "<pt-termspage></pt-termspage>";
         }
         else if (path.startsWith("/elements/")) {
           let elementName = path.substring(10);
           title.textContent = "Xel | " + elementName;
-          this.#elements["main"].innerHTML = `<pt-elementpage value="${elementName}"></pt-elementpage>`;
+          this["#main"].innerHTML = `<pt-elementpage value="${elementName}"></pt-elementpage>`;
         }
         else {
-          this.#elements["main"].innerHTML = "";
+          this["#main"].innerHTML = "";
         }
 
-        this.#elements["main"].dataset.path = path;
+        this["#main"].dataset.path = path;
       }
 
-      let page = this.#elements["main"].firstElementChild;
+      let page = this["#main"].firstElementChild;
 
       if (page) {
         await page.whenReady;
@@ -1197,7 +1196,7 @@ export default class PTAppElement extends HTMLElement {
   }
 
   #updateSidebarNav() {
-    for (let section of this.#elements["nav"].querySelectorAll(":scope > section")) {
+    for (let section of this["#nav"].querySelectorAll(":scope > section")) {
       if (section.id !== "settings-section") {
         for (let button of section.querySelectorAll("x-button")) {
           let anchor = button.closest("a");
@@ -1227,7 +1226,7 @@ export default class PTAppElement extends HTMLElement {
     {
       let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
 
-      for (let item of this.#elements["theme-select"].querySelectorAll("x-menuitem")) {
+      for (let item of this["#theme-select"].querySelectorAll("x-menuitem")) {
         if (item.getAttribute("value") === themeName) {
           item.setAttribute("toggled", "");
         }
@@ -1258,17 +1257,17 @@ export default class PTAppElement extends HTMLElement {
         </x-menuitem>
       `;
 
-      this.#elements["accent-preset-menu"].innerHTML = itemsHTML;
+      this["#accent-preset-menu"].innerHTML = itemsHTML;
 
       // Preset color
       if (Xel.presetAccentColors[Xel.accentColor]) {
-        this.#elements["accent-preset-select"].value = Xel.accentColor;
-        this.#elements["accent-color-select"].value = Xel.presetAccentColors[Xel.accentColor];
+        this["#accent-preset-select"].value = Xel.accentColor;
+        this["#accent-color-select"].value = Xel.presetAccentColors[Xel.accentColor];
       }
       // Custom color
       else {
-        this.#elements["accent-preset-select"].value = "custom";
-        this.#elements["accent-color-select"].value = Xel.accentColor;
+        this["#accent-preset-select"].value = "custom";
+        this["#accent-color-select"].value = Xel.accentColor;
       }
     }
 
@@ -1276,14 +1275,14 @@ export default class PTAppElement extends HTMLElement {
     {
       let iconsetPath = Xel.iconsets[0];
       let iconsetName = iconsetPath.substring(iconsetPath.lastIndexOf("/") + 1, iconsetPath.lastIndexOf("."));
-      this.#elements["iconset-select"].value = iconsetName;
+      this["#iconset-select"].value = iconsetName;
     }
 
     // Update locale subsection
     {
       let localePath = Xel.locales[0];
       let localeTag = localePath.substring(localePath.lastIndexOf("/") + 1, localePath.lastIndexOf("."));
-      this.#elements["locale-select"].value = localeTag;
+      this["#locale-select"].value = localeTag;
     }
   }
 }

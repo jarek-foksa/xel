@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -224,7 +224,6 @@ export default class XButtonElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #wasFocusedBeforeExpanding = false;
   #lastPointerDownEvent = null;
   #lastTabIndex = 0;
@@ -241,7 +240,7 @@ export default class XButtonElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XButtonElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
@@ -253,8 +252,8 @@ export default class XButtonElement extends HTMLElement {
 
     (async () => {
       await customElements.whenDefined("x-backdrop");
-      this.#elements["backdrop"] = createElement("x-backdrop");
-      this.#elements["backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+      this["#backdrop"] = createElement("x-backdrop");
+      this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
     })();
   }
 
@@ -337,8 +336,8 @@ export default class XButtonElement extends HTMLElement {
         this.#wasFocusedBeforeExpanding = this.matches(":focus");
         this.setAttribute("expanded", "");
 
-        this.#elements["backdrop"].ownerElement = menu;
-        this.#elements["backdrop"].show(false);
+        this["#backdrop"].ownerElement = menu;
+        this["#backdrop"].show(false);
 
         await menu.openNextToElement(this, "vertical", 3);
         menu.focus();
@@ -357,7 +356,7 @@ export default class XButtonElement extends HTMLElement {
         await delay;
         await menu.close();
 
-        this.#elements["backdrop"].hide(false);
+        this["#backdrop"].hide(false);
         this.removeAttribute("expanded");
 
         // @bugfix: Button gets stuck with :hover state after user clicks the backdrop.
@@ -548,13 +547,13 @@ export default class XButtonElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateArrowPathData() {
-    let arrowPathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
-    this.#elements["arrow-path"].setAttribute("d", arrowPathData);
+    let arrowPathData = getComputedStyle(this["#arrow"]).getPropertyValue("--path-data");
+    this["#arrow-path"].setAttribute("d", arrowPathData);
   }
 
   #updateArrowVisibility() {
     let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
-    this.#elements["arrow"].style.display = (popup ? null : "none");
+    this["#arrow"].style.display = (popup ? null : "none");
   }
 
   #updateAccessabilityAttributes() {
@@ -590,7 +589,7 @@ export default class XButtonElement extends HTMLElement {
 
     this.#lastPointerDownEvent = event;
 
-    if (event.target === this.#elements["backdrop"]) {
+    if (event.target === this["#backdrop"]) {
       this.#onBackdropPointerDown(event);
     }
     else if (openedMenu && openedMenu.contains(event.target)) {
@@ -659,7 +658,7 @@ export default class XButtonElement extends HTMLElement {
     let openedDialog = this.querySelector(":scope > dialog[open]");
     let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
-    if (event.target === this.#elements["backdrop"]) {
+    if (event.target === this["#backdrop"]) {
       return;
     }
     else if (openedMenu && openedMenu.contains(event.target)) {

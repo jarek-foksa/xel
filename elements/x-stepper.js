@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -137,9 +137,7 @@ export default class XStepperElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #parentInput = null;
-
   #xelThemeChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +150,7 @@ export default class XStepperElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XStepperElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
@@ -193,11 +191,11 @@ export default class XStepperElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updatePathData() {
-    let incrementPathData = getComputedStyle(this.#elements["increment-arrow"]).getPropertyValue("--path-data");
-    let decrementPathData = getComputedStyle(this.#elements["decrement-arrow"]).getPropertyValue("--path-data");
+    let incrementPathData = getComputedStyle(this["#increment-arrow"]).getPropertyValue("--path-data");
+    let decrementPathData = getComputedStyle(this["#decrement-arrow"]).getPropertyValue("--path-data");
 
-    this.#elements["increment-arrow-path"].setAttribute("d", incrementPathData);
-    this.#elements["decrement-arrow-path"].setAttribute("d", decrementPathData);
+    this["#increment-arrow-path"].setAttribute("d", incrementPathData);
+    this["#decrement-arrow-path"].setAttribute("d", decrementPathData);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,8 +203,8 @@ export default class XStepperElement extends HTMLElement {
   #onDisabledAttributeChange() {
     if (this.hasAttribute("disabled")) {
       this.removeAttribute("pressed");
-      this.#elements["increment-button"].removeAttribute("data-pressed");
-      this.#elements["decrement-button"].removeAttribute("data-pressed");
+      this["#increment-button"].removeAttribute("data-pressed");
+      this["#decrement-button"].removeAttribute("data-pressed");
     }
   }
 
@@ -214,10 +212,10 @@ export default class XStepperElement extends HTMLElement {
     let button = pointerDownEvent.target.closest(".button");
     let action = null;
 
-    if (button === this.#elements["increment-button"]) {
+    if (button === this["#increment-button"]) {
       action = "increment";
     }
-    else if (button === this.#elements["decrement-button"]) {
+    else if (button === this["#decrement-button"]) {
       action = "decrement";
     }
 

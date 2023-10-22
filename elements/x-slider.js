@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -386,7 +386,6 @@ export default class XSliderElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #lastTabIndex = 0;
 
   #mutationObserver = new MutationObserver((args) => this.#onMutation(args));
@@ -402,7 +401,7 @@ export default class XSliderElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XSliderElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
@@ -413,7 +412,7 @@ export default class XSliderElement extends HTMLElement {
   connectedCallback() {
     this.setAttribute("value", this.value);
 
-    this.#thumbResizeObserver.observe(this.#elements["start-thumb"]);
+    this.#thumbResizeObserver.observe(this["#start-thumb"]);
 
     this.#mutationObserver.observe(this, {
       childList: true,
@@ -430,7 +429,7 @@ export default class XSliderElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.#thumbResizeObserver.unobserve(this.#elements["start-thumb"]);
+    this.#thumbResizeObserver.unobserve(this["#start-thumb"]);
     this.#mutationObserver.disconnect();
   }
 
@@ -494,9 +493,9 @@ export default class XSliderElement extends HTMLElement {
   }
 
   #onThumbResize() {
-    let thumbRect = this.#elements["start-thumb"].getBoundingClientRect();
-    this.#elements["main"].style.setProperty("--computed-thumb-width", thumbRect.width + "px");
-    this.#elements["main"].style.setProperty("--computed-thumb-height", thumbRect.height + "px");
+    let thumbRect = this["#start-thumb"].getBoundingClientRect();
+    this["#main"].style.setProperty("--computed-thumb-width", thumbRect.width + "px");
+    this["#main"].style.setProperty("--computed-thumb-height", thumbRect.height + "px");
   }
 
   #onPointerDown(event) {
@@ -518,8 +517,8 @@ export default class XSliderElement extends HTMLElement {
     }
 
     let draggedThumb = null;
-    let {width: thumbWidth, height: thumbHeight} = this.#elements["start-thumb"].getBoundingClientRect();
-    let containerBounds = this.#elements["main"].getBoundingClientRect();
+    let {width: thumbWidth, height: thumbHeight} = this["#start-thumb"].getBoundingClientRect();
+    let containerBounds = this["#main"].getBoundingClientRect();
     let pointerMoveListener, pointerUpOrCancelListener;
     let changeStarted = false;
 
@@ -529,12 +528,12 @@ export default class XSliderElement extends HTMLElement {
         draggedThumb = pointerDownEvent.target;
       }
       else {
-        if (this.#elements["end-thumb"].hidden === true) {
-          draggedThumb = this.#elements["start-thumb"];
+        if (this["#end-thumb"].hidden === true) {
+          draggedThumb = this["#start-thumb"];
         }
         else {
-          let startBounds = this.#elements["start-thumb"].getBoundingClientRect();
-          let endBounds = this.#elements["end-thumb"].getBoundingClientRect();
+          let startBounds = this["#start-thumb"].getBoundingClientRect();
+          let endBounds = this["#end-thumb"].getBoundingClientRect();
 
           let startPoint = new DOMPoint(startBounds.x + startBounds.width / 2, startBounds.y + startBounds.height / 2);
           let endPoint = new DOMPoint(endBounds.x + endBounds.width / 2, endBounds.y + endBounds.height / 2);
@@ -544,10 +543,10 @@ export default class XSliderElement extends HTMLElement {
           let endDistance = getDistanceBetweenPoints(pointerPoint, endPoint);
 
           if (startDistance <= endDistance) {
-            draggedThumb = this.#elements["start-thumb"];
+            draggedThumb = this["#start-thumb"];
           }
           else {
-            draggedThumb = this.#elements["end-thumb"];
+            draggedThumb = this["#end-thumb"];
           }
         }
       }
@@ -574,7 +573,7 @@ export default class XSliderElement extends HTMLElement {
       if (Array.isArray(this.value)) {
         let [startValue, endValue] = this.value;
 
-        if (draggedThumb === this.#elements["start-thumb"]) {
+        if (draggedThumb === this["#start-thumb"]) {
           if (value >= endValue) {
             value = endValue;
           }
@@ -590,7 +589,7 @@ export default class XSliderElement extends HTMLElement {
             this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
           }
         }
-        else if (draggedThumb === this.#elements["end-thumb"]) {
+        else if (draggedThumb === this["#end-thumb"]) {
           if (value <= startValue) {
             value = startValue;
           }
@@ -626,7 +625,7 @@ export default class XSliderElement extends HTMLElement {
 
     updateValue(pointerDownEvent.clientX, pointerDownEvent.clientY);
 
-    for (let thumb of this.#elements["thumbs"].children) {
+    for (let thumb of this["#thumbs"].children) {
       thumb.style.zIndex = (thumb === draggedThumb) ? "1" : "0";
     }
 
@@ -660,7 +659,7 @@ export default class XSliderElement extends HTMLElement {
       if (Array.isArray(this.value)) {
         let [startValue, endValue] = this.value;
 
-        if (this.#shadowRoot.activeElement === this.#elements["start-thumb"]) {
+        if (this.#shadowRoot.activeElement === this["#start-thumb"]) {
           if (event.shiftKey) {
             startValue -= this.step * 10;
           }
@@ -668,7 +667,7 @@ export default class XSliderElement extends HTMLElement {
             startValue -= this.step;
           }
         }
-        else if (this.#shadowRoot.activeElement === this.#elements["end-thumb"]) {
+        else if (this.#shadowRoot.activeElement === this["#end-thumb"]) {
           if (event.shiftKey) {
             endValue -= this.step * 10;
           }
@@ -712,7 +711,7 @@ export default class XSliderElement extends HTMLElement {
       if (Array.isArray(this.value)) {
         let [startValue, endValue] = this.value;
 
-        if (this.#shadowRoot.activeElement === this.#elements["start-thumb"]) {
+        if (this.#shadowRoot.activeElement === this["#start-thumb"]) {
           if (event.shiftKey) {
             startValue += this.step * 10;
           }
@@ -724,7 +723,7 @@ export default class XSliderElement extends HTMLElement {
             startValue = endValue;
           }
         }
-        else if (this.#shadowRoot.activeElement === this.#elements["end-thumb"]) {
+        else if (this.#shadowRoot.activeElement === this["#end-thumb"]) {
           if (event.shiftKey) {
             endValue += this.step * 10;
           }
@@ -766,12 +765,12 @@ export default class XSliderElement extends HTMLElement {
         let offset = (((startValue - this.min) / (this.max - this.min)) * 100);
 
         if (this.vertical) {
-          this.#elements["start-thumb"].style.top = (100 - offset) + "%"
-          this.#elements["start-thumb"].hidden = false;
+          this["#start-thumb"].style.top = (100 - offset) + "%"
+          this["#start-thumb"].hidden = false;
         }
         else {
-          this.#elements["start-thumb"].style.left = offset + "%";
-          this.#elements["start-thumb"].hidden = false;
+          this["#start-thumb"].style.left = offset + "%";
+          this["#start-thumb"].hidden = false;
         }
       }
 
@@ -779,12 +778,12 @@ export default class XSliderElement extends HTMLElement {
         let offset = (((endValue - this.min) / (this.max - this.min)) * 100);
 
         if (this.vertical) {
-          this.#elements["end-thumb"].style.top = (100 - offset) + "%";
-          this.#elements["end-thumb"].hidden = false;
+          this["#end-thumb"].style.top = (100 - offset) + "%";
+          this["#end-thumb"].hidden = false;
         }
         else {
-          this.#elements["end-thumb"].style.left = offset + "%";
-          this.#elements["end-thumb"].hidden = false;
+          this["#end-thumb"].style.left = offset + "%";
+          this["#end-thumb"].hidden = false;
         }
       }
     }
@@ -792,14 +791,14 @@ export default class XSliderElement extends HTMLElement {
       let offset = (((this.value - this.min) / (this.max - this.min)) * 100);
 
       if (this.vertical) {
-        this.#elements["start-thumb"].style.top = (100 - offset) + "%"
-        this.#elements["start-thumb"].hidden = false;
-        this.#elements["end-thumb"].hidden = true;
+        this["#start-thumb"].style.top = (100 - offset) + "%"
+        this["#start-thumb"].hidden = false;
+        this["#end-thumb"].hidden = true;
       }
       else {
-        this.#elements["start-thumb"].style.left = offset + "%";
-        this.#elements["start-thumb"].hidden = false;
-        this.#elements["end-thumb"].hidden = true;
+        this["#start-thumb"].style.left = offset + "%";
+        this["#start-thumb"].hidden = false;
+        this["#end-thumb"].hidden = true;
       }
     }
   }
@@ -812,12 +811,12 @@ export default class XSliderElement extends HTMLElement {
       let endOffset = (((endValue - this.min) / (this.max - this.min)) * 100);
 
       if (this.vertical) {
-        this.#elements["range-track"].style.bottom = `${startOffset}%`;
-        this.#elements["range-track"].style.height = (endOffset - startOffset) + "%";
+        this["#range-track"].style.bottom = `${startOffset}%`;
+        this["#range-track"].style.height = (endOffset - startOffset) + "%";
       }
       else {
-        this.#elements["range-track"].style.left = `${startOffset}%`;
-        this.#elements["range-track"].style.width = (endOffset - startOffset) + "%";
+        this["#range-track"].style.left = `${startOffset}%`;
+        this["#range-track"].style.width = (endOffset - startOffset) + "%";
       }
     }
     else {
@@ -826,22 +825,22 @@ export default class XSliderElement extends HTMLElement {
 
       if (this.vertical) {
         if (offset >= originOffset) {
-          this.#elements["range-track"].style.bottom = `${originOffset}%`;
-          this.#elements["range-track"].style.height = (offset - originOffset) + "%";
+          this["#range-track"].style.bottom = `${originOffset}%`;
+          this["#range-track"].style.height = (offset - originOffset) + "%";
         }
         else {
-          this.#elements["range-track"].style.bottom = `${offset}%`;
-          this.#elements["range-track"].style.height = `${originOffset - offset}%`;
+          this["#range-track"].style.bottom = `${offset}%`;
+          this["#range-track"].style.height = `${originOffset - offset}%`;
         }
       }
       else {
         if (offset >= originOffset) {
-          this.#elements["range-track"].style.left = `${originOffset}%`;
-          this.#elements["range-track"].style.width = (offset - originOffset) + "%";
+          this["#range-track"].style.left = `${originOffset}%`;
+          this["#range-track"].style.width = (offset - originOffset) + "%";
         }
         else {
-          this.#elements["range-track"].style.left = `${offset}%`;
-          this.#elements["range-track"].style.width = `${originOffset - offset}%`;
+          this["#range-track"].style.left = `${offset}%`;
+          this["#range-track"].style.width = `${originOffset - offset}%`;
         }
       }
     }
@@ -853,12 +852,12 @@ export default class XSliderElement extends HTMLElement {
       let endOffset = (((endValue - this.min) / (this.max - this.min)) * 100);
 
       if (this.vertical) {
-        this.#elements["buffer-track"].style.bottom = startOffset + "%"
-        this.#elements["buffer-track"].style.height = (endOffset - startOffset) + "%"
+        this["#buffer-track"].style.bottom = startOffset + "%"
+        this["#buffer-track"].style.height = (endOffset - startOffset) + "%"
       }
       else {
-        this.#elements["buffer-track"].style.left = startOffset + "%";
-        this.#elements["buffer-track"].style.width = (endOffset - startOffset) + "%"
+        this["#buffer-track"].style.left = startOffset + "%";
+        this["#buffer-track"].style.width = (endOffset - startOffset) + "%"
       }
     }
   }
@@ -866,7 +865,7 @@ export default class XSliderElement extends HTMLElement {
   async #updateLabelsAndTicks() {
     await customElements.whenDefined("x-label");
 
-    this.#elements["ticks"].innerHTML = "";
+    this["#ticks"].innerHTML = "";
 
     for (let label of this.querySelectorAll(":scope > x-label")) {
       if (this.vertical) {
@@ -884,12 +883,12 @@ export default class XSliderElement extends HTMLElement {
       }
 
       if (this.vertical) {
-        this.#elements["ticks"].insertAdjacentHTML(
+        this["#ticks"].insertAdjacentHTML(
           "beforeend", `<div class="tick" part="tick" style="top: ${label.style.top}"></div>`
         );
       }
       else {
-        this.#elements["ticks"].insertAdjacentHTML(
+        this["#ticks"].insertAdjacentHTML(
           "beforeend", `<div class="tick" part="tick" style="left: ${label.style.left}"></div>`
         );
       }
@@ -913,8 +912,8 @@ export default class XSliderElement extends HTMLElement {
       this.#lastTabIndex = 0;
     }
 
-    this.#elements["start-thumb"].tabIndex = this.tabIndex;
-    this.#elements["end-thumb"].tabIndex = this.tabIndex;
+    this["#start-thumb"].tabIndex = this.tabIndex;
+    this["#end-thumb"].tabIndex = this.tabIndex;
   }
 }
 

@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -124,18 +124,18 @@ export default class XInputElement extends HTMLElement {
   // @type string
   // @default ""
   get value() {
-    return this.#elements["input"].value;
+    return this["#input"].value;
   }
   set value(value) {
-    if (this.#elements["input"].value !== value) {
+    if (this["#input"].value !== value) {
       if (this.matches(":focus")) {
         // https://goo.gl/s1UnHh
-        this.#elements["input"].selectionStart = 0;
-        this.#elements["input"].selectionEnd = this.#elements["input"].value.length;
+        this["#input"].selectionStart = 0;
+        this["#input"].selectionEnd = this["#input"].value.length;
         document.execCommand("insertText", false, value);
       }
       else {
-        this.#elements["input"].value = value;
+        this["#input"].value = value;
       }
 
       if (this.validation === "instant") {
@@ -275,7 +275,6 @@ export default class XInputElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #lastTabIndex = 0;
   #error = null;
   #customError = null;
@@ -290,7 +289,7 @@ export default class XInputElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XInputElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("click",  (event) => this.#onClick(event));
@@ -300,9 +299,9 @@ export default class XInputElement extends HTMLElement {
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
     this.addEventListener("keydown",  (event) => this.#onKeyDown(event));
 
-    this.#elements["input"].addEventListener("change", (event) => this.#onInputChange(event));
-    this.#elements["input"].addEventListener("input",  (event) => this.#onInputInput(event));
-    this.#elements["input"].addEventListener("search", (event) => this.#onInputSearch(event));
+    this["#input"].addEventListener("change", (event) => this.#onInputChange(event));
+    this["#input"].addEventListener("input",  (event) => this.#onInputInput(event));
+    this["#input"].addEventListener("search", (event) => this.#onInputSearch(event));
   }
 
   connectedCallback() {
@@ -351,7 +350,7 @@ export default class XInputElement extends HTMLElement {
   // @method
   // @type () => void
   selectAll() {
-    this.#elements["input"].select();
+    this["#input"].select();
   }
 
   // @method
@@ -379,13 +378,13 @@ export default class XInputElement extends HTMLElement {
       else if (this.required && this.value.length === 0) {
         this.#error = {href: "#required-field"};
       }
-      else if (this.type === "email" && this.#elements["input"].validity.valid === false) {
+      else if (this.type === "email" && this["#input"].validity.valid === false) {
         this.#error = {href: "#invalid-email"};
       }
-      else if (this.type === "url" && this.#elements["input"].validity.valid === false) {
+      else if (this.type === "url" && this["#input"].validity.valid === false) {
         this.#error = {href: "#invalid-url"};
       }
-      else if (this.type === "color" && isValidColorString(this.#elements["input"].value) === false) {
+      else if (this.type === "color" && isValidColorString(this["#input"].value) === false) {
         this.#error = {href: "#invalid-color"};
       }
       else {
@@ -488,10 +487,10 @@ export default class XInputElement extends HTMLElement {
 
   #onTypeAttributeChange() {
     if (this.type === "color") {
-      this.#elements["input"].type = "text";
+      this["#input"].type = "text";
     }
     else {
-      this.#elements["input"].type = this.type;
+      this["#input"].type = this.type;
     }
   }
 
@@ -504,24 +503,24 @@ export default class XInputElement extends HTMLElement {
   }
 
   #onSpellcheckAttributeChange() {
-    this.#elements["input"].spellcheck = this.spellcheck;
+    this["#input"].spellcheck = this.spellcheck;
   }
 
   #onMinLengthAttributeChange() {
-    this.#elements["input"].minLength = this.minLength;
+    this["#input"].minLength = this.minLength;
   }
 
   #onMaxLengthAttributeChange() {
-    this.#elements["input"].maxLength = this.maxLength;
+    this["#input"].maxLength = this.maxLength;
   }
 
   #onReadOnlyAttributeChnage() {
-    this.#elements["input"].readOnly = this.readOnly;
+    this["#input"].readOnly = this.readOnly;
     this.#updateAccessabilityAttributes();
   }
 
   #onDisabledAttributeChange() {
-    this.#elements["input"].disabled = this.disabled;
+    this["#input"].disabled = this.disabled;
     this.#updateAccessabilityAttributes();
   }
 

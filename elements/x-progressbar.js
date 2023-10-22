@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -134,7 +134,6 @@ export default class XProgressbarElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #indeterminateAnimations = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +146,7 @@ export default class XProgressbarElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XProgressbarElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -174,11 +173,11 @@ export default class XProgressbarElement extends HTMLElement {
     {
       // Hide
       if (this.value === null || this.value === -1 || this.disabled) {
-        this.#elements["determinate-bar"].style.width = "0%";
+        this["#determinate-bar"].style.width = "0%";
       }
       // Show
       else {
-        this.#elements["determinate-bar"].style.width = ((this.value / this.max) * 100) + "%";
+        this["#determinate-bar"].style.width = ((this.value / this.max) * 100) + "%";
       }
     }
 
@@ -198,7 +197,7 @@ export default class XProgressbarElement extends HTMLElement {
       else {
         if (!this.#indeterminateAnimations) {
           this.#indeterminateAnimations = [
-            this.#elements["primary-indeterminate-bar"].animate(
+            this["#primary-indeterminate-bar"].animate(
               [
                 { left: "-35%", right: "100%", offset: 0.0 },
                 { left: "100%", right: "-90%", offset: 0.6 },
@@ -210,7 +209,7 @@ export default class XProgressbarElement extends HTMLElement {
                 iterations: Infinity
               }
             ),
-            this.#elements["secondary-indeterminate-bar"].animate(
+            this["#secondary-indeterminate-bar"].animate(
               [
                 { left: "-100%", right: "100%", offset: 0.0 },
                 { left:  "110%", right: "-30%", offset: 0.8 },

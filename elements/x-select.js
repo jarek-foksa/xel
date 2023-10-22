@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -159,7 +159,6 @@ export default class XSelectElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #lastTabIndex = 0;
   #wasFocusedBeforeExpanding = false;
 
@@ -180,13 +179,13 @@ export default class XSelectElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XSelectElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
-    this.#elements["backdrop"] = createElement("x-backdrop");
-    this.#elements["backdrop"].style.opacity = "0";
-    this.#elements["backdrop"].ownerElement = this;
-    this.#elements["backdrop"].addEventListener("click", (event) => this.#onBackdropClick(event));
+    this["#backdrop"] = createElement("x-backdrop");
+    this["#backdrop"].style.opacity = "0";
+    this["#backdrop"].ownerElement = this;
+    this["#backdrop"].addEventListener("click", (event) => this.#onBackdropClick(event));
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
     this.addEventListener("toggle", (event) => this.#onMenuItemToggle(event));
@@ -230,7 +229,7 @@ export default class XSelectElement extends HTMLElement {
     }
 
     this.#wasFocusedBeforeExpanding = this.matches(":focus");
-    this.#elements["backdrop"].show(false);
+    this["#backdrop"].show(false);
 
     window.addEventListener("resize", this.#resizeListener = () => {
       this.#collapse();
@@ -267,22 +266,22 @@ export default class XSelectElement extends HTMLElement {
       let toggledItem = menu.querySelector(`x-menuitem[toggled]`);
 
       if (toggledItem) {
-        let buttonChild = this.#elements["button"].querySelector("x-label") ||
-                          this.#elements["button"].firstElementChild;
+        let buttonChild = this["#button"].querySelector("x-label") ||
+                          this["#button"].firstElementChild;
         let itemChild = buttonChild[$itemChild];
 
         menu.openOverElement(buttonChild, itemChild);
       }
       else {
         let item = menu.querySelector("x-menuitem").firstElementChild;
-        menu.openOverElement(this.#elements["button"], item);
+        menu.openOverElement(this["#button"], item);
       }
     }
 
     // Increase menu width if it is narrower than the button
     {
       let menuBounds = menu.getBoundingClientRect();
-      let buttonBounds = this.#elements["button"].getBoundingClientRect();
+      let buttonBounds = this["#button"].getBoundingClientRect();
       let hostPaddingRight = parseFloat(getComputedStyle(this).paddingRight);
 
       if (menuBounds.right - hostPaddingRight < buttonBounds.right) {
@@ -308,7 +307,7 @@ export default class XSelectElement extends HTMLElement {
     let menu = this.querySelector(":scope > x-menu");
     menu.setAttribute("closing", "");
     await whenTriggerEnd;
-    this.#elements["backdrop"].hide(false);
+    this["#backdrop"].hide(false);
 
     if (this.#wasFocusedBeforeExpanding) {
       this.focus();
@@ -354,7 +353,7 @@ export default class XSelectElement extends HTMLElement {
 
   #updateButton() {
     let toggledItem = this.querySelector(`:scope > x-menu x-menuitem[toggled]`);
-    this.#elements["button"].innerHTML = "";
+    this["#button"].innerHTML = "";
 
     if (toggledItem) {
       for (let itemChild of toggledItem.children) {
@@ -362,20 +361,20 @@ export default class XSelectElement extends HTMLElement {
         buttonChild[$itemChild] = itemChild;
         buttonChild.removeAttribute("id");
         buttonChild.removeAttribute("style");
-        this.#elements["button"].append(buttonChild);
+        this["#button"].append(buttonChild);
       }
 
       this.#updateButtonChildrenSize();
     }
 
-    this.#elements["button"].append(this.#elements["arrow-container"]);
+    this["#button"].append(this["#arrow-container"]);
   }
 
   #updateButtonThrottled = throttle(this.#updateButton, 300, this);
 
   #updateButtonChildrenSize() {
-    for (let buttonChild of this.#elements["button"].children) {
-      if (buttonChild !== this.#elements["arrow-container"]) {
+    for (let buttonChild of this["#button"].children) {
+      if (buttonChild !== this["#arrow-container"]) {
         let {width, height, margin, padding, border, borderRadius} = getComputedStyle(buttonChild[$itemChild]);
 
         if (["x-icon", "x-swatch", "img", "svg"].includes(buttonChild[$itemChild].localName)) {
@@ -393,8 +392,8 @@ export default class XSelectElement extends HTMLElement {
   }
 
   #updateArrowPathData() {
-    let pathData = getComputedStyle(this.#elements["arrow"]).getPropertyValue("--path-data");
-    this.#elements["arrow-path"].setAttribute("d", pathData);
+    let pathData = getComputedStyle(this["#arrow"]).getPropertyValue("--path-data");
+    this["#arrow-path"].setAttribute("d", pathData);
   }
 
   #updateAccessabilityAttributes() {

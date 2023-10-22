@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -65,7 +65,6 @@ export default class PTDemoBlockElement extends HTMLElement {
 
   #readyCallbacks = [];
   #shadowRoot = null;
-  #elements = {};
   #demoStyleSheet = new CSSStyleSheet();
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +77,7 @@ export default class PTDemoBlockElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(PTDemoBlockElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
   }
 
@@ -113,12 +112,12 @@ export default class PTDemoBlockElement extends HTMLElement {
           styleElement.remove();
         }
 
-        this.#elements["live-view"].append(liveViewContent);
+        this["#live-view"].append(liveViewContent);
 
-        let scripts = this.#elements["live-view"].querySelectorAll("script");
+        let scripts = this["#live-view"].querySelectorAll("script");
 
         if (scripts.length > 0) {
-          window["shadowRoot" + counter] = this.#elements["live-view"];
+          window["shadowRoot" + counter] = this["#live-view"];
           window["shadowRoot" + counter].createElement = (arg) => document.createElement(arg);
 
           for (let script of scripts) {
@@ -194,7 +193,7 @@ export default class PTDemoBlockElement extends HTMLElement {
           lines = lines.map(line => line.substring(minIndent));
         }
 
-        this.#elements["code-view"].textContent = lines.join("\n");
+        this["#code-view"].textContent = lines.join("\n");
       }
 
       resolve();

@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -119,7 +119,6 @@ export default class XTabElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -131,7 +130,7 @@ export default class XTabElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XTabElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
@@ -154,11 +153,11 @@ export default class XTabElement extends HTMLElement {
 
   animateSelectionIndicator(toTab) {
     return new Promise(async (resolve) => {
-      if (this.#elements["selection-indicator"].style.height !== "0px") {
+      if (this["#selection-indicator"].style.height !== "0px") {
         let fromBBox = this.getBoundingClientRect();
         let toBBox = toTab.getBoundingClientRect();
 
-        let animation = this.#elements["selection-indicator"].animate(
+        let animation = this["#selection-indicator"].animate(
           [
             {
               left: 0 + "px",

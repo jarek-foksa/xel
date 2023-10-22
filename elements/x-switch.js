@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -148,7 +148,6 @@ export default class XSwitchElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #lastTabIndex = 0;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +160,7 @@ export default class XSwitchElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XSwitchElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
@@ -171,13 +170,13 @@ export default class XSwitchElement extends HTMLElement {
 
   connectedCallback() {
     // Do not animate newly connected switch elements
-    sleep(100).then(() => this.#elements["indicator-thumb"].style.transition = null);
+    sleep(100).then(() => this["#indicator-thumb"].style.transition = null);
 
     this.#updateAccessabilityAttributes();
   }
 
   disconnectedCallback() {
-    this.#elements["indicator-thumb"].style.transition = "none";
+    this["#indicator-thumb"].style.transition = "none";
   }
 
   attributeChangedCallback(name) {

@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -164,7 +164,6 @@ export default class XCheckboxElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #lastTabIndex = 0;
 
   #xelThemeChangeListener = null;
@@ -179,7 +178,7 @@ export default class XCheckboxElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XCheckboxElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
@@ -213,8 +212,8 @@ export default class XCheckboxElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateCheckmarkPathData() {
-    let pathData = getComputedStyle(this.#elements["indicator"]).getPropertyValue("--path-data");
-    this.#elements["checkmark-path"].setAttribute("d", pathData);
+    let pathData = getComputedStyle(this["#indicator"]).getPropertyValue("--path-data");
+    this["#checkmark-path"].setAttribute("d", pathData);
   }
 
   #updateAccessabilityAttributes() {

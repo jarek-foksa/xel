@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -81,7 +81,6 @@ export default class XMenuElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #delayPoints = [];
   #delayTimeoutID = null;
   #lastDelayPoint = null;
@@ -101,7 +100,7 @@ export default class XMenuElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XMenuElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));

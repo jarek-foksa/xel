@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2022 Jarosław Foksa
+//   © 2016-2023 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -106,10 +106,10 @@ export default class XTextEditorElement extends HTMLElement {
   // @type string
   // @default ""
   get value() {
-    return this.#elements["editor"].textContent;
+    return this["#editor"].textContent;
   }
   set value(value) {
-    this.#elements["editor"].textContent = value;
+    this["#editor"].textContent = value;
 
     if (this.validation === "instant") {
       this.reportValidity();
@@ -237,7 +237,6 @@ export default class XTextEditorElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #elements = {};
   #focusInValue = "";
   #lastTabIndex = 0;
   #error = null;
@@ -253,21 +252,21 @@ export default class XTextEditorElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XTextEditorElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
-      this.#elements[element.id] = element;
+      this["#" + element.id] = element;
     }
 
     this.addEventListener("click",  (event) => this.#onClick(event));
     this.addEventListener("focusin", (event) => this.#onFocusIn(event));
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
 
-    this.#elements["editor"].addEventListener("click", (event) => this.#onEditorClick(event));
-    this.#elements["editor"].addEventListener("input", (event) => this.#onEditorInput(event));
+    this["#editor"].addEventListener("click", (event) => this.#onEditorClick(event));
+    this["#editor"].addEventListener("input", (event) => this.#onEditorInput(event));
 
     // @bugfix: https://bugzilla.mozilla.org/show_bug.cgi?id=1291467
     if (getBrowserEngine() === "gecko") {
-      this.#elements["editor"].setAttribute("contenteditable", "");
+      this["#editor"].setAttribute("contenteditable", "");
 
-      this.#elements["editor"].addEventListener("beforeinput", (event) => {
+      this["#editor"].addEventListener("beforeinput", (event) => {
         if (event.inputType === "insertFromPaste" && event.dataTransfer.types.includes("text/plain")) {
           event.preventDefault();
 
@@ -435,11 +434,11 @@ export default class XTextEditorElement extends HTMLElement {
   }
 
   #onSpellcheckAttributeChange() {
-    this.#elements["editor"].spellcheck = this.spellcheck;
+    this["#editor"].spellcheck = this.spellcheck;
   }
 
   #onDisabledAttributeChange() {
-    this.#elements["editor"].disabled = this.disabled;
+    this["#editor"].disabled = this.disabled;
     this.#updateAccessabilityAttributes();
   }
 
@@ -469,7 +468,7 @@ export default class XTextEditorElement extends HTMLElement {
 
     // Safari 16.4 does not support ShadowRoot.prototype.getSelection
     if (this.#shadowRoot.getSelection) {
-      this.#shadowRoot.getSelection().collapse(this.#elements["main"]);
+      this.#shadowRoot.getSelection().collapse(this["#main"]);
     }
 
     if (this.validation === "auto" || this.validation === "instant") {
