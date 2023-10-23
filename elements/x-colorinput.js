@@ -445,7 +445,7 @@ export default class XColorInputElement extends HTMLElement {
         `;
       }
 
-      else if (color.spaceId === "p3" || color.spaceId === "rec2020") {
+      else if (["p3", "rec2020", "prophoto", "a98rgb"].includes(color.spaceId)) {
         menu.innerHTML = `
           <x-menuitem value="color">
             <x-label>${prettySerializeColor(color, "color")}</x-label>

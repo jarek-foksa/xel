@@ -29,9 +29,12 @@ class XColorPickerElement extends HTMLElement {
         <x-select id="space-select" condensed>
           <x-menu id="space-select-menu">
             <x-menuitem value="srgb" toggled><x-label>sRGB</x-label></x-menuitem>
+            <hr/>
             <x-menuitem value="p3"><x-label>Display P3</x-label></x-menuitem>
-            <!-- TO BE IMPLEMENTED LATER
             <x-menuitem value="rec2020"><x-label>Rec. 2020</x-label></x-menuitem>
+            <x-menuitem value="a98rgb"><x-label>A98 RGB</x-label></x-menuitem>
+            <x-menuitem value="prophoto"><x-label>ProPhoto</x-label></x-menuitem>
+            <!-- TO BE IMPLEMENTED LATER
             <hr/>
             <x-menuitem value="oklch"><x-label>okLCH</x-label></x-menuitem>
             -->
@@ -121,6 +124,26 @@ class XColorPickerElement extends HTMLElement {
     }
 
     /**
+     * Main
+     */
+
+    #main {
+      margin-top: 10px;
+    }
+
+    /* Sliders */
+
+    #sliders {
+      width: 100%;
+    }
+    :host-context(x-popover) #sliders {
+      height: 250px;
+    }
+    :host-context(x-popover) #sliders[alpha] {
+      height: 290px;
+    }
+
+    /**
      * Footer
      */
 
@@ -187,7 +210,7 @@ class XColorPickerElement extends HTMLElement {
   // @property
   // @attribute
   // @type Array<string>
-  // @default ["srgb", "p3"]
+  // @default ["srgb", "p3", "rec2020", "prophoto", "a98rgb"]
   //
   // Available color spaces.
   get spaces() {
@@ -195,7 +218,7 @@ class XColorPickerElement extends HTMLElement {
       return this.getAttribute("spaces").replace(/\s+/g, " ").split(" ");
     }
     else {
-      return ["srgb", "p3"];
+      return ["srgb", "p3", "rec2020", "prophoto", "a98rgb"];
     }
   }
   set spaces(spaces) {
@@ -398,15 +421,9 @@ class XColorPickerElement extends HTMLElement {
         {format: "hex"}
       );
     }
-    else if (this["#space-select"].value === "p3") {
+    else if (["p3", "rec2020", "prophoto", "a98rgb"].includes(this["#space-select"].value)) {
       this.value =  serializeColor(
-        convertColor(color, "p3", {inGamut: true}),
-        {precision: COLOR_PRECISION}
-      );
-    }
-    else if (this["#space-select"].value === "rec2020") {
-      this.value = serializeColor(
-        convertColor(color, "rec2020", {inGamut: true}),
+        convertColor(color, this["#space-select"].value, {inGamut: true}),
         {precision: COLOR_PRECISION}
       );
     }
@@ -448,19 +465,11 @@ class XColorPickerElement extends HTMLElement {
         {format: "hex"}
       );
     }
-    else if (sliders.space === "p3") {
+    else if (["p3", "rec2020", "prophoto", "a98rgb"].includes(sliders.space)) {
       let [r, g, b, a] = event.target.value;
 
       this.value = serializeColor(
-        {space: "p3", coords: [r, g, b], alpha: a},
-        {format: "default", precision: COLOR_PRECISION}
-      );
-    }
-    else if (sliders.space === "rec2020") {
-      let [r, g, b, a] = event.target.value;
-
-      this.value = serializeColor(
-        {space: "rec2020", coords: [r, g, b], alpha: a},
+        {space: sliders.space, coords: [r, g, b], alpha: a},
         {format: "default", precision: COLOR_PRECISION}
       );
     }
@@ -553,11 +562,8 @@ class XColorPickerElement extends HTMLElement {
   #updateTypeButtons(color = this.#getColor()) {
     let supportedTypes;
 
-    if (color.spaceId === "srgb") {
+    if (["srgb", "p3", "rec2020", "prophoto", "a98rgb"].includes(color.spaceId)) {
       supportedTypes = ["planar", "polar", "linear"];
-    }
-    else if (color.spaceId === "p3" || color.spaceId === "rec2020") {
-      supportedTypes = ["planar", "linear"];
     }
     else if (color.spaceId === "oklch") {
       supportedTypes = ["planar", "linear"];
@@ -579,37 +585,15 @@ class XColorPickerElement extends HTMLElement {
     let value = [...color.coords, color.alpha];
     let localName;
 
-    if (space === "srgb") {
+    if (["srgb", "p3", "rec2020", "a98rgb", "prophoto"].includes(space)) {
       if (type === "linear") {
-        localName = "x-srgblinearsliders";
+        localName = "x-rgblinearsliders";
       }
       else if (type === "planar") {
-        localName = "x-srgbplanarsliders";
+        localName = "x-rgbplanarsliders";
       }
       else if (type === "polar") {
-        localName = "x-srgbpolarsliders";
-      }
-    }
-    else if (space === "p3") {
-      if (type === "linear") {
-        localName = "x-p3linearsliders";
-      }
-      else if (type === "planar") {
-        localName = "x-p3planarliders";
-      }
-      else if (type === "polar") {
-        localName = "x-p3polarsliders";
-      }
-    }
-    else if (space === "rec2020") {
-      if (type === "linear") {
-        localName = "x-rec2020linearsliders";
-      }
-      else if (type === "planar") {
-        localName = "x-rec2020planarliders";
-      }
-      else if (type === "polar") {
-        localName = "x-rec2020polarsliders";
+        localName = "x-rgbpolarsliders";
       }
     }
     else if (space === "oklch") {
@@ -622,10 +606,14 @@ class XColorPickerElement extends HTMLElement {
     }
 
     if (this["#main"].firstElementChild?.localName !== localName) {
-      this["#main"].innerHTML = `<${localName} id="sliders" exportparts="slider"></${localName}>`;
-      this["#sliders"] = this["#main"].firstElementChild;
+      this["#main"].innerHTML = "";
+      this["#sliders"] = document.createElement(localName);
+      this["#sliders"].setAttribute("id", "sliders");
+      this["#sliders"].setAttribute("exportparts", "slider");
+      this["#main"].append(this["#sliders"]);
     }
 
+    this["#sliders"].space = space;
     this["#sliders"].value = value;
     this["#sliders"].alpha = this.alpha;
     this["#sliders"].disabled = this.disabled;
@@ -633,6 +621,7 @@ class XColorPickerElement extends HTMLElement {
 
   #updateInput(color = this.#getColor()) {
     this["#input"].space = color.spaceId;
+    this["#input"].alpha = this.alpha;
     this["#input"].value = serializeColor(color);
     this["#input"].disabled = this.disabled;
   }
@@ -657,8 +646,13 @@ class XColorPickerElement extends HTMLElement {
       }
     }
 
-    if (color.spaceId === undefined) {
-      color.spaceId = color.space.id;
+    // @bugfix: parseColor() returns inconsistent objects
+    {
+      if (color.spaceId === undefined) {
+        color.spaceId = color.space.id;
+      }
+
+      color.coords = color.coords.map(coord => coord * 1);
     }
 
     return color;
@@ -670,24 +664,48 @@ if (customElements.get("x-colorpicker") === undefined) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Sliders (abstract base class)
+// Planar sliders for RGB-based color spaces (sRBG, Display P3, Rec. 2020, A98 RGB, ProPhoto)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class XSlidersElement extends HTMLElement {
+// @event ^change
+// @event ^changestart
+// @event ^changeend
+// @part slider
+class XRGBPlanarSlidersElement extends HTMLElement {
+  static #shadowTemplate = html`
+    <template>
+      <div id="hue-slider" part="slider">
+        <div id="hue-slider-track">
+          <div id="hue-slider-marker"></div>
+        </div>
+      </div>
+
+      <div id="planar-slider" part="slider">
+        <div id="planar-slider-marker"></div>
+      </div>
+
+      <div id="alpha-slider" part="slider">
+        <div id="alpha-slider-gradient"></div>
+        <div id="alpha-slider-track">
+          <div id="alpha-slider-marker"></div>
+        </div>
+      </div>
+
+      <x-contextmenu id="context-menu">
+        <x-menu>
+          <x-menuitem value="hsv"><x-label>HSV</x-label></x-menuitem>
+          <x-menuitem value="hsl"><x-label>HSL</x-label></x-menuitem>
+        </x-menu>
+      </x-contextmenu>
+    </template>
+  `;
+
   static #shadowStyleSheet = css`
     :host {
-      display: flex;
-      flex-flow: column;
-      width: 100%;
+      display: block;
       user-select: none;
       -webkit-user-select: none;
       --marker-width: 18px;
-    }
-    :host-context(x-popover) {
-      height: 250px;
-    }
-    :host-context(x-popover):host([alpha]) {
-      height: 300px;
     }
     :host([disabled]) {
       pointer-events: none;
@@ -695,19 +713,18 @@ class XSlidersElement extends HTMLElement {
     }
 
     /**
-     * Linear slider
+     * Hue slider
      */
 
-    .linear-slider {
+    #hue-slider {
       width: 100%;
-      height: 34px;
-      margin-top: 10px;
+      height: 35px;
       padding: 0 calc(var(--marker-width) / 2);
       box-sizing: border-box;
       touch-action: pinch-zoom;
     }
 
-    .linear-slider-track {
+    #hue-slider-track {
       position: relative;
       width: 100%;
       height: 100%;
@@ -715,7 +732,7 @@ class XSlidersElement extends HTMLElement {
       align-items: center;
     }
 
-    .linear-slider-marker {
+    #hue-slider-marker {
       position: absolute;
       left: 0%;
       width: var(--marker-width);
@@ -731,7 +748,7 @@ class XSlidersElement extends HTMLElement {
      * Planar slider
      */
 
-    .planar-slider {
+    #planar-slider {
       width: 100%;
       height: 200px;
       margin-top: 10px;
@@ -739,7 +756,7 @@ class XSlidersElement extends HTMLElement {
       touch-action: pinch-zoom;
     }
 
-    .planar-slider-marker {
+    #planar-slider-marker {
       position: absolute;
       top: 0%;
       left: 0%;
@@ -747,43 +764,6 @@ class XSlidersElement extends HTMLElement {
       height: var(--marker-size);
       box-sizing: border-box;
       transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
-      background: rgba(0, 0, 0, 0.3);
-      border: 3px solid white;
-      border-radius: 999px;
-      box-shadow: 0 0 3px black;
-      --marker-size: 20px;
-    }
-
-    /**
-     * Polar slider
-     */
-
-    .polar-slider {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      max-width: 200px;
-      height: 200px;
-      margin: 10px auto 0 auto;
-    }
-
-    .polar-slider-circle {
-      touch-action: pinch-zoom;
-      position: relative;
-      width: 100%;
-      height: fit-content;
-      aspect-ratio: 1 / 1;
-      border-radius: 999px !important;
-    }
-
-    .polar-slider-marker {
-      position: absolute;
-      top: 0%;
-      left: 0%;
-      width: var(--marker-size);
-      height: var(--marker-size);
-      transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
-      box-sizing: border-box;
       background: rgba(0, 0, 0, 0.3);
       border: 3px solid white;
       border-radius: 999px;
@@ -798,22 +778,36 @@ class XSlidersElement extends HTMLElement {
     #alpha-slider {
       display: none;
       width: 100%;
-      height: 30px;
+      height: 35px;
       margin-top: 10px;
       padding: 0 calc(var(--marker-width) / 2);
       position: relative;
       box-sizing: border-box;
       touch-action: pinch-zoom;
-      /* Checkerboard pattern */
-      background-size: 10px 10px;
-      background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
-      background-image: linear-gradient(45deg, #d6d6d6 25%, transparent 25%),
-                        linear-gradient(-45deg, #d6d6d6 25%, transparent 25%),
-                        linear-gradient(45deg, transparent 75%, #d6d6d6 75%),
-                        linear-gradient(-45deg, transparent 75%, #d6d6d6 75%);
+      background: var(--checkboard-background);
     }
     :host([alpha]) #alpha-slider {
       display: block;
+    }
+
+    #alpha-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #alpha-slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
     }
 
     #alpha-slider-gradient {
@@ -826,20 +820,59 @@ class XSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type string
-  get model() {
-    return this._model;
+  // @type [number, number, number, number]
+  get value() {
+    // HSV
+    if (this.#model === "hsv") {
+      let [h, s, v] = this.#modelCoords;
+      let [r, g, b] = convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords;
+      return [r, g, b, this.#a];
+    }
+    // HSL
+    else if (this.#model === "hsl") {
+      let [h, s, l] = this.#modelCoords;
+      let [r, g, b] = convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords;
+      return [r, g, b, this.#a];
+    }
   }
-  set model(model) {
-    if (this._model !== model) {
-      let value = [...this.value];
-      this._model = model;
-      this.value = value;
+  set value([r, g, b, a]) {
+    // HSV
+    if (this.#model === "hsv") {
+      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, "hsv").coords;
+      this.#modelCoords = [h/360, s/100, v/100];
+      this.#a = a;
+    }
+    // HSL
+    else if (this.#model === "hsl") {
+      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, "hsl").coords;
+      this.#modelCoords = [h/360, s/100, l/100];
+      this.#a = a;
+    }
+
+    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
+    if (Number.isNaN(this.#modelCoords[0])) {
+      this.#modelCoords[0] = 0;
+    }
+
+    this.#update();
+  }
+
+  // @type "srgb" || "p3" || "rec2020" || "a98rgb" || "prophoto"
+  // @default "srgb"
+  get space() {
+    return this.#space;
+  }
+  set space(space) {
+    if (this.#space !== space) {
+      this.#space = space;
+      this.#update();
     }
   }
 
   // @type boolean
   // @default false
+  //
+  // Whether to show the alpha slider.
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -857,12 +890,14 @@ class XSlidersElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
+  #isDraggingSlider = false;
   #shadowRoot = null;
   #configChangeListener;
 
-  _model = null;       // Color model, either "hsv", "hsl", "hwb", "okhsv", "okhsl", "hsluv" or "rgb"
-  _coords = [0, 0, 0]; // Normalized (0 ~ 1) coordinates in the current color model
-  _a = 1;              // Normalized (0 ~ 1) alpha
+  #space = "srgb";
+  #model = "hsv"; // "hsv" or "hsl"
+  #modelCoords = [0, 0, 0]; // Coordinates normalized to 0 ~ 1 range
+  #a = 1; // Alpha normalized to 0 ~ 1 range
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -870,31 +905,23 @@ class XSlidersElement extends HTMLElement {
     super();
 
     this.#shadowRoot = this.attachShadow({mode: "closed"});
-    this.#shadowRoot.append(document.importNode(this.constructor._shadowTemplate.content, true));
-
-    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XSlidersElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(this.constructor.#shadowTemplate.content, true));
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XRGBPlanarSlidersElement.#shadowStyleSheet];
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
     }
 
-    if (DEBUG) {
-      this.addEventListener("change", () => {
-        if (this.space === "srgb") {
-          let [r, g, b, a] = this.value;
-          let color = serializeColor({space: "srgb", coords: [r, g, b], alpha: a}, {precision: COLOR_PRECISION});
-          console.info(`%c ${color}`, `background: ${color};`)
-        }
-      });
-    }
+    this["#hue-slider"].addEventListener("pointerdown", (event) => this.#onHueSliderPointerDown(event));
+    this["#planar-slider"].addEventListener("pointerdown", (event) => this.#onPlanarSliderPointerDown(event));
+    this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
+    this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
   }
 
   connectedCallback() {
-    this._model = Xel.getConfig(`${this.localName}:model`, this.models[0]);
+    this.#model = Xel.getConfig(`${this.localName}:model`, "hsv");
 
-    Xel.addEventListener("configchange", this.#configChangeListener = (event) => {
-      this.#onConfigChange(event);
-    });
+    Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
   }
 
   disconnectedCallback() {
@@ -907,167 +934,1284 @@ class XSlidersElement extends HTMLElement {
     let {key, value, origin} = event.detail;
 
     if (key === `${this.localName}:model`) {
-      if (value !== this.model && origin === "self") {
-        this.model = value;
+      let model = value;
+
+      if (model !== this.#model && origin === "self") {
+        let [r, g, b] = this.value;
+        this.#model = model;
+        this.value = [r, g, b, this.#a];
       }
+    }
+  }
+
+  #onContextMenuClick(event) {
+    let item = event.target.closest("x-menuitem");
+    let model = item?.value;
+
+    if (model && model !== this.#model) {
+      let [r, g, b] = this.value;
+      this.#model = model;
+      this.value = [r, g, b, this.#a];
+
+      Xel.setConfig(`${this.localName}:model`, item.value);
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onHueSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#hue-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#hue-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let coord = ((clientX - trackBounds.x) / trackBounds.width);
+      coord = normalize(coord, 0, 1);
+
+      if (coord !== this.#modelCoords[0]) {
+        this.#modelCoords[0] = coord;
+
+        this.#updateHueSliderMarker();
+        this.#updatePlanarSliderBackground();
+        this.#updateAlphaSliderBackground();
+
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#hue-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#hue-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#hue-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#hue-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#hue-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#hue-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onPlanarSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let sliderBounds = this["#planar-slider"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+    this["#planar-slider"].setPointerCapture(pointerDownEvent.pointerId);
+
+    let onPointerMove = (clientX, clientY) => {
+      let x = (clientX - sliderBounds.left) / sliderBounds.width;
+      let y = (clientY - sliderBounds.top) / sliderBounds.height;
+
+      x = normalize(x, 0, 1);
+      y = normalize(y, 0, 1);
+
+      if (this.#model === "hsv") {
+        let [h, s, v] = this.#modelCoords;
+        s = x;
+        v = 1 - y;
+
+        this.#modelCoords = [h, s, v];
+      }
+      else if (this.#model === "hsl") {
+        let [h, s, l] = this.#modelCoords;
+        s = x;
+        l = 1 - y;
+
+        this.#modelCoords = [h, s, l];
+      }
+
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+
+      this.#updatePlanarSliderMarker();
+      this.#updatePlanarSliderBackground();
+      this.#updateAlphaSliderBackground();
+    };
+
+    onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
+
+    this["#planar-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
+      }
+    });
+
+    this["#planar-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#planar-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#planar-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#planar-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+      this.#isDraggingSlider = false;
+    });
+
+    this["#planar-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onAlphaSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#alpha-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let a = (clientX - trackBounds.x) / trackBounds.width;
+      a = normalize(a, 0, 1);
+
+      if (a !== this.#a) {
+        this.#a = a;
+        this.#updateAlphaSliderMarker();
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #update() {
+    this.#updateHueSliderMarker();
+    this.#updateHueSliderBackground();
+
+    this.#updatePlanarSliderMarker();
+    this.#updatePlanarSliderBackground();
+
+    this.#updateAlphaSliderMarker();
+    this.#updateAlphaSliderBackground();
+
+    this.#updateContextMenu();
+  }
+
+  /**
+   * Hue slider
+   */
+
+  #updateHueSliderMarker() {
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [h] = this.#modelCoords;
+      this["#hue-slider-marker"].style.left = (h * 100) + "%";
+    }
+  }
+
+  #updateHueSliderBackground() {
+    let colors;
+
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      colors = [
+        { space: this.space, coords: [1, 0, 0] },
+        { space: this.space, coords: [1, 1, 0] },
+        { space: this.space, coords: [0, 1, 0] },
+        { space: this.space, coords: [0, 1, 1] },
+        { space: this.space, coords: [0, 0, 1] },
+        { space: this.space, coords: [1, 0, 1] },
+        { space: this.space, coords: [1, 0, 0] }
+      ];
+    }
+
+    colors = colors.map(color => serializeColor(color));
+    this["#hue-slider"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
+  }
+
+  /**
+   * Planar slider
+   */
+
+  #updatePlanarSliderMarker() {
+    if (this.#model === "hsv") {
+      let [h, s, v] = this.#modelCoords;
+      let left = s * 100;
+      let top = 100 - (v * 100);
+
+      this["#planar-slider-marker"].style.left = `${left}%`;
+      this["#planar-slider-marker"].style.top = `${top}%`;
+    }
+    else if (this.#model === "hsl") {
+      let [h, s, l] = this.#modelCoords;
+      let left = s * 100;
+      let top = 100 - (l * 100);
+
+      this["#planar-slider-marker"].style.left = `${left}%`;
+      this["#planar-slider-marker"].style.top = `${top}%`;
+    }
+  }
+
+  #updatePlanarSliderBackground() {
+    if (this.#model === "hsv") {
+      let [h] = this.#modelCoords;
+
+      let backgroundColor = {
+        space: this.space,
+        coords: convertColor({space: "hsv", coords: [h*360, 100, 100]}, "srgb").coords
+      };
+
+      let firstOverlayColors = [
+        {space: this.space, coords: [1, 1, 1], alpha: 1},
+        {space: this.space, coords: [1, 1, 1], alpha: 0}
+      ];
+
+      let secondOverlayColors = [
+        {space: this.space, coords: [0, 0, 0], alpha: 0},
+        {space: this.space, coords: [0, 0, 0], alpha: 1}
+      ];
+
+      backgroundColor = serializeColor(backgroundColor);
+      firstOverlayColors = firstOverlayColors.map(color => serializeColor(color));
+      secondOverlayColors = secondOverlayColors.map(color => serializeColor(color));
+
+      this["#planar-slider"].style.background = `
+        linear-gradient(in srgb to bottom, ${secondOverlayColors.join(",")}),
+        linear-gradient(in srgb to right,  ${firstOverlayColors.join(",")}),
+        ${backgroundColor}
+      `;
+    }
+    else if (this.#model === "hsl") {
+      let [h] = this.#modelCoords;
+
+      let backgroundColors = [
+        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360,   0, 50]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 100, 50]}, "srgb").coords },
+      ];
+
+      let overylayColors = [
+        { space: this.space, coords: [1, 1, 1], alpha: 1 },
+        { space: this.space, coords: [1, 1, 1], alpha: 0 },
+        { space: this.space, coords: [0, 0, 0], alpha: 1 }
+      ];
+
+      backgroundColors = backgroundColors.map(color => serializeColor(color));
+      overylayColors = overylayColors.map(color => serializeColor(color));
+
+      this["#planar-slider"].style.background = `
+        linear-gradient(in srgb to bottom, ${overylayColors.join(",")}),
+        linear-gradient(in srgb to right, ${backgroundColors.join(",")})
+      `;
+    }
+  }
+
+  /**
+   * Alpha slider
+   */
+
+  #updateAlphaSliderMarker() {
+    this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
+  }
+
+  #updateAlphaSliderBackground() {
+    let colors;
+
+    if (this.#model === "hsv") {
+      let [h, s, v] = this.#modelCoords;
+
+      colors = [
+        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords, alpha: 0},
+        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords, alpha: 1}
+      ];
+    }
+    else if (this.#model === "hsl") {
+      let [h, s, l] = this.#modelCoords;
+
+      colors = [
+        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords, alpha: 0},
+        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords, alpha: 1}
+      ];
+    }
+
+    colors = colors.map(color => serializeColor(color));
+    this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
+  }
+
+  /**
+   * Context menu
+   */
+
+  #updateContextMenu() {
+    let items = [...this["#context-menu"].querySelectorAll("x-menuitem")];
+
+    for (let item of items) {
+      item.toggled = (item.value === this.#model);
     }
   }
 }
 
+if (customElements.get("x-rgbplanarsliders") === undefined) {
+  customElements.define("x-rgbplanarsliders", XRGBPlanarSlidersElement);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// sRGB linear sliders
+// Polar sliders for RGB-based color spaces (sRBG, Display P3, Rec. 2020, A98 RGB, ProPhoto)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // @event ^change
 // @event ^changestart
 // @event ^changeend
 // @part slider
-class XSRGBLinearSlidersElement extends XSlidersElement {
-  static _shadowTemplate = html`
+class XRGBPolarSlidersElement extends HTMLElement {
+  static #shadowTemplate = html`
     <template>
-      <div id="coord-1-slider" class="linear-slider" part="slider">
-        <div id="coord-1-slider-track" class="linear-slider-track">
-          <div id="coord-1-slider-marker" class="linear-slider-marker"></div>
+      <div id="polar-slider" part="slider">
+        <div id="polar-slider-circle">
+          <div id="polar-slider-marker"></div>
         </div>
       </div>
 
-      <div id="coord-2-slider" class="linear-slider" part="slider">
-        <div id="coord-2-slider-track" class="linear-slider-track">
-          <div id="coord-2-slider-marker" class="linear-slider-marker"></div>
+      <div id="linear-slider" part="slider">
+        <div id="linear-slider-track">
+          <div id="linear-slider-marker"></div>
         </div>
       </div>
 
-      <div id="coord-3-slider" class="linear-slider" part="slider">
-        <div id="coord-3-slider-track" class="linear-slider-track">
-          <div id="coord-3-slider-marker" class="linear-slider-marker"></div>
-        </div>
-      </div>
-
-      <div id="alpha-slider" class="linear-slider" part="slider">
+      <div id="alpha-slider" part="slider">
         <div id="alpha-slider-gradient"></div>
-        <div id="alpha-slider-track" class="linear-slider-track">
-          <div id="alpha-slider-marker" class="linear-slider-marker"></div>
+        <div id="alpha-slider-track">
+          <div id="alpha-slider-marker"></div>
         </div>
       </div>
 
       <x-contextmenu id="context-menu">
         <x-menu>
-          <x-menuitem value="hsv">
-            <x-label>HSV</x-label>
-          </x-menuitem>
-
-          <x-menuitem value="hsl">
-            <x-label>HSL</x-label>
-          </x-menuitem>
-
-          <x-menuitem value="hwb">
-            <x-label>HWB</x-label>
-          </x-menuitem>
-
-          <hr/>
-
-          <x-menuitem value="okhsv">
-            <x-label>okHSV</x-label>
-          </x-menuitem>
-
-          <x-menuitem value="okhsl">
-            <x-label>okHSL</x-label>
-          </x-menuitem>
-
-          <hr/>
-
-          <x-menuitem value="hsluv">
-            <x-label>HSLuv</x-label>
-          </x-menuitem>
-
-          <hr/>
-
-          <x-menuitem value="rgb">
-            <x-label>RGB</x-label>
-          </x-menuitem>
+          <x-menuitem value="hsv"><x-label>HSV</x-label></x-menuitem>
+          <x-menuitem value="hsl"><x-label>HSL</x-label></x-menuitem>
         </x-menu>
       </x-contextmenu>
     </template>
   `;
 
+  static #shadowStyleSheet = css`
+    :host {
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      --marker-width: 18px;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    /**
+     * Polar slider
+     */
+
+    #polar-slider {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 200px;
+      height: 200px;
+      margin: 0 auto;
+    }
+
+    #polar-slider-circle {
+      touch-action: pinch-zoom;
+      position: relative;
+      width: 100%;
+      height: fit-content;
+      aspect-ratio: 1 / 1;
+      border-radius: 999px !important;
+    }
+
+    #polar-slider-marker {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: var(--marker-size);
+      height: var(--marker-size);
+      transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.3);
+      border: 3px solid white;
+      border-radius: 999px;
+      box-shadow: 0 0 3px black;
+      --marker-size: 20px;
+    }
+
+    /**
+     * Linear slider
+     */
+
+    #linear-slider {
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
+      padding: 0 calc(var(--marker-width) / 2);
+      box-sizing: border-box;
+      touch-action: pinch-zoom;
+    }
+
+    #linear-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #linear-slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
+    }
+
+    /**
+     * Alpha slider
+     */
+
+    #alpha-slider {
+      display: none;
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
+      padding: 0 calc(var(--marker-width) / 2);
+      position: relative;
+      box-sizing: border-box;
+      touch-action: pinch-zoom;
+      background: var(--checkboard-background);
+    }
+    :host([alpha]) #alpha-slider {
+      display: block;
+    }
+
+    #alpha-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #alpha-slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
+    }
+
+    #alpha-slider-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+    }
+  `;
+
+  // @type [number, number, number, number]
   get value() {
-    // (ok)HSV
-    if (this._model === "hsv" || this._model === "okhsv") {
-      let [h, s, v] = this._coords;
-      let [r, g, b] = convertColor({space: this._model, coords: [h*360, s*100, v*100]}, "srgb").coords;
-      return [r, g, b, this._a];
+    // HSV
+    if (this.#model === "hsv") {
+      let [h, s, v] = this.#modelCoords;
+      let [r, g, b] = convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords;
+      return [r, g, b, this.#a];
     }
-    // (ok)HSL
-    else if (this._model === "hsl" || this._model === "okhsl" || this._model === "hsluv") {
-      let [h, s, l] = this._coords;
-      let [r, g, b] = convertColor({space: this._model, coords: [h*360, s*100, l*100]}, "srgb").coords;
-      return [r, g, b, this._a];
-    }
-    // HWB
-    else if (this._model === "hwb") {
-      let [h, w, b] = this._coords;
-      let [rr, gg, bb] = convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords;
-      return [rr, gg, bb, this._a];
-    }
-    // RGB
-    else if (this._model === "rgb") {
-      let [r, g, b] = this._coords;
-      return [r, g, b, this._a];
+    // HSL
+    else if (this.#model === "hsl") {
+      let [h, s, l] = this.#modelCoords;
+      let [r, g, b] = convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords;
+      return [r, g, b, this.#a];
     }
   }
   set value([r, g, b, a]) {
-    // (ok)HSV
-    if (this._model === "hsv" || this._model === "okhsv") {
-      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, this._model).coords;
-      this._coords = [h/360, s/100, v/100];
-      this._a = a;
+    // HSV
+    if (this.#model === "hsv") {
+      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, "hsv").coords;
+      this.#modelCoords = [h/360, s/100, v/100];
+      this.#a = a;
     }
-    // (ok)HSL
-    else if (this._model === "hsl" || this._model === "okhsl" || this._model === "hsluv") {
-      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, this._model).coords;
-      this._coords = [h/360, s/100, l/100];
-      this._a = a;
-    }
-    // HWB
-    else if (this._model === "hwb") {
-      let [hh, ww, bb] = convertColor({space: "srgb", coords: [r, g, b]}, "hwb").coords;
-      this._coords = [hh/360, ww/100, bb/100];
-      this._a = a;
-    }
-    // RGB
-    else if (this._model === "rgb") {
-      this._coords = [r, g, b];
-      this._a = a;
+    // HSL
+    else if (this.#model === "hsl") {
+      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, "hsl").coords;
+      this.#modelCoords = [h/360, s/100, l/100];
+      this.#a = a;
     }
 
     // @bugfix: https://github.com/LeaVerou/color.js/issues/328
-    if (Number.isNaN(this._coords[0])) {
-      this._coords[0] = 0;
+    if (Number.isNaN(this.#modelCoords[0])) {
+      this.#modelCoords[0] = 0;
     }
 
     this.#update();
   }
 
+  // @type "srgb" || "p3" || "rec2020" || "a98rgb" || "prophoto"
+  // @default "srgb"
   get space() {
-    return "srgb";
+    return this.#space;
+  }
+  set space(space) {
+    if (this.#space !== space) {
+      this.#space = space;
+      this.#update();
+    }
   }
 
-  get models() {
-    return ["hsv", "hsl", "hwb", "okhsv", "okhsl", "hsluv", "rgb"];
+  // @type boolean
+  // @default false
+  //
+  // Whether to show the alpha slider.
+  get alpha() {
+    return this.hasAttribute("alpha");
+  }
+  set alpha(alpha) {
+    alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
   #isDraggingSlider = false;
+  #shadowRoot = null;
+  #configChangeListener;
+
+  #space = "srgb";
+  #model = "hsv"; // "hsv" or "hsl"
+  #modelCoords = [0, 0, 0]; // Coordinates normalized to 0 ~ 1 range
+  #a = 1; // Alpha normalized to 0 ~ 1 range
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
 
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.append(document.importNode(this.constructor.#shadowTemplate.content, true));
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XRGBPolarSlidersElement.#shadowStyleSheet];
+
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this["#polar-slider"].addEventListener("pointerdown", (event) => this.#onPolarSliderPointerDown(event));
+    this["#linear-slider"].addEventListener("pointerdown", (event) => this.#onLinearSliderPointerDown(event));
+    this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
+    this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
+  }
+
+  connectedCallback() {
+    this.#model = Xel.getConfig(`${this.localName}:model`, "hsv");
+
+    Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("configchange", this.#configChangeListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onConfigChange(event) {
+    let {key, value, origin} = event.detail;
+
+    if (key === `${this.localName}:model`) {
+      let model = value;
+
+      if (model !== this.#model && origin === "self") {
+        let [r, g, b] = this.value;
+        this.#model = model;
+        this.value = [r, g, b, this.#a];
+      }
+    }
+  }
+
+  #onContextMenuClick(event) {
+    let item = event.target.closest("x-menuitem");
+    let model = item?.value;
+
+    if (model && model !== this.#model) {
+      let [r, g, b] = this.value;
+      this.#model = model;
+      this.value = [r, g, b, this.#a];
+
+      Xel.setConfig(`${this.localName}:model`, item.value);
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onPolarSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let pointerMoveListener, pointerUpOrCancelListener;
+    let wheelBounds = this["#polar-slider"].getBoundingClientRect();
+
+    this.#isDraggingSlider = true;
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    this["#polar-slider"].style.cursor = "default";
+    this["#polar-slider"].setPointerCapture(pointerDownEvent.pointerId);
+
+    let onPointerMove = (clientX, clientY) => {
+      let radius = wheelBounds.width / 2;
+      let x = clientX - wheelBounds.left - radius;
+      let y = clientY - wheelBounds.top - radius;
+      let d = pow(x, 2) + pow(y, 2);
+      let theta = atan2(y, x);
+
+      if (d > pow(radius, 2)) {
+        x = radius * cos(theta);
+        y = radius * sin(theta);
+        d = pow(x, 2) + pow(y, 2);
+        theta = atan2(y, x);
+      }
+
+      this.#modelCoords[0] = (theta + PI) / (PI * 2);
+      this.#modelCoords[1] = sqrt(d) / radius;
+
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+
+      this.#updatePolarSliderMarker();
+      this.#updateLinearSliderBackground();
+      this.#updateAlphaSliderBackground();
+    };
+
+    onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
+
+    this["#polar-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
+      }
+    });
+
+    this["#polar-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#polar-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#polar-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#polar-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this["#polar-slider"].style.cursor = null;
+
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+      this.#isDraggingSlider = false;
+    });
+
+    this["#polar-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onLinearSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#linear-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#linear-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let coord = ((clientX - trackBounds.x) / trackBounds.width);
+      coord = normalize(coord, 0, 1);
+
+      if (coord !== this.#modelCoords[0]) {
+        this.#modelCoords[2] = coord;
+
+        this.#updateLinearSliderMarker();
+        this.#updatePolarSliderBackground();
+        this.#updateAlphaSliderBackground();
+
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#linear-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#linear-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#linear-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#linear-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#linear-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#linear-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onAlphaSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#alpha-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let a = (clientX - trackBounds.x) / trackBounds.width;
+      a = normalize(a, 0, 1);
+
+      if (a !== this.#a) {
+        this.#a = a;
+        this.#updateAlphaSliderMarker();
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #update() {
+    this.#updatePolarSliderMarker();
+    this.#updatePolarSliderBackground();
+
+    this.#updateLinearSliderMarker();
+    this.#updateLinearSliderBackground();
+
+    this.#updateAlphaSliderMarker();
+    this.#updateAlphaSliderBackground();
+
+    this.#updateContextMenu();
+  }
+
+  /**
+   * Polar slider
+   */
+
+  #updatePolarSliderMarker() {
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [h, s] = this.#modelCoords;
+      let wheelSize = 100;
+      let angle = degToRad(h*360);
+      let radius = s * wheelSize/2;
+      let centerPoint = {x: wheelSize/2, y: wheelSize/2};
+
+      let x = ((wheelSize - (centerPoint.x + (radius * cos(angle)))) / wheelSize) * 100;
+      let y = ((centerPoint.y - (radius * sin(angle))) / wheelSize) * 100;
+
+      this["#polar-slider-marker"].style.left = x + "%";
+      this["#polar-slider-marker"].style.top = y + "%";
+    }
+  }
+
+  #updatePolarSliderBackground() {
+    if (this.#model === "hsv") {
+      let overlayColors = [
+        { space: this.space, coords: convertColor({space: "hsl", coords: [0, 0, 100]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hsl", coords: [0, 0,   0]}, "srgb").coords },
+      ];
+
+      let backgroundColors = [
+        { space: this.space, coords: [1, 0, 0] },
+        { space: this.space, coords: [1, 1, 0] },
+        { space: this.space, coords: [0, 1, 0] },
+        { space: this.space, coords: [0, 1, 1] },
+        { space: this.space, coords: [0, 0, 1] },
+        { space: this.space, coords: [1, 0, 1] },
+        { space: this.space, coords: [1, 0, 0] }
+      ];
+
+      this["#polar-slider-circle"].style.background = `
+        radial-gradient(circle closest-side, ${overlayColors.map(c => serializeColor(c)).join(",")} 90%),
+        conic-gradient(from -90deg in srgb, ${backgroundColors.map(c => serializeColor(c)).join(",")})
+      `;
+
+      this["#polar-slider-circle"].style.backgroundBlendMode = "screen, normal";
+    }
+    else if (this.#model === "hsl") {
+      let overlayColors = [
+        { space: this.space, coords: convertColor({space: "hsl", coords: [0, 0, 50]}, "srgb").coords, alpha: 1 },
+        { space: this.space, coords: convertColor({space: "hsl", coords: [0, 0, 50]}, "srgb").coords, alpha: 0 },
+      ];
+
+      let backgroundColors = [
+        { space: this.space, coords: [1, 0, 0] },
+        { space: this.space, coords: [1, 1, 0] },
+        { space: this.space, coords: [0, 1, 0] },
+        { space: this.space, coords: [0, 1, 1] },
+        { space: this.space, coords: [0, 0, 1] },
+        { space: this.space, coords: [1, 0, 1] },
+        { space: this.space, coords: [1, 0, 0] }
+      ];
+
+      this["#polar-slider-circle"].style.background = `
+        radial-gradient(circle closest-side, ${overlayColors.map(c => serializeColor(c)).join(",")}),
+        conic-gradient(from -90deg in srgb, ${backgroundColors.map(c => serializeColor(c)).join(",")})
+      `;
+
+      this["#polar-slider-circle"].style.backgroundBlendMode = "normal, normal";
+    }
+  }
+
+  /**
+   * Linear slider
+   */
+
+  #updateLinearSliderMarker() {
+    if (this.#model === "hsv") {
+      let [h, , v] = this.#modelCoords;
+      this["#linear-slider-marker"].style.left = (v * 100) + "%";
+    }
+    else if (this.#model === "hsl") {
+      let [h, , l] = this.#modelCoords;
+      this["#linear-slider-marker"].style.left = (l * 100) + "%";
+    }
+  }
+
+  #updateLinearSliderBackground() {
+    let colors;
+
+    if (this.#model === "hsv") {
+      let [h, s] = this.#modelCoords;
+
+      colors = [
+        { space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100,   0]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, 100]}, "srgb").coords }
+      ];
+    }
+    else if (this.#model === "hsl") {
+      let [h, s] = this.#modelCoords;
+
+      colors = [
+        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100,   0]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100,  50]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, 100]}, "srgb").coords }
+      ];
+    }
+
+    colors = colors.map(color => serializeColor(color));
+    this["#linear-slider"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
+  }
+
+  /**
+   * Alpha slider
+   */
+
+  #updateAlphaSliderMarker() {
+    this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
+  }
+
+  #updateAlphaSliderBackground() {
+    let colors;
+
+    if (this.#model === "hsv") {
+      let [h, s, v] = this.#modelCoords;
+
+      colors = [
+        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords, alpha: 0},
+        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords, alpha: 1}
+      ];
+    }
+    else if (this.#model === "hsl") {
+      let [h, s, l] = this.#modelCoords;
+
+      colors = [
+        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords, alpha: 0},
+        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords, alpha: 1}
+      ];
+    }
+
+    colors = colors.map(color => serializeColor(color));
+    this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
+  }
+
+  /**
+   * Context menu
+   */
+
+  #updateContextMenu() {
+    let items = [...this["#context-menu"].querySelectorAll("x-menuitem")];
+
+    for (let item of items) {
+      item.toggled = (item.value === this.#model);
+    }
+  }
+}
+
+if (customElements.get("x-rgbpolarsliders") === undefined) {
+  customElements.define("x-rgbpolarsliders", XRGBPolarSlidersElement);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Linear sliders for RGB-based color spaces (sRBG, Display P3, Rec. 2020, A98 RGB, ProPhoto)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// @event ^change
+// @event ^changestart
+// @event ^changeend
+// @part slider
+class XRGBLinearSlidersElement extends HTMLElement {
+  static #shadowTemplate = html`
+    <template>
+      <div id="coord-1-slider" class="slider" part="slider">
+        <div id="coord-1-slider-track" class="slider-track">
+          <div id="coord-1-slider-marker" class="slider-marker"></div>
+        </div>
+      </div>
+
+      <div id="coord-2-slider" class="slider" part="slider">
+        <div id="coord-2-slider-track" class="slider-track">
+          <div id="coord-2-slider-marker" class="slider-marker"></div>
+        </div>
+      </div>
+
+      <div id="coord-3-slider" class="slider" part="slider">
+        <div id="coord-3-slider-track" class="slider-track">
+          <div id="coord-3-slider-marker" class="slider-marker"></div>
+        </div>
+      </div>
+
+      <div id="alpha-slider" class="slider" part="slider">
+        <div id="alpha-slider-gradient"></div>
+        <div id="alpha-slider-track" class="slider-track">
+          <div id="alpha-slider-marker" class="slider-marker"></div>
+        </div>
+      </div>
+
+      <x-contextmenu id="context-menu">
+        <x-menu>
+          <x-menuitem value="hsv"><x-label>HSV</x-label></x-menuitem>
+          <x-menuitem value="hsl"><x-label>HSL</x-label></x-menuitem>
+          <x-menuitem value="hwb"><x-label>HWB</x-label></x-menuitem>
+          <hr id="separator-1"/>
+          <x-menuitem value="okhsv" data-srgb-only><x-label>okHSV</x-label></x-menuitem>
+          <x-menuitem value="okhsl" data-srgb-only><x-label>okHSL</x-label></x-menuitem>
+          <x-menuitem value="hsluv" data-srgb-only><x-label>HSLuv</x-label></x-menuitem>
+          <hr id="separator-2"/>
+          <x-menuitem value="rgb"><x-label>RGB</x-label></x-menuitem>
+        </x-menu>
+      </x-contextmenu>
+    </template>
+  `;
+
+  static #shadowStyleSheet = css`
+    :host {
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      --marker-width: 18px;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    /**
+     * Sliders
+     */
+
+    .slider {
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
+      padding: 0 calc(var(--marker-width) / 2);
+      box-sizing: border-box;
+      touch-action: pinch-zoom;
+    }
+
+    .slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
+    }
+
+    /**
+     * Alpha slider
+     */
+
+    #alpha-slider {
+      display: none;
+      margin-top: 10px;
+      position: relative;
+      background: var(--checkboard-background);
+    }
+    :host([alpha]) #alpha-slider {
+      display: block;
+    }
+
+    #alpha-slider-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+    }
+  `;
+
+  // @type [number, number, number, number]
+  get value() {
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
+
+    // RGB
+    if (model === "rgb") {
+      let [r, g, b] = this.#modelCoords;
+      return [r, g, b, this.#a];
+    }
+    // (ok)HSV
+    else if (model === "hsv" || model === "okhsv") {
+      let [h, s, v] = this.#modelCoords;
+      let [r, g, b] = convertColor({space: model, coords: [h*360, s*100, v*100]}, "srgb").coords;
+      return [r, g, b, this.#a];
+    }
+    // (ok)HSL, HSLuv
+    else if (model === "hsl" || model === "okhsl" || model === "hsluv") {
+      let [h, s, l] = this.#modelCoords;
+      let [r, g, b] = convertColor({space: model, coords: [h*360, s*100, l*100]}, "srgb").coords;
+      return [r, g, b, this.#a];
+    }
+    // HWB
+    else if (model === "hwb") {
+      let [h, w, b] = this.#modelCoords;
+      let [rr, gg, bb] = convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords;
+      return [rr, gg, bb, this.#a];
+    }
+  }
+  set value([r, g, b, a]) {
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
+
+    // RGB
+    if (model === "rgb") {
+      this.#modelCoords = [r, g, b];
+      this.#a = a;
+    }
+    // (ok)HSV
+    else if (model === "hsv" || model === "okhsv") {
+      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, model).coords;
+      this.#modelCoords = [h/360, s/100, v/100];
+      this.#a = a;
+    }
+    // (ok)HSL, HSLuv
+    else if (model === "hsl" || model === "okhsl" || model === "hsluv") {
+      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, model).coords;
+      this.#modelCoords = [h/360, s/100, l/100];
+      this.#a = a;
+    }
+    // HWB
+    else if (model === "hwb") {
+      let [hh, ww, bb] = convertColor({space: "srgb", coords: [r, g, b]}, "hwb").coords;
+      this.#modelCoords = [hh/360, ww/100, bb/100];
+      this.#a = a;
+    }
+
+    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
+    if (Number.isNaN(this.#modelCoords[0])) {
+      this.#modelCoords[0] = 0;
+    }
+
+    this.#update();
+  }
+
+  // @type "srgb" || "p3" || "rec2020" || "a98rgb" || "prophoto"
+  // @default "srgb"
+  get space() {
+    return this.#space;
+  }
+  set space(space) {
+    if (this.#space !== space) {
+      this.#space = space;
+      this.#update();
+    }
+  }
+
+  // @type boolean
+  // @default false
+  //
+  // Whether to show the alpha slider.
+  get alpha() {
+    return this.hasAttribute("alpha");
+  }
+  set alpha(alpha) {
+    alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  #isDraggingSlider = false;
+  #shadowRoot = null;
+  #configChangeListener;
+
+  #space = "srgb";
+  #srgbModel = "hsv"; // "rgb", "hsv", "hsl", "hwb", "okhsv", "okhsl" or "hsluv"
+  #wideGamutModel = "hsv"; // "rgb", "hsv", "hsl", or "hwb"
+  #modelCoords = [0, 0, 0]; // Coordinates normalized to 0 ~ 1 range
+  #a = 1; // Alpha normalized to 0 ~ 1 range
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.append(document.importNode(this.constructor.#shadowTemplate.content, true));
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XRGBLinearSlidersElement.#shadowStyleSheet];
+
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
     this["#coord-1-slider"].addEventListener("pointerdown", (event) => this.#onCoord1SliderPointerDown(event));
     this["#coord-2-slider"].addEventListener("pointerdown", (event) => this.#onCoord2SliderPointerDown(event));
     this["#coord-3-slider"].addEventListener("pointerdown", (event) => this.#onCoord3SliderPointerDown(event));
     this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
     this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
+  }
+
+  connectedCallback() {
+    this.#srgbModel = Xel.getConfig(`${this.localName}:srgbModel`, "hsv");
+    this.#wideGamutModel = Xel.getConfig(`${this.localName}:wideGamutModel`, "hsv");
+
+    Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("configchange", this.#configChangeListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onConfigChange(event) {
+    let {key, value, origin} = event.detail;
+
+    if (origin === "self") {
+      if (key === `${this.localName}:wideGamutModel`) {
+        let wideGamutModel = value;
+
+        if (wideGamutModel !== this.#wideGamutModel) {
+          let [r, g, b] = this.value;
+          this.#wideGamutModel = wideGamutModel;
+          this.value = [r, g, b, this.#a];
+        }
+      }
+      else if (key === `${this.localName}:srgbModel`) {
+        let srgbModel = value;
+
+        if (srgbModel !== this.#srgbModel) {
+          let [r, g, b] = this.value;
+          this.#srgbModel = srgbModel;
+          this.value = [r, g, b, this.#a];
+        }
+      }
+    }
+  }
+
+  #onContextMenuClick(event) {
+    let item = event.target.closest("x-menuitem");
+    let model = item?.value;
+
+    if (model) {
+      let [r, g, b] = this.value;
+
+      this.#srgbModel = model;
+      Xel.setConfig(`${this.localName}:srgbModel`, model);
+
+      if (["okhsv", "okhsl", "hsluv"].includes(model) === false) {
+        this.#wideGamutModel = model;
+        Xel.setConfig(`${this.localName}:wideGamutModel`, model);
+      }
+
+      this.value = [r, g, b, this.#a];
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1088,8 +2232,8 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
       let coord = ((clientX - trackBounds.x) / trackBounds.width);
       coord = normalize(coord, 0, 1);
 
-      if (coord !== this._coords[0]) {
-        this._coords[0] = coord;
+      if (coord !== this.#modelCoords[0]) {
+        this.#modelCoords[0] = coord;
 
         this.#updateCoord1SliderMarker();
         this.#updateCoord2SliderBackground();
@@ -1125,6 +2269,7 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
       return;
     }
 
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
     let trackBounds = this["#coord-2-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpOrCancelListener;
 
@@ -1136,10 +2281,10 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
       let coord = ((clientX - trackBounds.x) / trackBounds.width);
       coord = normalize(coord, 0, 1);
 
-      if (coord !== this._coords[1]) {
-        this._coords[1] = coord;
+      if (coord !== this.#modelCoords[1]) {
+        this.#modelCoords[1] = coord;
 
-        if (this._model === "rgb") {
+        if (model === "rgb") {
           this.#updateCoord1SliderBackground();
         }
 
@@ -1177,6 +2322,7 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
       return;
     }
 
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
     let trackBounds = this["#coord-3-slider-track"].getBoundingClientRect();
     let pointerMoveListener, pointerUpOrCancelListener;
 
@@ -1188,10 +2334,10 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
       let coord = ((clientX - trackBounds.x) / trackBounds.width);
       coord = normalize(coord, 0, 1);
 
-      if (coord !== this._coords[2]) {
-        this._coords[2] = coord;
+      if (coord !== this.#modelCoords[2]) {
+        this.#modelCoords[2] = coord;
 
-        if (this._model === "rgb") {
+        if (model === "rgb") {
           this.#updateCoord1SliderBackground();
           this.#updateCoord2SliderBackground();
         }
@@ -1239,8 +2385,8 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
       let a = (clientX - trackBounds.x) / trackBounds.width;
       a = normalize(a, 0, 1);
 
-      if (a !== this._a) {
-        this._a = a;
+      if (a !== this.#a) {
+        this.#a = a;
         this.#updateAlphaSliderMarker();
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -1264,15 +2410,6 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
     });
 
     this["#alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onContextMenuClick(event) {
-    let item = event.target.closest("x-menuitem");
-
-    if (item && item.value !== this.model) {
-      this.model = item.value;
-      Xel.setConfig(`${this.localName}:model`, item.value);
-    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1298,24 +2435,33 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
    */
 
   #updateCoord1SliderMarker() {
-    this["#coord-1-slider-marker"].style.left = (this._coords[0] * 100) + "%";
+    this["#coord-1-slider-marker"].style.left = (this.#modelCoords[0] * 100) + "%";
   }
 
   #updateCoord1SliderBackground() {
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
     let colors;
 
-    if (this._model === "hsv" || this._model === "hsl" || this._model === "hwb") {
+    if (model === "rgb") {
+      let [ , g, b] = this.#modelCoords;
+
       colors = [
-        { space: "srgb", coords: [1, 0, 0] },
-        { space: "srgb", coords: [1, 1, 0] },
-        { space: "srgb", coords: [0, 1, 0] },
-        { space: "srgb", coords: [0, 1, 1] },
-        { space: "srgb", coords: [0, 0, 1] },
-        { space: "srgb", coords: [1, 0, 1] },
-        { space: "srgb", coords: [1, 0, 0] }
+        { space: this.space, coords: [0, g, b] },
+        { space: this.space, coords: [1, g, b] }
       ];
     }
-    else if (this._model === "okhsv" || this._model === "okhsl" || this._model === "hsluv") {
+    else if (model === "hsv" || model === "hsl" || model === "hwb") {
+      colors = [
+        { space: this.space, coords: [1, 0, 0] },
+        { space: this.space, coords: [1, 1, 0] },
+        { space: this.space, coords: [0, 1, 0] },
+        { space: this.space, coords: [0, 1, 1] },
+        { space: this.space, coords: [0, 0, 1] },
+        { space: this.space, coords: [1, 0, 1] },
+        { space: this.space, coords: [1, 0, 0] }
+      ];
+    }
+    else if (model === "okhsv" || model === "okhsl" || model === "hsluv") {
       colors = [
         { space: "okhsv", coords: [0,   100, 100] },
         { space: "okhsv", coords: [60,  100, 100] },
@@ -1325,19 +2471,11 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
         { space: "okhsv", coords: [300, 100, 100] },
         { space: "okhsv", coords: [360, 100, 100] }
       ];
-    }
-    else if (this._model === "rgb") {
-      let [ , g, b] = this._coords;
 
-      colors = [
-        { space: "srgb", coords: [0, g, b] },
-        { space: "srgb", coords: [1, g, b] }
-      ];
+      colors = colors.map(color => convertColor(color, "srgb"))
     }
 
-    colors = colors.map(color => convertColor(color, "srgb"))
-                   .map(color => serializeColor(color));
-
+    colors = colors.map(color => serializeColor(color));
     this["#coord-1-slider"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
   }
 
@@ -1346,72 +2484,55 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
    */
 
   #updateCoord2SliderMarker() {
-    this["#coord-2-slider-marker"].style.left = (this._coords[1] * 100) + "%";
+    this["#coord-2-slider-marker"].style.left = (this.#modelCoords[1] * 100) + "%";
   }
 
   #updateCoord2SliderBackground() {
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
     let colors;
 
-    if (this._model === "hsv") {
-      let [h] = this._coords;
+    if (model === "rgb") {
+      let [r, , b] = this.#modelCoords;
 
       colors = [
-        { space: "hsv", coords: [h*360,   0, 100] },
-        { space: "hsv", coords: [h*360, 100, 100] }
+        { space: this.space, coords: [r, 0, b] },
+        { space: this.space, coords: [r, 1, b] }
       ];
     }
-    else if (this._model === "hsl") {
-      let [h] = this._coords;
+    else if (model === "hsv" || model === "okhsv") {
+      let [h] = this.#modelCoords;
 
       colors = [
-        { space: "hsl", coords: [h*360,   0, 50] },
-        { space: "hsl", coords: [h*360, 100, 50] }
+        { space: this.space, coords: convertColor({space: model, coords: [h*360,   0, 100]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: model, coords: [h*360, 100, 100]}, "srgb").coords }
       ];
     }
-    else if (this._model === "hwb") {
-      let [h] = this._coords;
+    else if (model === "hsl") {
+      let [h] = this.#modelCoords;
 
       colors = [
-        { space: "hwb", coords: [h*360,   0,  0] },
-        { space: "hwb", coords: [h*360, 100,  0] }
+        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360,   0, 50]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 100, 50]}, "srgb").coords }
       ];
     }
-    else if (this._model === "okhsv") {
-      let [h] = this._coords;
+    else if (model === "hwb") {
+      let [h] = this.#modelCoords;
 
       colors = [
-        { space: "okhsv", coords: [h*360,   0, 100] },
-        { space: "okhsv", coords: [h*360, 100, 100] }
+        { space: this.space, coords: convertColor({space: "hwb", coords: [h*360,   0,  0]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hwb", coords: [h*360, 100,  0]}, "srgb").coords }
       ];
     }
-    else if (this._model === "okhsl") {
-      let [h] = this._coords;
+    else if (model === "okhsl" || model === "hsluv") {
+      let [h] = this.#modelCoords;
 
       colors = [
-        { space: "okhsl", coords: [h*360,   0, 65] },
-        { space: "okhsl", coords: [h*360, 100, 65] }
-      ];
-    }
-    else if (this._model === "hsluv") {
-      let [h] = this._coords;
-
-      colors = [
-        { space: "hsluv", coords: [h*360,   0, 65] },
-        { space: "hsluv", coords: [h*360, 100, 65] }
-      ];
-    }
-    else if (this._model === "rgb") {
-      let [r, , b] = this._coords;
-
-      colors = [
-        { space: "srgb", coords: [r, 0, b] },
-        { space: "srgb", coords: [r, 1, b] }
+        { space: this.space, coords: convertColor({space: model, coords: [h*360,   0, 65]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: model, coords: [h*360, 100, 65]}, "srgb").coords }
       ];
     }
 
-    colors = colors.map(color => convertColor(color, "srgb"))
-                   .map(color => serializeColor(color));
-
+    colors = colors.map(color => serializeColor(color));
     this["#coord-2-slider"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
   }
 
@@ -1420,49 +2541,48 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
    */
 
   #updateCoord3SliderMarker() {
-    this["#coord-3-slider-marker"].style.left = (this._coords[2] * 100) + "%";
+    this["#coord-3-slider-marker"].style.left = (this.#modelCoords[2] * 100) + "%";
   }
 
   #updateCoord3SliderBackground() {
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
     let colors;
 
-    if (this._model === "hsv" || this._model === "okhsv") {
-      let [h, s, v] = this._coords;
+    if (model === "rgb") {
+      let [r, g, b] = this.#modelCoords;
 
       colors = [
-        { space: this._model, coords: [h*360, s*100,   0] },
-        { space: this._model, coords: [h*360, s*100, 100] }
+        { space: this.space, coords: [r, g, 0] },
+        { space: this.space, coords: [r, g, 1] }
       ];
     }
-    else if (this._model === "hsl" || this._model === "okhsl" || this._model === "hsluv") {
-      let [h, s] = this._coords;
+    else if (model === "hsv" || model === "okhsv") {
+      let [h, s] = this.#modelCoords;
 
       colors = [
-        { space: this._model, coords: [h*360, s*100,   0] },
-        { space: this._model, coords: [h*360, s*100,  50] },
-        { space: this._model, coords: [h*360, s*100, 100] }
+        { space: this.space, coords: convertColor({space: model, coords: [h*360, s*100,   0]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: model, coords: [h*360, s*100, 100]}, "srgb").coords }
       ];
     }
-    else if (this._model === "hwb") {
-      let [h, w, b] = this._coords;
+    else if (model === "hsl" || model === "okhsl" || model === "hsluv") {
+      let [h, s] = this.#modelCoords;
 
       colors = [
-        { space: "hwb", coords: [h*360, w*100,   0] },
-        { space: "hwb", coords: [h*360, w*100, 100] }
+        { space: this.space, coords: convertColor({space: model, coords: [h*360, s*100,   0]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: model, coords: [h*360, s*100,  50]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: model, coords: [h*360, s*100, 100]}, "srgb").coords }
       ];
     }
-    else if (this._model === "rgb") {
-      let [r, g, b] = this._coords;
+    else if (model === "hwb") {
+      let [h, w] = this.#modelCoords;
 
       colors = [
-        { space: "srgb", coords: [r, g, 0] },
-        { space: "srgb", coords: [r, g, 1] }
+        { space: this.space, coords: convertColor({space: "hwb", coords: [h*360, w*100,   0]}, "srgb").coords },
+        { space: this.space, coords: convertColor({space: "hwb", coords: [h*360, w*100, 100]}, "srgb").coords }
       ];
     }
 
-    colors = colors.map(color => convertColor(color, "srgb"))
-                   .map(color => serializeColor(color));
-
+    colors = colors.map(color => serializeColor(color));
     this["#coord-3-slider"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
   }
 
@@ -1471,48 +2591,63 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
    */
 
   #updateAlphaSliderMarker() {
-    this["#alpha-slider-marker"].style.left = (this._a * 100) + "%";
+    this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
   }
 
   #updateAlphaSliderBackground() {
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
     let colors;
 
-    if (this._model === "hsv" || this._model === "okhsv") {
-      let [h, s, v] = this._coords;
+    if (model === "rgb") {
+      let [r, g, b] = this.#modelCoords;
 
       colors = [
-        { space: this._model, coords: [h*360, s*100, v*100], alpha: 0 },
-        { space: this._model, coords: [h*360, s*100, v*100], alpha: 1 }
+        { space: this.space, coords: [r, g, b], alpha: 0 },
+        { space: this.space, coords: [r, g, b], alpha: 1 }
       ];
     }
-    else if (this._model === "hsl" || this._model === "okhsl" || this._model === "hsluv") {
-      let [h, s, l] = this._coords;
+    else if (model === "hsv" || model === "okhsv") {
+      let [h, s, v] = this.#modelCoords;
 
       colors = [
-        { space: this._model, coords: [h*360, s*100, l*100], alpha: 0 },
-        { space: this._model, coords: [h*360, s*100, l*100], alpha: 1 }
+        {
+          space: this.space,
+          coords: convertColor({space: model, coords: [h*360, s*100, v*100]}, "srgb").coords,
+          alpha: 0
+        },
+        {
+          space: this.space,
+          coords: convertColor({space: model, coords: [h*360, s*100, v*100]}, "srgb").coords,
+          alpha: 1
+        }
       ];
     }
-    else if (this._model === "hwb") {
-      let [h, w, b] = this._coords;
+    else if (model === "hsl" || model === "okhsl" || model === "hsluv") {
+      let [h, s, l] = this.#modelCoords;
 
       colors = [
-        { space: "hwb", coords: [h*360, w*100, b*100], alpha: 0 },
-        { space: "hwb", coords: [h*360, w*100, b*100], alpha: 1 }
+        {
+          space: this.space,
+          coords: convertColor({space: model, coords: [h*360, s*100, l*100]}, "srgb").coords,
+          alpha: 0
+        },
+        {
+          space: this.space,
+          coords: convertColor({space: model, coords: [h*360, s*100, l*100]}, "srgb").coords,
+          alpha: 1
+        }
       ];
     }
-    else if (this._model === "rgb") {
-      let [r, g, b] = this._coords;
+    else if (model === "hwb") {
+      let [h, w, b] = this.#modelCoords;
 
       colors = [
-        { space: "srgb", coords: [r, g, b], alpha: 0 },
-        { space: "srgb", coords: [r, g, b], alpha: 1 }
+        {space: this.space, coords: convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords, alpha: 0},
+        {space: this.space, coords: convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords, alpha: 1}
       ];
     }
 
-    colors = colors.map(color => convertColor(color, "srgb"))
-                   .map(color => serializeColor(color));
-
+    colors = colors.map(color => serializeColor(color));
     this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
   }
 
@@ -1521,890 +2656,18 @@ class XSRGBLinearSlidersElement extends XSlidersElement {
    */
 
   #updateContextMenu() {
+    let model = (this.#space === "srgb") ? this.#srgbModel : this.#wideGamutModel;
     let items = [...this["#context-menu"].querySelectorAll("x-menuitem")];
 
     for (let item of items) {
-      item.toggled = (item.value === this._model);
+      item.toggled = (item.value === model);
+      item.hidden = item.hasAttribute("data-srgb-only") && this.space !== "srgb";
     }
+
+    this["#separator-1"].hidden = this.space !== "srgb";
   }
 }
 
-if (customElements.get("x-srgblinearsliders") === undefined) {
-  customElements.define("x-srgblinearsliders", XSRGBLinearSlidersElement);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// sRGB planar sliders
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
-class XSRGBPlanarSlidersElement extends XSlidersElement {
-  static _shadowTemplate = html`
-    <template>
-      <div id="linear-slider" class="linear-slider" part="slider">
-        <div id="linear-slider-track" class="linear-slider-track">
-          <div id="linear-slider-marker" class="linear-slider-marker"></div>
-        </div>
-      </div>
-
-      <div id="planar-slider" class="planar-slider" part="slider">
-        <div id="planar-slider-marker" class="planar-slider-marker"></div>
-      </div>
-
-      <div id="alpha-slider" part="slider">
-        <div id="alpha-slider-gradient"></div>
-        <div id="alpha-slider-track" class="linear-slider-track">
-          <div id="alpha-slider-marker" class="linear-slider-marker"></div>
-        </div>
-      </div>
-
-      <x-contextmenu id="context-menu">
-        <x-menu>
-          <x-menuitem value="hsv">
-            <x-label>HSV</x-label>
-          </x-menuitem>
-
-          <x-menuitem value="hsl">
-            <x-label>HSL</x-label>
-          </x-menuitem>
-        </x-menu>
-      </x-contextmenu>
-    </template>
-  `;
-
-  get value() {
-    // HSV
-    if (this._model === "hsv") {
-      let [h, s, v] = this._coords;
-      let [r, g, b] = convertColor({space: this._model, coords: [h*360, s*100, v*100]}, "srgb").coords;
-      return [r, g, b, this._a];
-    }
-    // HSL
-    else if (this._model === "hsl") {
-      let [h, s, l] = this._coords;
-      let [r, g, b] = convertColor({space: this._model, coords: [h*360, s*100, l*100]}, "srgb").coords;
-      return [r, g, b, this._a];
-    }
-  }
-  set value([r, g, b, a]) {
-    // HSV
-    if (this._model === "hsv") {
-      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, this._model).coords;
-      this._coords = [h/360, s/100, v/100];
-      this._a = a;
-    }
-    // HSL
-    else if (this._model === "hsl") {
-      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, this._model).coords;
-      this._coords = [h/360, s/100, l/100];
-      this._a = a;
-    }
-
-    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
-    if (Number.isNaN(this._coords[0])) {
-      this._coords[0] = 0;
-    }
-
-    this.#update();
-  }
-
-  get space() {
-    return "srgb";
-  }
-
-  get models() {
-    return ["hsv", "hsl"];
-  }
-
-  #isDraggingSlider = false;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  constructor() {
-    super();
-
-    this["#linear-slider"].addEventListener("pointerdown", (event) => this.#onLinearSliderPointerDown(event));
-    this["#planar-slider"].addEventListener("pointerdown", (event) => this.#onPlanarSliderPointerDown(event));
-    this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
-    this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #onLinearSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
-      return;
-    }
-
-    let trackBounds = this["#linear-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpOrCancelListener;
-
-    this.#isDraggingSlider = true;
-    this["#linear-slider"].setPointerCapture(pointerDownEvent.pointerId);
-    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-
-    let onPointerMove = (clientX) => {
-      let coord = ((clientX - trackBounds.x) / trackBounds.width);
-      coord = normalize(coord, 0, 1);
-
-      if (coord !== this._coords[0]) {
-        this._coords[0] = coord;
-
-        this.#updateLinearSliderMarker();
-        this.#updatePlanarSliderBackground();
-        this.#updateAlphaSliderBackground();
-
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      }
-    };
-
-    onPointerMove(pointerDownEvent.clientX);
-
-    this["#linear-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
-        onPointerMove(pointerMoveEvent.clientX);
-      }
-    });
-
-    this["#linear-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
-      this["#linear-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#linear-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
-      this["#linear-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-
-      this.#isDraggingSlider = false;
-    });
-
-    this["#linear-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onPlanarSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
-      return;
-    }
-
-    let sliderBounds = this["#planar-slider"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpOrCancelListener;
-
-    this.#isDraggingSlider = true;
-    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-    this["#planar-slider"].setPointerCapture(pointerDownEvent.pointerId);
-
-    let onPointerMove = (clientX, clientY) => {
-      let x = (clientX - sliderBounds.left) / sliderBounds.width;
-      let y = (clientY - sliderBounds.top) / sliderBounds.height;
-
-      x = normalize(x, 0, 1);
-      y = normalize(y, 0, 1);
-
-      if (this._model === "hsv") {
-        let [h, s, v] = this._coords;
-        s = x;
-        v = 1 - y;
-
-        this._coords = [h, s, v];
-      }
-      else if (this._model === "hsl") {
-        let [h, s, l] = this._coords;
-        s = x;
-        l = 1 - y;
-
-        this._coords = [h, s, l];
-      }
-
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-
-      this.#updatePlanarSliderMarker();
-      this.#updatePlanarSliderBackground();
-      this.#updateAlphaSliderBackground();
-    };
-
-    onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
-
-    this["#planar-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
-        onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
-      }
-    });
-
-    this["#planar-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
-      this["#planar-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#planar-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
-      this["#planar-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-      this.#isDraggingSlider = false;
-    });
-
-    this["#planar-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
-      return;
-    }
-
-    let trackBounds = this["#alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpOrCancelListener;
-
-    this.#isDraggingSlider = true;
-    this["#alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
-    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-
-    let onPointerMove = (clientX) => {
-      let a = (clientX - trackBounds.x) / trackBounds.width;
-      a = normalize(a, 0, 1);
-
-      if (a !== this._a) {
-        this._a = a;
-        this.#updateAlphaSliderMarker();
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      }
-    };
-
-    onPointerMove(pointerDownEvent.clientX);
-
-    this["#alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
-        onPointerMove(pointerMoveEvent.clientX);
-      }
-    });
-
-    this["#alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
-      this["#alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
-      this["#alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-
-      this.#isDraggingSlider = false;
-    });
-
-    this["#alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onContextMenuClick(event) {
-    let item = event.target.closest("x-menuitem");
-
-    if (item && item.value !== this.model) {
-      this.model = item.value;
-      Xel.setConfig(`${this.localName}:model`, item.value);
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #update() {
-    this.#updateLinearSliderMarker();
-    this.#updateLinearSliderBackground();
-
-    this.#updatePlanarSliderMarker();
-    this.#updatePlanarSliderBackground();
-
-    this.#updateAlphaSliderMarker();
-    this.#updateAlphaSliderBackground();
-
-    this.#updateContextMenu();
-  }
-
-  /**
-   * Linear slider
-   */
-
-  #updateLinearSliderMarker() {
-    if (this._model === "hsv" || this._model === "hsl") {
-      let [h] = this._coords;
-      this["#linear-slider-marker"].style.left = (h * 100) + "%";
-    }
-  }
-
-  #updateLinearSliderBackground() {
-    let colors;
-
-    if (this._model === "hsv" || this._model === "hsl") {
-      colors = [
-        { space: "srgb", coords: [1, 0, 0] },
-        { space: "srgb", coords: [1, 1, 0] },
-        { space: "srgb", coords: [0, 1, 0] },
-        { space: "srgb", coords: [0, 1, 1] },
-        { space: "srgb", coords: [0, 0, 1] },
-        { space: "srgb", coords: [1, 0, 1] },
-        { space: "srgb", coords: [1, 0, 0] }
-      ];
-    }
-
-    colors = colors.map(color => convertColor(color, "srgb"))
-                   .map(color => serializeColor(color));
-
-    this["#linear-slider"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
-  }
-
-  /**
-   * Planar slider
-   */
-
-  #updatePlanarSliderMarker() {
-    if (this._model === "hsv") {
-      let [h, s, v] = this._coords;
-      let left = s * 100;
-      let top = 100 - (v * 100);
-
-      this["#planar-slider-marker"].style.left = `${left}%`;
-      this["#planar-slider-marker"].style.top = `${top}%`;
-    }
-    else if (this._model === "hsl") {
-      let [h, s, l] = this._coords;
-      let left = s * 100;
-      let top = 100 - (l * 100);
-
-      this["#planar-slider-marker"].style.left = `${left}%`;
-      this["#planar-slider-marker"].style.top = `${top}%`;
-    }
-  }
-
-  #updatePlanarSliderBackground() {
-    if (this._model === "hsv") {
-      let [h] = this._coords;
-
-      let backgroundColor = {space: "hsv", coords: [h*360, 100, 100]};
-
-      let firstOverlayColors = [
-        { space: "srgb", coords: [1, 1, 1], alpha: 1 },
-        { space: "srgb", coords: [1, 1, 1], alpha: 0 }
-      ];
-
-      let secondOverlayColors = [
-        { space: "srgb", coords: [0, 0, 0], alpha: 0 },
-        { space: "srgb", coords: [0, 0, 0], alpha: 1 }
-      ];
-
-      backgroundColor = serializeColor(convertColor(backgroundColor, "srgb"));
-      firstOverlayColors = firstOverlayColors.map(color => serializeColor(color));
-      secondOverlayColors = secondOverlayColors.map(color => serializeColor(color));
-
-      this["#planar-slider"].style.background = `
-        linear-gradient(in srgb to bottom, ${secondOverlayColors.join(",")}),
-        linear-gradient(in srgb to right,  ${firstOverlayColors.join(",")}),
-        ${backgroundColor}
-      `;
-    }
-    else if (this._model === "hsl") {
-      let [h] = this._coords;
-
-      let backgroundColors = [
-        { space: "hsl", coords: [h*360,   0, 50] },
-        { space: "hsl", coords: [h*360, 100, 50] }
-      ];
-
-      let overylayColors = [
-        { space: "srgb", coords: [1, 1, 1], alpha: 1 },
-        { space: "srgb", coords: [1, 1, 1], alpha: 0 },
-        { space: "srgb", coords: [0, 0, 0], alpha: 1 }
-      ];
-
-      backgroundColors = backgroundColors.map(color => serializeColor(color));
-      overylayColors = overylayColors.map(color => serializeColor(color));
-
-      this["#planar-slider"].style.background = `
-        linear-gradient(in srgb to bottom, ${overylayColors.join(",")}),
-        linear-gradient(in srgb to right, ${backgroundColors.join(",")})
-      `;
-    }
-  }
-
-  /**
-   * Alpha slider
-   */
-
-  #updateAlphaSliderMarker() {
-    this["#alpha-slider-marker"].style.left = (this._a * 100) + "%";
-  }
-
-  #updateAlphaSliderBackground() {
-    let colors;
-
-    if (this._model === "hsv") {
-      let [h, s, v] = this._coords;
-
-      colors = [
-        { space: this._model, coords: [h*360, s*100, v*100], alpha: 0 },
-        { space: this._model, coords: [h*360, s*100, v*100], alpha: 1 }
-      ];
-    }
-    else if (this._model === "hsl") {
-      let [h, s, l] = this._coords;
-
-      colors = [
-        { space: this._model, coords: [h*360, s*100, l*100], alpha: 0 },
-        { space: this._model, coords: [h*360, s*100, l*100], alpha: 1 }
-      ];
-    }
-
-    colors = colors.map(color => convertColor(color, "srgb"))
-                   .map(color => serializeColor(color));
-
-    this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
-  }
-
-  /**
-   * Context menu
-   */
-
-  #updateContextMenu() {
-    let items = [...this["#context-menu"].querySelectorAll("x-menuitem")];
-
-    for (let item of items) {
-      item.toggled = (item.value === this._model);
-    }
-  }
-}
-
-if (customElements.get("x-srgbplanarsliders") === undefined) {
-  customElements.define("x-srgbplanarsliders", XSRGBPlanarSlidersElement);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// sRGB polar sliders
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
-class XSRGBPolarSlidersElement extends XSlidersElement {
-  static _shadowTemplate = html`
-    <template>
-      <div id="polar-slider" class="polar-slider" part="slider">
-        <div id="polar-slider-circle" class="polar-slider-circle">
-          <div id="polar-slider-marker" class="polar-slider-marker"></div>
-        </div>
-      </div>
-
-      <div id="linear-slider" class="linear-slider" part="slider">
-        <div id="linear-slider-track" class="linear-slider-track">
-          <div id="linear-slider-marker" class="linear-slider-marker"></div>
-        </div>
-      </div>
-
-      <div id="alpha-slider" part="slider">
-        <div id="alpha-slider-gradient"></div>
-        <div id="alpha-slider-track" class="linear-slider-track">
-          <div id="alpha-slider-marker" class="linear-slider-marker"></div>
-        </div>
-      </div>
-
-      <x-contextmenu id="context-menu">
-        <x-menu>
-          <x-menuitem value="hsv">
-            <x-label>HSV</x-label>
-          </x-menuitem>
-
-          <x-menuitem value="hsl">
-            <x-label>HSL</x-label>
-          </x-menuitem>
-        </x-menu>
-      </x-contextmenu>
-    </template>
-  `;
-
-  get value() {
-    // HSV
-    if (this._model === "hsv") {
-      let [h, s, v] = this._coords;
-      let [r, g, b] = convertColor({space: this._model, coords: [h*360, s*100, v*100]}, "srgb").coords;
-      return [r, g, b, this._a];
-    }
-    // HSL
-    else if (this._model === "hsl") {
-      let [h, s, l] = this._coords;
-      let [r, g, b] = convertColor({space: this._model, coords: [h*360, s*100, l*100]}, "srgb").coords;
-      return [r, g, b, this._a];
-    }
-  }
-  set value([r, g, b, a]) {
-    // HSV
-    if (this._model === "hsv") {
-      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, this._model).coords;
-      this._coords = [h/360, s/100, v/100];
-      this._a = a;
-    }
-    // HSL
-    else if (this._model === "hsl") {
-      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, this._model).coords;
-      this._coords = [h/360, s/100, l/100];
-      this._a = a;
-    }
-
-    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
-    if (Number.isNaN(this._coords[0])) {
-      this._coords[0] = 0;
-    }
-
-    this.#update();
-  }
-
-  get space() {
-    return "srgb";
-  }
-
-  get models() {
-    return ["hsv", "hsl"];
-  }
-
-  #isDraggingSlider = false;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  constructor() {
-    super();
-
-    this["#linear-slider"].addEventListener("pointerdown", (event) => this.#onLinearSliderPointerDown(event));
-    this["#polar-slider"].addEventListener("pointerdown", (event) => this.#onPolarSliderPointerDown(event));
-    this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
-    this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #onLinearSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
-      return;
-    }
-
-    let trackBounds = this["#linear-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpOrCancelListener;
-
-    this.#isDraggingSlider = true;
-    this["#linear-slider"].setPointerCapture(pointerDownEvent.pointerId);
-    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-
-    let onPointerMove = (clientX) => {
-      let coord = ((clientX - trackBounds.x) / trackBounds.width);
-      coord = normalize(coord, 0, 1);
-
-      if (coord !== this._coords[0]) {
-        this._coords[2] = coord;
-
-        this.#updateLinearSliderMarker();
-        this.#updatePolarSliderBackground();
-        this.#updateAlphaSliderBackground();
-
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      }
-    };
-
-    onPointerMove(pointerDownEvent.clientX);
-
-    this["#linear-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
-        onPointerMove(pointerMoveEvent.clientX);
-      }
-    });
-
-    this["#linear-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
-      this["#linear-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#linear-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
-      this["#linear-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-
-      this.#isDraggingSlider = false;
-    });
-
-    this["#linear-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onPolarSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
-      return;
-    }
-
-    let pointerMoveListener, pointerUpOrCancelListener;
-    let wheelBounds = this["#polar-slider"].getBoundingClientRect();
-
-    this.#isDraggingSlider = true;
-    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-
-    this["#polar-slider"].style.cursor = "default";
-    this["#polar-slider"].setPointerCapture(pointerDownEvent.pointerId);
-
-    let onPointerMove = (clientX, clientY) => {
-      let radius = wheelBounds.width / 2;
-      let x = clientX - wheelBounds.left - radius;
-      let y = clientY - wheelBounds.top - radius;
-      let d = pow(x, 2) + pow(y, 2);
-      let theta = atan2(y, x);
-
-      if (d > pow(radius, 2)) {
-        x = radius * cos(theta);
-        y = radius * sin(theta);
-        d = pow(x, 2) + pow(y, 2);
-        theta = atan2(y, x);
-      }
-
-      this._coords[0] = (theta + PI) / (PI * 2);
-      this._coords[1] = sqrt(d) / radius;
-
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-
-      this.#updatePolarSliderMarker();
-      this.#updateLinearSliderBackground();
-      this.#updateAlphaSliderBackground();
-    };
-
-    onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
-
-    this["#polar-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
-        onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
-      }
-    });
-
-    this["#polar-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
-      this["#polar-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#polar-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
-      this["#polar-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
-      this["#polar-slider"].style.cursor = null;
-
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-      this.#isDraggingSlider = false;
-    });
-
-    this["#polar-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onAlphaSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
-      return;
-    }
-
-    let trackBounds = this["#alpha-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpOrCancelListener;
-
-    this.#isDraggingSlider = true;
-    this["#alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
-    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-
-    let onPointerMove = (clientX) => {
-      let a = (clientX - trackBounds.x) / trackBounds.width;
-      a = normalize(a, 0, 1);
-
-      if (a !== this._a) {
-        this._a = a;
-        this.#updateAlphaSliderMarker();
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      }
-    };
-
-    onPointerMove(pointerDownEvent.clientX);
-
-    this["#alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
-        onPointerMove(pointerMoveEvent.clientX);
-      }
-    });
-
-    this["#alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
-      this["#alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
-      this["#alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-
-      this.#isDraggingSlider = false;
-    });
-
-    this["#alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onContextMenuClick(event) {
-    let item = event.target.closest("x-menuitem");
-
-    if (item && item.value !== this.model) {
-      this.model = item.value;
-      Xel.setConfig(`${this.localName}:model`, item.value);
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #update() {
-    this.#updateLinearSliderMarker();
-    this.#updateLinearSliderBackground();
-
-    this.#updatePolarSliderMarker();
-    this.#updatePolarSliderBackground();
-
-    this.#updateAlphaSliderMarker();
-    this.#updateAlphaSliderBackground();
-
-    this.#updateContextMenu();
-  }
-
-  /**
-   * Linear slider
-   */
-
-  #updateLinearSliderMarker() {
-    if (this._model === "hsv") {
-      let [h, , v] = this._coords;
-      this["#linear-slider-marker"].style.left = (v * 100) + "%";
-    }
-    else if (this._model === "hsl") {
-      let [h, , l] = this._coords;
-      this["#linear-slider-marker"].style.left = (l * 100) + "%";
-    }
-  }
-
-  #updateLinearSliderBackground() {
-    if (this._model === "hsv") {
-      let [h, s] = this._coords;
-
-      let backgroundColor = {space: "hsv", coords: [h*360, s*100, 100]};
-
-      let overlayColors = [
-        { space: "srgb", coords: [0, 0, 0], alpha: 1 },
-        { space: "srgb", coords: [0, 0, 0], alpha: 0 }
-      ];
-
-      backgroundColor = serializeColor(convertColor(backgroundColor, "srgb"));
-      overlayColors = overlayColors.map(color => serializeColor(color));
-
-      this["#linear-slider"].style.background = `
-        linear-gradient(in srgb to right,  ${overlayColors.join(",")}),
-        ${backgroundColor}
-      `;
-    }
-    else if (this._model === "hsl") {
-      let [h, s] = this._coords;
-
-      let colors = [
-        { space: "hsl", coords: [h*360, s*100,   0] },
-        { space: "hsl", coords: [h*360, s*100,  50] },
-        { space: "hsl", coords: [h*360, s*100, 100] }
-      ];
-
-      colors = colors.map(color => serializeColor(color));
-
-      this["#linear-slider"].style.background = `linear-gradient(in srgb to right,  ${colors.join(",")})`;
-    }
-  }
-
-  /**
-   * Polar slider
-   */
-
-  #updatePolarSliderMarker() {
-    if (this._model === "hsv" || this._model === "hsl") {
-      let [h, s] = this._coords;
-      let wheelSize = 100;
-      let angle = degToRad(h*360);
-      let radius = s * wheelSize/2;
-      let centerPoint = {x: wheelSize/2, y: wheelSize/2};
-
-      let x = ((wheelSize - (centerPoint.x + (radius * cos(angle)))) / wheelSize) * 100;
-      let y = ((centerPoint.y - (radius * sin(angle))) / wheelSize) * 100;
-
-      this["#polar-slider-marker"].style.left = x + "%";
-      this["#polar-slider-marker"].style.top = y + "%";
-    }
-  }
-
-  #updatePolarSliderBackground() {
-    if (this._model === "hsv") {
-      let overlayColors = [
-        { space: "hsl", coords: [0, 0, 100] },
-        { space: "hsl", coords: [0, 0,   0] }
-      ];
-
-      let backgroundColors = [
-        { space: "srgb", coords: [1, 0, 0] },
-        { space: "srgb", coords: [1, 1, 0] },
-        { space: "srgb", coords: [0, 1, 0] },
-        { space: "srgb", coords: [0, 1, 1] },
-        { space: "srgb", coords: [0, 0, 1] },
-        { space: "srgb", coords: [1, 0, 1] },
-        { space: "srgb", coords: [1, 0, 0] }
-      ];
-
-      this["#polar-slider-circle"].style.background = `
-        radial-gradient(circle closest-side, ${overlayColors.map(c => serializeColor(c)).join(",")} 90%),
-        conic-gradient(from -90deg in srgb, ${backgroundColors.map(c => serializeColor(c)).join(",")})
-      `;
-
-      this["#polar-slider-circle"].style.backgroundBlendMode = "screen, normal";
-    }
-    else if (this._model === "hsl") {
-      let overlayColors = [
-        { space: "hsl", coords: [0, 0, 50], alpha: 1 },
-        { space: "hsl", coords: [0, 0, 50], alpha: 0 }
-      ];
-
-      let backgroundColors = [
-        { space: "srgb", coords: [1, 0, 0] },
-        { space: "srgb", coords: [1, 1, 0] },
-        { space: "srgb", coords: [0, 1, 0] },
-        { space: "srgb", coords: [0, 1, 1] },
-        { space: "srgb", coords: [0, 0, 1] },
-        { space: "srgb", coords: [1, 0, 1] },
-        { space: "srgb", coords: [1, 0, 0] }
-      ];
-
-      this["#polar-slider-circle"].style.background = `
-        radial-gradient(circle closest-side, ${overlayColors.map(c => serializeColor(c)).join(",")}),
-        conic-gradient(from -90deg in srgb, ${backgroundColors.map(c => serializeColor(c)).join(",")})
-      `;
-
-      this["#polar-slider-circle"].style.backgroundBlendMode = "normal, normal";
-    }
-  }
-
-  /**
-   * Alpha slider
-   */
-
-  #updateAlphaSliderMarker() {
-    this["#alpha-slider-marker"].style.left = (this._a * 100) + "%";
-  }
-
-  #updateAlphaSliderBackground() {
-    let colors;
-
-    if (this._model === "hsv") {
-      let [h, s, v] = this._coords;
-
-      colors = [
-        { space: this._model, coords: [h*360, s*100, v*100], alpha: 0 },
-        { space: this._model, coords: [h*360, s*100, v*100], alpha: 1 }
-      ];
-    }
-    else if (this._model === "hsl") {
-      let [h, s, l] = this._coords;
-
-      colors = [
-        { space: this._model, coords: [h*360, s*100, l*100], alpha: 0 },
-        { space: this._model, coords: [h*360, s*100, l*100], alpha: 1 }
-      ];
-    }
-
-    colors = colors.map(color => convertColor(color, "srgb"))
-                   .map(color => serializeColor(color));
-
-    this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors.join(",")})`;
-  }
-
-  /**
-   * Context menu
-   */
-
-  #updateContextMenu() {
-    let items = [...this["#context-menu"].querySelectorAll("x-menuitem")];
-
-    for (let item of items) {
-      item.toggled = (item.value === this._model);
-    }
-  }
-}
-
-if (customElements.get("x-srgbpolarsliders") === undefined) {
-  customElements.define("x-srgbpolarsliders", XSRGBPolarSlidersElement);
+if (customElements.get("x-rgblinearsliders") === undefined) {
+  customElements.define("x-rgblinearsliders", XRGBLinearSlidersElement);
 }
