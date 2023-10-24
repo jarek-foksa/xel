@@ -64,7 +64,8 @@ body {
   --checkboard-background: linear-gradient( 45deg, #5b5b5b 25%, #0000   25%)  0px  0px / 10px 10px,
                            linear-gradient(-45deg, #5b5b5b 25%, #0000   25%)  0px  5px / 10px 10px,
                            linear-gradient( 45deg, #0000   75%, #5b5b5b 75%)  5px -5px / 10px 10px,
-                           linear-gradient(-45deg, #0000   75%, #5b5b5b 75%) -5px  0px / 10px 10px;
+                           linear-gradient(-45deg, #0000   75%, #5b5b5b 75%) -5px  0px / 10px 10px,
+                           #929292;
 }
 
 /*****************************************************************************************************************/

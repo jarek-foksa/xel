@@ -31,7 +31,7 @@ export default class XColorInputElement extends HTMLElement {
         <input id="input" type="text" spellcheck="false" autocomplete="false" part="input"></input>
 
         <div id="arrow-container">
-          <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg id="arrow" width="10" height="10" viewBox="0 0 100 100" preserveAspectRatio="none" part="arrow">
             <path id="arrow-path"></path>
           </svg>
         </div>
@@ -122,7 +122,7 @@ export default class XColorInputElement extends HTMLElement {
       align-items: center;
       justify-content: center;
       height: 100%;
-      margin-left: 6px;
+      margin-left: 4px;
       min-width: fit-content;
     }
 
@@ -308,6 +308,7 @@ export default class XColorInputElement extends HTMLElement {
     this["#input"].addEventListener("input",  (event) => this.#onInputInput(event));
     this["#input"].addEventListener("blur",  (event) => this.#onInputBlur(event));
     this["#input"].addEventListener("search", (event) => this.#onInputSearch(event));
+    this["#input"].addEventListener("contextmenu", () => this.#onInputContextMenu());
     this["#arrow"].addEventListener("pointerdown", (event) => this.#onArrowPointerDown(event));
     this["#arrow"].addEventListener("click", (event) => this.#onArrowClick(event));
     this["#format-menu"].addEventListener("toggle", (event) => this.#onFormatMenuItemToggle(event));
@@ -874,6 +875,12 @@ export default class XColorInputElement extends HTMLElement {
 
   #onInputSearch() {
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+  }
+
+  #onInputContextMenu() {
+    if (this["#input"].selectionStart === this["#input"].selectionEnd) {
+      this.selectAll();
+    }
   }
 
   #onArrowPointerDown(event) {

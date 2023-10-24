@@ -13,7 +13,6 @@ import {throttle} from "../utils/time.js";
 
 let {PI, sin, cos, pow, atan2, sqrt} = Math;
 
-const DEBUG = false;
 const COLOR_PRECISION = 3;
 
 // @element x-colorpicker
@@ -21,12 +20,12 @@ const COLOR_PRECISION = 3;
 // @event ^changestart
 // @event ^changeend
 class XColorPickerElement extends HTMLElement {
-  static observedAttributes = ["value", "alpha", "spaces", "disabled", "size"];
+  static observedAttributes = ["value", "alpha", "spaces", "disabled"];
 
   static #shadowTemplate = html`
     <template>
       <header id="header">
-        <x-select id="space-select" condensed>
+        <x-select id="space-select" size="small">
           <x-menu id="space-select-menu">
             <x-menuitem value="srgb" toggled><x-label>sRGB</x-label></x-menuitem>
             <hr/>
@@ -59,9 +58,9 @@ class XColorPickerElement extends HTMLElement {
       <main id="main"></main>
 
       <footer id="footer">
-        <x-colorinput id="input" space="srgb"></x-colorinput>
+        <x-colorinput id="input" space="srgb" size="small"></x-colorinput>
 
-        <x-button id="grab-button" condensed togglable>
+        <x-button id="grab-button" size="small" condensed togglable>
           <x-icon href="#eye-dropper"></x-icon>
         </x-button>
       </footer>
@@ -73,12 +72,6 @@ class XColorPickerElement extends HTMLElement {
       display: block;
       width: 200px;
       box-sizing: border-box;
-    }
-    :host([size="small"]) {
-      width: 180px;
-    }
-    :host([size="large"]) {
-      width: 210px;
     }
     :host([hidden]) {
       display: none;
@@ -97,6 +90,7 @@ class XColorPickerElement extends HTMLElement {
 
     #space-select {
       min-width: 110px;
+      font-size: 13px;
     }
 
     /* Type buttons */
@@ -111,16 +105,8 @@ class XColorPickerElement extends HTMLElement {
     }
 
     #type-buttons x-button x-icon {
-      width: 20px;
-      height: 20px;
-    }
-    #type-buttons x-button[size="small"] x-icon {
-      width: 15px;
-      height: 15px;
-    }
-    #type-buttons x-button[size="large"] x-icon {
-      width: 22px;
-      height: 22px;
+      width: 18px;
+      height: 18px;
     }
 
     /**
@@ -139,7 +125,7 @@ class XColorPickerElement extends HTMLElement {
     :host-context(x-popover) #sliders {
       height: 250px;
     }
-    :host-context(x-popover) #sliders[alpha] {
+    :host-context(x-popover):host([alpha]) #sliders {
       height: 290px;
     }
 
@@ -156,7 +142,9 @@ class XColorPickerElement extends HTMLElement {
 
     #input {
       max-width: none;
+      min-height: 1px;
       flex: 1;
+      font-size: 13px;
     }
     #input:focus {
       z-index: 1;
@@ -166,18 +154,12 @@ class XColorPickerElement extends HTMLElement {
 
     #grab-button {
       margin: 0 0 0 5px;
-      padding: 0;
-      aspect-ratio: auto 1;
-    }
-    :host([size="small"]) #grab-button {
-      padding: 0 3px;
+      padding: 0px 6px;
     }
 
-    :host([size="small"]) #grab-button x-icon {
+    #grab-button x-icon {
       width: 14px;
       height: 14px;
-    }
-    :host([size="large"]) #grab-button x-icon {
     }
   `;
 
@@ -236,18 +218,6 @@ class XColorPickerElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
-  get size() {
-    let size = this.getAttribute("size");
-    return (size === "small" || size === "large") ? size : null;
-  }
-  set size(size) {
-    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
-  }
-
   #shadowRoot;
   #configChangeListener;
 
@@ -258,7 +228,7 @@ class XColorPickerElement extends HTMLElement {
   constructor() {
     super();
 
-    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot = this.attachShadow({mode: "open"});
     this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XColorPickerElement.#shadowStyleSheet];
     this.#shadowRoot.append(document.importNode(XColorPickerElement.#shadowTemplate.content, true));
 
@@ -309,9 +279,6 @@ class XColorPickerElement extends HTMLElement {
     }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
-    }
-    else if (name === "size") {
-      this.#onSizeAttributeChange();
     }
   }
 
@@ -385,13 +352,6 @@ class XColorPickerElement extends HTMLElement {
     if (this.isConnected) {
       this.#update();
     }
-  }
-
-  #onSizeAttributeChange() {
-    this["#space-select"].size = this.size;
-    [...this["#type-buttons"].children].forEach(button => button.size = this.size);
-    this["#input"].size = this.size;
-    this["#grab-button"].size = this.size;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2642,8 +2602,16 @@ class XRGBLinearSlidersElement extends HTMLElement {
       let [h, w, b] = this.#modelCoords;
 
       colors = [
-        {space: this.space, coords: convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords, alpha: 0},
-        {space: this.space, coords: convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords, alpha: 1}
+        {
+          space: this.space,
+          coords: convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords,
+          alpha: 0
+        },
+        {
+          space: this.space,
+          coords: convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords,
+          alpha: 1
+        }
       ];
     }
 

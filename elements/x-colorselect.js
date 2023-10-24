@@ -38,14 +38,7 @@ export default class XColorSelectElement extends HTMLElement {
       box-sizing: border-box;
       position: relative;
       overflow: hidden;
-      /* Checkerboard pattern */
-      background-color: white;
-      background-size: 10px 10px;
-      background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
-      background-image: linear-gradient(45deg, #d6d6d6 25%, transparent 25%),
-                        linear-gradient(-45deg, #d6d6d6 25%, transparent 25%),
-                        linear-gradient(45deg, transparent 75%, #d6d6d6 75%),
-                        linear-gradient(-45deg, transparent 75%, #d6d6d6 75%);
+      background: var(--checkboard-background);
     }
     :host([hidden]) {
       display: none;
@@ -58,6 +51,10 @@ export default class XColorSelectElement extends HTMLElement {
     #preview {
       width: 100%;
       height: 100%;
+    }
+
+    #popover {
+      --align: left;
     }
   `
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

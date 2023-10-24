@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.24.0 (PENDING)
+## 0.24.0 (2023-10-24)
 
 - Replace `<x-barscolorpicker>`, `<x-rectcolorpicker>` and `<x-wheelcolorpicker>` with unified `<x-colorpicker>`
 - Allow colors to be specified in any valid CSS format

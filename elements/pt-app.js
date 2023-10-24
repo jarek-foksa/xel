@@ -142,7 +142,7 @@ export default class PTAppElement extends HTMLElement {
                   <x-menu id="accent-preset-menu"></x-menu>
                 </x-select>
 
-                <x-colorselect id="accent-color-select"></x-colorselect>
+                <x-colorselect id="accent-color-select" spaces="srgb"></x-colorselect>
               </x-box>
             </div>
 
