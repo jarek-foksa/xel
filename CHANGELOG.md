@@ -4,6 +4,7 @@
 ## 0.24.0 (2023-10-24)
 
 - Replace `<x-barscolorpicker>`, `<x-rectcolorpicker>` and `<x-wheelcolorpicker>` with unified `<x-colorpicker>`
+- Display P3, Rec. 2020, A98 RGB and ProPhoto wide gamut color spaces support
 - Allow colors to be specified in any valid CSS format
 
 ## 0.23.0 (2023-09-24)
