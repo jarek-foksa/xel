@@ -22,7 +22,7 @@ export default class XTagElement extends HTMLElement {
         <main id="main" part="main">
           <slot></slot>
 
-          <svg id="remove-button" part="remove-button" viewBox="0 0 100 100">
+          <svg id="remove-button" part="remove-button" width="12" height="12" viewBox="0 0 100 100">
             <path id="remove-button-path"></path>
           </svg>
         </main>

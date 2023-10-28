@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.24.1 (2023-10-28)
+
+- [Bugfix] Can't focus `<x-tagsinput>` on WebKit
+
 ## 0.24.0 (2023-10-24)
 
 - Replace `<x-barscolorpicker>`, `<x-rectcolorpicker>` and `<x-wheelcolorpicker>` with unified `<x-colorpicker>`
