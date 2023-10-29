@@ -411,6 +411,10 @@ export default class XColorInputElement extends HTMLElement {
             <x-label>${prettySerializeColor(color, "hex")}</x-label>
           </x-menuitem>
 
+          <x-menuitem value="hex-alt">
+            <x-label>${prettySerializeColor(color, "hex").toUpperCase()}</x-label>
+          </x-menuitem>
+
           <hr/>
 
           <x-menuitem value="color">

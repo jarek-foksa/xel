@@ -1255,14 +1255,14 @@ ColorSpace.register(xyzabsd65);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // @type
-//   format = "hex" ||
-//            "hsl" || "hwb" || "rgb" || "color" || "oklch" ||
-//            "hsl-alt" || "hwb-alt" || "rgb-alt" || "color-alt" || "oklch-alt"
+//   format = "hex" || "hsl" || "hwb" || "rgb" || "color" || "oklch" ||
+//            "hex-alt" || "hsl-alt" || "hwb-alt" || "rgb-alt" || "color-alt" || "oklch-alt"
 //   (format) => string
 let prettySerializeColor = (color, format = "hex", precision = 3) => {
-  // Hexadecimal, e.g."#bada5580"
-  if (format === "hex") {
-    return serializeColor(convertColor(color, "srgb"), {format: "hex"});
+  // Hexadecimal, e.g."#bada5580" or "#BADA5580"
+  if (format === "hex" || format === "hex-alt") {
+    let value = serializeColor(convertColor(color, "srgb"), {format: "hex"});
+    return (format === "hex-alt") ? value.toUpperCase() : value;
   }
 
   // HSL function, e.g. "hsl(74.4deg 64.3% 59.4% / 50%)" or "hsl(74.4 64.3% 59.4% / 0.5)"
