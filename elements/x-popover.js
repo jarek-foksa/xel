@@ -4,6 +4,8 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
+import Xel from "../classes/xel.js";
+
 import {createElement, getClosestScrollableAncestor} from "../utils/element.js";
 import {roundRect} from "../utils/math.js";
 import {parseTransistion} from "../utils/style.js";
@@ -105,11 +107,12 @@ export default class XPopoverElement extends HTMLElement {
 
   #shadowRoot = null;
   #scrollableAncestor = null;
-  #ancestorScrollListener = null;
-  #windowResizeListener = null;
   #popoverResizeObserver = new ResizeObserver(() => this.#onResize());
-
   #context = null;
+
+  #ancestorScrollListener;
+  #windowResizeListener;
+  #themeChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -189,13 +192,14 @@ export default class XPopoverElement extends HTMLElement {
         this.setAttribute("opened", "");
         this.#popoverResizeObserver.observe(this);
         window.addEventListener("resize", this.#windowResizeListener = () => this.#onResize());
+        Xel.addEventListener("themechange", this.#themeChangeListener = () => this.#updateArrowStyle());
 
         // Dispatch the "open" event before actually showing the popover as user might want to update its content
         // in the event listener.
         this.dispatchEvent(new CustomEvent("open", {bubbles: true, detail: this}));
         await nextTick();
 
-        this.#updateStyle();
+        this.#updateArrowStyle();
         this.#updatePosition(context);
 
         this.#scrollableAncestor = getClosestScrollableAncestor(this);
@@ -237,6 +241,7 @@ export default class XPopoverElement extends HTMLElement {
         this.removeAttribute("opened");
         this.#popoverResizeObserver.disconnect();
         window.removeEventListener("resize", this.#windowResizeListener);
+        Xel.removeEventListener("themechange", this.#themeChangeListener);
         this["#backdrop"].hide();
         this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
         this.#scrollableAncestor.removeEventListener("scroll", this.#ancestorScrollListener);
@@ -648,7 +653,7 @@ export default class XPopoverElement extends HTMLElement {
     }
   }
 
-  #updateStyle() {
+  #updateArrowStyle() {
     // Make the arrow look consistently with the popover
     {
       let {backgroundColor, borderColor, borderWidth} = getComputedStyle(this);
