@@ -367,11 +367,18 @@ export default class XColorInputElement extends HTMLElement {
   // @method
   // @type () => boolean
   reportValidity() {
-    if (this.required && this["#input"].value.length === 0) {
+    let value =  this["#input"].value;
+
+    if (this.required && value.length === 0) {
       this.#error = {href: "#required-field"};
     }
-    else if (isValidColorString(this["#input"].value) === false) {
-      this.#error = {href: "#invalid-color"};
+    else if (isValidColorString(value) === false) {
+      if (isValidColorString("#" + value) === false) {
+        this.#error = {href: "#invalid-color"};
+      }
+      else {
+        this.#error = null;
+      }
     }
     else {
       this.#error = null;
@@ -723,6 +730,25 @@ export default class XColorInputElement extends HTMLElement {
     return [numericArgStart, numericArgEnd];
   }
 
+  #getFormattedInputValue() {
+    let value = this["#input"].value;
+    let color;
+
+    try {
+      color = parseColor(value);
+    }
+    catch (error) {
+      color = parseColor("#" + value);
+    }
+
+    if (this.alpha === false) {
+      color.alpha = 1;
+    }
+
+    value = prettySerializeColor(convertColor(color, this.space), this.#format);
+    return value;
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onConfigChange(event) {
@@ -813,13 +839,7 @@ export default class XColorInputElement extends HTMLElement {
       this.reportValidity();
 
       if (this.#error === null) {
-        let color = parseColor(this["#input"].value);
-
-        if (this.alpha === false) {
-          color.alpha = 1;
-        }
-
-        let value = prettySerializeColor(convertColor(color, this.space), this.#format);
+        let value = this.#getFormattedInputValue();
 
         if (value !== this.#value) {
           this.#value = value;
@@ -845,13 +865,7 @@ export default class XColorInputElement extends HTMLElement {
     this.reportValidity();
 
     if (this.#error === null) {
-      let color = parseColor(this["#input"].value);
-
-      if (this.alpha === false) {
-        color.alpha = 1;
-      }
-
-      let value = prettySerializeColor(convertColor(color, this.space), this.#format);
+      let value = this.#getFormattedInputValue();
 
       if (value !== this.#value) {
         this.#value = value;

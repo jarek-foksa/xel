@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.24.2 (2023-10-29)
+
+- Make the leading "#" char optional when entering hex color values
+
 ## 0.24.1 (2023-10-28)
 
 - [Bugfix] Can't focus `<x-tagsinput>` on WebKit
