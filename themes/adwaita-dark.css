@@ -430,7 +430,7 @@ x-button > x-label {
 x-button[skin="dock"] {
   color: var(--text-color);
   background: var(--light-background-color);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border-color);
 }
 x-button[skin="dock"]:hover {
   background: rgba(255, 255, 255, 0.18);
@@ -442,22 +442,7 @@ x-button[skin="dock"][toggled] {
   color: #ffffff;
   background: var(--accent-color);
   border-color: var(--light-accent-color);
-}
-
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
-  border-right: none;
-}
-x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button {
-  border-left-color: var(--light-accent-color);
-}
-
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
-  border-bottom: none;
-}
-x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button {
-  border-top-color: var(--light-accent-color);
+  z-index: 1;
 }
 
 /*****************************************************************************************************************/

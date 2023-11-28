@@ -564,6 +564,16 @@ x-buttons[vertical] > x-button[skin="dock"][size="large"] {
   min-height: 45px;
 }
 
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button[skin="dock"] + x-button[skin="dock"] {
+  margin-left: -1px;
+}
+
+/* Vertical siblings */
+x-buttons[vertical] > x-button[skin="dock"] + x-button[skin="dock"] {
+  margin-top: -1px;
+}
+
 /*****************************************************************************************************************/
 
 /**

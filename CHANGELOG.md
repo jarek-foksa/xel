@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.24.3 (2023-11-28)
+
+- Simplify dock button stylings
+
 ## 0.24.2 (2023-10-29)
 
 - Option to show color values using uppercase hexadecimal notation

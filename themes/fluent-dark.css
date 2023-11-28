@@ -371,7 +371,7 @@ x-button[skin="dock"] {
   border: 1px solid var(--border-color);
 }
 x-button[skin="dock"]:hover {
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)),
                     linear-gradient(to right, black, black);
   border-color: var(--light-border-color);
 }
@@ -380,12 +380,14 @@ x-button[skin="dock"][expanded] {
   background-image: linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
                     linear-gradient(to right, black, black);
   border-color: var(--light-border-color);
+  z-index: 1;
 }
 
 x-button[skin="dock"][toggled] {
   color: white;
   background: var(--accent-color);
   border-color: var(--light-accent-color);
+  z-index: 1;
 }
 x-button[skin="dock"][toggled][pressed],
 x-button[skin="dock"][toggled][expanded] {
@@ -396,42 +398,8 @@ x-button[skin="dock"]:focus {
   outline-offset: -2px;
 }
 
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="dock"]:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button[skin="dock"] {
-  border-left-color: var(--light-accent-color);
-}
-x-buttons:not([vertical]) > x-button[skin="dock"]                         + x-button[skin="dock"]:not([toggled]):hover,
-x-buttons:not([vertical]) > x-button[skin="dock"]:not([toggled]):hover    + x-button[skin="dock"],
-x-buttons:not([vertical]) > x-button[skin="dock"]:not([toggled])[pressed] + x-button[skin="dock"]:not([toggled]) {
-  border-left-color: var(--light-border-color);
-}
-
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="dock"]:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
-  border-bottom: none;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button[skin="dock"] {
-  border-top-color: var(--light-accent-color);
-}
-x-buttons[vertical] > x-button[skin="dock"]                         + x-button[skin="dock"]:not([toggled]):hover,
-x-buttons[vertical] > x-button[skin="dock"]:not([toggled]):hover    + x-button[skin="dock"],
-x-buttons[vertical] > x-button[skin="dock"]:not([toggled])[pressed] + x-button[skin="dock"]:not([toggled]) {
-  border-top-color: var(--light-border-color);
+x-button[skin="dock"]:hover {
+  z-index: 2;
 }
 
 /*****************************************************************************************************************/

@@ -385,29 +385,13 @@ x-button[skin="dock"][toggled] {
   color: white;
   background: var(--accent-color);
   border-color: var(--light-accent-color);
+  z-index: 1;
 }
 x-button[skin="dock"][pressed] {
   color: white;
   background: var(--dark-accent-color);
   border-color: var(--light-accent-color);
-}
-
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
-  border-right: none;
-}
-x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button[skin="dock"],
-x-buttons:not([vertical]) > x-button[skin="dock"][pressed] + x-button[skin="dock"] {
-  border-left-color: var(--light-accent-color);
-}
-
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
-  border-bottom: none;
-}
-x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button[skin="dock"],
-x-buttons[vertical] > x-button[skin="dock"][pressed] + x-button[skin="dock"] {
-  border-top-color: var(--light-accent-color);
+  z-index: 2;
 }
 
 /*****************************************************************************************************************/

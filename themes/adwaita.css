@@ -444,22 +444,7 @@ x-button[skin="dock"][toggled] {
   color: var(--light-background-color);
   background: var(--accent-color);
   border-color: var(--darkest-accent-color);
-}
-
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="dock"]:not(:last-of-type) {
-  border-right: none;
-}
-x-buttons:not([vertical]) > x-button[skin="dock"][toggled] + x-button {
-  border-left-color: var(--darkest-accent-color);
-}
-
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="dock"]:not(:last-of-type) {
-  border-bottom: none;
-}
-x-buttons[vertical] > x-button[skin="dock"][toggled] + x-button {
-  border-top-color: var(--darkest-accent-color);
+  z-index: 1;
 }
 
 /*****************************************************************************************************************/
