@@ -865,7 +865,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     super();
 
     this.#shadowRoot = this.attachShadow({mode: "closed"});
-    this.#shadowRoot.append(document.importNode(this.constructor.#shadowTemplate.content, true));
+    this.#shadowRoot.append(document.importNode(XRGBPlanarSlidersElement.#shadowTemplate.content, true));
     this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XRGBPlanarSlidersElement.#shadowStyleSheet];
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
@@ -1494,7 +1494,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     super();
 
     this.#shadowRoot = this.attachShadow({mode: "closed"});
-    this.#shadowRoot.append(document.importNode(this.constructor.#shadowTemplate.content, true));
+    this.#shadowRoot.append(document.importNode(XRGBPolarSlidersElement.#shadowTemplate.content, true));
     this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XRGBPolarSlidersElement.#shadowStyleSheet];
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
@@ -2103,7 +2103,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
     super();
 
     this.#shadowRoot = this.attachShadow({mode: "closed"});
-    this.#shadowRoot.append(document.importNode(this.constructor.#shadowTemplate.content, true));
+    this.#shadowRoot.append(document.importNode(XRGBLinearSlidersElement.#shadowTemplate.content, true));
     this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XRGBLinearSlidersElement.#shadowStyleSheet];
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
