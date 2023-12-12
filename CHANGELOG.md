@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.24.4 (2023-12-12)
+
+- [Bugfix] `<x-input type="search">` is not dispatching `change` event on latest versions of WebKit-based browsers
+
 ## 0.24.3 (2023-11-28)
 
 - Simplify dock button stylings

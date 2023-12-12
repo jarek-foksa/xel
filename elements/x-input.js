@@ -276,6 +276,7 @@ export default class XInputElement extends HTMLElement {
 
   #shadowRoot = null;
   #lastTabIndex = 0;
+  #lastInputChangeTimeStamp = 0;
   #error = null;
   #customError = null;
 
@@ -299,8 +300,8 @@ export default class XInputElement extends HTMLElement {
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
     this.addEventListener("keydown",  (event) => this.#onKeyDown(event));
 
-    this["#input"].addEventListener("change", (event) => this.#onInputChange(event));
     this["#input"].addEventListener("input",  (event) => this.#onInputInput(event));
+    this["#input"].addEventListener("change", (event) => this.#onInputChange(event));
     this["#input"].addEventListener("search", (event) => this.#onInputSearch(event));
   }
 
@@ -599,14 +600,15 @@ export default class XInputElement extends HTMLElement {
     this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
   }
 
-  #onInputChange() {
-    if (this.type !== "search") {
-      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-    }
+  #onInputChange(event) {
+    this.#lastInputChangeTimeStamp = event.timeStamp;
+    this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
   }
 
-  #onInputSearch() {
-    this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+  #onInputSearch(event) {
+    if (event.timeStamp - this.#lastInputChangeTimeStamp > 100) {
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+    }
   }
 }
 
