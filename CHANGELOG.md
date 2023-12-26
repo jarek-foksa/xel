@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.24.5 (2023-12-26)
+
+- [Bugfix] `<x-buttons>` element does not handle correctly child `<a>` elements
+
 ## 0.24.4 (2023-12-12)
 
 - [Bugfix] `<x-input type="search">` is not dispatching `change` event on latest versions of WebKit-based browsers

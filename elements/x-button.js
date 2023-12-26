@@ -213,7 +213,7 @@ export default class XButtonElement extends HTMLElement {
       if (this.parentElement.localName === "x-buttons") {
         return this.parentElement;
       }
-      else if (this.parentElement.localName === "x-box" && this.parentElement.parentElement) {
+      else if (["a", "x-box"].includes(this.parentElement.localName) && this.parentElement.parentElement) {
         if (this.parentElement.parentElement.localName === "x-buttons") {
           return this.parentElement.parentElement;
         }
