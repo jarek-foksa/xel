@@ -36,6 +36,10 @@ export default class XAccordionElement extends HTMLElement {
       margin: 8px 0;
       box-sizing: border-box;
     }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
     :host([animating]) {
       overflow: hidden;
     }
@@ -95,6 +99,19 @@ export default class XAccordionElement extends HTMLElement {
   }
   set expanded(expanded) {
     expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
+  }
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether the accordion is disabled.
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
   // @property

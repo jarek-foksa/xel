@@ -3,7 +3,8 @@
 
 ## 0.25.0 (2023-12-31)
 
-- Option to expand/collapse `<x-accordion>` without animations
+- Add option to expand/collapse `<x-accordion>` without animations
+- Add `disabled` property to `<x-accordion>`
 
 ## 0.24.5 (2023-12-26)
 
