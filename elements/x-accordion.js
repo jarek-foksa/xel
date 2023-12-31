@@ -74,7 +74,7 @@ export default class XAccordionElement extends HTMLElement {
       background: transparent;
       outline: none;
     }
-    :host([expanded]) #arrow{
+    :host([expanded]) #arrow {
       transform: rotate(90deg);
     }
 
@@ -163,7 +163,7 @@ export default class XAccordionElement extends HTMLElement {
   // @type () => Promise
   //
   // Expand the accordion. Returns a promise which will be resolved when the accordion finishes animating.
-  expand() {
+  expand(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === false) {
         let startBBox = this.getBoundingClientRect();
@@ -172,26 +172,35 @@ export default class XAccordionElement extends HTMLElement {
           this.#currentAnimation.finish();
         }
 
-        this.expanded = true;
         this.removeAttribute("animating");
-        let endBBox = this.getBoundingClientRect();
-        this.setAttribute("animating", "");
 
-        let animation = this.animate(
-          {
-            height: [startBBox.height + "px", endBBox.height + "px"],
-          },
-          {
-            duration: 300,
-            easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+        if (animate) {
+          this.expanded = true;
+
+          let endBBox = this.getBoundingClientRect();
+          this.setAttribute("animating", "");
+
+          let animation = this.animate(
+            {
+              height: [startBBox.height + "px", endBBox.height + "px"],
+            },
+            {
+              duration: 300,
+              easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+            }
+          );
+
+          this.#currentAnimation = animation;
+          await animation.finished;
+
+          if (this.#currentAnimation === animation) {
+            this.removeAttribute("animating");
           }
-        );
-
-        this.#currentAnimation = animation;
-        await animation.finished;
-
-        if (this.#currentAnimation === animation) {
-          this.removeAttribute("animating");
+        }
+        else {
+          this["#arrow"].style.transition = "none";
+          this.expanded = true;
+          this["#arrow"].style.transition = null;
         }
       }
 
@@ -203,7 +212,7 @@ export default class XAccordionElement extends HTMLElement {
   // @type () => Promise
   //
   // Collapse the accordion. Returns a promise which will be resolved when the accordion finishes animating.
-  collapse() {
+  collapse(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === true) {
         let startBBox = this.getBoundingClientRect();
@@ -212,26 +221,35 @@ export default class XAccordionElement extends HTMLElement {
           this.#currentAnimation.finish();
         }
 
-        this.expanded = false;
         this.removeAttribute("animating");
-        let endBBox = this.getBoundingClientRect();
-        this.setAttribute("animating", "");
 
-        let animation = this.animate(
-          {
-            height: [startBBox.height + "px", endBBox.height + "px"],
-          },
-          {
-            duration: 300,
-            easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+        if (animate) {
+          this.expanded = false;
+
+          let endBBox = this.getBoundingClientRect();
+          this.setAttribute("animating", "");
+
+          let animation = this.animate(
+            {
+              height: [startBBox.height + "px", endBBox.height + "px"],
+            },
+            {
+              duration: 300,
+              easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+            }
+          );
+
+          this.#currentAnimation = animation;
+          await animation.finished;
+
+          if (this.#currentAnimation === animation) {
+            this.removeAttribute("animating");
           }
-        );
-
-        this.#currentAnimation = animation;
-        await animation.finished;
-
-        if (this.#currentAnimation === animation) {
-          this.removeAttribute("animating");
+        }
+        else {
+          this["#arrow"].style.transition = "none";
+          this.expanded = false;
+          this["#arrow"].style.transition = null;
         }
       }
 

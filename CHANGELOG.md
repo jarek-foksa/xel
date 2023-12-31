@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.0 (2023-12-31)
+
+- Option to expand/collapse `<x-accordion>` without animations
+
 ## 0.24.5 (2023-12-26)
 
 - [Bugfix] `<x-buttons>` element does not handle correctly child `<a>` elements
