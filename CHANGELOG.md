@@ -4,6 +4,7 @@
 ## 0.25.1 (2024-01-08)
 
 - [Bugfix] `<x-tabs>` are flickering when clicked
+- [Bugfix] Can't disable `<x-tab>`
 
 ## 0.25.0 (2023-12-31)
 

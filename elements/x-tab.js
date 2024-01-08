@@ -45,6 +45,13 @@ export default class XTabElement extends HTMLElement {
       z-index: 10;
       outline: none;
     }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    :host([hidden]) {
+      display: none;
+    }
 
     #content {
       display: inherit;
