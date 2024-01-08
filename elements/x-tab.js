@@ -153,7 +153,7 @@ export default class XTabElement extends HTMLElement {
 
   animateSelectionIndicator(toTab) {
     return new Promise(async (resolve) => {
-      if (this["#selection-indicator"].style.height !== "0px") {
+      if (getComputedStyle(this["#selection-indicator"]).height !== "0px") {
         let fromBBox = this.getBoundingClientRect();
         let toBBox = toTab.getBoundingClientRect();
 

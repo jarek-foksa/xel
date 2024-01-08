@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.1 (2024-01-08)
+
+- [Bugfix] `<x-tabs>` are flickering when clicked
+
 ## 0.25.0 (2023-12-31)
 
 - Add option to expand/collapse `<x-accordion>` without animations
