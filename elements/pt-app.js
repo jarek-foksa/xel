@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2023 Jarosław Foksa
+//   © 2016-2024 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -474,7 +474,7 @@ export default class PTAppElement extends HTMLElement {
             <a id="terms-anchor" href="/terms">Terms</a>
           </section>
 
-          <p id="copyright">© 2016-2023 Jarosław Foksa</p>
+          <p id="copyright">© 2016-2024 Jarosław Foksa</p>
         </footer>
       </sidebar>
 
