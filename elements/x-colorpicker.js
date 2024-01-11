@@ -381,15 +381,9 @@ class XColorPickerElement extends HTMLElement {
         {format: "hex"}
       );
     }
-    else if (["p3", "rec2020", "prophoto", "a98rgb"].includes(this["#space-select"].value)) {
+    else if (["p3", "rec2020", "prophoto", "a98rgb", "oklch"].includes(this["#space-select"].value)) {
       this.value =  serializeColor(
         convertColor(color, this["#space-select"].value, {inGamut: true}),
-        {precision: COLOR_PRECISION}
-      );
-    }
-    else if (this["#space-select"].value === "oklch") {
-      this.value =  serializeColor(
-        convertColor(color, "oklch", {inGamut: true}),
         {precision: COLOR_PRECISION}
       );
     }
@@ -453,9 +447,20 @@ class XColorPickerElement extends HTMLElement {
   #onInputChange(event) {
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
-    this.value = serializeColor(
-      convertColor(parseColor(this["#input"].value), this["#space-select"].value, {inGamut: true})
-    );
+    let color = parseColor(this["#input"].value);
+
+    if (this["#space-select"].value === "srgb") {
+      this.value = serializeColor(
+        convertColor(color, "srgb", {inGamut: true}),
+        {format: "hex"}
+      );
+    }
+    else if (["p3", "rec2020", "prophoto", "a98rgb", "oklch"].includes(this["#space-select"].value)) {
+      this.value = serializeColor(
+        convertColor(color, this["#space-select"].value, {inGamut: true}),
+        {precision: COLOR_PRECISION}
+      );
+    }
 
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
     this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
@@ -472,15 +477,21 @@ class XColorPickerElement extends HTMLElement {
 
   #onGrabButtonToggle() {
     return new Promise(async (resolve) => {
-      let color = await this.grab();
+      let hexColor = await this.grab();
       this["#grab-button"].toggled = false;
 
-      if (color !== null) {
+      if (hexColor !== null) {
         this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
-        this.value = serializeColor(
-          convertColor(parseColor(color), this["#space-select"].value, {inGamut: true})
-        );
+        if (this["#space-select"].value === "srgb") {
+          this.value = hexColor;
+        }
+        else if (["p3", "rec2020", "prophoto", "a98rgb", "oklch"].includes(this["#space-select"].value)) {
+          this.value = serializeColor(
+            convertColor(parseColor(hexColor), this["#space-select"].value, {inGamut: true}),
+            {precision: COLOR_PRECISION}
+          );
+        }
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
         this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));

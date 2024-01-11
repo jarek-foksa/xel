@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.2 (2024-01-11)
+
+- [Bugfix] Color input widget uses inconsistent value format in sRGB space
+
 ## 0.25.1 (2024-01-08)
 
 - [Bugfix] `<x-tabs>` are flickering when clicked
