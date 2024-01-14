@@ -1,9 +1,9 @@
 
 # CHANGELOG
 
-## 0.25.2 (2024-01-11)
+## 0.25.3 (2024-01-14)
 
-- [Bugfix] 
+- [Bugfix] Wrong cursor image when hovering a tag inside an anchor
 
 ## 0.25.2 (2024-01-11)
 
