@@ -461,7 +461,7 @@ x-button[skin="recessed"] > x-label {
 
 x-button[skin="nav"] {
   color: var(--text-color);
-  cursor: default;
+  border-radius: 7px;
 }
 x-button[skin="nav"][toggled] {
   background: rgba(255, 255, 255, 0.14);

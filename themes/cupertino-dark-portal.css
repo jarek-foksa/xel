@@ -103,9 +103,7 @@ pt-code {
 }
 
 #nav x-button[skin="nav"] {
-  width: calc(100% + 50px);
-  margin-left: -30px;
-  padding: 8px 30px;
+  width: 100%;
 }
 
 #nav x-icon[href="#open"] {
