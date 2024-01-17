@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.4 (2024-01-17)
+
+- [Bugfix] Button tooltips have incorrect font weight
+
 ## 0.25.3 (2024-01-14)
 
 - [Bugfix] Wrong cursor image when hovering a tag inside an anchor

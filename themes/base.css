@@ -509,7 +509,7 @@ x-button[skin="nav"] {
 }
 
 /* Icon */
-x-button[skin="nav"] x-icon {
+x-button[skin="nav"] > x-icon {
   width: 20px;
   height: 20px;
   margin-right: 10px;
@@ -526,7 +526,7 @@ x-button[skin="nav"][size="large"] > x-icon {
 }
 
 /* Label */
-x-button[skin="nav"] x-label {
+x-button[skin="nav"] > x-label {
   flex: 1;
   overflow: hidden;
   white-space: nowrap;

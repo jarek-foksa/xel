@@ -526,7 +526,7 @@ x-button[skin="nav"][pressed] {
 }
 
 /* Label */
-x-button[skin="nav"] x-label {
+x-button[skin="nav"] > x-label {
   font-weight: 600;
 }
 
