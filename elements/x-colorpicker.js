@@ -360,10 +360,12 @@ class XColorPickerElement extends HTMLElement {
     let {key, value, origin} = event.detail;
 
     if (key === `${this.localName}:type` ) {
+      let type = (value || "planar");
+
       // If element is not current visible on the screen
       if (this.offsetParent === null) {
-        if (this["#type-buttons"].value !== value) {
-          this["#type-buttons"].value = value;
+        if (this["#type-buttons"].value !== type) {
+          this["#type-buttons"].value = type;
           this.#update();
         }
       }
@@ -905,7 +907,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     let {key, value, origin} = event.detail;
 
     if (key === `${this.localName}:model`) {
-      let model = value;
+      let model = (value || "hsv");
 
       if (model !== this.#model && origin === "self") {
         let [r, g, b] = this.value;
@@ -1534,7 +1536,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     let {key, value, origin} = event.detail;
 
     if (key === `${this.localName}:model`) {
-      let model = value;
+      let model = (value || "hsv");
 
       if (model !== this.#model && origin === "self") {
         let [r, g, b] = this.value;
@@ -2146,7 +2148,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
     if (origin === "self") {
       if (key === `${this.localName}:wideGamutModel`) {
-        let wideGamutModel = value;
+        let wideGamutModel = (value || "hsv");
 
         if (wideGamutModel !== this.#wideGamutModel) {
           let [r, g, b] = this.value;
@@ -2155,7 +2157,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
         }
       }
       else if (key === `${this.localName}:srgbModel`) {
-        let srgbModel = value;
+        let srgbModel = (value || "hsv");
 
         if (srgbModel !== this.#srgbModel) {
           let [r, g, b] = this.value;

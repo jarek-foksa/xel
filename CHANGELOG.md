@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.5 (2024-02-20)
+
+- [Bugfix] Color picker throws errors when clearing localStorage
+
 ## 0.25.4 (2024-01-17)
 
 - [Bugfix] Button tooltips have incorrect font weight

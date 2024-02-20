@@ -759,7 +759,7 @@ export default class XColorInputElement extends HTMLElement {
     let {key, value, origin} = event.detail;
 
     if (key === `x-colorinput:${this.space}Format`) {
-      this.#format = value;
+      this.#format = (value || (this.space === "srgb" ? "hex" : "color"));
       this.#value = prettySerializeColor(convertColor(parseColor(this["#input"].value), this.space), this.#format);
       this.#updateInput();
     }
