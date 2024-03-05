@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.6 (2024-03-05)
+
+- [Bugfix] Error thrown when unfocusing text inputs on WebKit
+
 ## 0.25.5 (2024-02-20)
 
 - [Bugfix] Color picker throws errors when clearing localStorage
