@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.7 (2024-03-09)
+
+- [Bugfix] Can't close modal popovers on WebKit
+
 ## 0.25.6 (2024-03-05)
 
 - [Bugfix] Error thrown when unfocusing text inputs on WebKit

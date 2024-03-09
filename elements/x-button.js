@@ -7,6 +7,7 @@
 import Xel from "../classes/xel.js";
 
 import {createElement, closest, isPointerInsideElement} from "../utils/element.js";
+import {getBrowserEngine} from "../utils/system.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
@@ -354,13 +355,15 @@ export default class XButtonElement extends HTMLElement {
         menu.setAttribute("closing", "");
 
         await delay;
-        await menu.close();
+        menu.close();
 
         this["#backdrop"].hide(false);
         this.removeAttribute("expanded");
 
         // @bugfix: Button gets stuck with :hover state after user clicks the backdrop.
-        this.replaceWith(this);
+        if (getBrowserEngine() === "chromium") {
+          this.replaceWith(this);
+        }
 
         if (this.#wasFocusedBeforeExpanding) {
           this.focus();
@@ -443,8 +446,8 @@ export default class XButtonElement extends HTMLElement {
 
         this.removeAttribute("expanded");
 
-        // @bugfix: Button gets stuck with :hover state after user clicks the backdrop of a modal popover.
-        if (popover.modal) {
+        // @bugfix: Button gets stuck with :hover state after user clicks the backdrop.
+        if (popover.modal && getBrowserEngine() === "chromium") {
           this.replaceWith(this);
         }
 
