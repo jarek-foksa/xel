@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.8 (2024-03-16)
+
+- [Bugfix] Don't show text selection inside blurred <x-numberinput>
+
 ## 0.25.7 (2024-03-09)
 
 - [Bugfix] Can't close modal popovers on WebKit

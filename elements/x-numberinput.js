@@ -541,8 +541,7 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onFocusOut() {
-    // Safari 16.4 does not support ShadowRoot.prototype.getSelection
-    if (this.#shadowRoot.getSelection?.collapse) {
+    if (getBrowserEngine() !== "webkit") {
       this.#shadowRoot.getSelection().collapse(this["#main"]);
     }
 
