@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.9 (2024-03-25)
+
+- [Bugfix] Can't pass full URLs as `<x-message>` arguments
+
 ## 0.25.8 (2024-03-16)
 
 - [Bugfix] Don't show text selection inside blurred <x-numberinput>

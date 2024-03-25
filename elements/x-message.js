@@ -36,7 +36,9 @@ export default class XMessageElement extends HTMLElement {
 
     if (serializedArgs !== "") {
       for (let serializedArg of serializedArgs.split(",")) {
-        let [key, value] = serializedArg.split(":");
+        let [key, ...values] = serializedArg.split(":");
+        let value = values.join(":");
+
         key = key.trim();
         value = value.trim();
 
