@@ -458,8 +458,15 @@ export default new class Xel extends EventEmitter {
       }
 
       let ids = urls.map((url) => {
-        let fileName = url.substring(url.lastIndexOf("/") + 1);
-        return fileName.substring(0, fileName.indexOf("."));
+        if (url.startsWith("blob:")) {
+          let lang = url.substring(url.lastIndexOf("#") + 1);
+          return lang;
+        }
+        else {
+          let fileName = url.substring(url.lastIndexOf("/") + 1);
+          let lang = fileName.substring(0, fileName.indexOf("."));
+          return lang;
+        }
       });
 
       if (ids.length === 0) {

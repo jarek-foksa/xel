@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.10 (2024-03-27)
+
+- [Bugfix] Language parameter in blob URLs is ignored
+
 ## 0.25.9 (2024-03-25)
 
 - [Bugfix] Can't pass full URLs as `<x-message>` arguments
