@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.25.11 (2024-04-01)
+
+- [Bugfix] "toggle" event on `<x-radios>` is not documented
+
 ## 0.25.10 (2024-03-27)
 
 - [Bugfix] Language parameter in blob URLs is ignored
