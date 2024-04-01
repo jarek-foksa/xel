@@ -5,6 +5,7 @@
 //   MIT License (check LICENSE.md for details)
 
 // @element x-radios
+// @event ^toggle - User toggled a radio.
 export default class XRadiosElement extends HTMLElement {
   // @property
   // @attribute

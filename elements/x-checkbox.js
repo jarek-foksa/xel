@@ -11,7 +11,7 @@ import {html, css} from "../utils/template.js";
 
 // @element x-checkbox
 // @part indicator
-// @event toggle
+// @event ^toggle - User toggled on or off the checkbox.
 export default class XCheckboxElement extends HTMLElement {
   static observedAttributes = ["toggled", "mixed", "disabled"];
 
