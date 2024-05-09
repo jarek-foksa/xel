@@ -107,8 +107,17 @@ export default class XMessageElement extends HTMLElement {
   #localesChangeListener = null;
   #themeChangeListener = null;
   #whenReadyCallbacks = [];
+  #defaultContent = "";
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    if (this.textContent.length > 0) {
+      this.#defaultContent = this.textContent;
+    }
+  }
 
   connectedCallback() {
     this.#update();
@@ -152,15 +161,20 @@ export default class XMessageElement extends HTMLElement {
 
     let message = Xel.queryMessage(this.href, this.args);
 
-    if (message.format === "html") {
-      this.innerHTML = message.content + (this.ellipsis ? "…" : "");
+    if (message.fallback && this.#defaultContent) {
+      this.textContent = this.#defaultContent;
     }
     else {
-      if (this.autocapitalize === true && Xel.autocapitalize === "titlecase") {
-        this.textContent = toTitleCase(message.content) + (this.ellipsis ? "…" : "");
+      if (message.format === "html") {
+        this.innerHTML = message.content + (this.ellipsis ? "…" : "");
       }
       else {
-        this.textContent = message.content + (this.ellipsis ? "…" : "");
+        if (this.autocapitalize === true && Xel.autocapitalize === "titlecase") {
+          this.textContent = toTitleCase(message.content) + (this.ellipsis ? "…" : "");
+        }
+        else {
+          this.textContent = message.content + (this.ellipsis ? "…" : "");
+        }
       }
     }
 

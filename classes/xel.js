@@ -201,6 +201,7 @@ export default new class Xel extends EventEmitter {
     let [id, attribute] = selector.split(".");
     let message = this.#localesBundle.getMessage(id);
     let content = null;
+    let fallback = false;
     let format = "text";
 
     if (args.os === undefined) {
@@ -227,6 +228,7 @@ export default new class Xel extends EventEmitter {
     // Show fallback text if the message was not found
     if (content === null) {
       content = (attribute === null) ? id : `${id}.${attribute}`;
+      fallback = true;
     }
     // Sanitize the message if it contains markup
     else if (/<|&#?\w+;/.test(content)) {
@@ -234,7 +236,7 @@ export default new class Xel extends EventEmitter {
       content = DOMPurify.sanitize(content, {USE_PROFILES: {html: true}});
     }
 
-    return {id, attribute, format, content};
+    return {id, attribute, format, content, fallback};
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,7 @@
 import ColorSpace from "../node_modules/colorjs.io/src/space.js";
 
 import convertColor from "../node_modules/colorjs.io/src/to.js";
+import inGamut from "../node_modules/colorjs.io/src/inGamut.js";
 import parseColor from "../node_modules/colorjs.io/src/parse.js";
 import serializeColor from "../node_modules/colorjs.io/src/serialize.js";
 import {normalize, toPrecision} from "../utils/math.js";
@@ -1255,8 +1256,8 @@ ColorSpace.register(xyzabsd65);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // @type
-//   format = "hex" || "hsl" || "hwb" || "rgb" || "color" || "oklch" ||
-//            "hex-alt" || "hsl-alt" || "hwb-alt" || "rgb-alt" || "color-alt" || "oklch-alt"
+//   format = "hex" || "hsl" || "hwb" || "rgb" || "color" || "oklch" || "oklab" || "lch" || "lab" || "hex-alt" ||
+//            "hsl-alt" || "hwb-alt" || "rgb-alt" || "color-alt" || "oklch-alt" || "oklab-alt" || "lch-alt" || "lab-alt"
 //   (format) => string
 let prettySerializeColor = (color, format = "hex", precision = 3) => {
   // Hexadecimal, e.g."#bada5580" or "#BADA5580"
@@ -1392,6 +1393,10 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
         z = toPrecision(z * 100, precision);
         a = toPrecision(a * 100, precision);
 
+        if (space === "xyz") {
+          space = "xyz-d65";
+        }
+
         return (a === 100) ? `color(${space} ${x}% ${y}% ${z}%)` : `color(${space} ${x}% ${y}% ${z}% / ${a}%)`;
       }
       else if (format === "color-alt") {
@@ -1399,6 +1404,10 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
         y = toPrecision(y, precision);
         z = toPrecision(z, precision);
         a = toPrecision(a, precision);
+
+        if (space === "xyz-d65") {
+          space = "xyz";
+        }
 
         return (a === 1) ? `color(${space} ${x} ${y} ${z})` : `color(${space} ${x} ${y} ${z} / ${a})`;
       }
@@ -1408,18 +1417,18 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     }
   }
 
-  // okLCH function, e.g. "oklch(84% 0.16 121.47deg / 50%)" or "oklch(0.84 0.16 121.47 / 0.5)"
+  // OKLCH function, e.g. "oklch(84% 40% 121deg / 50%)" or "oklch(0.84 0.16 121 / 0.5)"
   else if (format === "oklch" || format === "oklch-alt") {
-    let [l, c, h] = convertColor(color, "srgb").coords;
+    let [l, c, h] = convertColor(color, "oklch").coords;
     let a = color.alpha;
 
     if (format === "oklch") {
       l = toPrecision(l * 100, precision);
-      c = toPrecision(c, precision);
+      c = toPrecision((c / 0.4) * 100, precision);
       h = toPrecision(h, precision);
       a = toPrecision(a * 100, precision);
 
-      return (a === 100) ? `oklch(${l}% ${c} ${h}deg)` : `oklch(${l}% ${c} ${h}deg / ${a}%)`;
+      return (a === 100) ? `oklch(${l}% ${c}% ${h}deg)` : `oklch(${l}% ${c}% ${h}deg / ${a}%)`;
     }
     else if (format === "oklch-alt") {
       l = toPrecision(l, precision);
@@ -1428,6 +1437,75 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
       a = toPrecision(a, precision);
 
       return (a === 1) ? `oklch(${l} ${c} ${h})` : `oklch(${l} ${c} ${h} / ${a})`;
+    }
+  }
+
+  // OKLab function, e.g. "oklab(84% -25% 35% / 50%)" or "oklab(0.84 -0.1 0.14 / 0.5)"
+  else if (format === "oklab" || format === "oklab-alt") {
+    let [l, a, b] = convertColor(color, "oklab").coords;
+    let alpha = color.alpha;
+
+    if (format === "oklab") {
+      l = toPrecision(l * 100, precision);
+      a = toPrecision((a / 0.4) * 100, precision);
+      b = toPrecision((b / 0.4) * 100, precision);
+      alpha = toPrecision(alpha * 100, precision);
+
+      return (alpha === 100) ? `oklab(${l}% ${a}% ${b}%)` : `oklab(${l}% ${a}% ${b}% / ${alpha}%)`;
+    }
+    else if (format === "oklab-alt") {
+      l = toPrecision(l, precision);
+      a = toPrecision(a, precision);
+      b = toPrecision(b, precision);
+      alpha = toPrecision(alpha, precision);
+
+      return (alpha === 1) ? `oklab(${l} ${a} ${b})` : `oklab(${l} ${a} ${b} / ${alpha})`;
+    }
+  }
+
+  // LCH function, e.g. "lch(82.8% 43.1% 113deg / 50%)" or "lch(82.8 64.7 113 / 0.5)"
+  else if (format === "lch" || format === "lch-alt") {
+    let [l, c, h] = convertColor(color, "lch").coords;
+    let a = color.alpha;
+
+    if (format === "lch") {
+      l = toPrecision(l, precision);
+      c = toPrecision((c / 150) * 100, precision);
+      h = toPrecision(h, precision);
+      a = toPrecision(a * 100, precision);
+
+      return (a === 100) ? `lch(${l}% ${c}% ${h}deg)` : `lch(${l}% ${c}% ${h}deg / ${a}%)`;
+    }
+    else if (format === "lch-alt") {
+      l = toPrecision(l, precision);
+      c = toPrecision(c, precision);
+      h = toPrecision(h, precision);
+      a = toPrecision(a, precision);
+
+      return (a === 1) ? `lch(${l} ${c} ${h})` : `lch(${l} ${c} ${h} / ${a})`;
+    }
+  }
+
+  // Lab function, e.g. "lab(84% -25% 35% / 50%)" or "lab(0.84 -0.1 0.14 / 0.5)"
+  else if (format === "lab" || format === "lab-alt") {
+    let [l, a, b] = convertColor(color, "lab").coords;
+    let alpha = color.alpha;
+
+    if (format === "lab") {
+      l = toPrecision(l, precision);
+      a = toPrecision((a / 125) * 100, precision);
+      b = toPrecision((b / 125) * 100, precision);
+      alpha = toPrecision(alpha * 100, precision);
+
+      return (alpha === 100) ? `lab(${l}% ${a}% ${b}%)` : `lab(${l}% ${a}% ${b}% / ${alpha}%)`;
+    }
+    else if (format === "lab-alt") {
+      l = toPrecision(l, precision);
+      a = toPrecision(a, precision);
+      b = toPrecision(b, precision);
+      alpha = toPrecision(alpha, precision);
+
+      return (alpha === 1) ? `lab(${l} ${a} ${b})` : `lab(${l} ${a} ${b} / ${alpha})`;
     }
   }
 
@@ -1452,4 +1530,4 @@ let isValidColorString = (string) => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export {parseColor, convertColor, serializeColor, prettySerializeColor, isValidColorString};
+export {parseColor, convertColor, serializeColor, prettySerializeColor, isValidColorString, inGamut};

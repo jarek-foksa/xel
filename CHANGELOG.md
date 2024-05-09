@@ -1,6 +1,12 @@
 
 # CHANGELOG
 
+## 0.26.0 (PENDING)
+
+- Add "sRGB Linear", "CIE LCH", "OK LCH", "CIE LAB", "OK LAB", "CIE XYZ D65" and "CIE XYZ D50" color spaces to the
+  color picker
+- Add "Out of gamut" indicator in the color space select widget
+
 ## 0.25.11 (2024-04-01)
 
 - [Bugfix] "toggle" event on `<x-radios>` is not documented
