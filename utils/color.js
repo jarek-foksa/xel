@@ -7,7 +7,8 @@
 import ColorSpace from "../node_modules/colorjs.io/src/space.js";
 
 import convertColor from "../node_modules/colorjs.io/src/to.js";
-import inGamut from "../node_modules/colorjs.io/src/inGamut.js";
+import isColorInGamut from "../node_modules/colorjs.io/src/inGamut.js";
+import convertColorToGamut from "../node_modules/colorjs.io/src/toGamut.js";
 import parseColor from "../node_modules/colorjs.io/src/parse.js";
 import serializeColor from "../node_modules/colorjs.io/src/serialize.js";
 import {normalize, toPrecision} from "../utils/math.js";
@@ -1530,4 +1531,12 @@ let isValidColorString = (string) => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export {parseColor, convertColor, serializeColor, prettySerializeColor, isValidColorString, inGamut};
+export {
+  parseColor,
+  convertColor,
+  convertColorToGamut,
+  serializeColor,
+  prettySerializeColor,
+  isColorInGamut,
+  isValidColorString
+};
