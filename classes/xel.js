@@ -4,7 +4,7 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import DOMPurify from "../node_modules/dompurify/dist/purify.es.js";
+import DOMPurify from "../node_modules/dompurify/dist/purify.es.mjs";
 import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";

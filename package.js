@@ -2,7 +2,7 @@
 
 import ChildProcess from "child_process";
 import Fse from "fs-extra";
-import Glob from "glob";
+import {glob as Glob} from "glob";
 import OS from "os";
 import Path from "path";
 import Semver from "semver";
