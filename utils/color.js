@@ -335,6 +335,110 @@ let normalizeColorSpaceName = (space, format = "css") => {
   return space;
 };
 
+// @src http://goo.gl/J9ra3
+// @type (number, number, number) => [number, number, number]
+//
+// Perform fast conversion from HSV to RGB color model.
+// All numbers are in 0-1 range.
+let hsvToRgb = (h, s, v) => {
+  let i = Math.floor(h * 6);
+  let f = (h * 6) - i;
+  let p = v * (1 - s);
+  let q = v * (1 - (f * s));
+  let t = v * (1 - (1 - f) * s);
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+  if (i % 6 === 0) {
+    r = v;
+    g = t;
+    b = p;
+  }
+  else if (i % 6 === 1) {
+    r = q;
+    g = v;
+    b = p;
+  }
+  else if (i % 6 === 2) {
+    r = p;
+    g = v;
+    b = t;
+  }
+  else if (i % 6 === 3) {
+    r = p;
+    g = q;
+    b = v;
+  }
+  else if (i % 6 === 4) {
+    r = t;
+    g = p;
+    b = v;
+  }
+  else if (i % 6 === 5) {
+    r = v;
+    g = p;
+    b = q;
+  }
+
+  return [r, g, b];
+};
+
+// @src http://goo.gl/J9ra3
+// @type (number, number, number) => [number, number, number]
+//
+// Perform fast conversion from HSL to RGB color model.
+// All numbers are in 0-1 range.
+export let hslToRgb = (h, s, l) => {
+  let r;
+  let g;
+  let b;
+
+  if (s === 0) {
+    r = g = b = l;
+  }
+  else {
+    let hue2rgb = (p, q, t) => {
+      if (t < 0) {
+        t += 1;
+      }
+      if (t > 1) {
+        t -= 1;
+      }
+      if (t < 1/6) {
+        return p + (q - p) * 6 * t;
+      }
+      if (t < 1/2) {
+        return q;
+      }
+      if (t < 2/3) {
+        return p + (q - p) * (2/3 - t) * 6;
+      }
+
+      return p;
+    };
+
+    let q;
+    let p;
+
+    if (l < 0.5) {
+      q = l * (1 + s);
+    }
+    else {
+      q = l + s - l * s;
+    }
+
+    p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+
+  return [r, g, b];
+};
+
 // @type (string) => boolean
 //
 // Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
@@ -358,6 +462,7 @@ export {
   serializeColor,
   prettySerializeColor,
   normalizeColorSpaceName,
+  hsvToRgb,
   isColorInGamut,
   isValidColorString
 };

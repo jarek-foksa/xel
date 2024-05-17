@@ -6,13 +6,22 @@
 
 import Xel from "../classes/xel.js";
 
-import {convertColor, parseColor, serializeColor, normalizeColorSpaceName, isColorInGamut} from "../utils/color.js";
 import {createElement} from "../utils/element.js";
 import {degToRad, normalize, round} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {throttle} from "../utils/time.js";
 
-let {PI, sin, cos, pow, atan2, sqrt} = Math;
+import {
+  convertColor,
+  hsvToRgb,
+  hslToRgb,
+  parseColor,
+  serializeColor,
+  normalizeColorSpaceName,
+  isColorInGamut
+} from "../utils/color.js";
+
+let {PI, sin, cos, pow, atan2, sqrt, min, max} = Math;
 
 const COLOR_PRECISION = 3;
 const MAX_LCH_CHROMA = 150;
@@ -713,37 +722,37 @@ class XRGBLinearSlidersElement extends HTMLElement {
     <template>
       <div id="coord-0-slider" class="slider" part="slider">
         <div id="coord-0-slider-track" class="slider-track">
-          <div id="coord-0-slider-marker" class="slider-marker">
-            <span id="coord-0-slider-label" class="slider-label"></span>
-          </div>
-
           <svg id="coord-0-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="coord-0-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="coord-0-slider-marker" class="slider-marker">
+            <span id="coord-0-slider-label" class="slider-label"></span>
+          </div>
         </div>
       </div>
 
       <div id="coord-1-slider" class="slider" part="slider">
         <div id="coord-1-slider-track" class="slider-track">
-          <div id="coord-1-slider-marker" class="slider-marker">
-            <span id="coord-1-slider-label" class="slider-label"></span>
-          </div>
-
           <svg id="coord-1-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="coord-1-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="coord-1-slider-marker" class="slider-marker">
+            <span id="coord-1-slider-label" class="slider-label"></span>
+          </div>
         </div>
       </div>
 
       <div id="coord-2-slider" class="slider" part="slider">
         <div id="coord-2-slider-track" class="slider-track">
-          <div id="coord-2-slider-marker" class="slider-marker">
-            <span id="coord-2-slider-label" class="slider-label"></span>
-          </div>
-
           <svg id="coord-2-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="coord-2-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="coord-2-slider-marker" class="slider-marker">
+            <span id="coord-2-slider-label" class="slider-label"></span>
+          </div>
         </div>
       </div>
 
@@ -1080,6 +1089,22 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
   }
 
+  #getResolvedGamutHints() {
+    if (
+      (this.#gamutHints === "none") ||
+      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.space)) ||
+      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
+      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
+      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
+      (this.#gamutHints === "prophoto")
+    ) {
+      return "none";
+    }
+    else {
+      return this.#gamutHints;
+    }
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onConfigChange(event) {
@@ -1168,9 +1193,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
         this.#updateCoord0SliderMarker();
         this.#updateCoord1SliderBackground();
+        this.#updateCoord1SliderGamutPath();
         this.#updateCoord2SliderBackground();
+        this.#updateCoord2SliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -1220,11 +1247,13 @@ class XRGBLinearSlidersElement extends HTMLElement {
           this.#updateCoord0SliderBackground();
         }
 
+        this.#updateCoord0SliderGamutPath();
         this.#updateCoord1SliderMarker();
         this.#updateCoord1SliderBackground();
         this.#updateCoord2SliderBackground();
+        this.#updateCoord2SliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -1275,9 +1304,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
           this.#updateCoord1SliderBackground();
         }
 
+        this.#updateCoord0SliderGamutPath();
+        this.#updateCoord1SliderGamutPath();
         this.#updateCoord2SliderMarker();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -1351,17 +1382,20 @@ class XRGBLinearSlidersElement extends HTMLElement {
   #update() {
     this.#updateCoord0SliderMarker();
     this.#updateCoord0SliderBackground();
+    this.#updateCoord0SliderGamutPath();
 
     this.#updateCoord1SliderMarker();
     this.#updateCoord1SliderBackground();
+    this.#updateCoord1SliderGamutPath();
 
     this.#updateCoord2SliderMarker();
     this.#updateCoord2SliderBackground();
+    this.#updateCoord2SliderGamutPath();
 
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
-    this.#updateGamutHints();
+    this.#updateGamutWarnings();
     this.#updateLabels();
   }
 
@@ -1422,6 +1456,66 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
       colors = colors.map(color => serializeColor(convertColor(color, "srgb"))).join(",");
       this["#coord-0-slider"].style.background = `linear-gradient(in srgb to right, ${colors})`;
+    }
+  }
+
+  #updateCoord0SliderGamutPath() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#coord-0-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let model = this.#getResolvedModel();
+        let width = this["#coord-0-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [, coord1, coord2] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let coord0 = (column / width);
+          let color;
+
+          if (model === "hsv" || model === "hsl" || model === "hwb") {
+            color = {
+              space: this.#space,
+              coords: convertColor({space: model, coords: [coord0*360, coord1*100, coord2*100]}, "srgb").coords
+            };
+          }
+          else if (model === "rgb") {
+            color = {
+              space: this.#space,
+              coords: [coord0, coord1, coord2]
+            };
+          }
+
+          if (isColorInGamut(color, gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(coord0 * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#coord-0-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#coord-0-slider-gamut-path"].removeAttribute("d");
+      }
     }
   }
 
@@ -1496,6 +1590,66 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
       colors = colors.map(color => serializeColor(convertColor(color, "srgb"))).join(",");
       this["#coord-1-slider"].style.background = `linear-gradient(in srgb to right, ${colors})`;
+    }
+  }
+
+  #updateCoord1SliderGamutPath() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#coord-1-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let model = this.#getResolvedModel();
+        let width = this["#coord-1-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [coord0, , coord2] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let coord1 = (column / width);
+          let color;
+
+          if (model === "hsv" || model === "hsl" || model === "hwb") {
+            color = {
+              space: this.#space,
+              coords: convertColor({space: model, coords: [coord0*360, coord1*100, coord2*100]}, "srgb").coords
+            };
+          }
+          else if (model === "rgb") {
+            color = {
+              space: this.#space,
+              coords: [coord0, coord1, coord2]
+            };
+          }
+
+          if (isColorInGamut(color, gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(coord1 * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#coord-1-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#coord-1-slider-gamut-path"].removeAttribute("d");
+      }
     }
   }
 
@@ -1578,6 +1732,66 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
   }
 
+  #updateCoord2SliderGamutPath() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#coord-2-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let model = this.#getResolvedModel();
+        let width = this["#coord-2-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [coord0, coord1] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let coord2 = (column / width);
+          let color;
+
+          if (model === "hsv" || model === "hsl" || model === "hwb") {
+            color = {
+              space: this.#space,
+              coords: convertColor({space: model, coords: [coord0*360, coord1*100, coord2*100]}, "srgb").coords
+            };
+          }
+          else if (model === "rgb") {
+            color = {
+              space: this.#space,
+              coords: [coord0, coord1, coord2]
+            };
+          }
+
+          if (isColorInGamut(color, gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(coord2 * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#coord-2-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#coord-2-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
   }
@@ -1630,124 +1844,44 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
   }
 
-  #updateGamutHints() {
-    if (
-      (this.#gamutHints === "none") ||
-      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.space)) ||
-      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
-      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
-      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
-      (this.#gamutHints === "prophoto")
-    ) {
-      this["#coord-0-slider-gamut-path"].removeAttribute("d");
+  #updateGamutWarnings() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
       this["#coord-0-slider-marker"].removeAttribute("data-warn");
-
-      this["#coord-1-slider-gamut-path"].removeAttribute("d");
       this["#coord-1-slider-marker"].removeAttribute("data-warn");
-
-      this["#coord-2-slider-gamut-path"].removeAttribute("d");
       this["#coord-2-slider-marker"].removeAttribute("data-warn");
     }
     else {
       let model = this.#getResolvedModel();
+      let color;
 
       if (model === "hsv" || model === "hsl" || model === "hwb") {
-        let ranges = [];
-        let currentRange = null;
+        let [coord0, coord1, coord2] = this.#coords;
 
-        for (let coord2 = 0; coord2 <= 1.01; coord2 += 0.01) {
-          let [coord0, coord1] = [...this.#coords];
-
-          let color = {
-            space: this.space,
-            coords: convertColor({space: model, coords: [coord0*360, coord1*100, coord2*100]}, "srgb").coords
-          };
-
-          if (isColorInGamut(color, this.#gamutHints)) {
-            if (currentRange === null) {
-              currentRange = [];
-              ranges.push(currentRange);
-            }
-
-            currentRange.push(coord2 * 100);
-          }
-          else {
-            currentRange = null;
-          }
-        }
-
-        ranges = ranges.filter(range => range.length >= 2);
-
-        this["#coord-0-slider-gamut-path"].removeAttribute("d");
-        this["#coord-0-slider-marker"].removeAttribute("data-warn");
-
-        this["#coord-1-slider-gamut-path"].removeAttribute("d");
-        this["#coord-1-slider-marker"].removeAttribute("data-warn");
-
-        if (ranges.length === 0) {
-          this["#coord-2-slider-gamut-path"].removeAttribute("d");
-          this["#coord-2-slider-marker"].setAttribute("data-warn", "");
-        }
-        else {
-          let subpaths = [];
-          let inRange = false;
-
-          for (let range of ranges) {
-            let currentX = this.#coords[2] * 100;
-            let startX = range.at(0);
-            let endX = range.at(-1);
-
-            if (currentX >= startX && currentX <= endX) {
-              inRange = true;
-            }
-
-            subpaths.push(`M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
-          }
-
-          this["#coord-2-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
-
-          if (inRange) {
-            this["#coord-2-slider-marker"].removeAttribute("data-warn");
-          }
-          else {
-            this["#coord-2-slider-marker"].setAttribute("data-warn", "");
-          }
-        }
+        color = {
+          space: this.#space,
+          coords: convertColor({space: model, coords: [coord0*360, coord1*100, coord2*100]}, "srgb").coords
+        };
       }
       else if (model === "rgb") {
-        for (let coordIndex = 0; coordIndex < 3; coordIndex += 1) {
-          let coords = [...this.#coords];
-          let range = [];
+        let [r, g, b] = this.#coords;
 
-          for (let coordValue = 0; coordValue <= 1; coordValue += 0.01) {
-            coords[coordIndex] = coordValue;
+        color = {
+          space: this.#space,
+          coords: [...this.#coords]
+        };
+      }
 
-            if (isColorInGamut({space: this.#space, coords}, this.#gamutHints)) {
-              range.push(coordValue * 100);
-            }
-          }
-
-          if (range.length < 2) {
-            this[`#coord-${coordIndex}-slider-gamut-path`].removeAttribute("d");
-            this[`#coord-${coordIndex}-slider-marker`].setAttribute("data-warn", "right");
-          }
-          else {
-            let currentX = this.#coords[coordIndex] * 100;
-            let startX = range.at(0);
-            let endX = range.at(-1);
-
-            this[`#coord-${coordIndex}-slider-gamut-path`].setAttribute(
-              "d", `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`
-            );
-
-            if (currentX < startX || currentX > endX) {
-              this[`#coord-${coordIndex}-slider-marker`].setAttribute("data-warn", "");
-            }
-            else {
-              this[`#coord-${coordIndex}-slider-marker`].removeAttribute("data-warn");
-            }
-          }
-        }
+      if (isColorInGamut(color, gamutHints)) {
+        this["#coord-0-slider-marker"].removeAttribute("data-warn");
+        this["#coord-1-slider-marker"].removeAttribute("data-warn");
+        this["#coord-2-slider-marker"].removeAttribute("data-warn");
+      }
+      else {
+        this["#coord-0-slider-marker"].setAttribute("data-warn", "");
+        this["#coord-1-slider-marker"].setAttribute("data-warn", "");
+        this["#coord-2-slider-marker"].setAttribute("data-warn", "");
       }
     }
   }
@@ -1824,6 +1958,10 @@ class XLCHLinearSlidersElement extends HTMLElement {
     <template>
       <div id="hue-slider" class="slider" part="slider">
         <div id="hue-slider-track" class="slider-track">
+          <svg id="hue-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="hue-slider-gamut-path" class="slider-gamut-path"></path>
+          </svg>
+
           <div id="hue-slider-marker" class="slider-marker">
             <span id="hue-slider-label" class="slider-label">H</span>
           </div>
@@ -1832,6 +1970,10 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
       <div id="chroma-slider" class="slider" part="slider">
         <div id="chroma-slider-track" class="slider-track">
+          <svg id="chroma-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="chroma-slider-gamut-path" class="slider-gamut-path"></path>
+          </svg>
+
           <div id="chroma-slider-marker" class="slider-marker">
             <span id="chroma-slider-label" class="slider-label">C</span>
           </div>
@@ -1840,13 +1982,13 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
       <div id="lightness-slider" class="slider" part="slider">
         <div id="lightness-slider-track" class="slider-track">
-          <div id="lightness-slider-marker" class="slider-marker">
-            <span id="lightness-slider-label" class="slider-label">L</span>
-          </div>
-
           <svg id="lightness-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="lightness-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="lightness-slider-marker" class="slider-marker">
+            <span id="lightness-slider-label" class="slider-label">L</span>
+          </div>
         </div>
       </div>
 
@@ -2143,10 +2285,11 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
         this.#updateHueSliderMarker();
         this.#updateChromaSliderBackground();
-        this.#updateLightnessSliderMarker();
+        this.#updateChromaSliderGamutPath();
         this.#updateLightnessSliderBackground();
+        this.#updateLightnessSliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -2197,12 +2340,12 @@ class XLCHLinearSlidersElement extends HTMLElement {
       if (coord !== this.#coords[1]) {
         this.#coords[1] = coord;
 
+        this.#updateHueSliderGamutPath();
         this.#updateChromaSliderMarker();
-        this.#updateChromaSliderBackground();
-        this.#updateLightnessSliderMarker();
         this.#updateLightnessSliderBackground();
+        this.#updateLightnessSliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -2253,10 +2396,11 @@ class XLCHLinearSlidersElement extends HTMLElement {
       if (coord !== this.#coords[0]) {
         this.#coords[0] = coord;
 
+        this.#updateHueSliderGamutPath();
+        this.#updateChromaSliderGamutPath();
         this.#updateLightnessSliderMarker();
-        this.#updateLightnessSliderBackground();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -2330,17 +2474,20 @@ class XLCHLinearSlidersElement extends HTMLElement {
   #update() {
     this.#updateHueSliderMarker();
     this.#updateHueSliderBackground();
+    this.#updateHueSliderGamutPath();
 
     this.#updateChromaSliderMarker();
     this.#updateChromaSliderBackground();
+    this.#updateChromaSliderGamutPath();
 
     this.#updateLightnessSliderMarker();
     this.#updateLightnessSliderBackground();
+    this.#updateLightnessSliderGamutPath();
 
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
-    this.#updateGamutHints();
+    this.#updateGamutWarnings();
     this.#updateLabels();
   }
 
@@ -2365,6 +2512,50 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
     colors = colors.map(color => serializeColor(color));
     this["#hue-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
+  }
+
+  #updateHueSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#hue-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#hue-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [l, c] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let h = (column / width);
+          let color = {space: this.#space, coords: [l, c, h*360]};
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(h * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#hue-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#hue-slider-gamut-path"].removeAttribute("d");
+      }
+    }
   }
 
   #updateChromaSliderMarker() {
@@ -2409,6 +2600,51 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this["#chroma-slider"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
   }
 
+  #updateChromaSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#chroma-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#chroma-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [l, , h] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let c = (column / width);
+          let maxChroma = (this.#space === "lch") ? MAX_LCH_CHROMA : MAX_OKLCH_CHROMA;
+          let color = {space: this.#space, coords: [l, c * maxChroma, h]};
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(c * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#chroma-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#chroma-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateLightnessSliderMarker() {
     let [l, c, h] = this.#coords;
 
@@ -2439,6 +2675,54 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this["#lightness-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
+  #updateLightnessSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#lightness-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#lightness-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [, c, h] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let l = (column / width);
+
+          let color = {
+            space: this.#space,
+            coords: [this.#space === "oklch" ? l : l*100, c, h]
+          };
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(l * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#lightness-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#lightness-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
   }
@@ -2455,57 +2739,24 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
-  #updateGamutHints() {
+  #updateGamutWarnings() {
     if (this.#gamutHints === "none") {
-      this["#lightness-slider-gamut-path"].removeAttribute("d");
+      this["#hue-slider-marker"].removeAttribute("data-warn");
+      this["#chroma-slider-marker"].removeAttribute("data-warn");
       this["#lightness-slider-marker"].removeAttribute("data-warn");
     }
     else {
-      let [l, c, h] = this.#coords;
-      let points = [];
+      let color = {space: this.#space, coords: this.#coords};
 
-      if (this.#space === "oklch") {
-        for (let l = 0; l <= 1.01; l += 0.01) {
-          let color = {space: this.#space, coords: [l, c, h]};
-
-          if (isColorInGamut(color, this.#gamutHints)) {
-            let x = l * 100;
-            let y = (c / MAX_OKLCH_CHROMA) * 100;
-            points.push([x, y]);
-          }
-        }
-      }
-      else if (this.#space === "lch") {
-        for (let l = 0; l <= 100.5; l += 1.5) {
-          let color = {space: this.#space, coords: [l, c, h]};
-
-          if (isColorInGamut(color, this.#gamutHints)) {
-            let x = l;
-            let y = (c / MAX_LCH_CHROMA) * 100;
-            points.push([x, y]);
-          }
-        }
-      }
-
-      if (points.length < 2) {
-        this["#lightness-slider-gamut-path"].removeAttribute("d");
-        this["#lightness-slider-marker"].setAttribute("data-warn", "");
+      if (isColorInGamut(color, this.#gamutHints)) {
+        this["#hue-slider-marker"].removeAttribute("data-warn");
+        this["#chroma-slider-marker"].removeAttribute("data-warn");
+        this["#lightness-slider-marker"].removeAttribute("data-warn");
       }
       else {
-        let currentX = this.#space === "oklch" ? l * 100 : l;
-        let startX = points.at(0)[0];
-        let endX = points.at(-1)[0];
-
-        this["#lightness-slider-gamut-path"].setAttribute(
-          "d", `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`
-        );
-
-        if (currentX < startX || currentX > endX) {
-          this["#lightness-slider-marker"].setAttribute("data-warn", "");
-        }
-        else {
-          this["#lightness-slider-marker"].removeAttribute("data-warn");
-        }
+        this["#hue-slider-marker"].setAttribute("data-warn", "");
+        this["#chroma-slider-marker"].setAttribute("data-warn", "");
+        this["#lightness-slider-marker"].setAttribute("data-warn", "");
       }
     }
   }
@@ -2543,6 +2794,10 @@ class XLABLinearSlidersElement extends HTMLElement {
     <template>
       <div id="a-slider" class="slider" part="slider">
         <div id="a-slider-track" class="slider-track">
+          <svg id="a-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="a-slider-gamut-path" class="slider-gamut-path"></path>
+          </svg>
+
           <div id="a-slider-marker" class="slider-marker">
             <span id="a-slider-label" class="slider-label">A</span>
           </div>
@@ -2551,6 +2806,10 @@ class XLABLinearSlidersElement extends HTMLElement {
 
       <div id="b-slider" class="slider" part="slider">
         <div id="b-slider-track" class="slider-track">
+          <svg id="b-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="b-slider-gamut-path" class="slider-gamut-path"></path>
+          </svg>
+
           <div id="b-slider-marker" class="slider-marker">
             <span id="b-slider-label" class="slider-label">B</span>
           </div>
@@ -2559,13 +2818,13 @@ class XLABLinearSlidersElement extends HTMLElement {
 
       <div id="lightness-slider" class="slider" part="slider">
         <div id="lightness-slider-track" class="slider-track">
-          <div id="lightness-slider-marker" class="slider-marker">
-            <span id="lightness-slider-label" class="slider-label">L</span>
-          </div>
-
           <svg id="lightness-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="lightness-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="lightness-slider-marker" class="slider-marker">
+            <span id="lightness-slider-label" class="slider-label">L</span>
+          </div>
         </div>
       </div>
 
@@ -2865,11 +3124,13 @@ class XLABLinearSlidersElement extends HTMLElement {
       if (coord !== this.#coords[1]) {
         this.#coords[1] = coord;
 
-        this.#updateLightnessSliderBackground();
         this.#updateASliderMarker();
         this.#updateBSliderBackground();
+        this.#updateBSliderGamutPath();
+        this.#updateLightnessSliderBackground();
+        this.#updateLightnessSliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -2921,12 +3182,14 @@ class XLABLinearSlidersElement extends HTMLElement {
       if (coord !== this.#coords[2]) {
         this.#coords[2] = coord;
 
-        this.#updateLightnessSliderBackground();
         this.#updateASliderBackground();
+        this.#updateASliderGamutPath();
         this.#updateBSliderMarker();
         this.#updateBSliderBackground();
+        this.#updateLightnessSliderBackground();
+        this.#updateLightnessSliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -2977,10 +3240,11 @@ class XLABLinearSlidersElement extends HTMLElement {
       if (coord !== this.#coords[0]) {
         this.#coords[0] = coord;
 
+        this.#updateASliderGamutPath();
+        this.#updateBSliderGamutPath();
         this.#updateLightnessSliderMarker();
-        this.#updateLightnessSliderBackground();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -3054,17 +3318,20 @@ class XLABLinearSlidersElement extends HTMLElement {
   #update() {
     this.#updateASliderMarker();
     this.#updateASliderBackground();
+    this.#updateASliderGamutPath();
 
     this.#updateBSliderMarker();
     this.#updateBSliderBackground();
+    this.#updateBSliderGamutPath();
 
     this.#updateLightnessSliderMarker();
     this.#updateLightnessSliderBackground();
+    this.#updateLightnessSliderGamutPath();
 
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
-    this.#updateGamutHints();
+    this.#updateGamutWarnings();
     this.#updateLabels();
   }
 
@@ -3116,6 +3383,57 @@ class XLABLinearSlidersElement extends HTMLElement {
     this["#a-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
+  #updateASliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#a-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#a-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [l, , b] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let a = (column / width);
+          let color;
+
+          if (this.#space === "lab") {
+            color = {space: this.#space, coords: [l, (a * 250) - 125, b]};
+          }
+          else if (this.#space === "oklab") {
+            color = {space: this.#space, coords: [l, (a * 0.8) - 0.4, b]};
+          }
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(a * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#a-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#a-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateBSliderMarker() {
     let [l, a, b] = this.#coords;
 
@@ -3164,6 +3482,57 @@ class XLABLinearSlidersElement extends HTMLElement {
     this["#b-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
+  #updateBSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#b-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#b-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [l, a] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let b = (column / width);
+          let color;
+
+          if (this.#space === "lab") {
+            color = {space: this.#space, coords: [l, a, (b * 250) - 125]};
+          }
+          else if (this.#space === "oklab") {
+            color = {space: this.#space, coords: [l, a, (b * 0.8) - 0.4]};
+          }
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(b * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#b-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#b-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateLightnessSliderMarker() {
     let [l, a, b] = this.#coords;
 
@@ -3194,6 +3563,58 @@ class XLABLinearSlidersElement extends HTMLElement {
     this["#lightness-slider"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
   }
 
+
+  #updateLightnessSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#lightness-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#b-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [, a, b] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let l = (column / width);
+          let color;
+
+          if (this.#space === "lab") {
+            color = {space: this.#space, coords: [l*100, a, b]};
+          }
+          else if (this.#space === "oklab") {
+            color = {space: this.#space, coords: [l, a, b]};
+          }
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(l * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#lightness-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#lightness-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
   }
@@ -3210,47 +3631,24 @@ class XLABLinearSlidersElement extends HTMLElement {
     this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
   }
 
-  #updateGamutHints() {
+  #updateGamutWarnings() {
     if (this.#gamutHints === "none") {
-      this["#lightness-slider-gamut-path"].removeAttribute("d");
+      this["#a-slider-marker"].removeAttribute("data-warn");
+      this["#b-slider-marker"].removeAttribute("data-warn");
       this["#lightness-slider-marker"].removeAttribute("data-warn");
     }
     else {
-      let [l, a, b] = this.#coords;
-      let points = [];
+      let color = {space: this.#space, coords: this.#coords};
 
-      if (this.#space === "lab") {
-        for (let l = 0; l <= 100; l += 2) {
-          if (isColorInGamut({space: "lab", coords: [l, a, b]}, this.#gamutHints)) {
-            points.push([l, 0]);
-          }
-        }
-      }
-      else if (this.#space === "oklab") {
-        for (let l = 0; l <= 1; l += 0.02) {
-          if (isColorInGamut({space: "oklab", coords: [l, a, b]}, this.#gamutHints)) {
-            points.push([l * 100, 0]);
-          }
-        }
-      }
-
-      if (points.length < 2) {
-        this["#lightness-slider-gamut-path"].removeAttribute("");
-        this["#lightness-slider-marker"].setAttribute("data-warn", "");
+      if (isColorInGamut(color, this.#gamutHints)) {
+        this["#a-slider-marker"].removeAttribute("data-warn");
+        this["#b-slider-marker"].removeAttribute("data-warn");
+        this["#lightness-slider-marker"].removeAttribute("data-warn");
       }
       else {
-        let currentX = (this.space === "oklab") ? l * 100 : l;
-        let startX = points.at(0)[0];
-        let endX = points.at(-1)[0];
-
-        this["#lightness-slider-gamut-path"].setAttribute("d", `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
-
-        if (currentX < startX || currentX > endX) {
-          this["#lightness-slider-marker"].setAttribute("data-warn", "");
-        }
-        else {
-          this["#lightness-slider-marker"].removeAttribute("data-warn");
-        }
+        this["#a-slider-marker"].setAttribute("data-warn", "");
+        this["#b-slider-marker"].setAttribute("data-warn", "");
+        this["#lightness-slider-marker"].setAttribute("data-warn", "");
       }
     }
   }
@@ -3288,37 +3686,37 @@ class XXYZLinearSlidersElement extends HTMLElement {
     <template>
       <div id="x-slider" class="slider" part="slider">
         <div id="x-slider-track" class="slider-track">
-          <div id="x-slider-marker" class="slider-marker">
-            <span id="x-slider-label" class="slider-label">X</span>
-          </div>
-
           <svg id="x-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="x-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="x-slider-marker" class="slider-marker">
+            <span id="x-slider-label" class="slider-label">X</span>
+          </div>
         </div>
       </div>
 
       <div id="y-slider" class="slider" part="slider">
         <div id="y-slider-track" class="slider-track">
-          <div id="y-slider-marker" class="slider-marker">
-            <span id="y-slider-label" class="slider-label">Y</span>
-          </div>
-
           <svg id="y-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="y-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="y-slider-marker" class="slider-marker">
+            <span id="y-slider-label" class="slider-label">Y</span>
+          </div>
         </div>
       </div>
 
       <div id="z-slider" class="slider" part="slider">
         <div id="z-slider-track" class="slider-track">
-          <div id="z-slider-marker" class="slider-marker">
-            <span id="z-slider-label" class="slider-label">Z</span>
-          </div>
-
           <svg id="z-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
             <path id="z-slider-gamut-path" class="slider-gamut-path"></path>
           </svg>
+
+          <div id="z-slider-marker" class="slider-marker">
+            <span id="z-slider-label" class="slider-label">Z</span>
+          </div>
         </div>
       </div>
 
@@ -3615,9 +4013,11 @@ class XXYZLinearSlidersElement extends HTMLElement {
 
         this.#updateXSliderMarker();
         this.#updateYSliderBackground();
+        this.#updateYSliderGamutPath();
         this.#updateZSliderBackground();
+        this.#updateZSliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -3663,11 +4063,13 @@ class XXYZLinearSlidersElement extends HTMLElement {
         this.#coords[1] = coord;
 
         this.#updateXSliderBackground();
+        this.#updateXSliderGamutPath();
         this.#updateYSliderMarker();
         this.#updateYSliderBackground();
         this.#updateZSliderBackground();
+        this.#updateZSliderGamutPath();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -3713,11 +4115,13 @@ class XXYZLinearSlidersElement extends HTMLElement {
         this.#coords[2] = coord;
 
         this.#updateXSliderBackground();
+        this.#updateXSliderGamutPath();
         this.#updateYSliderBackground();
+        this.#updateYSliderGamutPath();
         this.#updateZSliderMarker();
         this.#updateZSliderBackground();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -3791,17 +4195,20 @@ class XXYZLinearSlidersElement extends HTMLElement {
   #update() {
     this.#updateXSliderMarker();
     this.#updateXSliderBackground();
+    this.#updateXSliderGamutPath();
 
     this.#updateYSliderMarker();
     this.#updateYSliderBackground();
+    this.#updateYSliderGamutPath();
 
     this.#updateZSliderMarker();
     this.#updateZSliderBackground();
+    this.#updateZSliderGamutPath();
 
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
-    this.#updateGamutHints();
+    this.#updateGamutWarnings();
     this.#updateLabels();
   }
 
@@ -3832,6 +4239,50 @@ class XXYZLinearSlidersElement extends HTMLElement {
     this["#x-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
+  #updateXSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#x-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#x-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [, y, z] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let x = (column / width);
+          let color = {space: this.#space, coords: [x, y, z]};
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(x * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#x-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#x-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateYSliderMarker() {
     let [, y] = this.#coords;
 
@@ -3857,6 +4308,50 @@ class XXYZLinearSlidersElement extends HTMLElement {
 
     colors = colors.map(color => serializeColor(color));
     this["#y-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
+  }
+
+  #updateYSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#y-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#y-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [x, , z] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let y = (column / width);
+          let color = {space: this.#space, coords: [x, y, z]};
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(y * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#y-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#y-slider-gamut-path"].removeAttribute("d");
+      }
+    }
   }
 
   #updateZSliderMarker() {
@@ -3886,6 +4381,50 @@ class XXYZLinearSlidersElement extends HTMLElement {
     this["#z-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
+  #updateZSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#z-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#z-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [x, y] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let z = (column / width);
+          let color = {space: this.#space, coords: [x, y, z]};
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(z * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#z-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#z-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
   }
@@ -3902,54 +4441,24 @@ class XXYZLinearSlidersElement extends HTMLElement {
     this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
   }
 
-  #updateGamutHints() {
+  #updateGamutWarnings() {
     if (this.#gamutHints === "none") {
-      this["#x-slider-gamut-path"].removeAttribute("d");
       this["#x-slider-marker"].removeAttribute("data-warn");
-
-      this["#y-slider-gamut-path"].removeAttribute("d");
       this["#y-slider-marker"].removeAttribute("data-warn");
-
-      this["#z-slider-gamut-path"].removeAttribute("d");
       this["#z-slider-marker"].removeAttribute("data-warn");
     }
     else {
-      let [x, y, z] = this.#coords;
+      let color = {space: this.#space, coords: this.#coords};
 
-      for (let name of ["x", "y", "z"]) {
-        let points = [];
-
-        {
-          let coords = {x, y, z};
-
-          for (let value = 0; value <= 1; value += 0.02) {
-            coords[name] = value;
-
-            if (isColorInGamut({space: this.#space, coords: [coords.x, coords.y, coords.z]}, this.#gamutHints)) {
-              points.push([value * 100, 0]);
-            }
-          }
-        }
-
-        if (points.length < 2) {
-          this[`#${name}-slider-gamut-path`].removeAttribute("d");
-          this[`#${name}-slider-marker`].setAttribute("data-warn", "");
-        }
-        else {
-          let coords = {x, y, z};
-          let currentX = coords[name] * 100;
-          let startX = points.at(0)[0];
-          let endX = points.at(-1)[0];
-
-          this[`#${name}-slider-gamut-path`].setAttribute("d", `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
-
-          if (currentX < startX || currentX > endX) {
-            this[`#${name}-slider-marker`].setAttribute("data-warn", "");
-          }
-          else {
-            this[`#${name}-slider-marker`].removeAttribute("data-warn");
-          }
-        }
+      if (isColorInGamut(color, this.#gamutHints)) {
+        this["#x-slider-marker"].removeAttribute("data-warn");
+        this["#y-slider-marker"].removeAttribute("data-warn");
+        this["#z-slider-marker"].removeAttribute("data-warn");
+      }
+      else {
+        this["#x-slider-marker"].setAttribute("data-warn", "");
+        this["#y-slider-marker"].setAttribute("data-warn", "");
+        this["#z-slider-marker"].setAttribute("data-warn", "");
       }
     }
   }
@@ -3987,6 +4496,10 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     <template>
       <div id="hue-slider" part="slider">
         <div id="hue-slider-track">
+          <svg id="hue-slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="hue-slider-gamut-path"></path>
+          </svg>
+
           <div id="hue-slider-marker">
             <span id="hue-slider-label">H</span>
           </div>
@@ -3997,11 +4510,13 @@ class XRGBPlanarSlidersElement extends HTMLElement {
         <svg id="planar-slider-gamut-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path id="planar-slider-gamut-path"></path>
         </svg>
+
         <div id="planar-slider-marker"></div>
       </div>
 
       <div id="alpha-slider" part="slider">
         <div id="alpha-slider-gradient"></div>
+
         <div id="alpha-slider-track">
           <div id="alpha-slider-marker">
             <span id="alpha-slider-label">α</span>
@@ -4087,6 +4602,29 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       background: rgba(0, 0, 0, 0.2);
       border: 3px solid white;
       box-shadow: 0 0 3px black;
+    }
+    #hue-slider-marker[data-warn]::after {
+      content: "⚠";
+      position: absolute;
+      right: -26px;
+      color: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(1px 1px 1px black);
+      pointer-events: none;
+      font-size: 18px;
+    }
+
+    #hue-slider-gamut-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    #hue-slider-gamut-path {
+      fill: none;
+      stroke: white;
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: 2px;
+      opacity: 0.8;
     }
 
     #hue-slider-label {
@@ -4321,6 +4859,22 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     Xel.removeEventListener("configchange", this.#configChangeListener);
   }
 
+  #getResolvedGamutHints() {
+    if (
+      (this.#gamutHints === "none") ||
+      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.space)) ||
+      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
+      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
+      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
+      (this.#gamutHints === "prophoto")
+    ) {
+      return "none";
+    }
+    else {
+      return this.#gamutHints;
+    }
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onConfigChange(event) {
@@ -4387,7 +4941,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   }
 
   #onResize() {
-    this.#updatePlanarSliderGamutLineThrottled();
+    this.#updatePlanarSliderGamutPathThrottled();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4413,10 +4967,12 @@ class XRGBPlanarSlidersElement extends HTMLElement {
         this.#coords[0] = coord;
 
         this.#updateHueSliderMarker();
+        this.#updateHueSliderGamutPath();
         this.#updatePlanarSliderMarker();
         this.#updatePlanarSliderBackground();
-        this.#updatePlanarSliderGamutLineThrottled();
+        this.#updatePlanarSliderGamutPathThrottled();
         this.#updateAlphaSliderBackground();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -4479,8 +5035,10 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 
+      this.#updateHueSliderGamutPath();
       this.#updatePlanarSliderMarker();
       this.#updateAlphaSliderBackground();
+      this.#updateGamutWarnings();
     };
 
     onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
@@ -4550,14 +5108,16 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   #update() {
     this.#updateHueSliderMarker();
     this.#updateHueSliderBackground();
+    this.#updateHueSliderGamutPath();
 
     this.#updatePlanarSliderMarker();
     this.#updatePlanarSliderBackground();
-    this.#updatePlanarSliderGamutLine();
+    this.#updatePlanarSliderGamutPath();
 
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
+    this.#updateGamutWarnings();
     this.#updateLabels();
   }
 
@@ -4569,12 +5129,10 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   }
 
   #updateHueSliderBackground() {
-    let colors;
-
     if (this.#model === "hsv" || this.#model === "hsl") {
       let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
 
-      colors = [
+      let colors = [
         { space: this.space, coords: [1, 0, 0] },
         { space: this.space, coords: [1, 1, 0] },
         { space: this.space, coords: [0, 1, 0] },
@@ -4586,6 +5144,59 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
       colors = colors.map(color => serializeColor(color)).join(",");
       this["#hue-slider"].style.background = `linear-gradient(in ${interpolation} to right, ${colors})`;
+    }
+  }
+
+  #updateHueSliderGamutPath() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#hue-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      if (this.#model === "hsv" || this.#model === "hsl") {
+        let [h, s, lv] = this.#coords;
+        let width = this["#hue-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+
+        let ranges = [];
+
+        // Determine ranges
+        {
+          let range = null;
+
+          for (let column = 0; column <= width; column += step) {
+            let h = (column / width);
+
+            let color = {
+              space: this.#space,
+              coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
+            };
+
+            if (isColorInGamut(color, gamutHints)) {
+              if (range === null) {
+                range = [];
+                ranges.push(range);
+              }
+
+              range.push(h * 100);
+            }
+            else {
+              range = null;
+            }
+          }
+
+          ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+        }
+
+        if (ranges.length > 0) {
+          let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+          this["#hue-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+        }
+        else {
+          this["#hue-slider-gamut-path"].removeAttribute("d");
+        }
+      }
     }
   }
 
@@ -4605,25 +5216,6 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
       this["#planar-slider-marker"].style.left = `${left}%`;
       this["#planar-slider-marker"].style.top = `${top}%`;
-    }
-
-    if (this.#gamutHints === "none") {
-      this["#planar-slider-marker"].removeAttribute("data-warn");
-    }
-    else {
-      let [h, s, v] = this.#coords;
-
-      let color = {
-        space: this.space,
-        coords: convertColor({space: this.#model, coords: [h*360, s*100, v*100]}, "srgb").coords
-      };
-
-      if (isColorInGamut(color, this.#gamutHints)) {
-        this["#planar-slider-marker"].removeAttribute("data-warn");
-      }
-      else {
-        this["#planar-slider-marker"].setAttribute("data-warn", "");
-      }
     }
   }
 
@@ -4687,20 +5279,15 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     }
   }
 
-  #updatePlanarSliderGamutLine() {
-    if (
-      (this.#gamutHints === "none") ||
-      (this.#gamutHints === "srgb" && ["srgb", "srgb-linear"].includes(this.space)) ||
-      (this.#gamutHints === "p3" && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
-      (this.#gamutHints === "a98rgb" && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
-      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
-      (this.#gamutHints === "prophoto")
-    ) {
-      this["#planar-slider-gamut-path"].style.d = null;
+  #updatePlanarSliderGamutPath() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#planar-slider-gamut-path"].removeAttribute("d");
     }
     else {
-      let width = this.clientWidth;
-      let height = this.clientHeight;
+      let width = this["#planar-slider"].clientWidth;
+      let height = this["#planar-slider"].clientHeight;
       let step = 1 / window.devicePixelRatio;
       let [h] = this.#coords;
       let points = [];
@@ -4711,7 +5298,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
           coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
         };
 
-        return isColorInGamut(color, this.#gamutHints);
+        return isColorInGamut(color, gamutHints);
       };
 
       if (this.#model === "hsv") {
@@ -4747,7 +5334,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
             }
           }
 
-          let maxCol = Math.min(col + 10, width);
+          let maxCol = min(col + 10, width);
 
           while (col <= maxCol) {
             col += step;
@@ -4762,17 +5349,17 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       }
 
       if (points.length === 0) {
-        this["#planar-slider-gamut-path"].style.d = null;
+        this["#planar-slider-gamut-path"].removeAttribute("d");
       }
       else {
         let d = points.map(([x, y], i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ");
-        this["#planar-slider-gamut-path"].style.d = `path("${d}")`;
+        this["#planar-slider-gamut-path"].setAttribute("d", d);
         this["#planar-slider-gamut-svg"].setAttribute("viewBox", `0 0 ${width} ${height}`);
       }
     }
   }
 
-  #updatePlanarSliderGamutLineThrottled = throttle(this.#updatePlanarSliderGamutLine, 40, this);
+  #updatePlanarSliderGamutPathThrottled = throttle(this.#updatePlanarSliderGamutPath, 40, this);
 
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
@@ -4802,6 +5389,32 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
       colors = colors.map(color => serializeColor(color)).join(",");
       this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors})`;
+    }
+  }
+
+  #updateGamutWarnings() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#hue-slider-marker"].removeAttribute("data-warn");
+      this["#planar-slider-marker"].removeAttribute("data-warn");
+    }
+    else {
+      let [h, s, vl] = this.#coords;
+
+      let color = {
+        space: this.space,
+        coords: convertColor({space: this.#model, coords: [h*360, s*100, vl*100]}, "srgb").coords
+      };
+
+      if (isColorInGamut(color, gamutHints)) {
+        this["#hue-slider-marker"].removeAttribute("data-warn");
+        this["#planar-slider-marker"].removeAttribute("data-warn");
+      }
+      else {
+        this["#hue-slider-marker"].setAttribute("data-warn", "");
+        this["#planar-slider-marker"].setAttribute("data-warn", "");
+      }
     }
   }
 
@@ -4840,6 +5453,10 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     <template>
       <div id="hue-slider" part="slider">
         <div id="hue-slider-track">
+          <svg id="hue-slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="hue-slider-gamut-path"></path>
+          </svg>
+
           <div id="hue-slider-marker">
             <span id="hue-slider-label">H</span>
           </div>
@@ -4852,11 +5469,13 @@ class XLCHPlanarSlidersElement extends HTMLElement {
         <svg id="planar-slider-gamut-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path id="planar-slider-gamut-path"></path>
         </svg>
+
         <div id="planar-slider-marker"></div>
       </div>
 
       <div id="alpha-slider" part="slider">
         <div id="alpha-slider-gradient"></div>
+
         <div id="alpha-slider-track">
           <div id="alpha-slider-marker">
             <span id="alpha-slider-label">α</span>
@@ -4935,6 +5554,29 @@ class XLCHPlanarSlidersElement extends HTMLElement {
       border: 3px solid white;
       box-shadow: 0 0 3px black;
     }
+    #hue-slider-marker[data-warn]::after {
+      content: "⚠";
+      position: absolute;
+      right: -26px;
+      color: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(1px 1px 1px black);
+      pointer-events: none;
+      font-size: 18px;
+    }
+
+    #hue-slider-gamut-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    #hue-slider-gamut-path {
+      fill: none;
+      stroke: white;
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: 2px;
+      opacity: 0.8;
+    }
 
     #hue-slider-label {
       font-weight: 700;
@@ -4982,6 +5624,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     }
 
     #planar-slider-canvas {
+      position: absolute;
       width: 100%;
       height: 100%;
     }
@@ -5198,7 +5841,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
   }
 
   #onResize() {
-    this.#updatePlanarSliderGamutLineThrottled();
+    this.#updatePlanarSliderGamutPathThrottled();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -5224,10 +5867,12 @@ class XLCHPlanarSlidersElement extends HTMLElement {
         this.#coords[2] = coord * 360;
 
         this.#updateHueSliderMarker();
+        this.#updateHueSliderGamutPath();
         this.#updatePlanarSliderMarker();
         this.#updatePlanarSliderBackground();
-        this.#updatePlanarSliderGamutLineThrottled();
+        this.#updatePlanarSliderGamutPathThrottled();
         this.#updateAlphaSliderBackground();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -5288,8 +5933,10 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 
+      this.#updateHueSliderGamutPath();
       this.#updatePlanarSliderMarker();
       this.#updateAlphaSliderBackground();
+      this.#updateGamutWarnings();
     };
 
     onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
@@ -5359,14 +6006,16 @@ class XLCHPlanarSlidersElement extends HTMLElement {
   #update() {
     this.#updateHueSliderMarker();
     this.#updateHueSliderBackground();
+    this.#updateHueSliderGamutPath();
 
     this.#updatePlanarSliderMarker();
     this.#updatePlanarSliderBackground();
-    this.#updatePlanarSliderGamutLine();
+    this.#updatePlanarSliderGamutPath();
 
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
+    this.#updateGamutWarnings();
     this.#updateLabels();
   }
 
@@ -5393,6 +6042,60 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     this["#hue-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
+  #updateHueSliderGamutPath() {
+    let gamutHints = this.#gamutHints;
+
+    if (gamutHints === "none") {
+      this["#hue-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let [l, c] = this.#coords;
+      let width = this["#hue-slider"].clientWidth;
+      let step = 1 / window.devicePixelRatio;
+
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let h = (column / width);
+          let color;
+
+          if (this.space === "lch") {
+            color = {space: "lch", coords: [l, c, h*360]};
+          }
+          else if (this.space === "oklch") {
+            color = {space: "oklch", coords: [l, c, h*360]};
+          }
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(h * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#hue-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#hue-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updatePlanarSliderMarker() {
     if (this.space === "lch") {
       let [l, c] = this.#coords;
@@ -5409,20 +6112,6 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
       this["#planar-slider-marker"].style.left = `${left}%`;
       this["#planar-slider-marker"].style.top = `${top}%`;
-    }
-
-    if (this.#gamutHints === "none") {
-      this["#planar-slider-marker"].removeAttribute("data-warn");
-    }
-    else {
-      let inGamut = isColorInGamut({space: this.space, coords: [...this.#coords]}, this.#gamutHints)
-
-      if (inGamut) {
-        this["#planar-slider-marker"].removeAttribute("data-warn");
-      }
-      else {
-        this["#planar-slider-marker"].setAttribute("data-warn", "");
-      }
     }
   }
 
@@ -5465,9 +6154,9 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     }
   }
 
-  #updatePlanarSliderGamutLine() {
+  #updatePlanarSliderGamutPath() {
     if (this.#gamutHints === "none") {
-      this["#planar-slider-gamut-path"].style.d = null;
+      this["#planar-slider-gamut-path"].removeAttribute("d");
     }
     else {
       let width = this.clientWidth;
@@ -5501,7 +6190,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
           }
         }
 
-        let maxRow = Math.max(row + 10, height);
+        let maxRow = max(row + 10, height);
 
         while (row <= maxRow) {
           row += step;
@@ -5515,17 +6204,17 @@ class XLCHPlanarSlidersElement extends HTMLElement {
       }
 
       if (points.length === 0) {
-        this["#planar-slider-gamut-path"].style.d = null;
+        this["#planar-slider-gamut-path"].removeAttribute("d");
       }
       else {
         let d = points.map(([x, y], i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ");
-        this["#planar-slider-gamut-path"].style.d = `path("${d}")`;
+        this["#planar-slider-gamut-path"].setAttribute("d", d);
         this["#planar-slider-gamut-svg"].setAttribute("viewBox", `0 0 ${width} ${height}`);
       }
     }
   }
 
-  #updatePlanarSliderGamutLineThrottled = throttle(this.#updatePlanarSliderGamutLine, 40, this);
+  #updatePlanarSliderGamutPathThrottled = throttle(this.#updatePlanarSliderGamutPath, 40, this);
 
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
@@ -5541,6 +6230,25 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
     colors = colors.map(color => serializeColor(color));
     this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
+  }
+
+  #updateGamutWarnings() {
+    if (this.#gamutHints === "none") {
+      this["#hue-slider-marker"].removeAttribute("data-warn");
+      this["#planar-slider-marker"].removeAttribute("data-warn");
+    }
+    else {
+      let inGamut = isColorInGamut({space: this.#space, coords: [...this.#coords]}, this.#gamutHints)
+
+      if (inGamut) {
+        this["#hue-slider-marker"].removeAttribute("data-warn");
+        this["#planar-slider-marker"].removeAttribute("data-warn");
+      }
+      else {
+        this["#hue-slider-marker"].setAttribute("data-warn", "");
+        this["#planar-slider-marker"].setAttribute("data-warn", "");
+      }
+    }
   }
 
   #updateLabels() {
@@ -5574,6 +6282,12 @@ class XRGBPolarSlidersElement extends HTMLElement {
     <template>
       <div id="polar-slider" part="slider">
         <div id="polar-slider-circle">
+          <canvas id="polar-slider-canvas" width="100" height="100"></canvas>
+
+          <svg id="polar-slider-gamut-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path id="polar-slider-gamut-path"></path>
+          </svg>
+
           <div id="polar-slider-marker"></div>
         </div>
       </div>
@@ -5673,13 +6387,50 @@ class XRGBPolarSlidersElement extends HTMLElement {
       left: 0%;
       width: var(--marker-size);
       height: var(--marker-size);
-      transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
       box-sizing: border-box;
+      transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
       background: rgba(0, 0, 0, 0.3);
       border: 3px solid white;
       border-radius: 999px;
       box-shadow: 0 0 3px black;
       --marker-size: 20px;
+    }
+    #polar-slider-marker[data-warn]::after {
+      content: "⚠";
+      position: absolute;
+      top: -30px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+      filter: drop-shadow(1px 1px 1px black);
+      pointer-events: none;
+    }
+
+    #polar-slider-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 9999px;
+    }
+
+    #polar-slider-gamut-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    #polar-slider-gamut-path {
+      fill: none;
+      stroke: white;
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: 2px;
+      opacity: 0.8;
     }
 
     /**
@@ -5920,6 +6671,22 @@ class XRGBPolarSlidersElement extends HTMLElement {
     Xel.removeEventListener("configchange", this.#configChangeListener);
   }
 
+  #getResolvedGamutHints() {
+    if (
+      (this.#gamutHints === "none") ||
+      (this.#gamutHints === "srgb" && ["srgb", "srgb-linear"].includes(this.space)) ||
+      (this.#gamutHints === "p3" && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
+      (this.#gamutHints === "a98rgb" && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
+      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
+      (this.#gamutHints === "prophoto")
+    ) {
+      return "none";
+    }
+    else {
+      return this.#gamutHints;
+    }
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onConfigChange(event) {
@@ -5986,7 +6753,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #onResize() {
-    // Might need to redraw if using canvas-based color wheel
+    this.#updatePolarSliderGamutPathThrottled();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6026,8 +6793,9 @@ class XRGBPolarSlidersElement extends HTMLElement {
 
       this.#updatePolarSliderMarker();
       this.#updateLinearSliderBackground();
+      this.#updateLinearSliderGamutPath();
       this.#updateAlphaSliderBackground();
-      this.#updateGamutHints();
+      this.#updateGamutWarnings();
     };
 
     onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
@@ -6071,9 +6839,9 @@ class XRGBPolarSlidersElement extends HTMLElement {
         this.#coords[2] = coord;
 
         this.#updateLinearSliderMarker();
-        this.#updatePolarSliderBackground();
+        this.#updatePolarSliderGamutPathThrottled();
         this.#updateAlphaSliderBackground();
-        this.#updateGamutHints();
+        this.#updateGamutWarnings();
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
       }
@@ -6147,14 +6915,16 @@ class XRGBPolarSlidersElement extends HTMLElement {
   #update() {
     this.#updatePolarSliderMarker();
     this.#updatePolarSliderBackground();
+    this.#updatePolarSliderGamutPath();
 
     this.#updateLinearSliderMarker();
     this.#updateLinearSliderBackground();
+    this.#updateLinearSliderGamutPath();
 
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
-    this.#updateGamutHints();
+    this.#updateGamutWarnings();
     this.#updateLabels();
   }
 
@@ -6175,65 +6945,94 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #updatePolarSliderBackground() {
-    if (this.#model === "hsv") {
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+    let canvas = this["#polar-slider-canvas"];
+    let colorSpace = ["srgb", "srgb-linear"].includes(this.#space) ? "srgb" : "display-p3";
+    let context = canvas.getContext("2d", {colorSpace});
+    let size = canvas.width;
+    let radius = size/2;
 
-      let overlayColors = [
-        { space: this.space, coords: convertColor({space: "hsv", coords: [0, 0, 100]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsv", coords: [0, 0,   0]}, hSpace).coords },
-      ];
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let bitmap = context.createImageData(size, size, {colorSpace});
 
-      let backgroundColors = [
-        { space: this.space, coords: [1, 0, 0] },
-        { space: this.space, coords: [1, 1, 0] },
-        { space: this.space, coords: [0, 1, 0] },
-        { space: this.space, coords: [0, 1, 1] },
-        { space: this.space, coords: [0, 0, 1] },
-        { space: this.space, coords: [1, 0, 1] },
-        { space: this.space, coords: [1, 0, 0] }
-      ];
+      for (let y = 0; y < size; y += 1) {
+        for (let x = 0; x < size; x += 1) {
+          let h = (180 + atan2(y - radius, x - radius) * (180 / PI)) / 360;
+          let s = min(1, sqrt(pow(y - radius, 2) + pow(x - radius, 2)) / radius);
+          let [r, g, b] = this.#model === "hsv" ? hsvToRgb(h, s, 1) : hslToRgb(h, s, 0.5);
+          let offset = 4 * ((y * size) + x);
 
-      overlayColors = overlayColors.map(c => serializeColor(c)).join(",");
-      backgroundColors = backgroundColors.map(c => serializeColor(c)).join(",");
+          bitmap.data[offset + 0] = r * 255;
+          bitmap.data[offset + 1] = g * 255;
+          bitmap.data[offset + 2] = b * 255;
+          bitmap.data[offset + 3] = 255; // Alpha
+        }
+      }
 
-      this["#polar-slider-circle"].style.background = `
-        radial-gradient(circle closest-side in ${interpolation}, ${overlayColors} 100%),
-        conic-gradient(from -90deg in hsl, ${backgroundColors})
-      `;
-
-      this["#polar-slider-circle"].style.backgroundBlendMode = "screen, normal";
-    }
-    else if (this.#model === "hsl") {
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
-
-      let overlayColors = [
-        { space: this.space, coords: convertColor({space: "hsl", coords: [0, 0, 50]}, hSpace).coords, alpha: 1 },
-        { space: this.space, coords: convertColor({space: "hsl", coords: [0, 0, 50]}, hSpace).coords, alpha: 0 },
-      ];
-
-      let backgroundColors = [
-        { space: this.space, coords: [1, 0, 0] },
-        { space: this.space, coords: [1, 1, 0] },
-        { space: this.space, coords: [0, 1, 0] },
-        { space: this.space, coords: [0, 1, 1] },
-        { space: this.space, coords: [0, 0, 1] },
-        { space: this.space, coords: [1, 0, 1] },
-        { space: this.space, coords: [1, 0, 0] }
-      ];
-
-      overlayColors = overlayColors.map(c => serializeColor(c)).join(",");
-      backgroundColors = backgroundColors.map(c => serializeColor(c)).join(",");
-
-      this["#polar-slider-circle"].style.background = `
-        radial-gradient(circle closest-side in ${interpolation}, ${overlayColors}),
-        conic-gradient(from -90deg in hsl, ${backgroundColors})
-      `;
-
-      this["#polar-slider-circle"].style.backgroundBlendMode = "normal, normal";
+      context.putImageData(bitmap, 0, 0);
     }
   }
+
+  #updatePolarSliderGamutPath() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#polar-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let width = this["#polar-slider-gamut-svg"].clientWidth;
+      let height = this["#polar-slider-gamut-svg"].clientHeight;
+      let step = 1 / window.devicePixelRatio;
+
+      if (this.#model === "hsv" || this.#model === "hsl") {
+        let [, , lv] = this.#coords;
+
+        let isInGamut = (h, s, lv) => {
+          let color = {
+            space: this.space,
+            coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
+          };
+
+          return isColorInGamut(color, gamutHints);
+        };
+
+        let rotatePoint = (point, centerPoint, angle) => {
+          let angleRad = (Math.PI / 180) * angle;
+          let cosRad = Math.cos(angleRad);
+          let sinRad = Math.sin(angleRad);
+          let [x, y] = point;
+          let [cx, cy] = centerPoint;
+          return [(cosRad * (x - cx)) - (sinRad * (y - cy)) + cx, (cosRad * (y - cy)) + (sinRad * (x - cx)) + cy];
+        };
+
+        let points = [];
+
+        for (let h = 0; h <= 1; h += 0.01) {
+          for (let row = height/2; row >= 0; row -= step) {
+            let s = row / (height/2);
+
+            if (isInGamut(h, s, lv)) {
+              let centerPoint = [width/2, height/2];
+              let point = [width/2, (height/2) - row];
+              point = rotatePoint(point, centerPoint, h*360);
+              points.push(point);
+              break;
+            }
+          }
+        }
+
+        if (points.length === 0) {
+          this["#polar-slider-gamut-path"].removeAttribute("d");
+        }
+        else {
+          let d = points.map(([x, y], i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ") + " Z";
+          this["#polar-slider-gamut-path"].setAttribute("d", d);
+          this["#polar-slider-gamut-svg"].setAttribute("viewBox", `0 0 ${width} ${height}`);
+        }
+      }
+    }
+  }
+
+  #updatePolarSliderGamutPathThrottled = throttle(this.#updatePolarSliderGamutPath, 40, this);
 
   #updateLinearSliderMarker() {
     if (this.#model === "hsv") {
@@ -6276,6 +7075,57 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
   }
 
+  #updateLinearSliderGamutPath() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#linear-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let [h, s, lv] = this.#coords;
+      let width = this["#linear-slider"].clientWidth;
+      let step = 1 / window.devicePixelRatio;
+
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let lv = (column / width);
+
+          let color = {
+            space: this.#space,
+            coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
+          };
+
+          if (isColorInGamut(color, gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(lv * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#linear-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#linear-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
   }
@@ -6307,73 +7157,28 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
   }
 
-  #updateGamutHints() {
-    if (
-      (this.#gamutHints === "none") ||
-      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.space)) ||
-      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
-      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
-      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
-      (this.#gamutHints === "prophoto")
-    ) {
-      this["#linear-slider-gamut-path"].removeAttribute("d");
+  #updateGamutWarnings() {
+    let gamutHints = this.#getResolvedGamutHints();
+
+    if (gamutHints === "none") {
+      this["#polar-slider-marker"].removeAttribute("data-warn");
       this["#linear-slider-marker"].removeAttribute("data-warn");
     }
     else {
-      let ranges = [];
-      let currentRange = null;
+      let [h, s, vl] = this.#coords;
 
-      for (let coord2 = 0; coord2 <= 1.01; coord2 += 0.01) {
-        let [coord0, coord1] = [...this.#coords];
+      let color = {
+        space: this.#space,
+        coords: convertColor({space: this.#model, coords: [h*360, s*100, vl*100]}, "srgb").coords
+      };
 
-        let color = {
-          space: this.space,
-          coords: convertColor({space: this.#model, coords: [coord0*360, coord1*100, coord2*100]}, "srgb").coords
-        };
-
-        if (isColorInGamut(color, this.#gamutHints)) {
-          if (currentRange === null) {
-            currentRange = [];
-            ranges.push(currentRange);
-          }
-
-          currentRange.push(coord2 * 100);
-        }
-        else {
-          currentRange = null;
-        }
-      }
-
-      ranges = ranges.filter(range => range.length >= 2);
-
-      if (ranges.length === 0) {
-        this["#linear-slider-gamut-path"].removeAttribute("d");
-        this["#linear-slider-marker"].setAttribute("data-warn", "");
+      if (isColorInGamut(color, gamutHints)) {
+        this["#polar-slider-marker"].removeAttribute("data-warn");
+        this["#linear-slider-marker"].removeAttribute("data-warn");
       }
       else {
-        let subpaths = [];
-        let inRange = false;
-
-        for (let range of ranges) {
-          let currentX = this.#coords[2] * 100;
-          let startX = range.at(0);
-          let endX = range.at(-1);
-
-          if (currentX >= startX && currentX <= endX) {
-            inRange = true;
-          }
-
-          subpaths.push(`M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
-        }
-
-        this["#linear-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
-
-        if (inRange) {
-          this["#linear-slider-marker"].removeAttribute("data-warn");
-        }
-        else {
-          this["#linear-slider-marker"].setAttribute("data-warn", "");
-        }
+        this["#polar-slider-marker"].setAttribute("data-warn", "");
+        this["#linear-slider-marker"].setAttribute("data-warn", "");
       }
     }
   }
