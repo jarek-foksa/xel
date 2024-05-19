@@ -6,22 +6,14 @@
 
 import Xel from "../classes/xel.js";
 
+import {convertColor, parseColor, serializeColor, normalizeColorSpaceName, isColorInGamut} from "../utils/color.js";
 import {createElement} from "../utils/element.js";
-import {degToRad, normalize, round} from "../utils/math.js";
+import {degToRad, normalize, round, rotatePoint} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {throttle} from "../utils/time.js";
 
-import {
-  convertColor,
-  hsvToRgb,
-  hslToRgb,
-  parseColor,
-  serializeColor,
-  normalizeColorSpaceName,
-  isColorInGamut
-} from "../utils/color.js";
-
 let {PI, sin, cos, pow, atan2, sqrt, min, max} = Math;
+let {isNaN} = Number;
 
 const COLOR_PRECISION = 3;
 const MAX_LCH_CHROMA = 150;
@@ -405,7 +397,6 @@ class XColorPickerElement extends HTMLElement {
 
   #onSpaceSelectChange() {
     let color = parseColor(this.value);
-
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}))
 
     if (this["#space-select"].value === "srgb") {
@@ -415,10 +406,17 @@ class XColorPickerElement extends HTMLElement {
       );
     }
     else {
-      this.value =  serializeColor(
-        convertColor(color, this["#space-select"].value, {inGamut: true}),
-        {precision: COLOR_PRECISION}
-      );
+      let convertedColor = convertColor(color, this["#space-select"].value, {inGamut: true});
+
+      // Convert missing components from NaN to 0
+      // @doc https://www.w3.org/TR/css-color-4/#missing
+      for (let i = 0; i < convertedColor.coords.length; i += 1) {
+        if (isNaN(convertedColor.coords[i])) {
+          convertedColor.coords[i] = 0;
+        }
+      }
+
+      this.value =  serializeColor(convertedColor, {precision: COLOR_PRECISION});
     }
 
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}))
@@ -445,26 +443,26 @@ class XColorPickerElement extends HTMLElement {
     let sliders = event.target;
 
     if (sliders.space === "srgb") {
-      let [r, g, b, a] = event.target.value;
+      let [r, g, b, alpha] = event.target.value;
 
       this.value = serializeColor(
-        {space: "srgb", coords: [r, g, b], alpha: a},
+        {space: "srgb", coords: [r, g, b], alpha},
         {format: "hex"}
       );
     }
     else if (["srgb-linear", "a98rgb", "p3", "rec2020", "prophoto"].includes(sliders.space)) {
-      let [r, g, b, a] = event.target.value;
+      let [r, g, b, alpha] = event.target.value;
 
       this.value = serializeColor(
-        {space: sliders.space, coords: [r, g, b], alpha: a},
+        {space: sliders.space, coords: [r, g, b], alpha},
         {format: "default", precision: COLOR_PRECISION}
       );
     }
     else if (sliders.space === "lch" || sliders.space === "oklch") {
-      let [l, c, h, a] = event.target.value;
+      let [l, c, h, alpha] = event.target.value;
 
       this.value = serializeColor(
-        {space: sliders.space, coords: [l, c, h], alpha: a},
+        {space: sliders.space, coords: [l, c, h], alpha},
         {format: "default", precision: COLOR_PRECISION}
       );
     }
@@ -477,10 +475,10 @@ class XColorPickerElement extends HTMLElement {
       );
     }
     else if (sliders.space === "xyz-d65" || sliders.space === "xyz-d50") {
-      let [x, y, z, a] = event.target.value;
+      let [x, y, z, alpha] = event.target.value;
 
       this.value = serializeColor(
-        {space: sliders.space, coords: [x, y, z], alpha: a},
+        {space: sliders.space, coords: [x, y, z], alpha},
         {format: "default", precision: COLOR_PRECISION}
       );
     }
@@ -602,11 +600,8 @@ class XColorPickerElement extends HTMLElement {
     if (["srgb", "srgb-linear", "a98rgb", "p3", "rec2020", "prophoto"].includes(color.spaceId)) {
       supportedTypes = ["planar", "polar", "linear"];
     }
-    else if (["lch", "oklch"].includes(color.spaceId)) {
+    else if (["lch", "oklch", "lab", "oklab", "xyz-d65", "xyz-d50"].includes(color.spaceId)) {
       supportedTypes = ["planar", "linear"];
-    }
-    else if (["lab", "oklab", "xyz-d65", "xyz-d50"].includes(color.spaceId)) {
-      supportedTypes = ["linear"];
     }
 
     if (supportedTypes.includes(this["#type-buttons"].value) === false) {
@@ -645,10 +640,20 @@ class XColorPickerElement extends HTMLElement {
       }
     }
     else if (space === "lab" || space === "oklab") {
-      localName = "x-lablinearsliders";
+      if (type === "linear") {
+        localName = "x-lablinearsliders";
+      }
+      else if (type === "planar") {
+        localName = "x-labplanarsliders";
+      }
     }
     else if (space === "xyz-d65" || space === "xyz-d50") {
-      localName = "x-xyzlinearsliders";
+      if (type === "linear") {
+        localName = "x-xyzlinearsliders";
+      }
+      else if (type === "planar") {
+        localName = "x-xyzplanarsliders";
+      }
     }
 
     if (this["#main"].firstElementChild?.localName !== localName) {
@@ -689,6 +694,14 @@ class XColorPickerElement extends HTMLElement {
       }
       else {
         color = convertColor(color, "p3", {inGamut: true});
+      }
+    }
+
+    // Convert missing components from NaN to 0
+    // @doc https://www.w3.org/TR/css-color-4/#missing
+    for (let i = 0; i < color.coords.length; i += 1) {
+      if (isNaN(color.coords[i])) {
+        color.coords[i] = 0;
       }
     }
 
@@ -773,13 +786,12 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
             <x-menu id="color-model-menu">
               <x-menuitem value="hsv"><x-label>HSV</x-label></x-menuitem>
-              <x-menuitem value="okhsv" data-srgb-only><x-label>OK HSV</x-label></x-menuitem>
-              <hr/>
               <x-menuitem value="hsl"><x-label>HSL</x-label></x-menuitem>
+              <x-menuitem value="hwb"><x-label>HWB</x-label></x-menuitem>
+              <hr/>
+              <x-menuitem value="okhsv" data-srgb-only><x-label>OK HSV</x-label></x-menuitem>
               <x-menuitem value="okhsl" data-srgb-only><x-label>OK HSL</x-label></x-menuitem>
               <x-menuitem value="hsluv" data-srgb-only><x-label>HSLuv</x-label></x-menuitem>
-              <hr/>
-              <x-menuitem value="hwb"><x-label>HWB</x-label></x-menuitem>
               <hr/>
               <x-menuitem value="rgb"><x-label>RGB</x-label></x-menuitem>
             </x-menu>
@@ -988,9 +1000,12 @@ class XRGBLinearSlidersElement extends HTMLElement {
       this.#a = a;
     }
 
-    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
-    if (Number.isNaN(this.#coords[0])) {
-      this.#coords[0] = 0;
+    // Convert missing components from NaN to 0
+    // @doc https://www.w3.org/TR/css-color-4/#missing
+    for (let i = 0; i < this.#coords.length; i += 1) {
+      if (isNaN(this.#coords[i])) {
+        this.#coords[i] = 0;
+      }
     }
 
     this.#update();
@@ -1035,7 +1050,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
   #space = "srgb";      // Either "srgb", "srgb-linear", "a98rgb", "p3", "rec2020" or "prophoto"
   #model = "hsv";       // Either "hsv", "hsl", "hwb", "okhsv", "okhsl", "hsluv" or "rgb"
   #gamutHints = "srgb"; // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
-  #labels = false;
+  #labels = true;
   #coords = [0, 0, 0];  // Values in the current MODEL coordinate system normalized to 0.00 - 1.00 range
   #a = 1;               // Alpha normalized to 0 ~ 1 range
 
@@ -1063,7 +1078,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
   connectedCallback() {
     this.#model = Xel.getConfig(`${this.localName}:model`, "hsv");
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
-    this.#labels = Xel.getConfig("x-colorpicker:labels", false);
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
   }
@@ -1092,10 +1107,10 @@ class XRGBLinearSlidersElement extends HTMLElement {
   #getResolvedGamutHints() {
     if (
       (this.#gamutHints === "none") ||
-      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.space)) ||
-      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
-      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
-      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
+      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.#space)) ||
+      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.#space)) ||
+      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.#space)) ||
+      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.#space)) ||
       (this.#gamutHints === "prophoto")
     ) {
       return "none";
@@ -1143,20 +1158,20 @@ class XRGBLinearSlidersElement extends HTMLElement {
     let item = event.target.closest("x-menuitem");
 
     if (item) {
-      if (item.parentElement === this["#gamut-hints-menu"]) {
-        if (item.value !== this.#gamutHints) {
-          this.#gamutHints = item.value;
-          this.#update();
-          Xel.setConfig("x-colorpicker:gamutHints", normalizeColorSpaceName(this.#gamutHints, "css"));
-        }
-      }
-      else if (item.parentElement === this["#color-model-menu"]) {
+      if (item.parentElement === this["#color-model-menu"]) {
         let model = item.value;
         let [r, g, b] = this.value;
 
         this.#model = model;
         Xel.setConfig(`${this.localName}:model`, model);
         this.value = [r, g, b, this.#a];
+      }
+      else if (item.parentElement === this["#gamut-hints-menu"]) {
+        if (item.value !== this.#gamutHints) {
+          this.#gamutHints = item.value;
+          this.#update();
+          Xel.setConfig("x-colorpicker:gamutHints", normalizeColorSpaceName(this.#gamutHints, "css"));
+        }
       }
       else if (item.value === "labels") {
         this.#labels = !item.toggled;
@@ -1408,11 +1423,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
     if (model === "rgb") {
       let [ , g, b] = this.#coords;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
 
       let colors = [
-        { space: this.space, coords: [0, g, b] },
-        { space: this.space, coords: [1, g, b] }
+        { space: this.#space, coords: [0, g, b] },
+        { space: this.#space, coords: [1, g, b] }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -1420,16 +1435,16 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
 
     else if (model === "hsv" || model === "hsl" || model === "hwb") {
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
 
       let colors = [
-        { space: this.space, coords: [1, 0, 0] },
-        { space: this.space, coords: [1, 1, 0] },
-        { space: this.space, coords: [0, 1, 0] },
-        { space: this.space, coords: [0, 1, 1] },
-        { space: this.space, coords: [0, 0, 1] },
-        { space: this.space, coords: [1, 0, 1] },
-        { space: this.space, coords: [1, 0, 0] }
+        { space: this.#space, coords: [1, 0, 0] },
+        { space: this.#space, coords: [1, 1, 0] },
+        { space: this.#space, coords: [0, 1, 0] },
+        { space: this.#space, coords: [0, 1, 1] },
+        { space: this.#space, coords: [0, 0, 1] },
+        { space: this.#space, coords: [1, 0, 1] },
+        { space: this.#space, coords: [1, 0, 0] }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -1528,11 +1543,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
     if (model === "rgb") {
       let [r, , b] = this.#coords;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
 
       let colors = [
-        { space: this.space, coords: [r, 0, b] },
-        { space: this.space, coords: [r, 1, b] }
+        { space: this.#space, coords: [r, 0, b] },
+        { space: this.#space, coords: [r, 1, b] }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -1541,26 +1556,26 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
     else if (model === "hsv" || model === "hsl" || model === "hwb") {
       let [h] = this.#coords;
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.space;
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
       let colors;
 
       if (model === "hsv") {
         colors = [
-          { space: this.space, coords: convertColor({space: "hsv", coords: [h*360,   0, 100]}, hSpace).coords },
-          { space: this.space, coords: convertColor({space: "hsv", coords: [h*360, 100, 100]}, hSpace).coords }
+          { space: this.#space, coords: convertColor({space: "hsv", coords: [h*360,   0, 100]}, hSpace).coords },
+          { space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, 100, 100]}, hSpace).coords }
         ];
       }
       else if (model === "hsl") {
         colors = [
-          { space: this.space, coords: convertColor({space: "hsl", coords: [h*360,   0, 50]}, hSpace).coords },
-          { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 100, 50]}, hSpace).coords }
+          { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360,   0, 50]}, hSpace).coords },
+          { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, 100, 50]}, hSpace).coords }
         ];
       }
       else if (model === "hwb") {
         colors = [
-          { space: this.space, coords: convertColor({space: "hwb", coords: [h*360,   0,  0]}, hSpace).coords },
-          { space: this.space, coords: convertColor({space: "hwb", coords: [h*360, 100,  0]}, hSpace).coords }
+          { space: this.#space, coords: convertColor({space: "hwb", coords: [h*360,   0,  0]}, hSpace).coords },
+          { space: this.#space, coords: convertColor({space: "hwb", coords: [h*360, 100,  0]}, hSpace).coords }
         ];
       }
 
@@ -1662,11 +1677,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
     if (model === "rgb") {
       let [r, g] = this.#coords;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
 
       let colors = [
-        { space: this.space, coords: [r, g, 0] },
-        { space: this.space, coords: [r, g, 1] }
+        { space: this.#space, coords: [r, g, 0] },
+        { space: this.#space, coords: [r, g, 1] }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -1674,32 +1689,32 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
 
     else if (model === "hsv" || model === "hsl" || model === "hwb") {
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
       let colors = [];
 
       if (model === "hsv") {
         let [h, s] = this.#coords;
 
         colors = [
-          { space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100,   0]}, hSpace).coords },
-          { space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, 100]}, hSpace).coords }
+          { space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, s*100,   0]}, hSpace).coords },
+          { space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, s*100, 100]}, hSpace).coords }
         ];
       }
       else if (model === "hsl") {
         let [h, s] = this.#coords;
 
         colors = [
-          { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100,   0]}, hSpace).coords },
-          { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100,  50]}, hSpace).coords },
-          { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, 100]}, hSpace).coords }
+          { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, s*100,   0]}, hSpace).coords },
+          { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, s*100,  50]}, hSpace).coords },
+          { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, s*100, 100]}, hSpace).coords }
         ];
       }
       else if (model === "hwb") {
         let [h, w] = this.#coords;
 
         for (let b = 0; b <= 100; b += 10) {
-          colors.push({space: this.space, coords: convertColor({space: "hwb", coords: [h*360, w*100, b]}, hSpace).coords});
+          colors.push({space: this.#space, coords: convertColor({space: "hwb", coords: [h*360, w*100, b]}, hSpace).coords});
         }
       }
 
@@ -1803,8 +1818,8 @@ class XRGBLinearSlidersElement extends HTMLElement {
       let [r, g, b] = this.#coords;
 
       let colors = [
-        { space: this.space, coords: [r, g, b], alpha: 0 },
-        { space: this.space, coords: [r, g, b], alpha: 1 }
+        { space: this.#space, coords: [r, g, b], alpha: 0 },
+        { space: this.#space, coords: [r, g, b], alpha: 1 }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -1812,12 +1827,12 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
     else if (model === "okhsv" || model === "okhsl") {
       let [h, a, b] = this.#coords;
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
       let colors = [];
 
       for (let alpha of [0, 1]) {
         colors.push({
-          space: this.space,
+          space: this.#space,
           coords: convertColor({space: model, coords: [h*360, a, b]}, hSpace).coords,
           alpha: alpha
         });
@@ -1828,12 +1843,12 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
     else {
       let [h, a, b] = this.#coords;
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
       let colors = [];
 
       for (let alpha of [0, 1]) {
         colors.push({
-          space: this.space,
+          space: this.#space,
           coords: convertColor({space: model, coords: [h*360, a*100, b*100]}, hSpace).coords,
           alpha: alpha
         });
@@ -1926,11 +1941,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
     for (let item of this["#color-model-menu"].querySelectorAll("x-menuitem")) {
       item.toggled = (item.value === model);
-      item.hidden = item.hasAttribute("data-srgb-only") && this.space !== "srgb";
+      item.hidden = item.hasAttribute("data-srgb-only") && this.#space !== "srgb";
     }
 
     for (let separator of this["#color-model-menu"].querySelectorAll("hr")) {
-      separator.hidden = (this.space !== "srgb");
+      separator.hidden = (this.#space !== "srgb" && separator.nextElementSibling?.value !== "rgb");
     }
 
     for (let item of this["#gamut-hints-menu"].querySelectorAll("x-menuitem")) {
@@ -2178,7 +2193,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
   #space = "lch";        // Either "lch" or "oklch"
   #gamutHints = "srgb";  // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
-  #labels = false;
+  #labels = true;
   #coords = [0, 0, 0];   // LCH: [0-100, 0-150, 0-360], OK LCH: [0-1, 0-0.4, 0-360]
   #a = 1;                // Alpha normalized to 0 ~ 1 range
 
@@ -2205,7 +2220,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
   connectedCallback() {
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
-    this.#labels = Xel.getConfig("x-colorpicker:labels", false);
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
   }
@@ -2597,7 +2612,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
     }
 
     colors = colors.map(color => serializeColor(color));
-    this["#chroma-slider"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
+    this["#chroma-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
   #updateChromaSliderGamutPath() {
@@ -2792,6 +2807,18 @@ if (customElements.get("x-lchlinearsliders") === undefined) {
 class XLABLinearSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
+      <div id="lightness-slider" class="slider" part="slider">
+        <div id="lightness-slider-track" class="slider-track">
+          <svg id="lightness-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="lightness-slider-gamut-path" class="slider-gamut-path"></path>
+          </svg>
+
+          <div id="lightness-slider-marker" class="slider-marker">
+            <span id="lightness-slider-label" class="slider-label">L</span>
+          </div>
+        </div>
+      </div>
+
       <div id="a-slider" class="slider" part="slider">
         <div id="a-slider-track" class="slider-track">
           <svg id="a-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
@@ -2812,18 +2839,6 @@ class XLABLinearSlidersElement extends HTMLElement {
 
           <div id="b-slider-marker" class="slider-marker">
             <span id="b-slider-label" class="slider-label">B</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="lightness-slider" class="slider" part="slider">
-        <div id="lightness-slider-track" class="slider-track">
-          <svg id="lightness-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
-            <path id="lightness-slider-gamut-path" class="slider-gamut-path"></path>
-          </svg>
-
-          <div id="lightness-slider-marker" class="slider-marker">
-            <span id="lightness-slider-label" class="slider-label">L</span>
           </div>
         </div>
       </div>
@@ -3012,7 +3027,7 @@ class XLABLinearSlidersElement extends HTMLElement {
 
   #space = "lab";        // Either "lab" or "oklab"
   #gamutHints = "srgb";  // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
-  #labels = false;
+  #labels = true;
   #coords = [0, 0, 0];   // LAB: [0-100, -125-125, -125-125], OK LAB: [0-1, -0.4-0.4, -0.4-0.4]
   #a = 1;                // Alpha normalized to 0 ~ 1 range
 
@@ -3029,9 +3044,9 @@ class XLABLinearSlidersElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
+    this["#lightness-slider"].addEventListener("pointerdown", (event) => this.#onLightnessSliderPointerDown(event));
     this["#a-slider"].addEventListener("pointerdown", (event) => this.#onASliderPointerDown(event));
     this["#b-slider"].addEventListener("pointerdown", (event) => this.#onBSliderPointerDown(event));
-    this["#lightness-slider"].addEventListener("pointerdown", (event) => this.#onLightnessSliderPointerDown(event));
     this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
     this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
     this["#context-menu"].addEventListener("open", (event) => this.#onContextMenuOpen(event));
@@ -3039,7 +3054,7 @@ class XLABLinearSlidersElement extends HTMLElement {
 
   connectedCallback() {
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
-    this.#labels = Xel.getConfig("x-colorpicker:labels", false);
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
   }
@@ -3098,6 +3113,63 @@ class XLABLinearSlidersElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  #onLightnessSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#lightness-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let coord = ((clientX - trackBounds.x) / trackBounds.width);
+
+      if (this.#space === "oklab") {
+        coord = normalize(coord, 0, 1);
+      }
+      else if (this.#space === "lab") {
+        coord = normalize(coord * 100, 0, 100);
+      }
+
+      if (coord !== this.#coords[0]) {
+        this.#coords[0] = coord;
+
+        this.#updateASliderBackground();
+        this.#updateASliderGamutPath();
+        this.#updateBSliderBackground();
+        this.#updateBSliderGamutPath();
+        this.#updateLightnessSliderMarker();
+        this.#updateAlphaSliderBackground();
+        this.#updateGamutWarnings();
+
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#lightness-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#lightness-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#lightness-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#lightness-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#lightness-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
   #onASliderPointerDown(pointerDownEvent) {
     if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
       return;
@@ -3124,11 +3196,11 @@ class XLABLinearSlidersElement extends HTMLElement {
       if (coord !== this.#coords[1]) {
         this.#coords[1] = coord;
 
+        this.#updateLightnessSliderBackground();
+        this.#updateLightnessSliderGamutPath();
         this.#updateASliderMarker();
         this.#updateBSliderBackground();
         this.#updateBSliderGamutPath();
-        this.#updateLightnessSliderBackground();
-        this.#updateLightnessSliderGamutPath();
         this.#updateAlphaSliderBackground();
         this.#updateGamutWarnings();
 
@@ -3182,12 +3254,12 @@ class XLABLinearSlidersElement extends HTMLElement {
       if (coord !== this.#coords[2]) {
         this.#coords[2] = coord;
 
+        this.#updateLightnessSliderBackground();
+        this.#updateLightnessSliderGamutPath();
         this.#updateASliderBackground();
         this.#updateASliderGamutPath();
         this.#updateBSliderMarker();
         this.#updateBSliderBackground();
-        this.#updateLightnessSliderBackground();
-        this.#updateLightnessSliderGamutPath();
         this.#updateAlphaSliderBackground();
         this.#updateGamutWarnings();
 
@@ -3213,61 +3285,6 @@ class XLABLinearSlidersElement extends HTMLElement {
     });
 
     this["#b-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
-  }
-
-  #onLightnessSliderPointerDown(pointerDownEvent) {
-    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
-      return;
-    }
-
-    let trackBounds = this["#lightness-slider-track"].getBoundingClientRect();
-    let pointerMoveListener, pointerUpOrCancelListener;
-
-    this.#isDraggingSlider = true;
-    this["#lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
-    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
-
-    let onPointerMove = (clientX) => {
-      let coord = ((clientX - trackBounds.x) / trackBounds.width);
-
-      if (this.#space === "oklab") {
-        coord = normalize(coord, 0, 1);
-      }
-      else if (this.#space === "lab") {
-        coord = normalize(coord * 100, 0, 100);
-      }
-
-      if (coord !== this.#coords[0]) {
-        this.#coords[0] = coord;
-
-        this.#updateASliderGamutPath();
-        this.#updateBSliderGamutPath();
-        this.#updateLightnessSliderMarker();
-        this.#updateAlphaSliderBackground();
-        this.#updateGamutWarnings();
-
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-      }
-    };
-
-    onPointerMove(pointerDownEvent.clientX);
-
-    this["#lightness-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
-      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
-        onPointerMove(pointerMoveEvent.clientX);
-      }
-    });
-
-    this["#lightness-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
-      this["#lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
-      this["#lightness-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
-      this["#lightness-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
-      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
-
-      this.#isDraggingSlider = false;
-    });
-
-    this["#lightness-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
   }
 
   #onAlphaSliderPointerDown(pointerDownEvent) {
@@ -3316,6 +3333,10 @@ class XLABLinearSlidersElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #update() {
+    this.#updateLightnessSliderMarker();
+    this.#updateLightnessSliderBackground();
+    this.#updateLightnessSliderGamutPath();
+
     this.#updateASliderMarker();
     this.#updateASliderBackground();
     this.#updateASliderGamutPath();
@@ -3324,15 +3345,92 @@ class XLABLinearSlidersElement extends HTMLElement {
     this.#updateBSliderBackground();
     this.#updateBSliderGamutPath();
 
-    this.#updateLightnessSliderMarker();
-    this.#updateLightnessSliderBackground();
-    this.#updateLightnessSliderGamutPath();
-
     this.#updateAlphaSliderMarker();
     this.#updateAlphaSliderBackground();
 
     this.#updateGamutWarnings();
     this.#updateLabels();
+  }
+
+  #updateLightnessSliderMarker() {
+    let [l, a, b] = this.#coords;
+
+    if (this.#space === "oklab") {
+      this["#lightness-slider-marker"].style.left = (l * 100) + "%";
+    }
+    else if (this.#space === "lab") {
+      this["#lightness-slider-marker"].style.left = l + "%";
+    }
+  }
+
+  #updateLightnessSliderBackground() {
+    let colors = [];
+    let [l, a, b] = this.#coords;
+
+    if (this.#space === "oklab") {
+      for (let l = 0; l <= 1; l += 0.02) {
+        colors.push({space: "oklab", coords: [l, a, b]});
+      }
+    }
+    else if (this.#space === "lab") {
+      for (let l = 0; l <= 100; l += 2) {
+        colors.push({space: "lab", coords: [l, a, b]});
+      }
+    }
+
+    colors = colors.map(color => serializeColor(color));
+    this["#lightness-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
+  }
+
+  #updateLightnessSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#lightness-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#lightness-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [, a, b] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let l = (column / width);
+          let color;
+
+          if (this.#space === "lab") {
+            color = {space: this.#space, coords: [l*100, a, b]};
+          }
+          else if (this.#space === "oklab") {
+            color = {space: this.#space, coords: [l, a, b]};
+          }
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(l * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#lightness-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#lightness-slider-gamut-path"].removeAttribute("d");
+      }
+    }
   }
 
   #updateASliderMarker() {
@@ -3370,12 +3468,12 @@ class XLABLinearSlidersElement extends HTMLElement {
 
     if (this.#space === "oklab") {
       for (let a = -0.4; a <= 0.4; a += 0.05) {
-        colors.push({space: "oklab", coords: [0.8, a, b]});
+        colors.push({space: "oklab", coords: [l, a, b]});
       }
     }
     else if (this.#space === "lab") {
       for (let a = -125; a <= 125; a += 5) {
-        colors.push({space: "lab", coords: [75, a, b]});
+        colors.push({space: "lab", coords: [l, a, b]});
       }
     }
 
@@ -3469,12 +3567,12 @@ class XLABLinearSlidersElement extends HTMLElement {
 
     if (this.#space === "oklab") {
       for (let b = -0.4; b <= 0.4; b += 0.05) {
-        colors.push({space: "oklab", coords: [0.8, a, b]});
+        colors.push({space: "oklab", coords: [l, a, b]});
       }
     }
     else if (this.#space === "lab") {
       for (let b = -125; b <= 125; b += 5) {
-        colors.push({space: "lab", coords: [75, a, b]});
+        colors.push({space: "lab", coords: [l, a, b]});
       }
     }
 
@@ -3533,88 +3631,6 @@ class XLABLinearSlidersElement extends HTMLElement {
     }
   }
 
-  #updateLightnessSliderMarker() {
-    let [l, a, b] = this.#coords;
-
-    if (this.#space === "oklab") {
-      this["#lightness-slider-marker"].style.left = (l * 100) + "%";
-    }
-    else if (this.#space === "lab") {
-      this["#lightness-slider-marker"].style.left = l + "%";
-    }
-  }
-
-  #updateLightnessSliderBackground() {
-    let [, a, b] = this.#coords;
-    let colors = [];
-
-    if (this.#space === "oklab") {
-      for (let l = 0; l <= 1; l += 0.02) {
-        colors.push({space: "oklab", coords: [l, a, b]});
-      }
-    }
-    else if (this.#space === "lab") {
-      for (let l = 0; l <= 100; l += 2) {
-        colors.push({space: "lab", coords: [l, a, b]});
-      }
-    }
-
-    colors = colors.map(color => serializeColor(color));
-    this["#lightness-slider"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
-  }
-
-
-  #updateLightnessSliderGamutPath() {
-    if (this.#gamutHints === "none") {
-      this["#lightness-slider-gamut-path"].removeAttribute("d");
-    }
-    else {
-      let ranges = [];
-
-      // Determine ranges
-      {
-        let width = this["#b-slider"].clientWidth;
-        let step = 1 / window.devicePixelRatio;
-        let [, a, b] = this.#coords;
-        let range = null;
-
-        for (let column = 0; column <= width; column += step) {
-          let l = (column / width);
-          let color;
-
-          if (this.#space === "lab") {
-            color = {space: this.#space, coords: [l*100, a, b]};
-          }
-          else if (this.#space === "oklab") {
-            color = {space: this.#space, coords: [l, a, b]};
-          }
-
-          if (isColorInGamut(color, this.#gamutHints)) {
-            if (range === null) {
-              range = [];
-              ranges.push(range);
-            }
-
-            range.push(l * 100);
-          }
-          else {
-            range = null;
-          }
-        }
-
-        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
-      }
-
-      if (ranges.length > 0) {
-        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
-        this["#lightness-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
-      }
-      else {
-        this["#lightness-slider-gamut-path"].removeAttribute("d");
-      }
-    }
-  }
-
   #updateAlphaSliderMarker() {
     this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
   }
@@ -3623,12 +3639,12 @@ class XLABLinearSlidersElement extends HTMLElement {
     let [l, a, b] = this.#coords;
 
     let colors = [
-      {space: this.space, coords: [l, a, b], alpha: 0},
-      {space: this.space, coords: [l, a, b], alpha: 1}
+      {space: this.#space, coords: [l, a, b], alpha: 0},
+      {space: this.#space, coords: [l, a, b], alpha: 1}
     ];
 
     colors = colors.map(color => serializeColor(color));
-    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
+    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
   #updateGamutWarnings() {
@@ -3906,7 +3922,7 @@ class XXYZLinearSlidersElement extends HTMLElement {
 
   #space = "xyz-d65";     // Either "xyz-d65" or "xyz-d50"
   #gamutHints = "srgb";   // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
-  #labels = false;
+  #labels = true;
   #coords = [0, 0, 0];    // Values normalized to 0 - 1 range
   #a = 1;                 // Alpha normalized to 0 ~ 1 range
 
@@ -3933,7 +3949,7 @@ class XXYZLinearSlidersElement extends HTMLElement {
 
   connectedCallback() {
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
-    this.#labels = Xel.getConfig("x-colorpicker:labels", false);
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
   }
@@ -4433,12 +4449,12 @@ class XXYZLinearSlidersElement extends HTMLElement {
     let [x, y, z] = this.#coords;
 
     let colors = [
-      {space: this.space, coords: [x, y, z], alpha: 0},
-      {space: this.space, coords: [x, y, z], alpha: 1}
+      {space: this.#space, coords: [x, y, z], alpha: 0},
+      {space: this.#space, coords: [x, y, z], alpha: 1}
     ];
 
     colors = colors.map(color => serializeColor(color));
-    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
+    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
   #updateGamutWarnings() {
@@ -4746,36 +4762,25 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
   // @type [number, number, number, number]
   get value() {
-    // HSV
-    if (this.#model === "hsv") {
-      let [h, s, v] = this.#coords;
-      let [r, g, b] = convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords;
-      return [r, g, b, this.#a];
-    }
-    // HSL
-    else if (this.#model === "hsl") {
-      let [h, s, l] = this.#coords;
-      let [r, g, b] = convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords;
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [h, c1, c2] = this.#coords;
+      let [r, g, b] = convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords;
       return [r, g, b, this.#a];
     }
   }
   set value([r, g, b, a]) {
-    // HSV
-    if (this.#model === "hsv") {
-      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, "hsv").coords;
-      this.#coords = [h/360, s/100, v/100];
-      this.#a = a;
-    }
-    // HSL
-    else if (this.#model === "hsl") {
-      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, "hsl").coords;
-      this.#coords = [h/360, s/100, l/100];
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [h, c1, c2] = convertColor({space: "srgb", coords: [r, g, b]}, this.#model).coords;
+      this.#coords = [h/360, c1/100, c2/100];
       this.#a = a;
     }
 
-    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
-    if (Number.isNaN(this.#coords[0])) {
-      this.#coords[0] = 0;
+    // Convert missing components from NaN to 0
+    // @doc https://www.w3.org/TR/css-color-4/#missing
+    for (let i = 0; i < this.#coords.length; i += 1) {
+      if (isNaN(this.#coords[i])) {
+        this.#coords[i] = 0;
+      }
     }
 
     this.#update();
@@ -4821,7 +4826,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   #space = "srgb";        // Either "srgb", "srgb-linear", "a98rgb", "p3", "rec2020" or "prophoto"
   #model = "hsv";         // Either "hsv" or "hsl"
   #gamutHints = "srgb";   // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
-  #labels = false;
+  #labels = true;
   #coords = [0, 0, 0];    // Values in the current MODEL coordinate system normalized to 0.00 - 1.00 range
   #a = 1;                 // Alpha normalized to 0 ~ 1 range
 
@@ -4848,7 +4853,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   connectedCallback() {
     this.#model = Xel.getConfig(`${this.localName}:model`, "hsv");
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
-    this.#labels = Xel.getConfig("x-colorpicker:labels", false);
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
     this.#resizeObserver.observe(this);
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
@@ -4862,10 +4867,10 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   #getResolvedGamutHints() {
     if (
       (this.#gamutHints === "none") ||
-      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.space)) ||
-      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
-      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
-      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
+      (this.#gamutHints === "srgb"    && ["srgb", "srgb-linear"].includes(this.#space)) ||
+      (this.#gamutHints === "p3"      && ["srgb", "srgb-linear", "p3"].includes(this.#space)) ||
+      (this.#gamutHints === "a98rgb"  && ["srgb", "srgb-linear", "a98rgb"].includes(this.#space)) ||
+      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.#space)) ||
       (this.#gamutHints === "prophoto")
     ) {
       return "none";
@@ -5130,16 +5135,16 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
   #updateHueSliderBackground() {
     if (this.#model === "hsv" || this.#model === "hsl") {
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
 
       let colors = [
-        { space: this.space, coords: [1, 0, 0] },
-        { space: this.space, coords: [1, 1, 0] },
-        { space: this.space, coords: [0, 1, 0] },
-        { space: this.space, coords: [0, 1, 1] },
-        { space: this.space, coords: [0, 0, 1] },
-        { space: this.space, coords: [1, 0, 1] },
-        { space: this.space, coords: [1, 0, 0] }
+        { space: this.#space, coords: [1, 0, 0] },
+        { space: this.#space, coords: [1, 1, 0] },
+        { space: this.#space, coords: [0, 1, 0] },
+        { space: this.#space, coords: [0, 1, 1] },
+        { space: this.#space, coords: [0, 0, 1] },
+        { space: this.#space, coords: [1, 0, 1] },
+        { space: this.#space, coords: [1, 0, 0] }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -5155,10 +5160,9 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     }
     else {
       if (this.#model === "hsv" || this.#model === "hsl") {
-        let [h, s, lv] = this.#coords;
+        let [h, c1, c2] = this.#coords;
         let width = this["#hue-slider"].clientWidth;
         let step = 1 / window.devicePixelRatio;
-
         let ranges = [];
 
         // Determine ranges
@@ -5170,7 +5174,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
             let color = {
               space: this.#space,
-              coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
+              coords: convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords
             };
 
             if (isColorInGamut(color, gamutHints)) {
@@ -5201,18 +5205,10 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   }
 
   #updatePlanarSliderMarker() {
-    if (this.#model === "hsv") {
-      let [h, s, v] = this.#coords;
-      let left = s * 100;
-      let top = 100 - (v * 100);
-
-      this["#planar-slider-marker"].style.left = `${left}%`;
-      this["#planar-slider-marker"].style.top = `${top}%`;
-    }
-    else if (this.#model === "hsl") {
-      let [h, s, l] = this.#coords;
-      let left = s * 100;
-      let top = 100 - (l * 100);
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [c0, c1, c2] = this.#coords;
+      let left = c1 * 100;
+      let top = 100 - (c2 * 100);
 
       this["#planar-slider-marker"].style.left = `${left}%`;
       this["#planar-slider-marker"].style.top = `${top}%`;
@@ -5220,19 +5216,19 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   }
 
   #updatePlanarSliderBackground() {
-    if (this.#model === "hsv") {
-      let [h] = this.#coords;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+    let [h] = this.#coords;
+    let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
+    let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
 
+    if (this.#model === "hsv") {
       let bg1Colors = [
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360,   0, 100]}, hSpace).coords},
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, 100, 100]}, hSpace).coords}
+        {space: this.#space, coords: convertColor({space: "hsv", coords: [h*360,   0, 100]}, hSpace).coords},
+        {space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, 100, 100]}, hSpace).coords}
       ];
 
       let bg2Colors = [
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, 0, 100]}, hSpace).coords},
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, 0,   0]}, hSpace).coords}
+        {space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, 0, 100]}, hSpace).coords},
+        {space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, 0,   0]}, hSpace).coords}
       ];
 
       this["#planar-slider"].style.background = `
@@ -5243,26 +5239,22 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       this["#planar-slider"].style.backgroundBlendMode = "multiply, normal";
     }
     else if (this.#model === "hsl") {
-      let [h] = this.#coords;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
-
       let bg1Colors = [
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360,   0, 50]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360,   100, 50]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360,   0, 50]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360,   100, 50]}, hSpace).coords },
       ];
 
       let bg2Colors = [
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 0, 100]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 0, 100]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 0, 0]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, 0, 100]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, 0, 100]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, 0, 0]}, hSpace).coords },
       ];
 
       // @bug: Colors with alpha channel are not interpolated correctly in srgb-linear color space
       let bg3Colors = [
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 0, 100]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 0, 0]}, hSpace).coords, alpha: 0},
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, 0, 0]}, hSpace).coords, alpha: 0},
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, 0, 100]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, 0, 0]}, hSpace).coords, alpha: 0},
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, 0, 0]}, hSpace).coords, alpha: 0},
       ];
 
       bg1Colors = bg1Colors.map(color => serializeColor(color));
@@ -5294,7 +5286,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
       let isInGamut = (h, s, lv) => {
         let color = {
-          space: this.space,
+          space: this.#space,
           coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
         };
 
@@ -5366,25 +5358,21 @@ class XRGBPlanarSlidersElement extends HTMLElement {
   }
 
   #updateAlphaSliderBackground() {
-    if (this.#model === "hsv") {
-      let [h, s, v] = this.#coords;
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [c0, c1, c2] = this.#coords;
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
 
       let colors = [
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, hSpace).coords, alpha: 0},
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, hSpace).coords, alpha: 1}
-      ];
-
-      colors = colors.map(color => serializeColor(color)).join(",");
-      this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors})`;
-    }
-    else if (this.#model === "hsl") {
-      let [h, s, l] = this.#coords;
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
-
-      let colors = [
-        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, hSpace).coords, alpha: 0},
-        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, hSpace).coords, alpha: 1}
+        {
+          space: this.#space,
+          coords: convertColor({space: this.#model, coords: [c0*360, c1*100, c2*100]}, hSpace).coords,
+          alpha: 0
+        },
+        {
+          space: this.#space,
+          coords: convertColor({space:this.#model, coords: [c0*360, c1*100, c2*100]}, hSpace).coords,
+          alpha: 1
+        }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -5400,20 +5388,22 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       this["#planar-slider-marker"].removeAttribute("data-warn");
     }
     else {
-      let [h, s, vl] = this.#coords;
+      if (this.#model === "hsv" || this.#model === "hsl") {
+        let [c0, c1, c2] = this.#coords;
 
-      let color = {
-        space: this.space,
-        coords: convertColor({space: this.#model, coords: [h*360, s*100, vl*100]}, "srgb").coords
-      };
+        let color = {
+          space: this.#space,
+          coords: convertColor({space: this.#model, coords: [c0*360, c1*100, c2*100]}, "srgb").coords
+        };
 
-      if (isColorInGamut(color, gamutHints)) {
-        this["#hue-slider-marker"].removeAttribute("data-warn");
-        this["#planar-slider-marker"].removeAttribute("data-warn");
-      }
-      else {
-        this["#hue-slider-marker"].setAttribute("data-warn", "");
-        this["#planar-slider-marker"].setAttribute("data-warn", "");
+        if (isColorInGamut(color, gamutHints)) {
+          this["#hue-slider-marker"].removeAttribute("data-warn");
+          this["#planar-slider-marker"].removeAttribute("data-warn");
+        }
+        else {
+          this["#hue-slider-marker"].setAttribute("data-warn", "");
+          this["#planar-slider-marker"].setAttribute("data-warn", "");
+        }
       }
     }
   }
@@ -5755,7 +5745,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
   #space = "lch";         // Either "lch" or "oklch"
   #gamutHints = "srgb";   // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
-  #labels = false;
+  #labels = true;
   #coords = [0, 0, 0];    // LCH: [0-100, 0-150, 0-360], OK LCH: [0.0-1.0, 0.0-0.4, 0-360]
   #a = 1;                 // Alpha normalized to 0 ~ 1 range
 
@@ -5781,7 +5771,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
   connectedCallback() {
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
-    this.#labels = Xel.getConfig("x-colorpicker:labels", false);
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
     this.#resizeObserver.observe(this);
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
@@ -5920,11 +5910,11 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
       let [l, c, h] = this.#coords;
 
-      if (this.space === "lch") {
+      if (this.#space === "lch") {
         l = x * 100;
         c = (1 - y) * MAX_LCH_CHROMA;
       }
-      else if (this.space === "oklch") {
+      else if (this.#space === "oklch") {
         l = x;
         c = (1 - y) * MAX_OKLCH_CHROMA;
       }
@@ -6063,10 +6053,10 @@ class XLCHPlanarSlidersElement extends HTMLElement {
           let h = (column / width);
           let color;
 
-          if (this.space === "lch") {
+          if (this.#space === "lch") {
             color = {space: "lch", coords: [l, c, h*360]};
           }
-          else if (this.space === "oklch") {
+          else if (this.#space === "oklch") {
             color = {space: "oklch", coords: [l, c, h*360]};
           }
 
@@ -6097,7 +6087,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
   }
 
   #updatePlanarSliderMarker() {
-    if (this.space === "lch") {
+    if (this.#space === "lch") {
       let [l, c] = this.#coords;
       let left = l;
       let top = 100 - ((c / MAX_LCH_CHROMA) * 100);
@@ -6105,7 +6095,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
       this["#planar-slider-marker"].style.left = `${left}%`;
       this["#planar-slider-marker"].style.top = `${top}%`;
     }
-    else if (this.space === "oklch") {
+    else if (this.#space === "oklch") {
       let [l, c] = this.#coords;
       let left = l * 100;
       let top = 100 - ((c / MAX_OKLCH_CHROMA) * 100);
@@ -6132,10 +6122,10 @@ class XLCHPlanarSlidersElement extends HTMLElement {
         let c = 1 - (row / height);
         let color;
 
-        if (this.space === "lch") {
+        if (this.#space === "lch") {
           color = {space: "lch", coords: [l*100, c*MAX_LCH_CHROMA, h]};
         }
-        else if (this.space === "oklch") {
+        else if (this.#space === "oklch") {
           color = {space: "oklch", coords: [l, c*MAX_OKLCH_CHROMA, h]};
         }
 
@@ -6168,10 +6158,10 @@ class XLCHPlanarSlidersElement extends HTMLElement {
       let isInGamut = (l, c, h) => {
         let color;
 
-        if (this.space === "lch") {
+        if (this.#space === "lch") {
           color = {space: "lch", coords: [l*100, c*MAX_LCH_CHROMA, h]};
         }
-        else if (this.space === "oklch") {
+        else if (this.#space === "oklch") {
           color = {space: "oklch", coords: [l, c*MAX_OKLCH_CHROMA, h]};
         }
 
@@ -6224,12 +6214,12 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     let [l, c, h] = this.#coords;
 
     let colors = [
-      {space: this.space, coords: [l, c, h], alpha: 0},
-      {space: this.space, coords: [l, c, h], alpha: 1}
+      {space: this.#space, coords: [l, c, h], alpha: 0},
+      {space: this.#space, coords: [l, c, h], alpha: 1}
     ];
 
     colors = colors.map(color => serializeColor(color));
-    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.space} to right, ${colors.join(",")})`;
+    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
   #updateGamutWarnings() {
@@ -6267,6 +6257,1842 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
 if (customElements.get("x-lchplanarsliders") === undefined) {
   customElements.define("x-lchplanarsliders", XLCHPlanarSlidersElement);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Planar sliders for LAB-based color spaces (CIE LAB, OK LAB)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// @event ^change
+// @event ^changestart
+// @event ^changeend
+// @part slider
+class XLABPlanarSlidersElement extends HTMLElement {
+  static #shadowTemplate = html`
+    <template>
+      <div id="lightness-slider" class="slider" part="slider">
+        <div id="lightness-slider-track" class="slider-track">
+          <svg id="lightness-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="lightness-slider-gamut-path" class="slider-gamut-path"></path>
+          </svg>
+
+          <div id="lightness-slider-marker" class="slider-marker">
+            <span id="lightness-slider-label" class="slider-label">L</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="planar-slider" part="slider">
+        <canvas id="planar-slider-canvas" width="100" height="100"></canvas>
+
+        <svg id="planar-slider-gamut-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path id="planar-slider-gamut-path"></path>
+        </svg>
+
+        <div id="planar-slider-marker"></div>
+      </div>
+
+      <div id="alpha-slider" part="slider">
+        <div id="alpha-slider-gradient"></div>
+
+        <div id="alpha-slider-track">
+          <div id="alpha-slider-marker">
+            <span id="alpha-slider-label">α</span>
+          </div>
+        </div>
+      </div>
+
+      <x-contextmenu id="context-menu">
+        <x-menu>
+          <x-menuitem>
+            <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
+            <x-menu id="gamut-hints-menu">
+              <x-menuitem value="none"><x-label><x-message href="#gamut-hints.none">None</x-message></x-label></x-menuitem>
+              <hr/>
+              <x-menuitem value="srgb" toggled><x-label>sRGB</x-label></x-menuitem>
+              <x-menuitem value="a98rgb"><x-label>Adobe RGB</x-label></x-menuitem>
+              <x-menuitem value="p3"><x-label>Display P3</x-label></x-menuitem>
+              <x-menuitem value="rec2020"><x-label>Rec. 2020</x-label></x-menuitem>
+              <x-menuitem value="prophoto"><x-label>ProPhoto RGB</x-label></x-menuitem>
+            </x-menu>
+          </x-menuitem>
+
+          <hr/>
+
+          <x-menuitem id="labels-menu-item" value="labels">
+            <x-label><x-message href="#labels" autocapitalize>Labels</x-message></x-label>
+          </x-menuitem>
+        </x-menu>
+      </x-contextmenu>
+    </template>
+  `;
+
+  static #shadowStyleSheet = css`
+    :host {
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      --marker-width: 18px;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    /**
+     * Lightness slider
+     */
+
+    #lightness-slider {
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
+      padding: 0 calc(var(--marker-width) / 2);
+      box-sizing: border-box;
+      touch-action: pinch-zoom;
+    }
+
+    #lightness-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #lightness-slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
+    }
+    #lightness-slider-marker[data-warn]::after {
+      content: "⚠";
+      position: absolute;
+      right: -26px;
+      color: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(1px 1px 1px black);
+      pointer-events: none;
+      font-size: 18px;
+    }
+
+    #lightness-slider-gamut-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    #lightness-slider-gamut-path {
+      fill: none;
+      stroke: white;
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: 2px;
+      opacity: 0.8;
+    }
+
+    #lightness-slider-label {
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 10px;
+    }
+
+    /**
+     * Planar slider
+     */
+
+    #planar-slider {
+      width: 100%;
+      height: 200px;
+      margin-top: 10px;
+      position: relative;
+      touch-action: pinch-zoom;
+    }
+
+    #planar-slider-marker {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: var(--marker-size);
+      height: var(--marker-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
+      background: rgba(0, 0, 0, 0.3);
+      border: 3px solid white;
+      border-radius: 999px;
+      box-shadow: 0 0 3px black;
+      --marker-size: 20px;
+    }
+    #planar-slider-marker[data-warn]::after {
+      content: "⚠";
+      position: absolute;
+      top: -30px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+      filter: drop-shadow(1px 1px 1px black);
+      pointer-events: none;
+    }
+
+    #planar-slider-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    #planar-slider-gamut-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #planar-slider-gamut-path {
+      fill: none;
+      stroke: white;
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: 2px;
+      opacity: 0.8;
+    }
+
+    /**
+     * Alpha slider
+     */
+
+    #alpha-slider {
+      display: none;
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
+      padding: 0 calc(var(--marker-width) / 2);
+      position: relative;
+      box-sizing: border-box;
+      touch-action: pinch-zoom;
+      background: var(--checkboard-background);
+    }
+    :host([alpha]) #alpha-slider {
+      display: block;
+    }
+
+    #alpha-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #alpha-slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
+    }
+
+    #alpha-slider-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+    }
+
+    #alpha-slider-label {
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 10px;
+    }
+  `;
+
+  // @type [number, number, number, number]
+  get value() {
+    let [l, c, h] = this.#coords;
+    return [l, c, h, this.#a];
+  }
+  set value([l, c, h, a]) {
+    this.#coords = [l, c, h];
+    this.#a = a;
+
+    this.#update();
+  }
+
+  // @type "lab" || "oklab"
+  // @default "lab"
+  get space() {
+    return this.#space;
+  }
+  set space(space) {
+    if (this.#space !== space) {
+      this.#space = space;
+      this.#update();
+    }
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get alpha() {
+    return this.hasAttribute("alpha");
+  }
+  set alpha(alpha) {
+    alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  #shadowRoot = null;
+  #configChangeListener;
+  #resizeObserver = new ResizeObserver(() => this.#onResize());
+  #isDraggingSlider = false;
+
+  #space = "lab";         // Either "lab" or "oklab"
+  #gamutHints = "srgb";   // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
+  #labels = true;
+  #coords = [0, 0, 0];    // LAB: [0-100, -125-125, -125-125], OK LAB: [0-1, -0.4-0.4, -0.4-0.4]
+  #a = 1;                 // Alpha normalized to 0 ~ 1 range
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.append(document.importNode(XLABPlanarSlidersElement.#shadowTemplate.content, true));
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XLABPlanarSlidersElement.#shadowStyleSheet];
+
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this["#lightness-slider"].addEventListener("pointerdown", (event) => this.#onLightnessSliderPointerDown(event));
+    this["#planar-slider"].addEventListener("pointerdown", (event) => this.#onPlanarSliderPointerDown(event));
+    this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
+    this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
+    this["#context-menu"].addEventListener("open", (event) => this.#onContextMenuOpen(event));
+  }
+
+  connectedCallback() {
+    this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
+
+    this.#resizeObserver.observe(this);
+    Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
+  }
+
+  disconnectedCallback() {
+    this.#resizeObserver.unobserve(this);
+    Xel.removeEventListener("configchange", this.#configChangeListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onConfigChange(event) {
+    let {key, value, origin} = event.detail;
+
+    if (origin === "self") {
+      if (key === "x-colorpicker:gamutHints") {
+        let gamutHints = normalizeColorSpaceName(value || "srgb", "color.js");
+
+        if (gamutHints !== this.#gamutHints) {
+          this.#gamutHints = gamutHints;
+          this.#update();
+        }
+      }
+      else if (key === "x-colorpicker:labels") {
+        let labels = (value === null ? false : value);
+
+        if (labels !== this.#labels) {
+          this.#labels = labels;
+          this.#updateLabels();
+        }
+      }
+    }
+  }
+
+  #onContextMenuClick(event) {
+    let item = event.target.closest("x-menuitem");
+
+    if (item) {
+      if (item.parentElement === this["#gamut-hints-menu"]) {
+        if (item.value !== this.#gamutHints) {
+          this.#gamutHints = item.value;
+          this.#update();
+          Xel.setConfig("x-colorpicker:gamutHints", normalizeColorSpaceName(this.#gamutHints, "css"));
+        }
+      }
+      else if (item.value === "labels") {
+        this.#labels = !item.toggled;
+        Xel.setConfig("x-colorpicker:labels", this.#labels);
+        this.#update();
+      }
+    }
+  }
+
+  #onContextMenuOpen() {
+    this.#updateContextMenu();
+  }
+
+  #onResize() {
+    this.#updatePlanarSliderGamutPathThrottled();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onLightnessSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#lightness-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#lightness-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let coord = ((clientX - trackBounds.x) / trackBounds.width);
+
+      if (this.#space === "oklab") {
+        coord = normalize(coord, 0, 1);
+      }
+      else if (this.#space === "lab") {
+        coord = normalize(coord * 100, 0, 100);
+      }
+
+      if (coord !== this.#coords[0]) {
+        this.#coords[0] = coord;
+
+        this.#updateLightnessSliderMarker();
+        this.#updatePlanarSliderGamutPathThrottled();
+        this.#updatePlanarSliderBackground();
+        this.#updateAlphaSliderBackground();
+        this.#updateGamutWarnings();
+
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#lightness-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#lightness-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#lightness-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#lightness-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#lightness-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#lightness-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onPlanarSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let sliderBounds = this["#planar-slider"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+    this["#planar-slider"].setPointerCapture(pointerDownEvent.pointerId);
+
+    let onPointerMove = (clientX, clientY) => {
+      let x = (clientX - sliderBounds.left) / sliderBounds.width;
+      let y = (clientY - sliderBounds.top) / sliderBounds.height;
+
+      x = normalize(x, 0, 1);
+      y = normalize(y, 0, 1);
+
+      let [l, a, b] = this.#coords;
+
+      if (this.#space === "lab") {
+        a = (x * 250) - 125;
+        b = ((1 - y) * 250) - 125;
+      }
+      else if (this.#space === "oklab") {
+        a = (x * 0.8) - 0.4;
+        b = ((1 - y) * 0.8) - 0.4;
+      }
+
+      this.#coords = [l, a, b];
+
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+
+      this.#updatePlanarSliderMarker();
+      this.#updateLightnessSliderBackground();
+      this.#updateLightnessSliderGamutPath();
+      this.#updateAlphaSliderBackground();
+      this.#updateGamutWarnings();
+    };
+
+    onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
+
+    this["#planar-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
+      }
+    });
+
+    this["#planar-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#planar-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#planar-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#planar-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+      this.#isDraggingSlider = false;
+    });
+
+    this["#planar-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onAlphaSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#alpha-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let a = (clientX - trackBounds.x) / trackBounds.width;
+      a = normalize(a, 0, 1);
+
+      if (a !== this.#a) {
+        this.#a = a;
+        this.#updateAlphaSliderMarker();
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #update() {
+    this.#updatePlanarSliderMarker();
+    this.#updatePlanarSliderBackground();
+    this.#updatePlanarSliderGamutPath();
+
+    this.#updateLightnessSliderMarker();
+    this.#updateLightnessSliderBackground();
+    this.#updateLightnessSliderGamutPath();
+
+    this.#updateAlphaSliderMarker();
+    this.#updateAlphaSliderBackground();
+
+    this.#updateGamutWarnings();
+    this.#updateLabels();
+  }
+
+  #updatePlanarSliderMarker() {
+      let [l, a, b] = this.#coords;
+      let left;
+      let top;
+
+      if (this.#space === "lab") {
+        if (a < -125) {
+          left = "calc(0% - 18px)";
+        }
+        else if (a > 125) {
+          left = "calc(100% + 18px)";
+        }
+        else {
+          left = (((a + 125) / 250) * 100) + "%";
+        }
+
+        if (b < -125) {
+          top = "calc(0% - 18px)";
+        }
+        else if (b > 125) {
+          top = "calc(100% + 18px)";
+        }
+        else {
+          top = (100 - (((b + 125) / 250) * 100)) + "%";
+        }
+      }
+
+      else if (this.#space === "oklab") {
+        if (a < -0.4) {
+          left = "calc(0% - 18px)";
+        }
+        else if (a > 0.4) {
+          left = "calc(100% + 18px)";
+        }
+        else {
+          left = (((a + 0.4) / 0.8) * 100) + "%";
+        }
+
+        if (b < -0.4) {
+          top = "calc(0% - 18px)";
+        }
+        else if (b > 0.4) {
+          top = "calc(100% + 18px)";
+        }
+        else {
+          top = (100 - (((b + 0.4) / 0.8) * 100)) + "%";
+        }
+      }
+
+      this["#planar-slider-marker"].style.left = left;
+      this["#planar-slider-marker"].style.top = top;
+  }
+
+  #updatePlanarSliderBackground() {
+    let canvas = this["#planar-slider-canvas"];
+    let context = canvas.getContext("2d", {colorSpace: "display-p3"});
+    let {width, height} = canvas;
+    let step = 1;
+    let [l] = this.#coords;
+
+    context.clearRect(0, 0, width, height);
+
+    for (let col = 0; col <= width ; col += step) {
+      let stopColors = [];
+
+      for (let row = 0; row <= height; row += 10) {
+        let a = col / width;
+        let b = 1 - (row / height);
+        let color;
+
+        if (this.#space === "lab") {
+          color = {space: "lab", coords: [l,  (a * 250) - 125, (b * 250) - 125]};
+        }
+        else if (this.#space === "oklab") {
+          color = {space: "oklab", coords: [l,  (a * 0.8) - 0.4, (b * 0.8) - 0.4]};
+        }
+
+        stopColors.push(color);
+      }
+
+      let gradient = context.createLinearGradient(col, 0, width, height);
+
+      for (let i = 0; i < stopColors.length; i += 1) {
+        let stopColor = stopColors[i];
+        gradient.addColorStop(i / stopColors.length, serializeColor(stopColor));
+      }
+
+      context.fillStyle = gradient;
+      context.fillRect(col, 0, step, height);
+    }
+  }
+
+  #updatePlanarSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#planar-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let width = this["#planar-slider-gamut-svg"].clientWidth;
+      let height = this["#planar-slider-gamut-svg"].clientHeight;
+      let maxR = sqrt(pow(width/2, 2) + pow(height/2, 2));
+      let centerPoint = {x: width/2, y: height/2};
+      let [l, a, b] = this.#coords;
+      let points = [];
+
+      for (let angle = 0; angle < 360; angle += 3) {
+        let minR;
+
+        for (let r = maxR; r >= 0; r -= 15) {
+          let point = rotatePoint({x: width/2, y: (height/2) - r}, centerPoint, angle);
+          let a, b;
+
+          if (this.#space === "lab") {
+            a = ((point.x / width) * 250) - 125;
+            b = -(((point.y / height) * 250) - 125);
+          }
+          else if (this.#space === "oklab") {
+            a = ((point.x / width) * 0.8) - 0.4;
+            b = -(((point.y / height) * 0.8) - 0.4);
+          }
+
+          if (isColorInGamut({space: this.#space, coords: [l, a, b]}, this.#gamutHints)) {
+            minR = r;
+            break;
+          }
+        }
+
+        for (let r = minR; r <= maxR; r += 1) {
+          let point = rotatePoint({x: width/2, y: (height/2) - r}, centerPoint, angle);
+          let a, b;
+
+          if (this.#space === "lab") {
+            a = ((point.x / width) * 250) - 125;
+            b = -(((point.y / height) * 250) - 125);
+          }
+          else if (this.#space === "oklab") {
+            a = ((point.x / width) * 0.8) - 0.4;
+            b = -(((point.y / height) * 0.8) - 0.4);
+          }
+
+          if (isColorInGamut({space: this.#space, coords: [l, a, b]}, this.#gamutHints) === false) {
+            points.push(point);
+            break;
+          }
+        }
+      }
+
+      if (points.length === 0) {
+        this["#planar-slider-gamut-path"].removeAttribute("d");
+      }
+      else {
+        let d = points.map(({x, y}, i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ") + " Z";
+        this["#planar-slider-gamut-path"].setAttribute("d", d);
+        this["#planar-slider-gamut-svg"].setAttribute("viewBox", `0 0 ${width} ${height}`);
+      }
+    }
+  }
+
+  #updatePlanarSliderGamutPathThrottled = throttle(this.#updatePlanarSliderGamutPath, 40, this);
+
+  #updateLightnessSliderMarker() {
+    let [l, a, b] = this.#coords;
+
+    if (this.#space === "oklab") {
+      this["#lightness-slider-marker"].style.left = (l * 100) + "%";
+    }
+    else if (this.#space === "lab") {
+      this["#lightness-slider-marker"].style.left = l + "%";
+    }
+  }
+
+  #updateLightnessSliderBackground() {
+    let [, a, b] = this.#coords;
+    let colors = [];
+
+    if (this.#space === "oklab") {
+      for (let l = 0; l <= 1; l += 0.02) {
+        colors.push({space: "oklab", coords: [l, a, b]});
+      }
+    }
+    else if (this.#space === "lab") {
+      for (let l = 0; l <= 100; l += 2) {
+        colors.push({space: "lab", coords: [l, a, b]});
+      }
+    }
+
+    colors = colors.map(color => serializeColor(color));
+    this["#lightness-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
+  }
+
+  #updateLightnessSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#lightness-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#lightness-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [, a, b] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let l = (column / width);
+          let color;
+
+          if (this.#space === "lab") {
+            color = {space: this.#space, coords: [l*100, a, b]};
+          }
+          else if (this.#space === "oklab") {
+            color = {space: this.#space, coords: [l, a, b]};
+          }
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(l * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#lightness-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#lightness-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
+  #updateAlphaSliderMarker() {
+    this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
+  }
+
+  #updateAlphaSliderBackground() {
+    let [l, a, b] = this.#coords;
+
+    let colors = [
+      {space: this.#space, coords: [l, a, b], alpha: 0},
+      {space: this.#space, coords: [l, a, b], alpha: 1}
+    ];
+
+    colors = colors.map(color => serializeColor(color));
+    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
+  }
+
+  #updateGamutWarnings() {
+    if (this.#gamutHints === "none") {
+      this["#planar-slider-marker"].removeAttribute("data-warn");
+      this["#lightness-slider-marker"].removeAttribute("data-warn");
+    }
+    else {
+      let inGamut = isColorInGamut({space: this.#space, coords: [...this.#coords]}, this.#gamutHints)
+
+      if (inGamut) {
+        this["#planar-slider-marker"].removeAttribute("data-warn");
+        this["#lightness-slider-marker"].removeAttribute("data-warn");
+      }
+      else {
+        this["#planar-slider-marker"].setAttribute("data-warn", "");
+        this["#lightness-slider-marker"].setAttribute("data-warn", "");
+      }
+    }
+  }
+
+  #updateLabels() {
+    this["#lightness-slider-label"].hidden = !this.#labels;
+    this["#alpha-slider-label"].hidden = !this.#labels;
+  }
+
+  #updateContextMenu() {
+    for (let item of this["#gamut-hints-menu"].querySelectorAll("x-menuitem")) {
+      item.toggled = (item.value === this.#gamutHints);
+    }
+
+    this["#labels-menu-item"].toggled = this.#labels;
+  }
+}
+
+if (customElements.get("x-labplanarsliders") === undefined) {
+  customElements.define("x-labplanarsliders", XLABPlanarSlidersElement);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Planar sliders for XYZ-based color spaces (CIE XYZ D65, CIE XYZ D50)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// @event ^change
+// @event ^changestart
+// @event ^changeend
+// @part slider
+class XXYZPlanarSlidersElement extends HTMLElement {
+  static #shadowTemplate = html`
+    <template>
+      <div id="linear-slider" class="slider" part="slider">
+        <div id="linear-slider-track" class="slider-track">
+          <svg id="linear-slider-gamut-svg" class="slider-gamut-svg" viewBox="0 0 100 35" preserveAspectRatio="none">
+            <path id="linear-slider-gamut-path" class="slider-gamut-path"></path>
+          </svg>
+
+          <div id="linear-slider-marker" class="slider-marker">
+            <span id="linear-slider-label" class="slider-label">L</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="planar-slider" part="slider">
+        <canvas id="planar-slider-canvas" width="100" height="100"></canvas>
+
+        <svg id="planar-slider-gamut-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path id="planar-slider-gamut-path"></path>
+        </svg>
+
+        <div id="planar-slider-marker"></div>
+      </div>
+
+      <div id="alpha-slider" part="slider">
+        <div id="alpha-slider-gradient"></div>
+
+        <div id="alpha-slider-track">
+          <div id="alpha-slider-marker">
+            <span id="alpha-slider-label">α</span>
+          </div>
+        </div>
+      </div>
+
+      <x-contextmenu id="context-menu">
+        <x-menu>
+          <x-menuitem>
+            <x-label><x-message href="#color-model" autocapitalize>Color Model</x-message></x-label>
+
+            <x-menu id="color-model-menu">
+              <x-menuitem value="x-zy"><x-label>X-ZY</x-label></x-menuitem>
+              <x-menuitem value="y-xz"><x-label>Y-XZ</x-label></x-menuitem>
+              <x-menuitem value="z-xy"><x-label>Z-XY</x-label></x-menuitem>
+            </x-menu>
+          </x-menuitem>
+
+          <x-menuitem>
+            <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
+            <x-menu id="gamut-hints-menu">
+              <x-menuitem value="none"><x-label><x-message href="#gamut-hints.none">None</x-message></x-label></x-menuitem>
+              <hr/>
+              <x-menuitem value="srgb" toggled><x-label>sRGB</x-label></x-menuitem>
+              <x-menuitem value="a98rgb"><x-label>Adobe RGB</x-label></x-menuitem>
+              <x-menuitem value="p3"><x-label>Display P3</x-label></x-menuitem>
+              <x-menuitem value="rec2020"><x-label>Rec. 2020</x-label></x-menuitem>
+              <x-menuitem value="prophoto"><x-label>ProPhoto RGB</x-label></x-menuitem>
+            </x-menu>
+          </x-menuitem>
+
+          <hr/>
+
+          <x-menuitem id="labels-menu-item" value="labels">
+            <x-label><x-message href="#labels" autocapitalize>Labels</x-message></x-label>
+          </x-menuitem>
+        </x-menu>
+      </x-contextmenu>
+    </template>
+  `;
+
+  static #shadowStyleSheet = css`
+    :host {
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      --marker-width: 18px;
+    }
+    :host([disabled]) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    /**
+     * Linear slider
+     */
+
+    #linear-slider {
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
+      padding: 0 calc(var(--marker-width) / 2);
+      box-sizing: border-box;
+      touch-action: pinch-zoom;
+    }
+
+    #linear-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #linear-slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
+    }
+    #linear-slider-marker[data-warn]::after {
+      content: "⚠";
+      position: absolute;
+      right: -26px;
+      color: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(1px 1px 1px black);
+      pointer-events: none;
+      font-size: 18px;
+    }
+
+    #linear-slider-gamut-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    #linear-slider-gamut-path {
+      fill: none;
+      stroke: white;
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: 2px;
+      opacity: 0.8;
+    }
+
+    #linear-slider-label {
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 10px;
+    }
+
+    /**
+     * Planar slider
+     */
+
+    #planar-slider {
+      width: 100%;
+      height: 200px;
+      margin-top: 10px;
+      position: relative;
+      touch-action: pinch-zoom;
+    }
+
+    #planar-slider-marker {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: var(--marker-size);
+      height: var(--marker-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      transform: translate(calc(var(--marker-size) / -2), calc(var(--marker-size) / -2));
+      background: rgba(0, 0, 0, 0.3);
+      border: 3px solid white;
+      border-radius: 999px;
+      box-shadow: 0 0 3px black;
+      --marker-size: 20px;
+    }
+    #planar-slider-marker[data-warn]::after {
+      content: "⚠";
+      position: absolute;
+      top: -30px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+      filter: drop-shadow(1px 1px 1px black);
+      pointer-events: none;
+    }
+
+    #planar-slider-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    #planar-slider-gamut-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #planar-slider-gamut-path {
+      fill: none;
+      stroke: white;
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: 2px;
+      opacity: 0.8;
+    }
+
+    /**
+     * Alpha slider
+     */
+
+    #alpha-slider {
+      display: none;
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
+      padding: 0 calc(var(--marker-width) / 2);
+      position: relative;
+      box-sizing: border-box;
+      touch-action: pinch-zoom;
+      background: var(--checkboard-background);
+    }
+    :host([alpha]) #alpha-slider {
+      display: block;
+    }
+
+    #alpha-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #alpha-slider-marker {
+      position: absolute;
+      left: 0%;
+      width: var(--marker-width);
+      height: calc(100% + 6px);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(calc((var(--marker-width) / 2) * -1));
+      background: rgba(0, 0, 0, 0.2);
+      border: 3px solid white;
+      box-shadow: 0 0 3px black;
+    }
+
+    #alpha-slider-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+    }
+
+    #alpha-slider-label {
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 10px;
+    }
+  `;
+
+  // @type [number, number, number, number]
+  get value() {
+    let [l, c, h] = this.#coords;
+    return [l, c, h, this.#a];
+  }
+  set value([l, c, h, a]) {
+    this.#coords = [l, c, h];
+    this.#a = a;
+
+    this.#update();
+  }
+
+  // @type "xyz-d65" || "xyz-d50"
+  // @default "xyz-d65"
+  get space() {
+    return this.#space;
+  }
+  set space(space) {
+    if (this.#space !== space) {
+      this.#space = space;
+      this.#update();
+    }
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get alpha() {
+    return this.hasAttribute("alpha");
+  }
+  set alpha(alpha) {
+    alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
+  }
+
+  // @type boolean
+  // @default false
+  // @attribute
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(disabled) {
+    disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
+  }
+
+  #shadowRoot = null;
+  #configChangeListener;
+  #resizeObserver = new ResizeObserver(() => this.#onResize());
+  #isDraggingSlider = false;
+
+  #space = "xyz-d65";   // Either "xyz-d65" or "xyz-d50"
+  #model = "x-zy";      // Either "x-zy", "y-xz" or "z-xy"
+  #gamutHints = "srgb"; // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
+  #labels = true;
+  #coords = [0, 0, 0];  // [0-1, 0-1, 0-1]
+  #a = 1;               // Alpha normalized to 0 ~ 1 range
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  constructor() {
+    super();
+
+    this.#shadowRoot = this.attachShadow({mode: "closed"});
+    this.#shadowRoot.append(document.importNode(XXYZPlanarSlidersElement.#shadowTemplate.content, true));
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XXYZPlanarSlidersElement.#shadowStyleSheet];
+
+    for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
+      this["#" + element.id] = element;
+    }
+
+    this["#planar-slider"].addEventListener("pointerdown", (event) => this.#onPlanarSliderPointerDown(event));
+    this["#linear-slider"].addEventListener("pointerdown", (event) => this.#onLinearSliderPointerDown(event));
+    this["#alpha-slider"].addEventListener("pointerdown", (event) => this.#onAlphaSliderPointerDown(event));
+    this["#context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
+    this["#context-menu"].addEventListener("open", (event) => this.#onContextMenuOpen(event));
+  }
+
+  connectedCallback() {
+    this.#model = Xel.getConfig(`${this.localName}:model`, "x-zy");
+    this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
+
+    this.#resizeObserver.observe(this);
+    Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
+  }
+
+  disconnectedCallback() {
+    this.#resizeObserver.unobserve(this);
+    Xel.removeEventListener("configchange", this.#configChangeListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onConfigChange(event) {
+    let {key, value, origin} = event.detail;
+
+    if (origin === "self") {
+      if (key === `${this.localName}:model`) {
+        let model = (value || "x-zy");
+
+        if (model !== this.#model) {
+          this.#model = model;
+          this.#update();
+        }
+      }
+      else if (key === "x-colorpicker:gamutHints") {
+        let gamutHints = normalizeColorSpaceName(value || "srgb", "color.js");
+
+        if (gamutHints !== this.#gamutHints) {
+          this.#gamutHints = gamutHints;
+          this.#update();
+        }
+      }
+      else if (key === "x-colorpicker:labels") {
+        let labels = (value === null ? false : value);
+
+        if (labels !== this.#labels) {
+          this.#labels = labels;
+          this.#updateLabels();
+        }
+      }
+    }
+  }
+
+  #onContextMenuClick(event) {
+    let item = event.target.closest("x-menuitem");
+
+    if (item) {
+      if (item.parentElement === this["#color-model-menu"]) {
+        if (item.value !== this.#model) {
+          this.#model = item.value;
+          this.#update();
+          Xel.setConfig(`${this.localName}:model`, item.value);
+        }
+      }
+      else if (item.parentElement === this["#gamut-hints-menu"]) {
+        if (item.value !== this.#gamutHints) {
+          this.#gamutHints = item.value;
+          this.#update();
+          Xel.setConfig("x-colorpicker:gamutHints", normalizeColorSpaceName(this.#gamutHints, "css"));
+        }
+      }
+      else if (item.value === "labels") {
+        this.#labels = !item.toggled;
+        Xel.setConfig("x-colorpicker:labels", this.#labels);
+        this.#update();
+      }
+    }
+  }
+
+  #onContextMenuOpen() {
+    this.#updateContextMenu();
+  }
+
+  #onResize() {
+    this.#updatePlanarSliderGamutPathThrottled();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onLinearSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#linear-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#linear-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let coord = ((clientX - trackBounds.x) / trackBounds.width);
+      coord = normalize(coord, 0, 1);
+
+      let index;
+
+      if (this.#model === "x-zy") {
+        index = 0;
+      }
+      else if (this.#model === "y-xz") {
+        index = 1;
+      }
+      else if (this.#model === "z-xy") {
+        index = 2;
+      }
+
+      if (coord !== this.#coords[index]) {
+        this.#coords[index] = coord;
+
+        this.#updatePlanarSliderBackground();
+        this.#updatePlanarSliderGamutPathThrottled();
+        this.#updateLinearSliderMarker();
+        this.#updateAlphaSliderBackground();
+        this.#updateGamutWarnings();
+
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#linear-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#linear-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#linear-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#linear-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#linear-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#linear-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onPlanarSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let sliderBounds = this["#planar-slider"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+    this["#planar-slider"].setPointerCapture(pointerDownEvent.pointerId);
+
+    let onPointerMove = (clientX, clientY) => {
+      let left = (clientX - sliderBounds.left) / sliderBounds.width;
+      let top = (clientY - sliderBounds.top) / sliderBounds.height;
+
+      left = normalize(left, 0, 1);
+      top = normalize(top, 0, 1);
+
+      let [x, y, z] = this.#coords;
+
+      if (this.#model === "x-zy") {
+        this.#coords = [x, top, left];
+      }
+      else if (this.#model === "y-xz") {
+        this.#coords = [left, y, top];
+      }
+      else if (this.#model === "z-xy") {
+        this.#coords = [left, top, z];
+      }
+
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+
+      this.#updatePlanarSliderMarker();
+      this.#updateLinearSliderBackground();
+      this.#updateLinearSliderGamutPath();
+      this.#updateAlphaSliderBackground();
+      this.#updateGamutWarnings();
+    };
+
+    onPointerMove(pointerDownEvent.clientX, pointerDownEvent.clientY);
+
+    this["#planar-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX, pointerMoveEvent.clientY);
+      }
+    });
+
+    this["#planar-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#planar-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#planar-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#planar-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+      this.#isDraggingSlider = false;
+    });
+
+    this["#planar-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  #onAlphaSliderPointerDown(pointerDownEvent) {
+    if (pointerDownEvent.button > 0 || this.#isDraggingSlider) {
+      return;
+    }
+
+    let trackBounds = this["#alpha-slider-track"].getBoundingClientRect();
+    let pointerMoveListener, pointerUpOrCancelListener;
+
+    this.#isDraggingSlider = true;
+    this["#alpha-slider"].setPointerCapture(pointerDownEvent.pointerId);
+    this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+
+    let onPointerMove = (clientX) => {
+      let a = (clientX - trackBounds.x) / trackBounds.width;
+      a = normalize(a, 0, 1);
+
+      if (a !== this.#a) {
+        this.#a = a;
+        this.#updateAlphaSliderMarker();
+        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      }
+    };
+
+    onPointerMove(pointerDownEvent.clientX);
+
+    this["#alpha-slider"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
+      if (pointerMoveEvent.pointerId === pointerDownEvent.pointerId) {
+        onPointerMove(pointerMoveEvent.clientX);
+      }
+    });
+
+    this["#alpha-slider"].addEventListener("pointerup", pointerUpOrCancelListener = () => {
+      this["#alpha-slider"].removeEventListener("pointermove", pointerMoveListener);
+      this["#alpha-slider"].removeEventListener("pointerup", pointerUpOrCancelListener);
+      this["#alpha-slider"].removeEventListener("pointercancel", pointerUpOrCancelListener);
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+
+      this.#isDraggingSlider = false;
+    });
+
+    this["#alpha-slider"].addEventListener("pointercancel", pointerUpOrCancelListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #update() {
+    this.#updateLinearSliderMarker();
+    this.#updateLinearSliderBackground();
+    this.#updateLinearSliderGamutPath();
+
+    this.#updatePlanarSliderMarker();
+    this.#updatePlanarSliderBackground();
+    this.#updatePlanarSliderGamutPath();
+
+    this.#updateAlphaSliderMarker();
+    this.#updateAlphaSliderBackground();
+
+    this.#updateGamutWarnings();
+    this.#updateLabels();
+  }
+
+  #updateLinearSliderMarker() {
+    let [x, y, z] = this.#coords;
+
+    if (this.#model === "x-zy") {
+      this["#linear-slider-marker"].style.left = (x * 100) + "%";
+    }
+    else if (this.#model === "y-xz") {
+      this["#linear-slider-marker"].style.left = (y * 100) + "%";
+    }
+    else if (this.#model === "z-xy") {
+      this["#linear-slider-marker"].style.left = (z * 100) + "%";
+    }
+  }
+
+  #updateLinearSliderBackground() {
+    let [x, y, z] = this.#coords;
+    let colors = [];
+
+    if (this.#model === "x-zy") {
+      for (let x = 0; x <= 1; x += 0.02) {
+        colors.push({space: this.#space, coords: [x, y, z]});
+      }
+    }
+    else if (this.#model === "y-xz") {
+      for (let y = 0; y <= 1; y += 0.02) {
+        colors.push({space: this.#space, coords: [x, y, z]});
+      }
+    }
+    else if (this.#model === "z-xy") {
+      for (let z = 0; z <= 1; z += 0.02) {
+        colors.push({space: this.#space, coords: [x, y, z]});
+      }
+    }
+
+    colors = colors.map(color => serializeColor(color));
+    this["#linear-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
+  }
+
+  #updateLinearSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#linear-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let ranges = [];
+
+      // Determine ranges
+      {
+        let width = this["#linear-slider"].clientWidth;
+        let step = 1 / window.devicePixelRatio;
+        let [x, y, z] = this.#coords;
+        let range = null;
+
+        for (let column = 0; column <= width; column += step) {
+          let coord = (column / width);
+          let color;
+
+          if (this.#model === "x-zy") {
+            color = {space: this.#space, coords: [coord, y, z]};
+          }
+          else if (this.#model === "y-xz") {
+            color = {space: this.#space, coords: [x, coord, z]};
+          }
+          else if (this.#model === "z-xy") {
+            color = {space: this.#space, coords: [x, y, coord]};
+          }
+
+          if (isColorInGamut(color, this.#gamutHints)) {
+            if (range === null) {
+              range = [];
+              ranges.push(range);
+            }
+
+            range.push(coord * 100);
+          }
+          else {
+            range = null;
+          }
+        }
+
+        ranges = ranges.map(range => [range.at(0), range.at(-1)]);
+      }
+
+      if (ranges.length > 0) {
+        let subpaths = ranges.map(([startX, endX]) => `M ${startX} 35 L ${startX} 17 L ${endX} 17 L ${endX} 35`);
+        this["#linear-slider-gamut-path"].setAttribute("d", subpaths.join(" "));
+      }
+      else {
+        this["#linear-slider-gamut-path"].removeAttribute("d");
+      }
+    }
+  }
+
+  #updatePlanarSliderMarker() {
+    let [x, y, z] = this.#coords;
+    let left;
+    let top;
+
+    if (this.#model === "x-zy") {
+      if (z < 0) {
+        left = "calc(0% - 18px)";
+      }
+      else if (z > 1) {
+        left = "calc(100% + 18px)";
+      }
+      else {
+        left = (z * 100) + "%";
+      }
+
+      if (y < 0) {
+        top = "calc(0% - 18px)";
+      }
+      else if (y > 1) {
+        top = "calc(100% + 18px)";
+      }
+      else {
+        top = (y * 100) + "%";
+      }
+    }
+    else if (this.#model === "y-xz") {
+      if (x < 0) {
+        left = "calc(0% - 18px)";
+      }
+      else if (x > 1) {
+        left = "calc(100% + 18px)";
+      }
+      else {
+        left = (x * 100) + "%";
+      }
+
+      if (z < 0) {
+        top = "calc(0% - 18px)";
+      }
+      else if (z > 1) {
+        top = "calc(100% + 18px)";
+      }
+      else {
+        top = (z * 100) + "%";
+      }
+    }
+    else if (this.#model === "z-xy") {
+      if (x < 0) {
+        left = "calc(0% - 18px)";
+      }
+      else if (x > 1) {
+        left = "calc(100% + 18px)";
+      }
+      else {
+        left = (x * 100) + "%";
+      }
+
+      if (y < 0) {
+        top = "calc(0% - 18px)";
+      }
+      else if (y > 1) {
+        top = "calc(100% + 18px)";
+      }
+      else {
+        top = (y * 100) + "%";
+      }
+    }
+
+    this["#planar-slider-marker"].style.left = left;
+    this["#planar-slider-marker"].style.top = top;
+  }
+
+  #updatePlanarSliderBackground() {
+    let canvas = this["#planar-slider-canvas"];
+    let context = canvas.getContext("2d", {colorSpace: "display-p3"});
+    let {width, height} = canvas;
+    let step = 1;
+    let [x, y, z] = this.#coords;
+
+    context.clearRect(0, 0, width, height);
+
+    for (let col = 0; col <= width ; col += step) {
+      let stopColors = [];
+
+      for (let row = 0; row <= height; row += 10) {
+        let color;
+
+        if (this.#model === "x-zy") {
+          let z = col / width;
+          let y = (row / height);
+          color = {space: this.#space, coords: [x, y, z]};
+        }
+        else if (this.#model === "y-xz") {
+          let x = col / width;
+          let z = (row / height);
+          color = {space: this.#space, coords: [x, y, z]};
+        }
+        else if (this.#model === "z-xy") {
+          let x = col / width;
+          let y = (row / height);
+          color = {space: this.#space, coords: [x, y, z]};
+        }
+
+        stopColors.push(color);
+      }
+
+      let gradient = context.createLinearGradient(col, 0, width, height);
+
+      for (let i = 0; i < stopColors.length; i += 1) {
+        let stopColor = stopColors[i];
+        gradient.addColorStop(i / stopColors.length, serializeColor(stopColor));
+      }
+
+      context.fillStyle = gradient;
+      context.fillRect(col, 0, step, height);
+    }
+  }
+
+  #updatePlanarSliderGamutPath() {
+    if (this.#gamutHints === "none") {
+      this["#planar-slider-gamut-path"].removeAttribute("d");
+    }
+    else {
+      let width = this["#planar-slider-gamut-svg"].clientWidth;
+      let height = this["#planar-slider-gamut-svg"].clientHeight;
+      let maxR = sqrt(pow(width/2, 2) + pow(height/2, 2));
+      let centerPoint = {x: width/2, y: height/2};
+      // let [x, y, z] = this.#coords;
+      let points = [];
+
+      for (let angle = 0; angle < 360; angle += 3) {
+        let minR;
+        let [x, y, z] = this.#coords;
+
+        for (let r = maxR; r >= 0; r -= 15) {
+          let point = rotatePoint({x: width/2, y: (height/2) - r}, centerPoint, angle);
+
+          if (this.#model === "x-zy") {
+            z = point.x / width;
+            y = point.y / height;
+          }
+          else if (this.#model === "y-xz") {
+            x = point.x / width;
+            z = point.y / height;
+          }
+          else if (this.#model === "z-xy") {
+            x = point.x / width;
+            y = point.y / height;
+          }
+
+          if (isColorInGamut({space: this.#space, coords: [x, y, z]}, this.#gamutHints)) {
+            minR = r;
+            break;
+          }
+        }
+
+        for (let r = minR; r <= maxR; r += 1) {
+          let point = rotatePoint({x: width/2, y: (height/2) - r}, centerPoint, angle);
+          let [x, y, z] = this.#coords;
+
+          if (this.#model === "x-zy") {
+            z = point.x / width;
+            y = point.y / height;
+          }
+          else if (this.#model === "y-xz") {
+            x = point.x / width;
+            z = point.y / height;
+          }
+          else if (this.#model === "z-xy") {
+            x = point.x / width;
+            y = point.y / height;
+          }
+
+          if (isColorInGamut({space: this.#space, coords: [x, y, z]}, this.#gamutHints) === false) {
+            points.push(point);
+            break;
+          }
+        }
+      }
+
+      if (points.length === 0) {
+        this["#planar-slider-gamut-path"].removeAttribute("d");
+      }
+      else {
+        let d = points.map(({x, y}, i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ") + " Z";
+        this["#planar-slider-gamut-path"].setAttribute("d", d);
+        this["#planar-slider-gamut-svg"].setAttribute("viewBox", `0 0 ${width} ${height}`);
+      }
+    }
+  }
+
+  #updatePlanarSliderGamutPathThrottled = throttle(this.#updatePlanarSliderGamutPath, 40, this);
+
+  #updateAlphaSliderMarker() {
+    this["#alpha-slider-marker"].style.left = (this.#a * 100) + "%";
+  }
+
+  #updateAlphaSliderBackground() {
+    let [x, y, z] = this.#coords;
+
+    let colors = [
+      {space: this.#space, coords: [x, y, z], alpha: 0},
+      {space: this.#space, coords: [x, y, z], alpha: 1}
+    ];
+
+    colors = colors.map(color => serializeColor(color));
+    this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
+  }
+
+  #updateGamutWarnings() {
+    if (this.#gamutHints === "none") {
+      this["#linear-slider-marker"].removeAttribute("data-warn");
+      this["#planar-slider-marker"].removeAttribute("data-warn");
+    }
+    else {
+      let inGamut = isColorInGamut({space: this.#space, coords: [...this.#coords]}, this.#gamutHints);
+
+      if (inGamut) {
+        this["#linear-slider-marker"].removeAttribute("data-warn");
+        this["#planar-slider-marker"].removeAttribute("data-warn");
+      }
+      else {
+        this["#linear-slider-marker"].setAttribute("data-warn", "");
+        this["#planar-slider-marker"].setAttribute("data-warn", "");
+      }
+    }
+  }
+
+  #updateLabels() {
+    this["#linear-slider-label"].hidden = !this.#labels;
+    this["#linear-slider-label"].textContent = this.#model[0].toUpperCase();
+    this["#alpha-slider-label"].hidden = !this.#labels;
+  }
+
+  #updateContextMenu() {
+    for (let item of this["#color-model-menu"].querySelectorAll("x-menuitem")) {
+      item.toggled = (item.value === this.#model);
+    }
+
+    for (let item of this["#gamut-hints-menu"].querySelectorAll("x-menuitem")) {
+      item.toggled = (item.value === this.#gamutHints);
+    }
+
+    this["#labels-menu-item"].toggled = this.#labels;
+  }
+}
+
+if (customElements.get("x-xyzplanarsliders") === undefined) {
+  customElements.define("x-xyzplanarsliders", XXYZPlanarSlidersElement);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6558,42 +8384,31 @@ class XRGBPolarSlidersElement extends HTMLElement {
 
   // @type [number, number, number, number]
   get value() {
-    // HSV
-    if (this.#model === "hsv") {
-      let [h, s, v] = this.#coords;
-      let [r, g, b] = convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, "srgb").coords;
-      return [r, g, b, this.#a];
-    }
-    // HSL
-    else if (this.#model === "hsl") {
-      let [h, s, l] = this.#coords;
-      let [r, g, b] = convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, "srgb").coords;
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [h, c1, c2] = this.#coords;
+      let [r, g, b] = convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords;
       return [r, g, b, this.#a];
     }
   }
   set value([r, g, b, a]) {
-    // HSV
-    if (this.#model === "hsv") {
-      let [h, s, v] = convertColor({space: "srgb", coords: [r, g, b]}, "hsv").coords;
-      this.#coords = [h/360, s/100, v/100];
-      this.#a = a;
-    }
-    // HSL
-    else if (this.#model === "hsl") {
-      let [h, s, l] = convertColor({space: "srgb", coords: [r, g, b]}, "hsl").coords;
-      this.#coords = [h/360, s/100, l/100];
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [h, c1, c2] = convertColor({space: "srgb", coords: [r, g, b]}, this.#model).coords;
+      this.#coords = [h/360, c1/100, c2/100];
       this.#a = a;
     }
 
-    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
-    if (Number.isNaN(this.#coords[0])) {
-      this.#coords[0] = 0;
+    // Convert missing components from NaN to 0
+    // @doc https://www.w3.org/TR/css-color-4/#missing
+    for (let i = 0; i < this.#coords.length; i += 1) {
+      if (isNaN(this.#coords[i])) {
+        this.#coords[i] = 0;
+      }
     }
 
     this.#update();
   }
 
-  // @type "srgb" || "srgb-linear"|| "a98rgb" || "p3" || "rec2020" || "prophoto"
+  // @type "srgb" || "srgb-linear" || "a98rgb" || "p3" || "rec2020" || "prophoto"
   // @default "srgb"
   get space() {
     return this.#space;
@@ -6633,7 +8448,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
   #space = "srgb";        // Either "srgb", "srgb-linear", "a98rgb", "p3", "rec2020" or "prophoto"
   #model = "hsv";         // Either "hsv" or "hsl"
   #gamutHints = "srgb";   // Either "srgb", "a98rgb", "p3", "rec2020" or "prophoto"
-  #labels = false;
+  #labels = true;
   #coords = [0, 0, 0];    // Values in the current MODEL coordinate system normalized to 0.00 - 1.00 range
   #a = 1;                 // Alpha normalized to 0 ~ 1 range
 
@@ -6660,7 +8475,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
   connectedCallback() {
     this.#model = Xel.getConfig(`${this.localName}:model`, "hsv");
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
-    this.#labels = Xel.getConfig("x-colorpicker:labels", false);
+    this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
     this.#resizeObserver.observe(this);
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => this.#onConfigChange(event));
@@ -6674,10 +8489,10 @@ class XRGBPolarSlidersElement extends HTMLElement {
   #getResolvedGamutHints() {
     if (
       (this.#gamutHints === "none") ||
-      (this.#gamutHints === "srgb" && ["srgb", "srgb-linear"].includes(this.space)) ||
-      (this.#gamutHints === "p3" && ["srgb", "srgb-linear", "p3"].includes(this.space)) ||
-      (this.#gamutHints === "a98rgb" && ["srgb", "srgb-linear", "a98rgb"].includes(this.space)) ||
-      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.space)) ||
+      (this.#gamutHints === "srgb" && ["srgb", "srgb-linear"].includes(this.#space)) ||
+      (this.#gamutHints === "p3" && ["srgb", "srgb-linear", "p3"].includes(this.#space)) ||
+      (this.#gamutHints === "a98rgb" && ["srgb", "srgb-linear", "a98rgb"].includes(this.#space)) ||
+      (this.#gamutHints === "rec2020" && ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020"].includes(this.#space)) ||
       (this.#gamutHints === "prophoto")
     ) {
       return "none";
@@ -6787,7 +8602,10 @@ class XRGBPolarSlidersElement extends HTMLElement {
       }
 
       this.#coords[0] = (theta + PI) / (PI * 2);
-      this.#coords[1] = sqrt(d) / radius;
+
+      if (this.#model === "hsv" || this.#model === "hsl") {
+        this.#coords[1] = sqrt(d) / radius;
+      }
 
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 
@@ -6929,11 +8747,12 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #updatePolarSliderMarker() {
+    let [h, c1, c2] = this.#coords;
+
     if (this.#model === "hsv" || this.#model === "hsl") {
-      let [h, s] = this.#coords;
       let wheelSize = 100;
       let angle = degToRad(h*360);
-      let radius = s * wheelSize/2;
+      let radius = c1 * wheelSize/2;
       let centerPoint = {x: wheelSize/2, y: wheelSize/2};
 
       let x = ((wheelSize - (centerPoint.x + (radius * cos(angle)))) / wheelSize) * 100;
@@ -6945,30 +8764,60 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #updatePolarSliderBackground() {
-    let canvas = this["#polar-slider-canvas"];
-    let colorSpace = ["srgb", "srgb-linear"].includes(this.#space) ? "srgb" : "display-p3";
-    let context = canvas.getContext("2d", {colorSpace});
-    let size = canvas.width;
-    let radius = size/2;
+    let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
+    let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
 
-    if (this.#model === "hsv" || this.#model === "hsl") {
-      let bitmap = context.createImageData(size, size, {colorSpace});
+    if (this.#model === "hsv") {
+      let overlayColors = [
+        { space: this.#space, coords: convertColor({space: "hsv", coords: [0, 0, 100]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsv", coords: [0, 0,   0]}, hSpace).coords },
+      ];
 
-      for (let y = 0; y < size; y += 1) {
-        for (let x = 0; x < size; x += 1) {
-          let h = (180 + atan2(y - radius, x - radius) * (180 / PI)) / 360;
-          let s = min(1, sqrt(pow(y - radius, 2) + pow(x - radius, 2)) / radius);
-          let [r, g, b] = this.#model === "hsv" ? hsvToRgb(h, s, 1) : hslToRgb(h, s, 0.5);
-          let offset = 4 * ((y * size) + x);
+      let backgroundColors = [
+        { space: this.#space, coords: [1, 0, 0] },
+        { space: this.#space, coords: [1, 1, 0] },
+        { space: this.#space, coords: [0, 1, 0] },
+        { space: this.#space, coords: [0, 1, 1] },
+        { space: this.#space, coords: [0, 0, 1] },
+        { space: this.#space, coords: [1, 0, 1] },
+        { space: this.#space, coords: [1, 0, 0] }
+      ];
 
-          bitmap.data[offset + 0] = r * 255;
-          bitmap.data[offset + 1] = g * 255;
-          bitmap.data[offset + 2] = b * 255;
-          bitmap.data[offset + 3] = 255; // Alpha
-        }
-      }
+      overlayColors = overlayColors.map(c => serializeColor(c)).join(",");
+      backgroundColors = backgroundColors.map(c => serializeColor(c)).join(",");
 
-      context.putImageData(bitmap, 0, 0);
+      this["#polar-slider-circle"].style.background = `
+        radial-gradient(circle closest-side in ${interpolation}, ${overlayColors} 100%),
+        conic-gradient(from -90deg in hsl, ${backgroundColors})
+      `;
+
+      this["#polar-slider-circle"].style.backgroundBlendMode = "screen, normal";
+    }
+    else if (this.#model === "hsl") {
+      let overlayColors = [
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [0, 0, 50]}, hSpace).coords, alpha: 1 },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [0, 0, 50]}, hSpace).coords, alpha: 0 },
+      ];
+
+      let backgroundColors = [
+        { space: this.#space, coords: [1, 0, 0] },
+        { space: this.#space, coords: [1, 1, 0] },
+        { space: this.#space, coords: [0, 1, 0] },
+        { space: this.#space, coords: [0, 1, 1] },
+        { space: this.#space, coords: [0, 0, 1] },
+        { space: this.#space, coords: [1, 0, 1] },
+        { space: this.#space, coords: [1, 0, 0] }
+      ];
+
+      overlayColors = overlayColors.map(c => serializeColor(c)).join(",");
+      backgroundColors = backgroundColors.map(c => serializeColor(c)).join(",");
+
+      this["#polar-slider-circle"].style.background = `
+        radial-gradient(circle closest-side in ${interpolation}, ${overlayColors}),
+        conic-gradient(from -90deg in hsl, ${backgroundColors})
+      `;
+
+      this["#polar-slider-circle"].style.backgroundBlendMode = "normal, normal";
     }
   }
 
@@ -6982,52 +8831,40 @@ class XRGBPolarSlidersElement extends HTMLElement {
       let width = this["#polar-slider-gamut-svg"].clientWidth;
       let height = this["#polar-slider-gamut-svg"].clientHeight;
       let step = 1 / window.devicePixelRatio;
+      let [c0, c1, c2] = this.#coords;
+
+      let isInGamut = (h, c1, c2) => {
+        let color = {
+          space: this.#space,
+          coords: convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords
+        };
+
+        return isColorInGamut(color, gamutHints);
+      };
+
+      let points = [];
 
       if (this.#model === "hsv" || this.#model === "hsl") {
-        let [, , lv] = this.#coords;
-
-        let isInGamut = (h, s, lv) => {
-          let color = {
-            space: this.space,
-            coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
-          };
-
-          return isColorInGamut(color, gamutHints);
-        };
-
-        let rotatePoint = (point, centerPoint, angle) => {
-          let angleRad = (Math.PI / 180) * angle;
-          let cosRad = Math.cos(angleRad);
-          let sinRad = Math.sin(angleRad);
-          let [x, y] = point;
-          let [cx, cy] = centerPoint;
-          return [(cosRad * (x - cx)) - (sinRad * (y - cy)) + cx, (cosRad * (y - cy)) + (sinRad * (x - cx)) + cy];
-        };
-
-        let points = [];
-
         for (let h = 0; h <= 1; h += 0.01) {
           for (let row = height/2; row >= 0; row -= step) {
-            let s = row / (height/2);
+            let c1 = row / (height/2);
 
-            if (isInGamut(h, s, lv)) {
-              let centerPoint = [width/2, height/2];
-              let point = [width/2, (height/2) - row];
-              point = rotatePoint(point, centerPoint, h*360);
+            if (isInGamut(h, c1, c2)) {
+              let point = rotatePoint({x: width/2, y: (height/2) - row}, {x: width/2, y: height/2}, h*360);
               points.push(point);
               break;
             }
           }
         }
+      }
 
-        if (points.length === 0) {
-          this["#polar-slider-gamut-path"].removeAttribute("d");
-        }
-        else {
-          let d = points.map(([x, y], i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ") + " Z";
-          this["#polar-slider-gamut-path"].setAttribute("d", d);
-          this["#polar-slider-gamut-svg"].setAttribute("viewBox", `0 0 ${width} ${height}`);
-        }
+      if (points.length === 0) {
+        this["#polar-slider-gamut-path"].removeAttribute("d");
+      }
+      else {
+        let d = points.map(({x, y}, i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ") + " Z";
+        this["#polar-slider-gamut-path"].setAttribute("d", d);
+        this["#polar-slider-gamut-svg"].setAttribute("viewBox", `0 0 ${width} ${height}`);
       }
     }
   }
@@ -7035,25 +8872,22 @@ class XRGBPolarSlidersElement extends HTMLElement {
   #updatePolarSliderGamutPathThrottled = throttle(this.#updatePolarSliderGamutPath, 40, this);
 
   #updateLinearSliderMarker() {
-    if (this.#model === "hsv") {
-      let [h, , v] = this.#coords;
-      this["#linear-slider-marker"].style.left = (v * 100) + "%";
-    }
-    else if (this.#model === "hsl") {
-      let [h, , l] = this.#coords;
-      this["#linear-slider-marker"].style.left = (l * 100) + "%";
+    let [, coord1, coord2] = this.#coords;
+
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      this["#linear-slider-marker"].style.left = (coord2 * 100) + "%";
     }
   }
 
   #updateLinearSliderBackground() {
     if (this.#model === "hsv") {
       let [h, s] = this.#coords;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
 
       let colors = [
-        { space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100,   0]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, 100]}, hSpace).coords }
+        { space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, s*100,   0]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsv", coords: [h*360, s*100, 100]}, hSpace).coords }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -7061,13 +8895,13 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
     else if (this.#model === "hsl") {
       let [h, s] = this.#coords;
-      let interpolation = (this.space === "srgb-linear") ? "srgb-linear" : "srgb";
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+      let interpolation = (this.#space === "srgb-linear") ? "srgb-linear" : "srgb";
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
 
       let colors = [
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100,   0]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100,  50]}, hSpace).coords },
-        { space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, 100]}, hSpace).coords }
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, s*100,   0]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, s*100,  50]}, hSpace).coords },
+        { space: this.#space, coords: convertColor({space: "hsl", coords: [h*360, s*100, 100]}, hSpace).coords }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -7082,7 +8916,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
       this["#linear-slider-gamut-path"].removeAttribute("d");
     }
     else {
-      let [h, s, lv] = this.#coords;
+      let [h, c1, c2] = this.#coords;
       let width = this["#linear-slider"].clientWidth;
       let step = 1 / window.devicePixelRatio;
 
@@ -7093,23 +8927,25 @@ class XRGBPolarSlidersElement extends HTMLElement {
         let range = null;
 
         for (let column = 0; column <= width; column += step) {
-          let lv = (column / width);
+          if (this.#model === "hsv" || this.#model === "hsl") {
+            let c2 = (column / width);
 
-          let color = {
-            space: this.#space,
-            coords: convertColor({space: this.#model, coords: [h*360, s*100, lv*100]}, "srgb").coords
-          };
+            let color = {
+              space: this.#space,
+              coords: convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords
+            };
 
-          if (isColorInGamut(color, gamutHints)) {
-            if (range === null) {
-              range = [];
-              ranges.push(range);
+            if (isColorInGamut(color, gamutHints)) {
+              if (range === null) {
+                range = [];
+                ranges.push(range);
+              }
+
+              range.push(c2 * 100);
             }
-
-            range.push(lv * 100);
-          }
-          else {
-            range = null;
+            else {
+              range = null;
+            }
           }
         }
 
@@ -7131,25 +8967,21 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #updateAlphaSliderBackground() {
-    if (this.#model === "hsv") {
-      let [h, s, v] = this.#coords;
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
+    if (this.#model === "hsv" || this.#model === "hsl") {
+      let [c0, c1, c2] = this.#coords;
+      let hSpace = (this.#space === "srgb-linear") ? "srgb" : this.#space;
 
       let colors = [
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, hSpace).coords, alpha: 0},
-        {space: this.space, coords: convertColor({space: "hsv", coords: [h*360, s*100, v*100]}, hSpace).coords, alpha: 1}
-      ];
-
-      colors = colors.map(color => serializeColor(color)).join(",");
-      this["#alpha-slider-gradient"].style.background = `linear-gradient(in srgb to right, ${colors})`;
-    }
-    else if (this.#model === "hsl") {
-      let [h, s, l] = this.#coords;
-      let hSpace = (this.space === "srgb-linear") ? "srgb" : this.space;
-
-      let colors = [
-        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, hSpace).coords, alpha: 0},
-        {space: this.space, coords: convertColor({space: "hsl", coords: [h*360, s*100, l*100]}, hSpace).coords, alpha: 1}
+        {
+          space: this.#space,
+          coords: convertColor({space: this.#model, coords: [c0*360, c1*100, c2*100]}, hSpace).coords,
+          alpha: 0
+        },
+        {
+          space: this.#space,
+          coords: convertColor({space:this.#model, coords: [c0*360, c1*100, c2*100]}, hSpace).coords,
+          alpha: 1
+        }
       ];
 
       colors = colors.map(color => serializeColor(color)).join(",");
@@ -7185,7 +9017,13 @@ class XRGBPolarSlidersElement extends HTMLElement {
 
   #updateLabels() {
     if (this.#labels) {
-      this["#linear-slider-label"].textContent = (this.#model === "hsv") ? "V" : "L";
+      if (this.#model === "hsv") {
+        this["#linear-slider-label"].textContent = "V";
+      }
+      else if (this.#model === "hsl") {
+        this["#linear-slider-label"].textContent = "L";
+      }
+
       this["#alpha-slider-label"].textContent = "A";
     }
     else {

@@ -33,6 +33,8 @@ import xyzd50 from "../node_modules/colorjs.io/src/spaces/xyz-d50.js";
 import xyzd65 from "../node_modules/colorjs.io/src/spaces/xyz-d65.js";
 import xyzabsd65 from "../node_modules/colorjs.io/src/spaces/xyz-abs-d65.js";
 
+let {isNaN} = Number;
+
 ColorSpace.register(a98rgb);
 ColorSpace.register(hsl);
 ColorSpace.register(hsluv);
@@ -60,6 +62,10 @@ ColorSpace.register(xyzabsd65);
 //            "hsl-alt" || "hwb-alt" || "rgb-alt" || "color-alt" || "oklch-alt" || "oklab-alt" || "lch-alt" || "lab-alt"
 //   (format) => string
 let prettySerializeColor = (color, format = "hex", precision = 3) => {
+  if (color.spaceId === undefined) {
+    color.spaceId = color.space.id;
+  }
+
   // Hexadecimal, e.g."#bada5580" or "#BADA5580"
   if (format === "hex" || format === "hex-alt") {
     let value = serializeColor(convertColor(color, "srgb"), {format: "hex"});
@@ -71,7 +77,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, s, l] = convertColor(color, "hsl").coords;
     let a = color.alpha;
 
-    if (Number.isNaN(h)) {
+    if (isNaN(h)) {
       h = 0;
     }
 
@@ -94,7 +100,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, w, b] = convertColor(color, "hwb").coords;
     let a = color.alpha;
 
-    if (Number.isNaN(h)) {
+    if (isNaN(h)) {
       h = 0;
     }
 
@@ -137,10 +143,6 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
 
   // Color function e.g. "color(srgb 72.9% 85.5% 33.3% / 50.2%)" or  "color(srgb 0.73 0.85 0.33 / 0.5)"
   else if (format === "color" || format === "color-alt") {
-    if (color.spaceId === undefined) {
-      color.spaceId = color.space.id;
-    }
-
     if (["srgb", "srgb-linear", "a98rgb", "prophoto", "p3", "rec2020", "hsl", "hwb"].includes(color.spaceId)) {
       if (color.spaceId === "hsl" || color.spaceId === "hwb") {
         color = convertColor(color, "srgb");
@@ -385,12 +387,33 @@ let hsvToRgb = (h, s, v) => {
   return [r, g, b];
 };
 
+// @src https://drafts.csswg.org/css-color/#hwb-to-rgb
+// @type (number, number, number) => [number, number, number]
+//
+// Perform fast conversion from HWB to RGB color model.
+// All numbers are in 0-1 range.
+let hwbToRgb = (hue, white, black) => {
+    if (white + black >= 1) {
+      let gray = white / (white + black);
+      return [gray, gray, gray];
+    }
+
+    let rgb = hslToRgb(hue, 1, 0.5);
+
+    for (let i = 0; i < 3; i++) {
+      rgb[i] *= (1 - white - black);
+      rgb[i] += white;
+    }
+
+    return rgb;
+};
+
 // @src http://goo.gl/J9ra3
 // @type (number, number, number) => [number, number, number]
 //
 // Perform fast conversion from HSL to RGB color model.
 // All numbers are in 0-1 range.
-export let hslToRgb = (h, s, l) => {
+let hslToRgb = (h, s, l) => {
   let r;
   let g;
   let b;
@@ -463,6 +486,8 @@ export {
   prettySerializeColor,
   normalizeColorSpaceName,
   hsvToRgb,
+  hwbToRgb,
+  hslToRgb,
   isColorInGamut,
   isValidColorString
 };

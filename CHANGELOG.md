@@ -1,12 +1,13 @@
 
 # CHANGELOG
 
-## 0.26.0 (PENDING)
+## 0.26.0 (2024-05-19)
 
 - Add "sRGB Linear", "CIE LCH", "OK LCH", "CIE LAB", "OK LAB", "CIE XYZ D65" and "CIE XYZ D50" color spaces to the
   color picker
-- Add "Out of gamut" indicator in the color space select widget
-- Add color picker options to show gamut hints and channel names
+- Add "Out of gamut" indicator to the color space select widget
+- Add color picker option to show gamut hints
+- Add color picker option to show channel labels
 
 ## 0.25.11 (2024-04-01)
 
