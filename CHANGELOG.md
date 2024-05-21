@@ -7,6 +7,7 @@
 - API change: Rename `Xel.iconsets` to `Xel.icons`
 - API change: Rename `Xel.whenIconsetsReady` to `Xel.whenIconsReady`
 - API change: rename `iconsetschange` event to `iconschange`
+- [Bugfix] `<x-contextmenu>` fails to render on WebKit in some edge cases
 
 ## 0.26.0 (2024-05-19)
 
