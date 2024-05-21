@@ -7,7 +7,7 @@
 import Xel from "../classes/xel.js";
 import ApiParser from "../classes/api-parser.js";
 
-import {getIconset} from "../utils/icon.js";
+import {getIcons} from "../utils/icon.js";
 import {escapeHTML} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 
@@ -333,8 +333,8 @@ export default class PTApiBlockElement extends HTMLElement {
           this["#icons-section"].hidden = true;
         }
         else {
-          let materialIconset = await getIconset("/node_modules/xel/iconsets/material.svg");
-          let ids = [...materialIconset.querySelectorAll("symbol")].map(symbol => symbol.id);
+          let materialIcons = await getIcons("/node_modules/xel/icons/material.svg");
+          let ids = [...materialIcons.querySelectorAll("symbol")].map(symbol => symbol.id);
 
           let rowsHTML = `
             <tr>
@@ -350,10 +350,10 @@ export default class PTApiBlockElement extends HTMLElement {
             rowsHTML += `
               <tr>
                 <td>${id}</td>
-                <td><x-icon href="/node_modules/xel/iconsets/material.svg#${id}"></x-icon></td>
-                <td><x-icon href="/node_modules/xel/iconsets/material-outlined.svg#${id}"></x-icon></td>
-                <td><x-icon href="/node_modules/xel/iconsets/fluent.svg#${id}"></x-icon></td>
-                <td><x-icon href="/node_modules/xel/iconsets/fluent-outlined.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/icons/material.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/icons/material-outlined.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/icons/fluent.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/icons/fluent-outlined.svg#${id}"></x-icon></td>
               </tr>
             `;
           }

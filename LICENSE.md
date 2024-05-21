@@ -7,11 +7,11 @@ and the Xel source code distributed on GitHub.</p>
 Cupertino theme files (cupertino.css and cupertino-dark.css) are made available
 under the Xel Cupertino License v1.
 
-Material iconset files (material.svg and material-outlined.svg) are made available
-under the Material Iconset License v1.
+Material icons (material.svg and material-outlined.svg files) are made available
+under the Material Icons License v1.
 
-Fluent iconset files (fluent.svg and fluent-outlined.svg) are made available under
-the Fluent Iconset License v1.
+Fluent icons (fluent.svg and fluent-outlined.svg files) are made available under
+the Fluent Icons License v1.
 
 All other files included in the NPM package and the GitHub source code repository are
 licensed under the Xel License.
@@ -76,7 +76,7 @@ The full text of each license is provided below.
 
 ---
 
-## Fluent Iconset License v1
+## Fluent Icons License v1
 
     Copyright © 2020 Microsoft Corporation
 
@@ -102,7 +102,7 @@ The full text of each license is provided below.
 
 ---
 
-## Material Iconset License v1
+## Material Icons License v1
 
     Copyright © 2020 Google LLC
 

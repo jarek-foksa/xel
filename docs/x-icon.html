@@ -2,18 +2,18 @@
   <section id="intro-section">
     <h2>Icon</h2>
 
-    <p><strong>&lt;x-icon&gt;</strong> is used to display a specific icon from an SVG iconset file.</p>
+    <p><strong>&lt;x-icon&gt;</strong> is used to display a specific icon from a symbol-based SVG iconset file.</p>
 
     <p>Xel comes with several predefined iconsets containing the most often used icons:</p>
 
     <ul style="padding-left: 28px;">
-      <li>Material - located in <code>/node_modules/xel/iconsets/material.svg</code></li>
-      <li>Material Outlined - located in <code>/node_modules/xel/iconsets/material-outlined.svg</code></li>
-      <li>Fluent - located in <code>/node_modules/xel/iconsets/fluent.svg</code></li>
-      <li>Fluent Outlined - located in <code>/node_modules/xel/iconsets/fluent-outlined.svg</code></li>
+      <li>Material - located in <code>/node_modules/xel/icons/material.svg</code></li>
+      <li>Material Outlined - located in <code>/node_modules/xel/icons/material-outlined.svg</code></li>
+      <li>Fluent - located in <code>/node_modules/xel/icons/fluent.svg</code></li>
+      <li>Fluent Outlined - located in <code>/node_modules/xel/icons/fluent-outlined.svg</code></li>
     </ul>
 
-    <p>It is recommended that you create your own iconset that contains only the icons needed by your app. This
+    <p>It is recommended that you create your own iconset file that contains only the icons needed by your app. This
     could be done e.g. by copying a predefined iconset file and then manipulating it with
     <a href="https://boxy-svg.com">Boxy SVG</a>.</p>
 
@@ -41,8 +41,8 @@
         </template>
       </pt-demoblock>
 
-      <p><strong>Note:</strong> You must specify the default iconset URL in <code>&lt;head&gt;</code> as described
-      in <a href="/setup#iconset-card">the setup guide</a>.</p>
+      <p><strong>Note:</strong> You must specify the default icons URL in <code>&lt;head&gt;</code> as described
+      in <a href="/setup#icons-card">the setup guide</a>.</p>
     </section>
 
     <hr/>
@@ -52,7 +52,7 @@
 
       <pt-demoblock>
         <template>
-          <x-icon href="/node_modules/xel/iconsets/material.svg#folder"></x-icon>
+          <x-icon href="/node_modules/xel/icons/material.svg#folder"></x-icon>
         </template>
       </pt-demoblock>
     </section>
@@ -64,7 +64,7 @@
 
       <pt-demoblock>
         <template>
-          <x-icon href="https://xel-toolkit.org/iconsets/fluent.svg#lock"></x-icon>
+          <x-icon href="https://xel-toolkit.org/icons/fluent.svg#lock"></x-icon>
         </template>
       </pt-demoblock>
     </section>

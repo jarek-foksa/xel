@@ -34,7 +34,7 @@ export default class PTAppElement extends HTMLElement {
       <sidebar id="sidebar">
         <header id="header">
           <div id="branding">
-            <x-icon href="/iconsets/portal.svg#xel"></x-icon>
+            <x-icon href="/icons/portal.svg#xel"></x-icon>
             <h1>Xel</h1>
           </div>
 
@@ -146,10 +146,10 @@ export default class PTAppElement extends HTMLElement {
               </x-box>
             </div>
 
-            <div id="iconset-subsection">
-              <h3><x-message href="#iconset" autocapitalize></x-message></h3>
+            <div id="icons-subsection">
+              <h3><x-message href="#icons" autocapitalize></x-message></h3>
 
-              <x-select id="iconset-select">
+              <x-select id="icons-select">
                 <x-menu>
                   <x-menuitem value="material" toggled>
                     <x-label>Material</x-label>
@@ -594,12 +594,12 @@ export default class PTAppElement extends HTMLElement {
       margin-left: 8px;
     }
 
-    /* Iconset */
+    /* Icons */
 
-    #settings-section #iconset-subsection {
+    #settings-section #icons-subsection {
       margin-top: 14px;
     }
-    #settings-section #iconset-select {
+    #settings-section #icons-select {
       width: 100%;
     }
 
@@ -701,12 +701,12 @@ export default class PTAppElement extends HTMLElement {
   async connectedCallback() {
     let theme       = Xel.getConfig("pt-app:theme", "adwaita");
     let accentColor = Xel.getConfig("pt-app:accentColor", "blue");
-    let iconset     = Xel.getConfig("pt-app:iconset", "material");
+    let icons       = Xel.getConfig("pt-app:icons", "material");
     let locale      = Xel.getConfig("pt-app:locale", "en");
 
-    Xel.theme = `/themes/${theme}-portal.css`;
+    Xel.theme       = `/themes/${theme}-portal.css`;
     Xel.accentColor = accentColor;
-    Xel.iconsets = [`/iconsets/${iconset}.svg`];
+    Xel.icons       = [`/icons/${icons}.svg`];
 
     // Load locales
     {
@@ -723,7 +723,7 @@ export default class PTAppElement extends HTMLElement {
     // Prevent the flash of unstyled content
     {
       await Xel.whenThemeReady;
-      await Xel.whenIconsetsReady;
+      await Xel.whenIconsReady;
       await Xel.whenLocalesReady;
 
       this.hidden = false;
@@ -742,7 +742,7 @@ export default class PTAppElement extends HTMLElement {
 
     Xel.addEventListener("themechange", () => this.#onXelThemeChange());
     Xel.addEventListener("accentcolorchange", () => this.#onXelAccentColorChange());
-    Xel.addEventListener("iconsetschange", () => this.#onXelIconsetsChange());
+    Xel.addEventListener("iconschange", () => this.#onXelIconsChange());
     Xel.addEventListener("localeschange", () => this.#onXelLocalesChange());
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
@@ -752,7 +752,7 @@ export default class PTAppElement extends HTMLElement {
     this["#theme-select"].addEventListener("change", (e) => this.#onThemeSelectChange(e));
     this["#accent-preset-select"].addEventListener("change", (e) => this.#onAccentPresetSelectChange(e));
     this["#accent-color-select"].addEventListener("change", (e) => this.#onAccentColorSelectChange(e));
-    this["#iconset-select"].addEventListener("change", (e) => this.#onIconsetSelectChange(e));
+    this["#icons-select"].addEventListener("change", (e) => this.#onIconsSelectChange(e));
     this["#locale-select"].addEventListener("change", (e) => this.#onLocaleSelectChange(e));
     this["#main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
 
@@ -799,9 +799,9 @@ export default class PTAppElement extends HTMLElement {
     Xel.setConfig("pt-app:accentColor", color);
   }
 
-  #onXelIconsetsChange() {
+  #onXelIconsChange() {
     this.#updateSidebarSettingsSection();
-    Xel.setConfig("pt-app:iconset", this["#iconset-select"].value);
+    Xel.setConfig("pt-app:icons", this["#icons-select"].value);
   }
 
   #onXelLocalesChange() {
@@ -974,8 +974,8 @@ export default class PTAppElement extends HTMLElement {
     Xel.accentColor = this["#accent-color-select"].value;
   }
 
-  #onIconsetSelectChange() {
-    Xel.iconsets = ["/iconsets/" + this["#iconset-select"].value + ".svg"];
+  #onIconsSelectChange() {
+    Xel.icons = ["/icons/" + this["#icons-select"].value + ".svg"];
   }
 
   #onLocaleSelectChange() {
@@ -1252,7 +1252,7 @@ export default class PTAppElement extends HTMLElement {
       itemsHTML += `
         <hr/>
         <x-menuitem value="custom">
-          <x-icon href="/iconsets/portal.svg#color-wheel"></x-icon>
+          <x-icon href="/icons/portal.svg#color-wheel"></x-icon>
           <x-label>Custom</x-label>
         </x-menuitem>
       `;
@@ -1271,11 +1271,11 @@ export default class PTAppElement extends HTMLElement {
       }
     }
 
-    // Update iconset subsection
+    // Update icons subsection
     {
-      let iconsetPath = Xel.iconsets[0];
-      let iconsetName = iconsetPath.substring(iconsetPath.lastIndexOf("/") + 1, iconsetPath.lastIndexOf("."));
-      this["#iconset-select"].value = iconsetName;
+      let iconsPath = Xel.icons[0];
+      let iconsName = iconsPath.substring(iconsPath.lastIndexOf("/") + 1, iconsPath.lastIndexOf("."));
+      this["#icons-select"].value = iconsName;
     }
 
     // Update locale subsection

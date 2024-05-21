@@ -89,12 +89,12 @@ export default class PTSetupPageElement extends PTPage {
           </main>
         </x-card>
 
-        <x-card id="iconset-card">
+        <x-card id="icons-card">
           <main>
-            <h3><strong>5</strong> Set iconset</h3>
+            <h3><strong>5</strong> Set icons</h3>
 
             <p>Add to the <code>&lt;head&gt;</code> to use
-            <x-select id="iconset-select">
+            <x-select id="icons-select">
               <x-menu>
                 <x-menuitem value="material" toggled>
                   <x-label>Material</x-label>
@@ -113,11 +113,11 @@ export default class PTSetupPageElement extends PTPage {
                 </x-menuitem>
               </x-menu>
             </x-select>
-            iconset:</p>
-            <pt-code id="iconset-code"></pt-code>
+            icons:</p>
+            <pt-code id="icons-code"></pt-code>
 
             <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If an icon
-            is not found in the first iconset file, Xel will look for it in the subsequent iconset files.</p>
+            is not found in the first file, Xel will look for it in the subsequent files.</p>
           </main>
         </x-card>
 
@@ -198,7 +198,7 @@ export default class PTSetupPageElement extends PTPage {
 
     #theme-select,
     #accent-preset-select,
-    #iconset-select,
+    #icons-select,
     #locale-select {
       display: inline-block;
       vertical-align: middle;
@@ -210,7 +210,7 @@ export default class PTSetupPageElement extends PTPage {
 
   #xelThemeChangeListener;
   #xelAccentColorChangeListener;
-  #xelIconsetsChangeListener;
+  #xelIconsChangeListener;
   #xelLocalesChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ export default class PTSetupPageElement extends PTPage {
 
     this._elements["theme-select"].addEventListener("change", () => this.#onThemeSelectChange());
     this._elements["accent-preset-select"].addEventListener("change", () => this.#onAccentPresetSelectChange());
-    this._elements["iconset-select"].addEventListener("change", () => this.#onIconsetSelectChange());
+    this._elements["icons-select"].addEventListener("change", () => this.#onIconsSelectChange());
     this._elements["locale-select"].addEventListener("change", () => this.#onLocaleSelectChange());
   }
 
@@ -229,7 +229,7 @@ export default class PTSetupPageElement extends PTPage {
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#onXelThemeChange());
     Xel.addEventListener("accentcolorchange", this.#xelAccentColorChangeListener = () => this.#onXelAccentColorChange());
-    Xel.addEventListener("iconsetschange", this.#xelIconsetsChangeListener = () => this.#onXelIconsetsChange());
+    Xel.addEventListener("iconschange", this.#xelIconsChangeListener = () => this.#onXelIconsChange());
     Xel.addEventListener("localeschange", this.#xelLocalesChangeListener = () => this.#onXelLocalesChange());
 
     this.#updateAccentColorMenu();
@@ -240,7 +240,7 @@ export default class PTSetupPageElement extends PTPage {
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
     Xel.removeEventListener("accentcolorchange", this.#xelAccentColorChangeListener);
-    Xel.removeEventListener("iconsetschange", this.#xelIconsetsChangeListener);
+    Xel.removeEventListener("iconschange", this.#xelIconsChangeListener);
     Xel.removeEventListener("localeschange", this.#xelLocalesChangeListener);
   }
 
@@ -255,7 +255,7 @@ export default class PTSetupPageElement extends PTPage {
     this.#update();
   }
 
-  #onXelIconsetsChange() {
+  #onXelIconsChange() {
     this.#update();
   }
 
@@ -274,8 +274,8 @@ export default class PTSetupPageElement extends PTPage {
     Xel.accentColor = (value === "custom") ? Xel.presetAccentColors[Xel.accentColor] : value;
   }
 
-  #onIconsetSelectChange() {
-    Xel.iconsets = [`/iconsets/${this._elements["iconset-select"].value}.svg`];
+  #onIconsSelectChange() {
+    Xel.icons = [`/icons/${this._elements["icons-select"].value}.svg`];
   }
 
   #onLocaleSelectChange() {
@@ -308,14 +308,14 @@ export default class PTSetupPageElement extends PTPage {
       }
     }
 
-    // Iconset
+    // Icons
     {
-      let iconsetPath = Xel.iconsets[0];
-      let iconsetName = iconsetPath.substring(iconsetPath.lastIndexOf("/") + 1, iconsetPath.lastIndexOf("."));
-      let meta = `<meta name="xel-iconsets" content="node_modules/xel/iconsets/${iconsetName}.svg">`;
+      let iconsPath = Xel.icons[0];
+      let iconsName = iconsPath.substring(iconsPath.lastIndexOf("/") + 1, iconsPath.lastIndexOf("."));
+      let meta = `<meta name="xel-icons" content="node_modules/xel/icons/${iconsName}.svg">`;
 
-      this._elements["iconset-select"].value = iconsetName;
-      this._elements["iconset-code"].textContent = meta;
+      this._elements["icons-select"].value = iconsName;
+      this._elements["icons-code"].textContent = meta;
     }
 
     // Locale
@@ -344,7 +344,7 @@ export default class PTSetupPageElement extends PTPage {
     itemsHTML += `
       <hr/>
       <x-menuitem value="custom">
-        <x-icon href="/iconsets/portal.svg#color-wheel"></x-icon>
+        <x-icon href="/icons/portal.svg#color-wheel"></x-icon>
         <x-label>Custom</x-label>
       </x-menuitem>
     `;

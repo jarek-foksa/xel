@@ -9,37 +9,37 @@ import {svg} from "./template.js";
 let cache = {};
 
 // @type (string) => SVGSVGElement?
-export let getIconset = (iconsetURL) => {
+export let getIcons = (iconsURL) => {
   return new Promise(async (resolve) => {
-    if (cache[iconsetURL]) {
-      if (cache[iconsetURL].iconset) {
-        resolve(cache[iconsetURL].iconset);
+    if (cache[iconsURL]) {
+      if (cache[iconsURL].icons) {
+        resolve(cache[iconsURL].icons);
       }
       else {
-        cache[iconsetURL].callbacks.push(resolve);
+        cache[iconsURL].callbacks.push(resolve);
       }
     }
     else {
-      cache[iconsetURL] = {callbacks: [resolve], iconset: null};
+      cache[iconsURL] = {callbacks: [resolve], icons: null};
 
-      let iconsetSVG = null;
+      let iconsSVG = null;
 
       try {
-        iconsetSVG = await (await fetch(iconsetURL)).text();
+        iconsSVG = await (await fetch(iconsURL)).text();
       }
       catch (error) {
-        iconsetSVG = null;
+        iconsSVG = null;
       }
 
-      if (iconsetSVG) {
-        cache[iconsetURL].iconset = svg`${iconsetSVG}`;
+      if (iconsSVG) {
+        cache[iconsURL].icons = svg`${iconsSVG}`;
 
-        for (let callback of cache[iconsetURL].callbacks) {
-          callback(cache[iconsetURL].iconset);
+        for (let callback of cache[iconsURL].callbacks) {
+          callback(cache[iconsURL].icons);
         }
       }
       else {
-        console.error(`Xel failed to fetch the iconset: ${iconsetURL}`);
+        console.error(`Xel failed to fetch the icons: ${iconsURL}`);
       }
     }
   });

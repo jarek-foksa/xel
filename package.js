@@ -77,9 +77,9 @@ let createPortalPackage = (minify = true, publish = false) => {
         }
       }
 
-      // Iconsets
+      // Icons
       {
-        for (let srcPath of Glob.sync(`${projectPath}/iconsets/*.svg`)) {
+        for (let srcPath of Glob.sync(`${projectPath}/icons/*.svg`)) {
           let destPath = `${projectPath}/dist/portal/` + srcPath.substring(projectPath.length);
 
           Fse.ensureDirSync(dirname(destPath));
@@ -251,17 +251,17 @@ let createNpmPackage = (minify = true, publish = false) => {
         }
       }
 
-      // Iconsets
+      // Icons
       {
-        let paths = Glob.sync(`${projectPath}/iconsets/*.svg`);
+        let paths = Glob.sync(`${projectPath}/icons/*.svg`);
 
         for (let path of paths) {
           if (path.endsWith("portal.svg") === false) {
             let relPath = path.substring(projectPath.length);
-            let iconsetSVG = Fse.readFileSync(path, "utf8");
+            let iconsSVG = Fse.readFileSync(path, "utf8");
 
-            Fse.ensureDirSync(`${projectPath}/dist/npm/iconsets/`);
-            Fse.writeFileSync(`${projectPath}/dist/npm/${relPath}`, iconsetSVG, "utf8");
+            Fse.ensureDirSync(`${projectPath}/dist/npm/icons/`);
+            Fse.writeFileSync(`${projectPath}/dist/npm/${relPath}`, iconsSVG, "utf8");
           }
         }
       }

@@ -6,7 +6,7 @@
 
 import Xel from "../classes/xel.js";
 
-import {getIconset} from "../utils/icon.js";
+import {getIcons} from "../utils/icon.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-icon
@@ -84,7 +84,7 @@ export default class XIconElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #defaultIconsetsChangeListener = null;
+  #defaultIconsChangeListener = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -101,13 +101,13 @@ export default class XIconElement extends HTMLElement {
   }
 
   connectedCallback() {
-    Xel.addEventListener("iconsetschange", this.#defaultIconsetsChangeListener = () => {
+    Xel.addEventListener("iconschange", this.#defaultIconsChangeListener = () => {
       this.#update();
     });
   }
 
   disconnectedCallback() {
-    Xel.removeEventListener("iconsetschange", this.#defaultIconsetsChangeListener);
+    Xel.removeEventListener("iconschange", this.#defaultIconsChangeListener);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -141,17 +141,17 @@ export default class XIconElement extends HTMLElement {
       }
 
       if (id !== null) {
-        // Default iconset
+        // Default icons
         if (path === null) {
-          await Xel.whenIconsetsReady;
+          await Xel.whenIconsReady;
           symbol = Xel.queryIcon("#" + CSS.escape(id));
         }
-        // Custom iconset
+        // Custom icons
         else {
-          let iconsetElement = await getIconset(path);
+          let iconsElement = await getIcons(path);
 
-          if (iconsetElement) {
-            symbol = iconsetElement.querySelector("#" + CSS.escape(id));
+          if (iconsElement) {
+            symbol = iconsElement.querySelector("#" + CSS.escape(id));
           }
         }
       }

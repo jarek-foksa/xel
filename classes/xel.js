@@ -9,17 +9,17 @@ import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
 import {convertColor, parseColor, serializeColor} from "../utils/color.js";
-import {getIconset} from "../utils/icon.js";
+import {getIcons} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
 import {getRelDisplayDate} from "../utils/time.js";
 
 // @singleton
 // @event themechange
-// @event accentcolorchange
-// @event iconsetschange
+// @event iconschange
 // @event localeschange
 // @event configchange
+// @event accentcolorchange
 export default new class Xel extends EventEmitter {
   // @type string?
   //
@@ -39,37 +39,30 @@ export default new class Xel extends EventEmitter {
     metaElement.setAttribute("content", value);
   }
 
-  // @type string
-  //
-  // Accent color.
-  get accentColor() {
-    return this.#accentColor;
-  }
-  set accentColor(value) {
-    let meta = document.head.querySelector(`:scope > meta[name="xel-accent-color"]`);
-
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "xel-accent-color");
-      document.head.append(meta);
-    }
-
-    meta.setAttribute("content", value);
-  }
-
   // @type Array<string>
   //
   // URLs to an SVG files with icons.
-  get iconsets() {
-    return [...this.#iconsets];
+  get icons() {
+    return [...this.#icons];
   }
-  set iconsets(urls) {
-    let metaElement = document.head.querySelector(`:scope > meta[name="xel-iconsets"]`);
+  set icons(urls) {
+    let metaElement = document.head.querySelector(`:scope > meta[name="xel-icons"]`);
 
     if (!metaElement) {
-      metaElement = document.createElement("meta");
-      metaElement.setAttribute("name", "xel-iconsets");
-      document.head.append(metaElement);
+      // @legacy
+      {
+        metaElement = document.head.querySelector(`:scope > meta[name="xel-iconsets"]`);
+
+        if (metaElement) {
+          console.warn(`<meta name="xel-iconsets"> has been deprecated. Please use <meta name="xel-icons"> instead.`);
+        }
+      }
+
+      if (!metaElement) {
+        metaElement = document.createElement("meta");
+        metaElement.setAttribute("name", "xel-icons");
+        document.head.append(metaElement);
+      }
     }
 
     metaElement.setAttribute("content", urls.join(", "));
@@ -100,6 +93,24 @@ export default new class Xel extends EventEmitter {
     return this.#localesIds[0] || "en";
   }
 
+  // @type string
+  //
+  // Accent color.
+  get accentColor() {
+    return this.#accentColor;
+  }
+  set accentColor(value) {
+    let meta = document.head.querySelector(`:scope > meta[name="xel-accent-color"]`);
+
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "xel-accent-color");
+      document.head.append(meta);
+    }
+
+    meta.setAttribute("content", value);
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   get whenThemeReady() {
@@ -113,13 +124,13 @@ export default new class Xel extends EventEmitter {
     });
   }
 
-  get whenIconsetsReady() {
+  get whenIconsReady() {
     return new Promise((resolve) => {
-      if (this.#iconsetsReadyCalbacks === null) {
+      if (this.#iconsReadyCalbacks === null) {
         resolve();
       }
       else {
-        this.#iconsetsReadyCalbacks.push(resolve);
+        this.#iconsReadyCalbacks.push(resolve);
       }
     });
   }
@@ -172,14 +183,14 @@ export default new class Xel extends EventEmitter {
   //
   // Get an icon matching the given selector.
   // Selector consists from "#", followed by the icon ID.
-  // Should be called after Xel.whenIconsetsReady.
+  // Should be called after Xel.whenIconsReady.
   queryIcon(selector) {
     selector = (selector.startsWith("#") === false) ? "#" + selector : selector;
 
     let icon = null;
 
-    for (let iconsetElement of this.#iconsetElements) {
-      let matchedIcon = iconsetElement.querySelector(selector);
+    for (let iconsElement of this.#iconsElements) {
+      let matchedIcon = iconsElement.querySelector(selector);
 
       if (matchedIcon) {
         icon = matchedIcon;
@@ -278,17 +289,17 @@ export default new class Xel extends EventEmitter {
 
   #theme = null;
   #accentColor = null;
-  #iconsets = [];
+  #icons = [];
   #locales = [];
   #localesIds = [];
   #autocapitalize = "none";
 
   #themeStyleSheet = new CSSStyleSheet();
-  #iconsetElements = [];
+  #iconsElements = [];
   #localesBundle = null;
 
   #themeReadyCallbacks = [];
-  #iconsetsReadyCalbacks = [];
+  #iconsReadyCalbacks = [];
   #localesReadyCallbacks = [];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,11 +309,11 @@ export default new class Xel extends EventEmitter {
 
     document.adoptedStyleSheets = [this.#themeStyleSheet];
 
-    let {theme, accentColor, iconsets, locales} = this.#getSettings();
+    let {theme, accentColor, icons, locales} = this.#getSettings();
 
     this.#theme = theme;
     this.#accentColor = accentColor;
-    this.#iconsets = iconsets;
+    this.#icons = icons;
     this.#locales = locales;
 
     this.#localesIds = this.#locales.map((locale) => {
@@ -315,9 +326,9 @@ export default new class Xel extends EventEmitter {
       this.#loadTheme(this.#theme);
     }
 
-    // Load iconsets
-    if (this.#iconsets.length > 0) {
-      this.#loadIconsets(this.#iconsets);
+    // Load icons
+    if (this.#icons.length > 0) {
+      this.#loadIcons(this.#icons);
     }
 
     // Load locales
@@ -342,14 +353,14 @@ export default new class Xel extends EventEmitter {
   #onHeadChange(mutations) {
     let oldTheme = this.#theme;
     let oldAccentColor = this.#accentColor;
-    let oldIconsets = this.#iconsets;
+    let oldIcons = this.#icons;
     let oldLocales = this.#locales;
 
-    let {theme, accentColor, iconsets, locales} = this.#getSettings();
+    let {theme, accentColor, icons, locales} = this.#getSettings();
 
     this.#theme = theme;
     this.#accentColor = accentColor;
-    this.#iconsets = iconsets;
+    this.#icons = icons;
     this.#locales = locales;
 
     this.#localesIds = this.#locales.map((locale) => {
@@ -368,8 +379,11 @@ export default new class Xel extends EventEmitter {
       this.dispatchEvent(new CustomEvent("accentcolorchange"));
     }
 
-    if (compareArrays(this.#iconsets, oldIconsets, true) === false) {
-      this.#loadIconsets(this.#iconsets).then(() => {
+    if (compareArrays(this.#icons, oldIcons, true) === false) {
+      this.#loadIcons(this.#icons).then(() => {
+        this.dispatchEvent(new CustomEvent("iconschange"));
+
+        // @legacy
         this.dispatchEvent(new CustomEvent("iconsetschange"));
       });
     }
@@ -431,24 +445,24 @@ export default new class Xel extends EventEmitter {
     });
   }
 
-  #loadIconsets(urls) {
+  #loadIcons(urls) {
     return new Promise(async (resolve) => {
-      if (this.#iconsetsReadyCalbacks === null) {
-        this.#iconsetsReadyCalbacks = [];
+      if (this.#iconsReadyCalbacks === null) {
+        this.#iconsReadyCalbacks = [];
       }
 
-      this.#iconsetElements = [];
+      this.#iconsElements = [];
 
       for (let url of urls) {
-        let iconsetElement = await getIconset(url);
-        this.#iconsetElements.push(iconsetElement);
+        let iconsElement = await getIcons(url);
+        this.#iconsElements.push(iconsElement);
       }
 
-      for (let callback of this.#iconsetsReadyCalbacks) {
+      for (let callback of this.#iconsReadyCalbacks) {
         callback();
       }
 
-      this.#iconsetsReadyCalbacks = null;
+      this.#iconsReadyCalbacks = null;
       resolve();
     });
   }
@@ -577,14 +591,25 @@ export default new class Xel extends EventEmitter {
   #getSettings() {
     let themeMeta       = document.head.querySelector(`:scope > meta[name="xel-theme"]`);
     let accentColorMeta = document.head.querySelector(`:scope > meta[name="xel-accent-color"]`);
-    let iconsetsMeta    = document.head.querySelector(`:scope > meta[name="xel-iconsets"]`);
+    let iconsMeta       = document.head.querySelector(`:scope > meta[name="xel-icons"]`);
     let localesMeta     = document.head.querySelector(`:scope > meta[name="xel-locales"]`);
+
+    // @legacy
+    if (!iconsMeta) {
+      iconsMeta = document.head.querySelector(`:scope > meta[name="xel-iconsets"]`);
+
+      if (iconsMeta) {
+        console.warn(
+          `<meta name="xel-iconsets"> has been deprecated in in Xel 0.27.0. Please use <meta name="xel-icons"> instead.`
+        );
+      }
+    }
 
     return {
       theme       : (themeMeta       && themeMeta.content       !== "") ? themeMeta.content       : null,
       accentColor : (accentColorMeta && accentColorMeta.content !== "") ? accentColorMeta.content : null,
-      iconsets    : iconsetsMeta ? iconsetsMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : [],
-      locales     : localesMeta  ?  localesMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : []
+      icons       : iconsMeta   ? iconsMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : [],
+      locales     : localesMeta ? localesMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : []
     };
   }
 
@@ -627,5 +652,21 @@ export default new class Xel extends EventEmitter {
     }
 
     return output;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @legacy
+  get iconsets() {
+    console.warn(`"Xel.iconsets" has been deprecated in Xel 0.27.0. Please use "Xel.icons" instead.`);
+    return this.icons;
+  }
+  set iconsets(iconsets) {
+    console.warn(`"Xel.iconsets" has been deprecated in Xel 0.27.0. Please use "Xel.icons" instead.`);
+    this.icons = iconsets;
+  }
+  get whenIconsetsReady() {
+    console.warn(`"Xel.whenIconsetsReady" has been deprecated in Xel 0.27.0. Please use "Xel.whenIconsReady" instead.`);
+    return this.whenIconsReady;
   }
 }

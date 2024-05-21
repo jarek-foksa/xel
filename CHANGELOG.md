@@ -1,6 +1,13 @@
 
 # CHANGELOG
 
+## 0.27.0 (2024-05-21)
+
+- API change: Rename `<meta name="xel-iconsets">` to `<meta name="xel-icons">`
+- API change: Rename `Xel.iconsets` to `Xel.icons`
+- API change: Rename `Xel.whenIconsetsReady` to `Xel.whenIconsReady`
+- API change: rename `iconsetschange` event to `iconschange`
+
 ## 0.26.0 (2024-05-19)
 
 - Add "sRGB Linear", "CIE LCH", "OK LCH", "CIE LAB", "OK LAB", "CIE XYZ D65" and "CIE XYZ D50" color spaces to the
