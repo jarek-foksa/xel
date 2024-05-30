@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.27.1 (2024-05-30)
+
+- Make inner padding of `<x-numberinput>` configurable
+
 ## 0.27.0 (2024-05-21)
 
 - API change: Rename `<meta name="xel-iconsets">` to `<meta name="xel-icons">`

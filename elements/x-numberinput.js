@@ -44,6 +44,7 @@ export default class XNumberInputElement extends HTMLElement {
       height: 32px;
       box-sizing: border-box;
       font-size: 12.5px;
+      --inner-padding: 0 6px;
     }
     :host(:hover) {
       cursor: text;
@@ -75,7 +76,7 @@ export default class XNumberInputElement extends HTMLElement {
       align-items: center;
       width: 100%;
       height: 100%;
-      padding: 0 6px;
+      padding: var(--inner-padding);
       box-sizing: border-box;
       overflow: hidden;
     }
