@@ -10,6 +10,8 @@ import {html, css} from "../utils/template.js";
 const DEBUG = false;
 
 // @element x-menubar
+// @event expand
+// @event collapse
 export default class XMenuBarElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
@@ -136,6 +138,8 @@ export default class XMenuBarElement extends HTMLElement {
     let menu = item.querySelector(":scope > x-menu");
 
     if (menu && menu.opened === false) {
+      let wasExpanded = this.#expanded;
+
       item.focus();
       this.#expanded = true;
       this.style.touchAction = "none";
@@ -172,11 +176,17 @@ export default class XMenuBarElement extends HTMLElement {
 
         this["#backdrop"].removeAttribute("hidden");
       }
+
+      if (wasExpanded === false) {
+        this.dispatchEvent(new CustomEvent("expand"));
+      }
     }
   }
 
   #collapseMenubarItems() {
     return new Promise( async (resolve) => {
+      let wasExpanded = this.#expanded;
+
       this.#expanded = false;
       this.style.touchAction = null;
 
@@ -199,6 +209,10 @@ export default class XMenuBarElement extends HTMLElement {
 
       if (focusedMenuItem) {
         focusedMenuItem.blur();
+      }
+
+      if (wasExpanded === true) {
+        this.dispatchEvent(new CustomEvent("collapse"));
       }
 
       resolve();

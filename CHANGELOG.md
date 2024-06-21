@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.0 (2024-06-21)
+
+- Add "expand" and "collapse" events to `<x-menubar>`
+
 ## 0.27.1 (2024-05-30)
 
 - Make inner padding of `<x-numberinput>` configurable
