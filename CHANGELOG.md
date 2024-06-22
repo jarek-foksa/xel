@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.1 (2024-06-22)
+
+- [Bugfix] Incorrect z-index of button tooltips when using Fluent theme
+
 ## 0.28.0 (2024-06-21)
 
 - Add "expand" and "collapse" events to `<x-menubar>`
