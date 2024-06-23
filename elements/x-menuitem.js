@@ -7,6 +7,7 @@
 import Xel from "../classes/xel.js";
 
 import {createElement} from "../utils/element.js";
+import {rectContainsPoint} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
@@ -341,12 +342,27 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   async #onClick(event) {
+    if (event.buttons > 1) {
+      return;
+    }
+
+    let clickedMenuItem = event.target.closest("x-menuitem");
+    let clickedMenu = event.target.closest("x-menu");
+
     if (
-      event.buttons > 1 ||
-      event.target.closest("x-menuitem") !== this ||
-      event.target.closest("x-menu") !== this.closest("x-menu") ||
+      clickedMenuItem !== this ||
+      clickedMenu !== this.closest("x-menu") ||
       this.matches("[closing] x-menuitem")
     ) {
+      return;
+    }
+
+    // Pointer down and pointer up menu items are different
+    if (
+      event.detail > 0 &&
+      rectContainsPoint(clickedMenuItem.getBoundingClientRect(), new DOMPoint(event.clientX, event.clientY)) === false
+    ) {
+      event.stopImmediatePropagation();
       return;
     }
 

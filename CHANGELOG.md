@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.3 (2024-06-23)
+
+- Handle menu item click event like native Windows and GNOME apps
+
 ## 0.28.2 (2024-06-22)
 
 - [Bugfix] Incorrect z-index of button tooltips when using dark Fluent theme
