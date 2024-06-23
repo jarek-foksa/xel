@@ -406,8 +406,13 @@ export default class XNumberInputElement extends HTMLElement {
 
   #commitEditorChanges() {
     let editorTextContent = this["#editor"].textContent;
-    let editorValue = editorTextContent.trim() === "" ? null : parseFloat(editorTextContent);
-    let normalizedEditorValue = editorValue === null ? null : normalize(editorValue, this.min, this.max);
+    let editorValue = parseFloat(editorTextContent);
+
+    if (Number.isNaN(editorValue)) {
+      editorValue = null;
+    }
+
+    let normalizedEditorValue = (editorValue === null) ? null : normalize(editorValue, this.min, this.max);
 
     if (normalizedEditorValue !== this.value) {
       this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
@@ -417,6 +422,10 @@ export default class XNumberInputElement extends HTMLElement {
     }
     else if (editorValue !== this.value) {
       this.value = normalizedEditorValue;
+    }
+    else {
+      // Reset the editor text content just in case the currently entered raw value is invalid
+      this.#updateEditorTextContent();
     }
   }
 

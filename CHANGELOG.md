@@ -3,9 +3,10 @@
 
 ## 0.28.3 (2024-06-23)
 
-- Handle menu item click event like native Windows and GNOME apps
-- Automatically select the color input widget value when it receives focus
-- [Bugfix] Can't change the color input widget value when only a single color space is allowed
+- Handle `<x-menuitem>` click event like native Windows and GNOME apps
+- Automatically select `<x-colorinput>` contents when it receives focus
+- [Bugfix] Can't change `<x-colorinput>` value when only a single color space is allowed
+- [Bugfix] `<x-numberinput>` does not properly discard invalid values
 
 ## 0.28.2 (2024-06-22)
 
