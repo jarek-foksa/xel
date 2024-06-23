@@ -723,6 +723,7 @@ export default class XButtonElement extends HTMLElement {
             ancestorFocusableElement.focus();
           }
           else {
+            this.focus(); // Need when e.g. a color input widget was focused
             this.blur();
           }
         });

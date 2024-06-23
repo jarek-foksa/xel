@@ -283,7 +283,7 @@ export default class XColorInputElement extends HTMLElement {
   constructor() {
     super();
 
-    this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: false});
+    this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: true});
     this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XColorInputElement.#shadowStyleSheet];
     this.#shadowRoot.append(document.importNode(XColorInputElement.#shadowTemplate.content, true));
 
@@ -309,6 +309,7 @@ export default class XColorInputElement extends HTMLElement {
     this["#input"].addEventListener("input",  (event) => this.#onInputInput(event));
     this["#input"].addEventListener("blur",  (event) => this.#onInputBlur(event));
     this["#input"].addEventListener("search", (event) => this.#onInputSearch(event));
+    this["#input"].addEventListener("pointerdown",  (event) => this.#onInputPointerDown(event));
     this["#input"].addEventListener("contextmenu", () => this.#onInputContextMenu());
     this["#arrow"].addEventListener("pointerdown", (event) => this.#onArrowPointerDown(event));
     this["#arrow"].addEventListener("click", (event) => this.#onArrowClick(event));
@@ -951,6 +952,14 @@ export default class XColorInputElement extends HTMLElement {
 
   #onInputSearch() {
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+  }
+
+  #onInputPointerDown(event) {
+    if (this["#input"].matches(":focus") === false) {
+      event.preventDefault();
+      this["#input"].focus();
+      this.selectAll();
+    }
   }
 
   #onInputContextMenu() {

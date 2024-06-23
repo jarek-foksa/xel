@@ -4,6 +4,7 @@
 ## 0.28.3 (2024-06-23)
 
 - Handle menu item click event like native Windows and GNOME apps
+- Automatically select the color input widget value when it receives focus
 
 ## 0.28.2 (2024-06-22)
 
