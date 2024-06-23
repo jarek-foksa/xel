@@ -561,13 +561,14 @@ class XColorPickerElement extends HTMLElement {
   #updateSpaceSelect(color = this.#getColor()) {
     let allowedSpaces = this.spaces;
 
+    this["#space-select"].value = color.spaceId;
+
     if (allowedSpaces.length === 1) {
       this["#space-select"].hidden = true;
     }
     else {
       this["#space-select"].hidden = false;
       this["#space-select"].disabled = this.disabled;
-      this["#space-select"].value = color.spaceId;
 
       for (let item of this["#space-select-menu"].children) {
         if (item.localName === "x-menuitem") {

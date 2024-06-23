@@ -5,6 +5,7 @@
 
 - Handle menu item click event like native Windows and GNOME apps
 - Automatically select the color input widget value when it receives focus
+- [Bugfix] Can't change the color input widget value when only a single color space is allowed
 
 ## 0.28.2 (2024-06-22)
 
