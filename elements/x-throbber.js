@@ -10,7 +10,7 @@ import {html, css} from "../utils/template.js";
 
 // @element x-throbber
 export default class XThrobberElement extends HTMLElement {
-  static observedAttributes = ["type"];
+  static observedAttributes = ["type", "hidden"];
 
   static #ringTemplate = html`
     <template>
@@ -168,23 +168,31 @@ export default class XThrobberElement extends HTMLElement {
     else if (name === "type") {
       this.#update();
     }
+    else if (name === "hidden") {
+      this.#update();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #update() {
-    let svg = this.#shadowRoot.firstElementChild;
-    let template = (this.type === "ring") ? XThrobberElement.#ringTemplate : XThrobberElement.#spinTemplate;
-
-    if (svg === null) {
-      this.#shadowRoot.append(document.importNode(template.content, true));
+    if (this.hidden) {
+      this.#shadowRoot.innerHTML = "";
     }
-    else if (svg.dataset.type !== this.type) {
-      svg.replaceWith(document.importNode(template.content, true));
-    }
+    else {
+      let svg = this.#shadowRoot.firstElementChild;
+      let template = (this.type === "ring") ? XThrobberElement.#ringTemplate : XThrobberElement.#spinTemplate;
 
-    if (this.hasAttribute("type") === false) {
-      this.setAttribute("type", this.type);
+      if (svg === null) {
+        this.#shadowRoot.append(document.importNode(template.content, true));
+      }
+      else if (svg.dataset.type !== this.type) {
+        svg.replaceWith(document.importNode(template.content, true));
+      }
+
+      if (this.hasAttribute("type") === false) {
+        this.setAttribute("type", this.type);
+      }
     }
   }
 }

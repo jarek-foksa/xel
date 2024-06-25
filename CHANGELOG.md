@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.4 (2024-06-25)
+
+- [Bugfix] `<x-throbber>` animation freezes when changing the "hidden" attribute
+
 ## 0.28.3 (2024-06-23)
 
 - Handle `<x-menuitem>` click event like native Windows and GNOME apps
