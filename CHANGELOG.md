@@ -4,6 +4,7 @@
 ## 0.28.4 (2024-06-25)
 
 - [Bugfix] `<x-throbber>` animation freezes when changing the "hidden" attribute
+- [Bugfix] Backspace, arrow up and arrow down keyboard events should not be propagated when `<x-colorinput>` is focused
 
 ## 0.28.3 (2024-06-23)
 

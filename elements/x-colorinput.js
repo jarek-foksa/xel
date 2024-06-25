@@ -916,11 +916,16 @@ export default class XColorInputElement extends HTMLElement {
     }
     else if (event.code === "ArrowUp") {
       event.preventDefault();
+      event.stopPropagation();
       this.#changeNumericArgValueAtCaretPositionByStep("increment", event.shiftKey ? 10 : 1);
     }
     else if (event.code === "ArrowDown") {
       event.preventDefault();
+      event.stopPropagation();
       this.#changeNumericArgValueAtCaretPositionByStep("decrement", event.shiftKey ? 10 : 1);
+    }
+    else if (event.code === "Backspace") {
+      event.stopPropagation();
     }
   }
 
