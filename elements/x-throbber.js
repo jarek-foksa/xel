@@ -10,7 +10,7 @@ import {html, css} from "../utils/template.js";
 
 // @element x-throbber
 export default class XThrobberElement extends HTMLElement {
-  static observedAttributes = ["type", "hidden"];
+  static observedAttributes = ["type"];
 
   static #ringTemplate = html`
     <template>
@@ -147,6 +147,7 @@ export default class XThrobberElement extends HTMLElement {
   }
 
   #shadowRoot = null;
+  #intersectionObserver = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -155,10 +156,16 @@ export default class XThrobberElement extends HTMLElement {
 
     this.#shadowRoot = this.attachShadow({mode: "closed"});
     this.#shadowRoot.adoptedStyleSheets = [XThrobberElement.#shadowStyleSheet];
+    this.#intersectionObserver = new IntersectionObserver(entries => this.#update());
   }
 
   connectedCallback() {
     this.#update();
+    this.#intersectionObserver.observe(this);
+  }
+
+  disconnectedCallback() {
+    this.#intersectionObserver.unobserve(this);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -168,15 +175,12 @@ export default class XThrobberElement extends HTMLElement {
     else if (name === "type") {
       this.#update();
     }
-    else if (name === "hidden") {
-      this.#update();
-    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #update() {
-    if (this.hidden) {
+    if (this.hidden || (this.checkVisibility && this.checkVisibility() === false)) {
       this.#shadowRoot.innerHTML = "";
     }
     else {
