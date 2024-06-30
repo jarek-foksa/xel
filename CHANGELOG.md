@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.5 (2024-06-30)
+
+- [Bugfix] Disabled `<x-numberinput>` is still editable
+
 ## 0.28.4 (2024-06-25)
 
 - [Bugfix] `<x-throbber>` animation freezes when changing the "hidden" attribute

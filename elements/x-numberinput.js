@@ -94,6 +94,10 @@ export default class XNumberInputElement extends HTMLElement {
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
+    :host([disabled]) #editor {
+      user-select: none;
+      -webkit-user-select: none;
+    }
     #editor::-webkit-scrollbar {
       display: none;
     }
@@ -541,7 +545,7 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onDisabledAttributeChange() {
-    this["#editor"].disabled = this.disabled;
+    this["#editor"].contentEditable = this.disabled ? "false" : "plaintext-only";
     this.#updateAccessabilityAttributes();
   }
 
