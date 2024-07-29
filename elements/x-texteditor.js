@@ -31,7 +31,7 @@ export default class XTextEditorElement extends HTMLElement {
 
   static #shadowStyleSheet = css`
     :host {
-      display: block;
+      display: block flex;
       position: relative;
       width: 100%;
       min-height: 100px;
@@ -57,6 +57,10 @@ export default class XTextEditorElement extends HTMLElement {
     ::selection {
       color: var(--selection-color);
       background-color: var(--selection-background-color);
+    }
+    :host(:not(:focus)) ::selection {
+      color: inherit;
+      background: none;
     }
     :host([error]) ::selection {
       color: white;
@@ -110,6 +114,12 @@ export default class XTextEditorElement extends HTMLElement {
   }
   set value(value) {
     this["#editor"].textContent = value;
+
+    if (this.matches(":focus")) {
+      document.execCommand("selectAll");
+      let selection = (getBrowserEngine() === "chromium") ? this.#shadowRoot.getSelection() : window.getSelection();
+      selection.collapseToEnd();
+    }
 
     if (this.validation === "instant") {
       this.reportValidity();
@@ -465,10 +475,6 @@ export default class XTextEditorElement extends HTMLElement {
 
   #onFocusOut() {
     this.dispatchEvent(new CustomEvent("textinputmodeend", {bubbles: true, composed: true}));
-
-    if (getBrowserEngine() !== "webkit") {
-      this.#shadowRoot.getSelection().collapse(this["#main"]);
-    }
 
     if (this.validation === "auto" || this.validation === "instant") {
       this.reportValidity();

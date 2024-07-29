@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.6 (2024-07-29)
+
+- [Bugfix] Incorrect cursor position after changing `<x-texteditor>` value
+
 ## 0.28.5 (2024-06-30)
 
 - [Bugfix] Disabled `<x-numberinput>` is still editable
