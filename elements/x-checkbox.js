@@ -182,6 +182,8 @@ export default class XCheckboxElement extends HTMLElement {
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("pointerenter", () => this.#onPointerEnter());
+    this.addEventListener("pointerleave", () => this.#onPointerLeave());
     this.addEventListener("click", (event) => this.#onClick(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
@@ -264,6 +266,22 @@ export default class XCheckboxElement extends HTMLElement {
       if (ancestorFocusableElement) {
         ancestorFocusableElement.focus();
       }
+    }
+  }
+
+  #onPointerEnter() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip && tooltip.disabled === false) {
+      tooltip.open(this);
+    }
+  }
+
+  #onPointerLeave() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip) {
+      tooltip.close();
     }
   }
 

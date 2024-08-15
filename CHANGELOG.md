@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.7 (2024-08-15)
+
+- Allow `<x-tooltip>` to be placed inside `<x-checkbox>`
+
 ## 0.28.6 (2024-07-29)
 
 - [Bugfix] Incorrect cursor position after changing `<x-texteditor>` value

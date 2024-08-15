@@ -226,6 +226,7 @@ export default class XButtonElement extends HTMLElement {
 
   #shadowRoot = null;
   #wasFocusedBeforeExpanding = false;
+  #dismissTooltip = false;
   #lastPointerDownEvent = null;
   #lastTabIndex = 0;
 
@@ -611,8 +612,6 @@ export default class XButtonElement extends HTMLElement {
       this.#onButtonPointerDown(event);
     }
   }
-
-  #dismissTooltip = false;
 
   #onClose(event) {
     if (
