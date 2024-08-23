@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.8 (2024-08-23)
+
+- [Bugfix] `<x-checkbox>` fails to update on WebKit in some edge cases
+
 ## 0.28.7 (2024-08-15)
 
 - Allow `<x-tooltip>` to be placed inside `<x-checkbox>`

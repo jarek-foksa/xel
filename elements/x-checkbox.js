@@ -7,7 +7,9 @@
 import Xel from "../classes/xel.js";
 
 import {createElement, closest} from "../utils/element.js";
+import {getBrowserEngine} from "../utils/system.js";
 import {html, css} from "../utils/template.js";
+import {sleep} from "../utils/time.js";
 
 // @element x-checkbox
 // @part indicator
@@ -188,11 +190,21 @@ export default class XCheckboxElement extends HTMLElement {
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateCheckmarkPathData());
 
-    this.#updateCheckmarkPathData();
     this.#updateAccessabilityAttributes();
+
+    // @bugfix: Small delay is needed in order to make getComputedStyle() work properly on WebKit
+    if (getBrowserEngine() === "webkit") {
+      await sleep(10);
+
+      if (this.isConnected === false) {
+        return;
+      }
+    }
+
+    this.#updateCheckmarkPathData();
   }
 
   disconnectedCallback() {
