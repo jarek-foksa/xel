@@ -4,7 +4,7 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import ColorSpace from "../node_modules/colorjs.io/src/space.js";
+import ColorSpace from "../node_modules/colorjs.io/src/ColorSpace.js";
 
 import convertColor from "../node_modules/colorjs.io/src/to.js";
 import isColorInGamut from "../node_modules/colorjs.io/src/inGamut.js";

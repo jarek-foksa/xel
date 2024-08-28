@@ -44,7 +44,7 @@
     "@rollup/rollup-darwin-arm64": "4.17.2",
     "cantarell": "0.303.0",
     "clean-css": "5.3.3",
-    "colorjs.io": "https://github.com/color-js/color.js",
+    "colorjs.io": "https://github.com/color-js/color.js#40e7a05",
     "dompurify": "3.1.3",
     "fs-extra": "11.2.0",
     "glob": "10.3.15",

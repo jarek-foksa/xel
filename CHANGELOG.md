@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.9 (2024-08-28)
+
+- [Bugfix] Breaking changes in the dev version of colorjs.io
+
 ## 0.28.8 (2024-08-23)
 
 - [Bugfix] `<x-checkbox>` fails to update on WebKit in some edge cases
