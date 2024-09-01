@@ -577,8 +577,10 @@ export default new class Xel extends EventEmitter {
     let [h, s, l] = color.coords;
     let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
 
-    // @bugfix: https://github.com/LeaVerou/color.js/issues/328
-    if (Number.isNaN(h)) {
+    // @bugfix
+    //   https://github.com/LeaVerou/color.js/issues/328
+    //   https://github.com/color-js/color.js/issues/409
+    if (h === null || Number.isNaN(h)) {
       h = 0;
     }
 

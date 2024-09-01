@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.10 (2024-09-01)
+
+- [Bugfix] "none" is turned into null instead of NaN in dev version of colorjs.io
+
 ## 0.28.9 (2024-08-28)
 
 - [Bugfix] Breaking changes in the dev version of colorjs.io

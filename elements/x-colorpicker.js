@@ -408,10 +408,10 @@ class XColorPickerElement extends HTMLElement {
     else {
       let convertedColor = convertColor(color, this["#space-select"].value, {inGamut: true});
 
-      // Convert missing components from NaN to 0
+      // Convert missing components to 0
       // @doc https://www.w3.org/TR/css-color-4/#missing
       for (let i = 0; i < convertedColor.coords.length; i += 1) {
-        if (isNaN(convertedColor.coords[i])) {
+        if (convertedColor.coords[i] === null || isNaN(convertedColor.coords[i])) {
           convertedColor.coords[i] = 0;
         }
       }
@@ -698,10 +698,10 @@ class XColorPickerElement extends HTMLElement {
       }
     }
 
-    // Convert missing components from NaN to 0
+    // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < color.coords.length; i += 1) {
-      if (isNaN(color.coords[i])) {
+      if (color.coords[i] === null || isNaN(color.coords[i])) {
         color.coords[i] = 0;
       }
     }
@@ -1001,10 +1001,10 @@ class XRGBLinearSlidersElement extends HTMLElement {
       this.#a = a;
     }
 
-    // Convert missing components from NaN to 0
+    // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
-      if (isNaN(this.#coords[i])) {
+      if (this.#coords[i] === null || isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
       }
     }
@@ -4776,10 +4776,10 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       this.#a = a;
     }
 
-    // Convert missing components from NaN to 0
+    // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
-      if (isNaN(this.#coords[i])) {
+      if (this.#coords[i] === null || isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
       }
     }
@@ -8398,10 +8398,10 @@ class XRGBPolarSlidersElement extends HTMLElement {
       this.#a = a;
     }
 
-    // Convert missing components from NaN to 0
+    // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
-      if (isNaN(this.#coords[i])) {
+      if (this.#coords[i] === null || isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
       }
     }

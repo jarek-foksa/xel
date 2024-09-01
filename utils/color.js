@@ -77,7 +77,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, s, l] = convertColor(color, "hsl").coords;
     let a = color.alpha;
 
-    if (isNaN(h)) {
+    if (h === null || isNaN(h)) {
       h = 0;
     }
 
@@ -100,7 +100,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, w, b] = convertColor(color, "hwb").coords;
     let a = color.alpha;
 
-    if (isNaN(h)) {
+    if (h === null || isNaN(h)) {
       h = 0;
     }
 
