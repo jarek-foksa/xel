@@ -226,6 +226,16 @@ export default new class Xel extends EventEmitter {
     if (message) {
       if (attribute === null) {
         if (message.value) {
+          if (Array.isArray(message.value)) {
+            for (let part of message.value) {
+              if (part.type === "select") {
+                if (args[part.selector.name] === undefined) {
+                  args[part.selector.name] = "unknown";
+                }
+              }
+            }
+          }
+
           content = this.#localesBundle.formatPattern(message.value, args);
         }
       }

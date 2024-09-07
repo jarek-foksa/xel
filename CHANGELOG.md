@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.11 (2024-09-08)
+
+- [Bugfix] Allow "unknown" selector in Fluent localization files
+
 ## 0.28.10 (2024-09-01)
 
 - [Bugfix] "none" is turned into null instead of NaN in dev version of colorjs.io
