@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.12 (2024-09-08)
+
+- Allow `<x-tooltip>` to be placed inside `<x-icon>`
+
 ## 0.28.11 (2024-09-08)
 
 - [Bugfix] Allow "unknown" selector in Fluent localization files

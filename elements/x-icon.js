@@ -16,6 +16,7 @@ export default class XIconElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
       <svg id="svg" preserveAspectRatio="none" viewBox="0 0 100 100" width="0px" height="0px"></svg>
+      <slot></slot>
     </template>
   `;
 
@@ -98,6 +99,9 @@ export default class XIconElement extends HTMLElement {
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
     }
+
+    this.addEventListener("pointerenter", () => this.#onPointerEnter());
+    this.addEventListener("pointerleave", () => this.#onPointerLeave());
   }
 
   connectedCallback() {
@@ -116,6 +120,24 @@ export default class XIconElement extends HTMLElement {
     }
     else if (name === "href") {
       this.#update();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onPointerEnter() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip && tooltip.disabled === false) {
+      tooltip.open(this);
+    }
+  }
+
+  #onPointerLeave() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip) {
+      tooltip.close();
     }
   }
 
