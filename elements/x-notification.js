@@ -70,7 +70,8 @@ export default class XNotificationElement extends HTMLElement {
   // @default 0
   //
   // Time (in miliseconds) after which this notification should disappear.<br/>
-  // Set to 0 to disable the timeout.
+  // Set to 0 to disable the timeout.<br/>
+  // Set to -1 to disable the timeout and make the notification permanent.
   get timeout() {
     return this.hasAttribute("timeout") ? parseFloat(this.getAttribute("timeout")) : 0;
   }
@@ -133,7 +134,7 @@ export default class XNotificationElement extends HTMLElement {
     }
 
     // Automatically close the notification after given timeout
-    {
+    if (this.timeout > 0) {
       this.#time = 0;
 
       this.#intervalID = setInterval(() => {
@@ -143,7 +144,10 @@ export default class XNotificationElement extends HTMLElement {
           this.opened = false;
         }
       }, 100);
+    }
 
+    // Automatically close the notification on pointer down
+    if (this.timeout >= 0) {
       let openTimeStamp = getTimeStamp();
 
       window.addEventListener("pointerdown", this.#windowPointerDownListener = (event) => {
@@ -161,7 +165,10 @@ export default class XNotificationElement extends HTMLElement {
   }
 
   async #onClose() {
-    clearInterval(this.#intervalID);
+    if (this.#intervalID !== null) {
+      clearInterval(this.#intervalID);
+      this.#intervalID = null;
+    }
 
     // Animate out
     if (this.isConnected) {

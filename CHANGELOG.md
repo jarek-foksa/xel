@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.13 (2024-09-24)
+
+- Treat `<x-notification>` with negative timeout value as permanent
+
 ## 0.28.12 (2024-09-08)
 
 - Allow `<x-tooltip>` to be placed inside `<x-icon>`
