@@ -779,6 +779,9 @@ x-tab x-label {
 x-tab x-icon + x-label {
   margin-left: 6px;
 }
+x-tab x-box:is([vertical]) x-icon + x-label {
+  margin-left: 0px;
+}
 
 /*****************************************************************************************************************/
 
