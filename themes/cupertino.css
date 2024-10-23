@@ -542,7 +542,6 @@ x-tag::part(scope) {
 x-tagsinput {
   background: white;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
 }
 x-tagsinput:focus-within {
   border-color: var(--accent-color);

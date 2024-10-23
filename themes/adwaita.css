@@ -602,7 +602,7 @@ x-tag::part(scope) {
  */
 
 x-tagsinput {
-  background: var(--dark-background-color);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 6px;
 }
 x-tagsinput:focus-within {

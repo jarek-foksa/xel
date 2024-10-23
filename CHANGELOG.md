@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.14 (2024-10-23)
+
+- Make `<x-tagsinput>` look consistent with `<x-input>`
+
 ## 0.28.13 (2024-09-24)
 
 - Treat `<x-notification>` with negative timeout value as permanent
