@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.28.15 (2024-10-26)
+
+- Stop keyboard event propagation when deleting a tag inside `<x-tagsinput>` with backspace key
+
 ## 0.28.14 (2024-10-23)
 
 - Make `<x-tagsinput>` look consistent with `<x-input>`

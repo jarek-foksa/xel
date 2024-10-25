@@ -442,6 +442,9 @@ export default class XTagsInputElement extends HTMLElement {
         }
       }
       else if (event.target.localName === "x-tag") {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+
         let tags = [...this.children].filter(child => child.localName === "x-tag");
         let focusedTag = event.target;
         let focusedTagIndex = tags.indexOf(focusedTag);
