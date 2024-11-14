@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+
+## 0.28.16 (2024-11-14)
+
+- [Bugfix] Can't dismiss `<x-tooltip>` after disconnecting and reconnecting the ancestor element
+
 ## 0.28.15 (2024-10-26)
 
 - Stop keyboard event propagation when deleting a tag inside `<x-tagsinput>` with backspace key

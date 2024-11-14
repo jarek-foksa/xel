@@ -274,6 +274,8 @@ export default class XButtonElement extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.#dismissTooltip = false;
+
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
   }
 

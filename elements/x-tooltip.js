@@ -103,6 +103,10 @@ export default class XTooltipElement extends HTMLElement {
     }
   }
 
+  disconnectedCallback() {
+    this.close(false);
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @method
