@@ -1,6 +1,9 @@
 
 # CHANGELOG
 
+## 0.28.17 (2025-01-01)
+
+- [Bugfix] Tooltip position is not updated when dynamically changing the tooltip text
 
 ## 0.28.16 (2024-11-14)
 

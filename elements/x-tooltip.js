@@ -80,6 +80,7 @@ export default class XTooltipElement extends HTMLElement {
   #shadowRoot = null;
   #scrollableAncestor = null;
   #ancestorScrollListener;
+  #resizeObserver;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,6 +122,11 @@ export default class XTooltipElement extends HTMLElement {
         this.#updatePosition(context);
         this.#scrollableAncestor = getClosestScrollableAncestor(this);
 
+        if (context instanceof Element) {
+          this.#resizeObserver = new ResizeObserver(() => this.#updatePosition(context));
+          this.#resizeObserver.observe(this);
+        }
+
         if (this.#scrollableAncestor) {
           this.#scrollableAncestor.addEventListener("scroll", this.#ancestorScrollListener = () => {
             this.close();
@@ -154,6 +160,11 @@ export default class XTooltipElement extends HTMLElement {
         this.removeAttribute("opened");
         this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
         this.#scrollableAncestor.removeEventListener("scroll", this.#ancestorScrollListener);
+
+        if (this.#resizeObserver) {
+          this.#resizeObserver.unobserve(this);
+          this.#resizeObserver = null;
+        }
 
         if (animate) {
           let transition = getComputedStyle(this).getPropertyValue("--close-transition");
