@@ -253,7 +253,7 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   #updateArrowIconVisibility() {
-    if (this.parentElement.localName === "x-menubar") {
+    if (this.parentElement && this.parentElement.localName === "x-menubar") {
       this["#arrow"].setAttribute("hidden", "");
     }
     else {
