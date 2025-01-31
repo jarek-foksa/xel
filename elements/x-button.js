@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -15,17 +15,12 @@ let {max} = Math;
 
 // @element x-button
 // @event toggle - User toggled the button on or off by clicking it.
-// @part arrow - The arrow icon shown when the button contains <code>x-popover</code> or <code>x-menu</code>.
 export default class XButtonElement extends HTMLElement {
   static observedAttributes = ["disabled", "skin"];
 
   static #shadowTemplate = html`
     <template>
       <slot></slot>
-
-      <svg id="arrow" part="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path id="arrow-path"></path>
-      </svg>
     </template>
   `;
 
@@ -58,27 +53,8 @@ export default class XButtonElement extends HTMLElement {
     :host([hidden]) {
       display: none;
     }
+  `;
 
-    /**
-     * Arrow
-     */
-
-    #arrow {
-      color: currentColor;
-      width: 8px;
-      height: 8px;
-      min-width: 8px;
-      margin: 0 0 0 4px;
-      --path-data: M 11.7 19.9 L 49.8 57.9 L 87.9 19.9 L 99.7 31.6 L 49.8 81.4 L -0.0 31.6 Z;
-    }
-
-    #arrow path {
-      fill: currentColor;
-    }
-    #arrow[hidden] {
-      display: none;
-    }
-  `
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @property
@@ -161,7 +137,7 @@ export default class XButtonElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "flat" || "recessed" || "nav" || "dock" || "circular" || null
+  // @type "flat" || "recessed" || "dock" || null
   // @default null
   get skin() {
     return this.hasAttribute("skin") ? this.getAttribute("skin") : null;
@@ -230,8 +206,6 @@ export default class XButtonElement extends HTMLElement {
   #lastPointerDownEvent = null;
   #lastTabIndex = 0;
 
-  #xelThemeChangeListener = null;
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
@@ -265,18 +239,12 @@ export default class XButtonElement extends HTMLElement {
       this.parentElement.tabIndex = -1;
     }
 
-    this.#updateArrowPathData();
-    this.#updateArrowVisibility();
     this.#updateAccessabilityAttributes();
     this.#updateSkinAttribute();
-
-    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
   }
 
   disconnectedCallback() {
     this.#dismissTooltip = false;
-
-    Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
   }
 
   attributeChangedCallback(name) {
@@ -551,16 +519,6 @@ export default class XButtonElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #updateArrowPathData() {
-    let arrowPathData = getComputedStyle(this["#arrow"]).getPropertyValue("--path-data");
-    this["#arrow-path"].setAttribute("d", arrowPathData);
-  }
-
-  #updateArrowVisibility() {
-    let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
-    this["#arrow"].style.display = (popup ? null : "none");
-  }
 
   #updateAccessabilityAttributes() {
     this.setAttribute("role", "button");

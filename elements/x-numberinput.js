@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -44,6 +44,7 @@ export default class XNumberInputElement extends HTMLElement {
       height: 32px;
       box-sizing: border-box;
       font-size: 12.5px;
+      line-height: 10;
       --inner-padding: 0 6px;
     }
     :host(:hover) {
@@ -90,7 +91,7 @@ export default class XNumberInputElement extends HTMLElement {
       outline: none;
       font-family: inherit;
       font-size: inherit;
-      line-height: 10;
+      line-height: inherit;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
@@ -233,19 +234,6 @@ export default class XNumberInputElement extends HTMLElement {
   }
   set disabled(disabled) {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
-  }
-
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the input should take less horizontal space.
-  get condensed() {
-    return this.hasAttribute("condensed");
-  }
-  set condensed(condensed) {
-    condensed ? this.setAttribute("condensed", "") : this.removeAttribute("condensed");
   }
 
   // @property

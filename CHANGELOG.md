@@ -1,6 +1,16 @@
 
 # CHANGELOG
 
+## 0.29.0 (PENDING)
+
+- Update Fluent theme to match the latest Windows 11 UI guidelines
+- Allow wide gamut accent color
+- Add `<x-nav>` and `<x-navitem>`
+- API change: Rename `selected` property on `<x-tab>` to `toggled`
+- API change: Remove `condensed` property from `<x-numberinput>`
+- API change: Remove `type` property from `<x-throbber>`
+- API change: Remove `circular` and `nav` skins from `<x-button>`
+
 ## 0.28.17 (2025-01-01)
 
 - [Bugfix] Tooltip position is not updated when dynamically changing the tooltip text
@@ -399,7 +409,6 @@
 
 ## 0.10.0 (2022-01-05)
 
-- Switch from GPL/Commercial dual licensing model to MIT license
 - Remove the custom issue tracker (use GitHub instead)
 - Move all files into a single GitHub repository
 - Update documentation
@@ -426,7 +435,7 @@
 
 ## 0.9.7 (2021-05-10)
 
-- Update the commercial license to allow the usage of beta Xel versions for free
+- Update the license
 
 ## 0.9.6 (2021-05-02)
 
@@ -455,10 +464,8 @@
 - [Portal] [Bugfix] Syntax highlighting is not working with dark themes
 - [Portal] [Bugfix] Redirects are not working when using a local Firebase instance
 - [Portal] [Bugfix] Whitespace is missing between changelog tags
-- [Portal] [Bugfix] User should not be able to purchase a license while not logged in
 - [Portal] [Bugfix] Always fetch the changelog from the public GitHub repository
 
 ## 0.9.0 (2021-04-06)
 
 - Project rewrite using the latest Web Platform APIs
-- Switch from MIT to GPL/Commercial dual licensing model

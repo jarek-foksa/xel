@@ -6,7 +6,7 @@ slogan-3 = Dla aplikacji <em>webowych</em>, <em>hybrydowych</em> i bazujących n
 # Sidebar nav
 about = O projekcie
 setup = Konfiguracja
-faq = Najczęstsze pytania
+elements = Elementy
 changelog = Historia zmian
 license = Licencja
 issues = Problemy

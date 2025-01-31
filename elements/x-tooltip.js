@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -159,7 +159,10 @@ export default class XTooltipElement extends HTMLElement {
       if (this.opened === true) {
         this.removeAttribute("opened");
         this.dispatchEvent(new CustomEvent("close", {bubbles: true, detail: this}));
-        this.#scrollableAncestor.removeEventListener("scroll", this.#ancestorScrollListener);
+
+        if (this.#scrollableAncestor) {
+          this.#scrollableAncestor.removeEventListener("scroll", this.#ancestorScrollListener);
+        }
 
         if (this.#resizeObserver) {
           this.#resizeObserver.unobserve(this);

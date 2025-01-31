@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -143,6 +143,7 @@ export default class XColorSelectElement extends HTMLElement {
     }
 
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
     this["#preview"].addEventListener("click", (event) => this.#onClick(event));
     this["#popover"].addEventListener("close", () => this.#onPopoverClose());
     this["#color-picker"].addEventListener("changestart", () => this.#onColorPickerChangeStart());
@@ -274,6 +275,13 @@ export default class XColorSelectElement extends HTMLElement {
   #onColorPickerChangeEnd() {
     this.#isChangingColorPicker = false;
     this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}))
+  }
+
+  #onPointerDown(event) {
+    // Don't focus the widget with pointer
+    if (event.target === this && this.matches(":focus") === false) {
+      event.preventDefault();
+    }
   }
 
   #onClick(event) {

@@ -1,14 +1,13 @@
 
 /*
  * @copyright
- *   © 2016-2024 Jarosław Foksa
+ *   © 2016-2025 Jarosław Foksa
  * @license
  *   MIT License (check LICENSE.md for details)
  * @doc
- *   https://en.wikipedia.org/wiki/Adwaita_(design_language)
  *   https://developer.gnome.org/hig/
+ *   https://gnome.pages.gitlab.gnome.org/libadwaita/doc/main/
  *   https://blogs.gnome.org/alexm/2021/12/31/libadwaita-1-0/
- *   https://aplazas.pages.gitlab.gnome.org/blog/blog/2021/03/31/introducing-libadwaita.html
  *
  * Theme implementing GNOME Human Interface Guidelines.
  */
@@ -17,197 +16,87 @@
 
 /*****************************************************************************************************************/
 
-/**
- * Wrappers
- */
-
 body {
   color: var(--text-color);
-  background: var(--background-color);
-  font-weight: 500;
+  background-color: var(--background-color);
   font-family: "Cantarell", BlinkMacSystemFont, -apple-system, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
-  --autocapitalize: titlecase;
-  --preset-accent-colors: blue #3584e4, purple #9141ac, pink #f74f9e, red #e01b24, orange #ff7800, yellow #e5a50a,
-                          green #2ec27e, graphite #9a9996;
-  --titlebar-color: auto;
-  --background-color: #f5f5f5;
-  --light-background-color: #fcfcfc;
-  --dark-background-color: #ebebeb;
-  --border-color: #dcdcdc;
-  --dark-border-color: #d1d1d1;
-  --text-color: rgba(0, 0, 0, 0.8);
-  --dark-text-color: rgba(0, 0, 0, 1);
-  --error-color:  #c5313c;
-  --error-background-color: #f4e5e5;
-  --autofill-background-color: #f2ede2;
-  --accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), var(--accent-color-l), var(--accent-color-a)
-    );
-  --light-accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 8%), var(--accent-color-a)
-    );
-  --lightest-accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 20%), var(--accent-color-a)
-    );
-  --dark-accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 5%), var(--accent-color-a)
-    );
-  --darker-accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 8%), var(--accent-color-a)
-    );
-  --darkest-accent-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 18%), var(--accent-color-a)
-    );
-  --selection-color: currentColor;
-  --selection-background-color: hsla(
-      var(--accent-color-h), var(--accent-color-s), var(--accent-color-l), 0.2
-    );
-  --checkboard-background: linear-gradient( 45deg, #dedede 25%, #0000   25%)  0px  0px / 10px 10px,
-                           linear-gradient(-45deg, #dedede 25%, #0000   25%)  0px  5px / 10px 10px,
-                           linear-gradient( 45deg, #0000   75%, #dedede 75%)  5px -5px / 10px 10px,
-                           linear-gradient(-45deg, #0000   75%, #dedede 75%) -5px  0px / 10px 10px,
-                           white;
+  font-weight: 500;
+  --preset-accent-colors:       blue     color(srgb 0.21 0.52 0.89),
+                                purple   color(srgb 0.57 0.25 0.67),
+                                pink     color(srgb 0.97 0.31 0.62),
+                                red      color(srgb 0.88 0.11 0.14),
+                                orange   color(srgb 1.00 0.47 0.00),
+                                yellow   color(srgb 0.90 0.65 0.04),
+                                green    color(srgb 0.18 0.76 0.49),
+                                graphite color(srgb 0.60 0.60 0.59);
+  --light-accent-color:         oklch(from var(--accent-color) calc(l + 0.07) calc(c - 0.02) h);
+  --dark-accent-color:          oklch(from var(--accent-color) calc(l + 0.04) calc(c + 0.02) h);
+  --background-color:           color(srgb 0.96 0.96 0.96);
+  --foreground-color:           color(srgb 0.99 0.99 0.99);
+  --border-color:               color(srgb 0.86 0.86 0.86);
+  --text-color:                 color(srgb 0 0 0 / 0.8);
+  --error-color:                color(srgb 0.77 0.19 0.24);
+  --selection-color:            currentColor;
+  --selection-background-color: oklch(from var(--accent-color) l c h / 0.2);
+  --autofill-background-color:  color(srgb 0.95 0.93 0.89);
+  --titlebar-color:             auto;
+  --autocapitalize:             titlecase;
+  --checkboard-background:      linear-gradient( 45deg, #dedede 25%, #0000   25%)  0px  0px / 10px 10px,
+                                linear-gradient(-45deg, #dedede 25%, #0000   25%)  0px  5px / 10px 10px,
+                                linear-gradient( 45deg, #0000   75%, #dedede 75%)  5px -5px / 10px 10px,
+                                linear-gradient(-45deg, #0000   75%, #dedede 75%) -5px  0px / 10px 10px, #ffffff;
+  --arrow-right-path-data: M 31 74 L 56 49 L 32 26 C 30 24 30 20 32 18 L 33 17 C 35 15 39 15 42 17 L 70 45 C 72 47 72 51 70 54 C 69 54 69 55 69 55 L 41 83 C 38 85 35 85 32 83 L 31 82 C 29 80 29 76 31 74 Z;
+  --arrow-down-path-data: M 6 30 L 93 30 L 50 76 L 6 30 Z;
+  --checkmark-path-data: M 38 74 L 22 55 C 20 52 20 48 22 46 C 25 44 28 44 31 47 L 44 63 L 68 26 C 71 23 75 21 78 23 C 80 25 81 29 78 33 L 51 74 C 50 76 46 78 45 78 C 44 78 42 78 41 77 C 40 76 39 75 38 74 Z;
+  --mixed-checkmark-path-data: M 13 50 C 13.1 54.5 16.8 57.2 21.3 57.2 L 78.6 57.2 C 83.1 57.2 86.8 54.5 86.9 50 C 86.9 45.4 83.2 42.7 78.6 42.7 L 21.3 42.7 C 16.7 42.7 13 45.4 13 50 Z;
+  --clear-path-data: M 25 16 L 50 41 L 75 16 L 84 25 L 59 50 L 84 75 L 75 84 L 50 59 L 25 84 L 16 75 L 41 50 L 16 25 Z;
+  --plus-path-data: M 58 10 L 58 42 L 90 42 L 90 58 L 58 58 L 58 90 L 42 90 L 42 58 L 10 58 L 10 42 L 42 42 L 42 10 Z;
+  --minus-path-data: M 10 42 H 90 V 58 H 10 V 42 Z;
 }
-
-/*****************************************************************************************************************/
-
-/**
- * Selection
- */
-
-::selection {
-  color: var(--selection-color);
-  background: var(--selection-background-color);
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Scrollbar
- */
-
-::-webkit-scrollbar {
-  background: none;
-}
-::-webkit-scrollbar:hover {
-  background: rgba(0, 0, 0, 0.08);
-}
-
-/* Thumb */
-::-webkit-scrollbar-thumb:vertical {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent 25%,
-    rgba(0, 0, 0, 0.15) 25%,
-    rgba(0, 0, 0, 0.15) 75%,
-    transparent 75%,
-    transparent 100%
-  );
-}
-::-webkit-scrollbar-thumb:horizontal {
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    transparent 25%,
-    rgba(0, 0, 0, 0.15) 25%,
-    rgba(0, 0, 0, 0.15) 75%,
-    transparent 75%,
-    transparent 100%
-  );
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #7a7a7a;
-  border-radius: 4px;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Headings
- */
 
 h2 {
-  color: var(--dark-text-color);
+  color: color(srgb 0 0 0);
 }
-
 h3 {
-  color: var(--dark-text-color);
+  color: color(srgb 0 0 0);
 }
-
 h4 {
-  color: var(--dark-text-color);
+  color: color(srgb 0 0 0);
 }
-
-/*****************************************************************************************************************/
-
-/**
- * Links
- */
 
 a {
   color: var(--accent-color);
   text-decoration: underline;
 }
 a:focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
 }
 a:hover {
   color: var(--darkest-accent-color);
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Code
- */
-
-code,
-pre,
-var {
-  background: var(--light-background-color);
-  outline: 1px solid var(--border-color);
-  /* In future the font family should be set to ui-monospace (this value is not supported yet) */
-  font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", monospace;
+pre, code, var {
+  background-color: var(--background-color);
+  outline-width: 1px;
+  outline-style: solid;
+  outline-color: var(--border-color);
+  font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
 }
-
-/*****************************************************************************************************************/
-
-/**
- * Blockquote
- */
 
 blockquote {
-  border-color: #f86466;
+  border-color: color(srgb 0.97 0.39 0.4);
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Mark
- */
-
-mark,
-::highlight(mark) {
+mark, ::highlight(mark) {
   color: inherit;
-  background: #F6D32D;
+  background-color: color(srgb 0.96 0.83 0.18);
 }
-
-/*****************************************************************************************************************/
-
-/**
- * Separators
- */
 
 hr {
-  background: var(--border-color);
+  background-color: var(--border-color);
 }
-
-/*****************************************************************************************************************/
-
-/**
- * Tables
- */
 
 table {
   border-radius: 8px;
@@ -216,9 +105,48 @@ table {
   overflow: hidden;
 }
 
-th,
-td {
-  border: 1px solid var(--border-color);
+th, td {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-color);
+}
+
+::selection {
+  color: var(--selection-color);
+  background-color: var(--selection-background-color);
+}
+
+::-webkit-scrollbar {
+  background-color: transparent;
+}
+::-webkit-scrollbar:hover {
+  background-color: color(srgb 0 0 0 / 0.08);
+}
+::-webkit-scrollbar-thumb:vertical {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 25%,
+    color(srgb 0 0 0 / 0.15) 25%,
+    color(srgb 0 0 0 / 0.15) 75%,
+    transparent 75%,
+    transparent 100%
+  );
+}
+::-webkit-scrollbar-thumb:horizontal {
+  background-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 25%,
+    color(srgb 0 0 0 / 0.15) 25%,
+    color(srgb 0 0 0 / 0.15) 75%,
+    transparent 75%,
+    transparent 100%
+  );
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: color(srgb 0.48 0.48 0.48);
+  border-radius: 4px;
 }
 
 /*****************************************************************************************************************/
@@ -228,8 +156,10 @@ td {
  */
 
 x-card {
-  background: var(--light-background-color);
-  border: 1px solid rgba(0, 0, 0, 0.14);
+  background-color: var(--light-background-color);
+  border-width: 1px;
+  border-style: solid;
+  border-color: color(srgb 0 0 0 / 0.14);
   border-radius: 12px;
 }
 
@@ -240,35 +170,37 @@ x-card {
  */
 
 x-accordion::part(arrow) {
-  color: rgba(0, 0, 0, 0.48);
-  --path-data: M 31 74 L 56 49 L 32 26 C 30 24 30 20 32 18 L 33 17 C 35 15 39 15 42 17 L 70 45 C 72 47 72 51 70 54 C 69 54 69 55 69 55 L 41 83 C 38 85 35 85 32 83 L 31 82 C 29 80 29 76 31 74 Z;
+  color: color(srgb 0 0 0 / 0.48);
+  --path-data: var(--arrow-right-path-data);
 }
 x-accordion[expanded]::part(arrow) {
   color: var(--dark-accent-color);
 }
 x-accordion::part(arrow):focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -2px;
 }
 
 /* Label */
 x-accordion > header > x-label {
+  color: color(srgb 0 0 0 / 0.92);
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.92);
 }
 
 /*****************************************************************************************************************/
 
 /**
- *  Tooltip
+ * Tooltip
  */
 
 x-tooltip {
   color: var(--text-color);
-  background: var(--dark-background-color);
+  background-color: var(--dark-background-color);
   border-color: var(--border-color);
   border-radius: 12px;
-  box-shadow: rgb(0 0 0 / 17%) 0px 3px 10px 0px;
+  box-shadow: 0px 3px 10px 0px color(srgb 0 0 0 / 0.17);
 }
 
 /*****************************************************************************************************************/
@@ -278,43 +210,38 @@ x-tooltip {
  */
 
 x-stepper {
-  flex-flow: row;
-  min-width: 60px;
+  margin: 0;
+  min-width: 20px;
   color: var(--text-color);
 }
 
 /* Buttons */
 x-stepper::part(increment-button) {
-  border-left: 1px solid var(--border-color);
+  border-top-right-radius: 6px;
+}
+x-stepper::part(decrement-button) {
+  border-bottom-right-radius: 6px;
 }
 x-stepper::part(increment-button),
 x-stepper::part(decrement-button) {
-  min-height: 24px;
+  transform: scale(0.85);
 }
 x-stepper::part(increment-button):hover,
 x-stepper::part(decrement-button):hover {
-  background: rgba(0, 0, 0, 0.07);
+  background-color: color(srgb 0 0 0 / 0.07);
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
-  background: rgba(0, 0, 0, 0.12);
   color: var(--text-color);
+  background-color: color(srgb 0 0 0 / 0.12);
 }
 
 /* Arrows */
-x-stepper::part(increment-arrow),
-x-stepper::part(decrement-arrow) {
-  width: 12px;
-  height: 12px;
-}
 x-stepper::part(increment-arrow) {
-  --path-data: M 58 10 L 58 42 L 90 42 L 90 58 L 58 58 L 58 90 L 42 90 L 42 58 L 10 58 L 10 42 L 42 42 L 42 10 Z;
+  --path-data: var(--plus-path-data);
 }
 x-stepper::part(decrement-arrow) {
-  --path-data: M 10 42 H 90 V 58 H 10 V 42 Z;
-}
-x-stepper::part(decrement-arrow) {
-  transform: rotateZ(180deg);
+  --path-data: var(--minus-path-data);
 }
 
 /*****************************************************************************************************************/
@@ -324,7 +251,7 @@ x-stepper::part(decrement-arrow) {
  */
 
 x-swatch {
-  border: 1px solid var(--dark-border-color);
+  border-color: var(--dark-border-color);
   border-radius: 99px;
 }
 
@@ -335,7 +262,9 @@ x-swatch {
  */
 
 x-button:focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
 
@@ -347,29 +276,29 @@ x-button:focus {
 
 x-button[skin="default"] {
   color: var(--text-color);
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
   border-radius: 6px;
 }
 x-button[skin="default"]:hover {
-  background: rgba(0, 0, 0, 0.12);
+  background-color: color(srgb 0 0 0 / 0.12);
 }
 x-button[skin="default"][pressed] {
-  background: rgba(0, 0, 0, 0.2);
+  background-color: color(srgb 0 0 0 / 0.2);
 }
 x-button[skin="default"][toggled] {
-  color: #ffffff;
-  background: var(--accent-color);
+  color: color(srgb 1 1 1);
+  background-color: var(--accent-color);
 }
 x-button[skin="default"][toggled][expanded] {
-  background: var(--dark-accent-color);
+  background-color: var(--dark-accent-color);
 }
 x-button[skin="default"][toggled][pressed] {
-  background: var(--darker-accent-color);
+  background-color: var(--darker-accent-color);
 }
 
 /* Horizontal siblings */
 x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
-  border-left: 1px solid rgba(0, 0, 0, 0.12);
+  border-left: 1px solid color(srgb 0 0 0 / 0.12);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -378,10 +307,10 @@ x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
   border-bottom-right-radius: 0;
 }
 x-buttons:not([vertical]) > x-button[skin="default"][pressed] {
-  border-left-color: rgba(0, 0, 0, 0.12);
+  border-left-color: color(srgb 0 0 0 / 0.12);
 }
 x-buttons:not([vertical]) > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
-  border-left-color: rgba(0, 0, 0, 0.2);
+  border-left-color: color(srgb 0 0 0 / 0.2);
 }
 x-buttons:not([vertical]) > x-button[skin="default"][toggled],
 x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"] {
@@ -394,7 +323,9 @@ x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed] + x-butto
 
 /* Vertical siblings */
 x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: color(srgb 0 0 0 / 0.12);
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -403,10 +334,10 @@ x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
   border-bottom-right-radius: 0;
 }
 x-buttons[vertical] > x-button[skin="default"][pressed] {
-  border-top-color: rgba(0, 0, 0, 0.12);
+  border-top-color: color(srgb 0 0 0 / 0.12);
 }
 x-buttons[vertical] > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
-  border-top-color: rgba(0, 0, 0, 0.2);
+  border-top-color: color(srgb 0 0 0 / 0.2);
 }
 x-buttons[vertical] > x-button[skin="default"][toggled],
 x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"] {
@@ -430,19 +361,20 @@ x-button > x-label {
 
 x-button[skin="dock"] {
   color: var(--text-color);
-  background: var(--light-background-color);
-  border: 1px solid gray;
+  background-color: var(--light-background-color);
+  border-width: 1px;
+  border-style: solid;
   border-color: var(--dark-border-color);
 }
 x-button[skin="dock"]:hover {
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
 }
 x-button[skin="dock"][pressed] {
-  background: rgba(0, 0, 0, 0.12);
+  background-color: color(srgb 0 0 0 / 0.12);
 }
 x-button[skin="dock"][toggled] {
   color: var(--light-background-color);
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   border-color: var(--darkest-accent-color);
   z-index: 1;
 }
@@ -475,25 +407,15 @@ x-button[skin="recessed"] {
   border-radius: 6px;
 }
 x-button[skin="recessed"]:hover {
-  background: rgba(0, 0, 0, 0.07);
+  background-color: color(srgb 0 0 0 / 0.07);
 }
 x-button[skin="recessed"][toggled] {
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(0, 0, 0, 0.42);
+  color: color(srgb 1 1 1 / 0.95);
+  background-color: color(srgb 0 0 0 / 0.42);
 }
 x-button[skin="recessed"][pressed] {
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(0, 0, 0, 0.6);
-}
-
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="recessed"] + x-button[skin="recessed"] {
-  margin-left: 4px;
-}
-
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="recessed"] + x-button[skin="recessed"] {
-  margin-top: 4px;
+  color: color(srgb 1 1 1 / 0.95);
+  background-color: color(srgb 0 0 0 / 0.6);
 }
 
 /* Label */
@@ -505,80 +427,30 @@ x-button[skin="recessed"] > x-label {
 /*****************************************************************************************************************/
 
 /**
- * Button ("nav" skin)
- */
-
-x-button[skin="nav"] {
-  color: var(--text-color);
-  border-radius: 8px;
-}
-x-button[skin="nav"][toggled] {
-  background: rgba(0, 0, 0, 0.08);
-}
-x-button[skin="nav"]:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-x-button[skin="nav"][toggled]:hover {
-  background: rgba(0, 0, 0, 0.12);
-}
-x-button[skin="nav"][pressed] {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/* Label */
-x-button[skin="nav"] > x-label {
-  font-weight: 600;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("circular" skin)
- */
-
-x-button[skin="circular"] {
-  color: var(--text-color);
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-}
-x-button[skin="circular"]:hover {
-  background: rgba(0, 0, 0, 0.12);
-}
-x-button[skin="circular"][pressed],
-x-button[skin="circular"][expanded] {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-x-button[skin="circular"] > x-icon {
-  transform: scale(0.8);
-}
-
-/*****************************************************************************************************************/
-
-/**
  * Tag
  */
 
 x-tag {
-  background: var(--light-background-color);
+  background-color: var(--light-background-color);
   border-color: var(--border-color);
   border-radius: 4px;
-  position: relative;
 }
 x-tag:active {
   filter: brightness(0.97);
 }
 x-tag:focus {
-  outline: 2px solid var(--light-accent-color);
-  outline-offset: -1px;
   border-color: var(--accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
+  outline-offset: -1px;
 }
 x-tag[scoped]::part(main) {
-  background: var(--light-background-color);
+  background-color: var(--light-background-color);
 }
 x-tag[toggled] {
+  color: color(srgb 0 0 0 / 0.8);
   filter: brightness(0.8);
-  color: rgba(0, 0, 0, 0.8);
 }
 x-tag[toggled]:active {
   filter: brightness(0.7);
@@ -586,12 +458,15 @@ x-tag[toggled]:active {
 
 /* Remove button */
 x-tag::part(remove-button) {
-  display: none;
+  --path-data: var(--clear-path-data);
+}
+x-tag::part(remove-button):hover {
+  background-color: transparent;
 }
 
 /* Scope prefix */
 x-tag::part(scope) {
-  background: #ffffff;
+  background-color: color(srgb 1 1 1);
   border-color: var(--border-color);
 }
 
@@ -602,22 +477,26 @@ x-tag::part(scope) {
  */
 
 x-tagsinput {
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
   border-radius: 6px;
 }
 x-tagsinput:focus-within {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
 x-tagsinput[error] {
-  background: var(--error-background-color);
-  outline: 2px solid var(--error-color);
+  background-color: var(--error-background-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--error-color);
   outline-offset: -1px;
 }
 
 /* Placeholder */
 x-tagsinput > x-label {
-  color: rgba(0, 0, 0, 0.4);
+  color: color(srgb 0 0 0 / 0.4);
   font-weight: 600;
 }
 
@@ -630,46 +509,86 @@ x-tagsinput > x-label {
 x-tabs {
   width: 100%;
   justify-content: flex-start;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--border-color);
 }
 
 /* Tab */
 x-tab {
-  border-bottom: 4px solid transparent;
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+  border-bottom-color: transparent;
   margin-bottom: -1px;
 }
 x-tab + x-tab {
   margin-left: 5px;
 }
 x-tab:hover {
-  background: var(--dark-background-color);
-  border-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--dark-background-color);
+  border-color: color(srgb 0 0 0 / 0.1);
 }
 x-tab:focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
-x-tab[selected] {
+x-tab[toggled] {
   border-color: var(--accent-color);
 }
 x-tab:active {
-  background: rgba(0, 0, 0, 0.12);
+  background-color: color(srgb 0 0 0 / 0.12);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Menubar
+ * Nav item
  */
 
-x-menubar {
-  padding: 0 3px;
+x-navitem:focus {
+  outline-width: 0;
 }
 
-x-menubar > x-menuitem,
-x-menubar > x-menuitem[size="small"],
-x-menubar > x-menuitem[size="large"] {
-  height: calc(100% - 6px);
+/* Button */
+x-navitem::part(button) {
+  color: var(--text-color);
+  border-radius: 8px;
+}
+x-navitem[toggled]::part(button) {
+  background-color: color(srgb 0 0 0 / 0.08);
+}
+x-navitem::part(button):hover {
+  background-color: color(srgb 0 0 0 / 0.04);
+}
+x-navitem[toggled]::part(button):hover {
+  background-color: color(srgb 0 0 0 / 0.12);
+}
+x-navitem[pressed]::part(button) {
+  background-color: color(srgb 0 0 0 / 0.2);
+}
+x-navitem:focus::part(button) {
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
+  outline-offset: -1px;
+}
+
+/* Label */
+x-nav x-label {
+  font-weight: 700;
+}
+
+/* Arrow */
+x-navitem::part(arrow) {
+  color: var(--accent-color);
+  --path-data: var(--arrow-right-path-data);
+}
+
+/* Secondary icon */
+x-nav x-label + x-icon {
+  color: var(--accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -681,11 +600,13 @@ x-menubar > x-menuitem[size="large"] {
 x-menu {
   padding: 3px;
   color: var(--text-color);
-  background: #ffffff;
-  border: 1px solid var(--border-color);
+  background-color: color(srgb 1 1 1);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-color);
   border-radius: 12px;
-  box-shadow: rgb(0 0 0 / 17%) 0px 3px 10px 0px;
-  --open-transition: none;
+  box-shadow: 0px 3px 10px 0px color(srgb 0 0 0 / 0.17);
+  --close-transition: 200 opacity cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Separator */
@@ -708,33 +629,51 @@ x-menuitem {
 x-menuitem:hover,
 x-menuitem:focus,
 x-menuitem[expanded] {
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
 }
 x-menuitem[pressed] {
-  background: rgba(0, 0, 0, 0.12);
+  background-color: color(srgb 0 0 0 / 0.12);
 }
 
 /* Checkmark icon */
 x-menuitem::part(checkmark) {
-  --path-data: M 38 74 L 22 55 C 20 52 20 48 22 46 C 25 44 28 44 31 47 L 44 63 L 68 26 C 71 23 75 21 78 23 C 80 25 81 29 78 33 L 51 74 C 50 76 46 78 45 78 C 44 78 42 78 41 77 C 40 76 39 75 38 74 Z;
+  --path-data: var(--checkmark-path-data);
 }
 
 /* Arrow icon */
 x-menuitem::part(arrow) {
-  color: rgba(0, 0, 0, 0.4);
-  --path-data: M 34 29 C 31 26 30 21 32 19 C 35 17 39 17 42 20 L 66 44 C 66 44 67 45 67 45 C 67 45 68 46 68 46 C 69 47 69 48 69 50 C 69 52 69 53 68 54 C 68 54 67 55 67 55 C 67 55 66 56 66 56 L 42 80 C 39 83 35 83 32 81 C 30 79 31 74 34 71 L 55 50 Z;
+  color: color(srgb 0 0 0 / 0.4);
+  width: 14px;
+  height: 14px;
+  --path-data: var(--arrow-right-path-data);
 }
 
 /* Shortcut */
 
 x-menuitem > x-shortcut {
-  color: rgba(0, 0, 0, 0.4);
+  color: color(srgb 0 0 0 / 0.4);
 }
 
 /* Swatch */
 x-menuitem:focus > x-swatch,
 x-menuitem[expanded] > x-swatch {
-  border-color: rgba(255, 255, 255, 0.8);
+  border-color: color(srgb 1 1 1 / 0.8);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Menubar
+ */
+
+x-menubar {
+  padding: 0 3px;
+}
+
+x-menubar > x-menuitem,
+x-menubar > x-menuitem[size="small"],
+x-menubar > x-menuitem[size="large"] {
+  height: calc(100% - 6px);
 }
 
 /*****************************************************************************************************************/
@@ -747,14 +686,18 @@ dialog {
   overflow: hidden;
   margin: auto;
   color: inherit;
-  background: var(--background-color);
-  border: 1px solid var(--dark-border-color);
+  background-color: var(--background-color);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--dark-border-color);
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 22px;
-  transition: transform 100ms linear;
+  box-shadow: 0px 4px 22px color(srgb 0 0 0 / 0.3);
+  transition-duration: 100ms;
+  transition-timing-function: linear;
+  --transition-type: stretch;
 }
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.3);
+  background-color: color(srgb 0 0 0 / 0.3);
 }
 
 /*****************************************************************************************************************/
@@ -765,10 +708,12 @@ dialog::backdrop {
 
 x-popover {
   color: var(--text-color);
-  background: var(--light-background-color);
-  border: 1px solid var(--dark-border-color);
+  background-color: var(--light-background-color);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--dark-border-color);
   border-radius: 12px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 6px;
+  box-shadow: 0px 3px 6px color(srgb 0 0 0 / 0.15);
   --open-transition: none;
 }
 
@@ -781,13 +726,18 @@ x-popover {
 x-notification {
   border-radius: 20px;
   font-weight: 600;
-  background: rgba(0, 0, 0, 0.7);
+  background-color: color(srgb 0 0 0 / 0.7);
 }
 
 /* Selection */
 x-notification::selection {
-  color: black;
-  background: white;
+  color: color(srgb 0 0 0);
+  background-color: color(srgb 1 1 1);
+}
+
+/* Link */
+x-notification a {
+  color: var(--light-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -798,31 +748,36 @@ x-notification::selection {
 
 /* Indicator */
 x-checkbox::part(indicator) {
-  background: white;
-  border: 1px solid var(--dark-border-color);
+  background-color: color(srgb 1 1 1);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--dark-border-color);
   border-radius: 6px;
-  --path-data: M -4 -4 L 100 -4 L 100 100 L -4 100 L -4 -4 Z M 89.1 34.6 C 96.4 27 84.8 15.6 77.3 23.3 L 41.7 63.6 L 23.4 44.5 C 13.2 36.6 5.3 51 12.4 56.7 L 42.7 86.1 L 89.1 34.6 Z;
+  --path-data: var(--checkmark-path-data);
 }
 x-checkbox[mixed]::part(indicator) {
-  --path-data: M -4 -4 L 100 -4 L 100 100 L -4 100 L -4 -4 Z M 13 50 C 13.1 54.5 16.8 58.2 21.3 58.2 L 78.6 58.2 C 83.1 58.2 86.8 54.5 86.9 50 C 86.9 45.4 83.2 41.7 78.6 41.7 L 21.3 41.7 C 16.7 41.7 13 45.4 13 50 Z;
+  --path-data: var(--mixed-checkmark-path-data);
 }
 x-checkbox:not([toggled]):active::part(indicator) {
-  background: rgba(0, 0, 0, 0.2);
+  background-color: color(srgb 0 0 0 / 0.2);
 }
 x-checkbox:focus::part(indicator) {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: 1px;
 }
 x-checkbox[mixed]::part(indicator) {
-  color: rgba(0, 0, 0, 0.4);
-  border-color: rgba(0, 0, 0, 0.4);
+  color: color(srgb 0 0 0 / 0.3);
 }
 x-checkbox[toggled]::part(indicator) {
-  color: var(--accent-color);
-  border: 2px solid currentColor;
+  color: color(srgb 1 1 1);
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
 }
 x-checkbox[toggled]:active::part(indicator) {
-  color: var(--darkest-accent-color);
+  background-color: var(--darkest-accent-color);
+  border-color: var(--darkest-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -833,27 +788,31 @@ x-checkbox[toggled]:active::part(indicator) {
 
 /* Indicator */
 x-radio::part(indicator) {
-  background: white;
-  border: 1px solid var(--dark-border-color);
+  background-color: color(srgb 1 1 1);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--dark-border-color);
 }
 x-radio:not([toggled]):active::part(indicator) {
-  background: rgba(0, 0, 0, 0.2);
+  background-color: color(srgb 0 0 0 / 0.2);
 }
 x-radio:focus::part(indicator) {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: 1px;
 }
 x-radio[toggled]::part(indicator) {
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   border-color: var(--accent-color);
 }
 x-radio[toggled]:active::part(indicator) {
-  background: var(--darkest-accent-color);
+  background-color: var(--darkest-accent-color);
 }
 
 /* Indicator dot */
 x-radio::part(indicator-dot) {
-  background: white;
+  background-color: color(srgb 1 1 1);
 }
 x-radio[toggled]::part(indicator-dot) {
   transform: scale(0.4);
@@ -870,13 +829,14 @@ x-radio[mixed]::part(indicator-dot) {
  */
 
 x-switch:focus {
-  outline: none;
+  outline-width: 0;
 }
 
 /* Indicator thumb */
 x-switch::part(indicator-thumb) {
-  background: white;
-  box-shadow: white 0px 0px 0px 2px, rgb(0 0 0 / 38%) 0px 1px 3px 2px;
+  background-color: color(srgb 1 1 1);
+  box-shadow: 0px 0px 0px 2px color(srgb 1 1 1),
+              0px 1px 3px 2px color(srgb 0 0 0 / 0.38);
   width: 15px;
   height: 15px;
 }
@@ -902,16 +862,18 @@ x-switch[size="large"][toggled]::part(indicator-thumb) {
 /* Indicator track */
 x-switch::part(indicator-track) {
   height: 100%;
-  background: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.12);
+  background-color: color(srgb 0 0 0 / 0.12);
+  box-shadow: 0 0 0 4px color(srgb 0 0 0 / 0.12);
 }
 x-switch[toggled]::part(indicator-track) {
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   box-shadow: 0 0 0 4px var(--accent-color);
 }
 
 x-switch:focus::part(indicator-track) {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: 5px;
 }
 
@@ -923,32 +885,62 @@ x-switch:focus::part(indicator-track) {
 
 x-select {
   color: var(--text-color);
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
   border-radius: 8px;
 }
 x-select:hover {
-  background: rgba(0, 0, 0, 0.12);
+  background-color: color(srgb 0 0 0 / 0.12);
 }
 x-select:focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
 
 /* Arrow icon */
 x-select::part(arrow) {
   margin: 0 8px;
-  --path-data: M 6 30 L 93 30 L 50 76 L 6 30 Z;
+  --path-data: var(--arrow-down-path-data);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Color select
+ * Slider
  */
 
-x-colorselect {
-  border: 5px solid #e8e8e8;
-  border-radius: 8px;
+/* Groove track */
+x-slider::part(groove-track) {
+  background-color: var(--dark-border-color);
+  border-radius: 5px;
+}
+
+/* Buffer track */
+x-slider::part(buffer-track) {
+  background-color: color(srgb 0 0 0 / 0.4);
+  border-radius: 5px;
+}
+
+/* Range track */
+x-slider::part(range-track) {
+  background-color: var(--light-accent-color);
+  border-radius: 5px;
+}
+
+/* Thumbs */
+x-slider::part(thumb) {
+  background-color: color(srgb 1 1 1);
+  border-radius: 99px;
+  box-shadow: 0px 2px 4px 0px color(srgb 0 0 0 / 0.1);
+}
+x-slider[dragging="start"]::part(start-thumb),
+x-slider[dragging="end"]::part(end-thumb) {
+  background-color: var(--light-background-color);
+}
+x-slider::part(thumb):focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0px 3px var(--lightest-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -958,22 +950,26 @@ x-colorselect {
  */
 
 x-input {
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
   border-radius: 6px;
 }
 x-input:focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
 x-input[error] {
-  background: var(--error-background-color);
-  outline: 2px solid var(--error-color);
+  background-color: var(--error-background-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--error-color);
   outline-offset: -1px;
 }
 
 /* Placeholder */
 x-input > x-label {
-  color: rgba(0, 0, 0, 0.4);
+  color: color(srgb 0 0 0 / 0.4);
   font-weight: 600;
 }
 x-input > x-icon + x-label {
@@ -993,88 +989,35 @@ x-input[size="large"] > x-icon + x-label {
  */
 
 x-numberinput {
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
   border-radius: 6px;
 }
 x-numberinput:focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
 x-numberinput[error] {
-  background: var(--error-background-color);
-  outline: 2px solid var(--error-color);
+  background-color: var(--error-background-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--error-color);
   outline-offset: -1px;
 }
 
 /* Placeholder */
 x-numberinput > x-label {
-  color: rgba(0, 0, 0, 0.4);
+  color: color(srgb 0 0 0 / 0.4);
   font-weight: 600;
 }
 
 /* Stepper */
 x-numberinput > x-stepper {
-  height: 100%;
-  margin: 0;
-  border-left: 1px solid var(--border-color);
+  border-left: 1px solid var(--dark-border-color);
 }
-x-numberinput[condensed] > x-stepper {
-  min-width: 20px;
-  flex-flow: column-reverse;
-}
-x-numberinput[condensed]:focus > x-stepper {
+x-numberinput:focus > x-stepper {
   display: none;
-}
-x-numberinput[condensed] > x-stepper::part(increment-button),
-x-numberinput[condensed] > x-stepper::part(decrement-button) {
-  min-height: initial;
-  border: none;
-}
-x-numberinput[condensed] > x-stepper::part(increment-button) {
-  border-top-right-radius: 6px;
-}
-x-numberinput[condensed] > x-stepper::part(decrement-button) {
-  border-top: 1px solid var(--border-color);
-  border-bottom-right-radius: 6px;
-}
-x-numberinput[condensed] > x-stepper::part(increment-arrow),
-x-numberinput[condensed] > x-stepper::part(decrement-arrow) {
-  transform: scale(0.8);
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Color input
- */
-
-x-colorinput {
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-}
-x-colorinput:focus {
-  outline: 2px solid var(--light-accent-color);
-  outline-offset: -1px;
-}
-x-colorinput[error] {
-  background: var(--error-background-color);
-  outline: 2px solid var(--error-color);
-  outline-offset: -1px;
-}
-
-/* Arrow */
-x-colorinput::part(arrow) {
-  padding: 8px 4px 8px 2px;
-  --path-data: M 6 30 L 93 30 L 50 76 L 6 30 Z;
-}
-x-colorinput[size="small"]::part(arrow) {
-  padding: 4px 4px 4px 0;
-}
-
-/* Placeholder */
-x-colorinput > x-label {
-  color: rgba(0, 0, 0, 0.4);
-  font-weight: 600;
 }
 
 /*****************************************************************************************************************/
@@ -1084,62 +1027,66 @@ x-colorinput > x-label {
  */
 
 x-texteditor {
-  background: rgba(0, 0, 0, 0.08);
+  background-color: color(srgb 0 0 0 / 0.08);
   border-radius: 6px;
 }
 x-texteditor:focus {
-  outline: 2px solid var(--light-accent-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
 x-texteditor[error] {
-  background: var(--error-background-color);
-  outline: 2px solid var(--error-color);
+  background-color: var(--error-background-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--error-color);
   outline-offset: -1px;
 }
 
 /* Placeholder */
 x-texteditor > x-label {
-  color: rgba(0, 0, 0, 0.4);
+  color: color(srgb 0 0 0 / 0.4);
   font-weight: 600;
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Slider
+ * Color input
  */
 
-/* Groove track */
-x-slider::part(groove-track) {
-  background: var(--dark-border-color);
-  border-radius: 5px;
+x-colorinput {
+  background-color: color(srgb 0 0 0 / 0.08);
+  border-radius: 6px;
+}
+x-colorinput:focus {
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-colorinput[error] {
+  background-color: var(--error-background-color);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--error-color);
+  outline-offset: -1px;
 }
 
-/* Buffer track */
-x-slider::part(buffer-track) {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 5px;
+/* Arrow */
+x-colorinput::part(arrow) {
+  padding: 8px 4px 8px 2px;
+  --path-data: var(--arrow-down-path-data);
+}
+x-colorinput[size="small"]::part(arrow) {
+  padding: 4px 4px 4px 0;
 }
 
-/* Range track */
-x-slider::part(range-track) {
-  background: var(--light-accent-color);
-  border-radius: 5px;
-}
-
-/* Thumbs */
-x-slider::part(thumb) {
-  background: white;
-  border-radius: 99px;
-  box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px 0px;
-}
-x-slider[dragging="start"]::part(start-thumb),
-x-slider[dragging="end"]::part(end-thumb) {
-  background: var(--light-background-color);
-}
-x-slider::part(thumb):focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0px 3px var(--lightest-accent-color);
+/* Placeholder */
+x-colorinput > x-label {
+  color: color(srgb 0 0 0 / 0.4);
+  font-weight: 600;
 }
 
 /*****************************************************************************************************************/
@@ -1152,6 +1099,14 @@ x-colorpicker::part(slider) {
   border-radius: 6px;
 }
 
+/* Color select */
+x-colorselect {
+  border-width: 5px;
+  border-style: solid;
+  border-color: color(srgb 0.91 0.91 0.91);
+  border-radius: 8px;
+}
+
 /*****************************************************************************************************************/
 
 /**
@@ -1159,14 +1114,14 @@ x-colorpicker::part(slider) {
  */
 
 x-progressbar {
-  background: var(--dark-background-color);
-  box-shadow: inset 0px 0px 0px 1px var(--border-color);
+  background-color: var(--dark-background-color);
+  box-shadow: 0px 0px 0px 1px inset var(--border-color);
   border-radius: 5px;
 }
 
 /* Bar */
 x-progressbar::part(bar) {
-  background: var(--light-accent-color);
+  background-color: var(--light-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -1175,6 +1130,60 @@ x-progressbar::part(bar) {
  * Throbber
  */
 
-x-throbber[type="ring"] {
+x-throbber {
   color: var(--light-accent-color);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************************************************************
+ DEPRECATED
+ ****************************************************************************************************************/
+
+body {
+
+  /* @todo: deprecate */
+  --light-background-color: color(srgb 0.99 0.99 0.99);
+  --dark-background-color: color(srgb 0.92 0.92 0.92);
+  --dark-border-color: color(srgb 0.82 0.82 0.82);
+  --error-background-color: color(srgb 0.96 0.9 0.9);
+  --lightest-accent-color: oklch(from var(--accent-color) calc(l + 0.17) calc(c - 0.07) h);
+  --darker-accent-color: oklch(from var(--accent-color) calc(l - 0.06) c h);
+  --darkest-accent-color: oklch(from var(--accent-color) calc(l - 0.15) calc(c - 0.02) h);
 }

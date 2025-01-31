@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -89,6 +89,7 @@ export default class XInputElement extends HTMLElement {
       font-weight: inherit;
       text-align: inherit;
       cursor: inherit;
+      z-index: 1;
     }
     #input:-webkit-autofill {
       /* Hide the placeholder text when the input is autofilled */
@@ -120,8 +121,9 @@ export default class XInputElement extends HTMLElement {
   }
 
   // @property
-  // @attribute partial
+  // @attribute
   // @type string
+  // @partial
   // @default ""
   get value() {
     return this["#input"].value;

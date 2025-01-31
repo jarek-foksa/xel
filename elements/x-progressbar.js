@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -33,7 +33,6 @@ export default class XProgressbarElement extends HTMLElement {
       position: relative;
       contain: strict;
       overflow: hidden;
-      background: #acece6;
       cursor: default;
     }
     :host([hidden]) {
@@ -53,7 +52,6 @@ export default class XProgressbarElement extends HTMLElement {
       width: 0%;
       height: 100%;
       background: #3B99FB;
-      box-shadow: 0px 0px 0px 1px #3385DB;
       transition: width 0.4s ease-in-out;
       will-change: left, right;
     }

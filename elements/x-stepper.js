@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -160,7 +160,9 @@ export default class XStepperElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.#updatePathData();
+    Xel.whenThemeReady.then(() => {
+      this.#updatePathData();
+    });
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updatePathData());
 

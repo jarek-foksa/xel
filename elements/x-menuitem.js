@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -218,8 +218,11 @@ export default class XMenuItemElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.#updateCheckmarkPathData();
-    this.#updateArrowPathData();
+    Xel.whenThemeReady.then(() => {
+      this.#updateCheckmarkPathData();
+      this.#updateArrowPathData();
+    });
+
     this.#updateArrowIconVisibility();
     this.#updateAccessabilityAttributes();
 

@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -42,8 +42,8 @@ export default class XMenuElement extends HTMLElement {
       --align: start;
       --scrollbar-background: rgba(0, 0, 0, 0.2);
       --scrollbar-width: 6px;
-      --open-transition: 100 transform cubic-bezier(0.4, 0, 0.2, 1);
-      --close-transition: 200 opacity cubic-bezier(0.4, 0, 0.2, 1);
+      --open-transition: none;
+      --close-transition: none;
     }
     :host([opened]),
     :host([animating]) {

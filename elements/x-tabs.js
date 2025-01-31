@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -8,7 +8,7 @@ import {closest, createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-tabs
-// @event ^change - Selected tab has changed.
+// @event ^change - Toggled tab has changed.
 export default class XTabsElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -37,17 +37,17 @@ export default class XTabsElement extends HTMLElement {
   // @type string?
   // @default null
   //
-  // The value of the currently selected tab. Null if there is no tab selected.
+  // The value of the currently toggled tab. Null if there is no tab toggled.
   get value() {
-    let selectedTab = this.querySelector("x-tab[selected]");
-    return selectedTab ? selectedTab.value : null;
+    let toggledTab = this.querySelector("x-tab[toggled]");
+    return toggledTab ? toggledTab.value : null;
   }
   set value(value) {
     let tabs = [...this.querySelectorAll("x-tab")];
-    let selectedTab = (value === null) ? null : tabs.find(tab => tab.value === value);
+    let toggledTab = (value === null) ? null : tabs.find(tab => tab.value === value);
 
     for (let tab of tabs) {
-      tab.selected = (tab === selectedTab);
+      tab.toggled = (tab === toggledTab);
     }
   }
 
@@ -80,15 +80,15 @@ export default class XTabsElement extends HTMLElement {
     else if (event.target.closest("x-tab")) {
       let tabs = this.querySelectorAll("x-tab");
       let clickedTab = event.target.closest("x-tab");
-      let selectedTab = this.querySelector("x-tab[selected]");
+      let toggledTab = this.querySelector("x-tab[toggled]");
 
-      if (clickedTab !== selectedTab) {
-        if (selectedTab) {
-          await selectedTab.animateSelectionIndicator(clickedTab);
+      if (clickedTab !== toggledTab) {
+        if (toggledTab) {
+          await toggledTab.animateSelectionIndicator(clickedTab);
         }
 
         for (let tab of tabs) {
-          tab.selected = (tab === clickedTab);
+          tab.toggled = (tab === clickedTab);
         }
 
         this.dispatchEvent(new CustomEvent("change", {bubbles: true}));

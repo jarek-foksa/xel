@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -8,16 +8,14 @@ import Xel from "../classes/xel.js";
 
 import "./pt-aboutpage.js";
 import "./pt-setuppage.js";
-import "./pt-faqpage.js";
 import "./pt-changelogpage.js";
 import "./pt-licensepage.js";
-import "./pt-privacypage.js";
-import "./pt-termspage.js";
 import "./pt-elementpage.js";
 
 import "./pt-apiblock.js";
 import "./pt-demoblock.js";
 import "./pt-code.js";
+import "./pt-settings.js";
 
 import {removeDuplicates} from "../utils/array.js";
 import {html, css} from "../utils/template.js";
@@ -27,459 +25,315 @@ import {sleep, debounce} from "../utils/time.js";
 export default class PTAppElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
-      <x-button id="expand-sidebar-button" icon="menu" hidden>
-        <x-icon href="#menu"></x-icon>
-      </x-button>
-
       <sidebar id="sidebar">
         <header id="header">
           <div id="branding">
             <x-icon href="/icons/portal.svg#xel"></x-icon>
             <h1>Xel</h1>
           </div>
-
-          <x-button id="collapse-sidebar-button" hidden>
-            <x-icon href="#chevron-left"></x-icon>
-          </x-button>
         </header>
 
         <hr/>
 
-        <nav id="nav">
-          <section>
-            <a href="/">
-              <x-button skin="nav">
-                <x-icon href="#help"></x-icon>
-                <x-label><x-message href="#about" autocapitalize></x-message></x-label>
-              </x-button>
-            </a>
+        <x-nav id="nav">
+          <a href="/">
+            <x-navitem>
+              <x-icon href="#help"></x-icon>
+              <x-label><x-message href="#about" autocapitalize></x-message></x-label>
+            </x-navitem>
+          </a>
 
-            <a href="/setup">
-              <x-button skin="nav">
-                <x-icon href="#wrench"></x-icon>
-                <x-label><x-message href="#setup" autocapitalize></x-message></x-label>
-              </x-button>
-            </a>
+          <a href="/setup">
+            <x-navitem>
+              <x-icon href="#wrench"></x-icon>
+              <x-label><x-message href="#setup" autocapitalize></x-message></x-label>
+            </x-navitem>
+          </a>
 
-            <a href="/faq">
-              <x-button skin="nav">
-                <x-icon href="#comment"></x-icon>
-                <x-label><x-message href="#faq" autocapitalize></x-message></x-label>
-              </x-button>
-            </a>
+          <x-navitem>
+            <x-icon href="#tune"></x-icon>
+            <x-label><x-message href="#elements" autocapitalize></x-message></x-label>
 
-            <a href="/changelog">
-              <x-button skin="nav">
-                <x-icon href="#calendar"></x-icon>
-                <x-label><x-message href="#changelog" autocapitalize></x-message></x-label>
-              </x-button>
-            </a>
-
-            <a href="/license">
-              <x-button skin="nav">
-                <x-icon href="#paste"></x-icon>
-                <x-label><x-message href="#license" autocapitalize></x-message></x-label>
-              </x-button>
-            </a>
-
-            <a href="https://github.com/jarek-foksa/xel/issues" target="_blank" tabindex="-1">
-              <x-button skin="nav">
-                <x-icon href="#visibility-visible"></x-icon>
-                <x-label><x-message href="#issues" autocapitalize></x-message></x-label>
-                <x-icon href="#open"></x-icon>
-              </x-button>
+            <x-nav>
+              <a href="/elements/x-accordion">
+                <x-navitem>
+                  <x-label>x-accordion</x-label>
+                </x-navitem>
               </a>
 
-            <a href="https://github.com/jarek-foksa/xel" target="_blank" tabindex="-1">
-              <x-button skin="nav" role="button" aria-disabled="false" tabindex="0">
-                <x-icon href="#code"></x-icon>
-                <x-label><x-message href="#source-code" autocapitalize></x-message></x-label>
-                <x-icon href="#open"></x-icon>
-              </x-button>
-            </a>
-          </section>
+              <a href="/elements/x-box">
+                <x-navitem>
+                  <x-label>x-box</x-label>
+                </x-navitem>
+              </a>
 
-          <hr/>
+              <a href="/elements/x-button">
+                <x-navitem>
+                  <x-label>x-button</x-label>
+                </x-navitem>
+              </a>
 
-          <section id="settings-section">
-            <div id="theme-subsection">
-              <h3 id="theme-heading"><x-message href="#theme" autocapitalize>Theme</x-message></h3>
+              <a href="/elements/x-buttons">
+                <x-navitem>
+                  <x-label>x-buttons</x-label>
+                </x-navitem>
+              </a>
 
-              <x-select id="theme-select">
-                <x-menu>
-                  <x-menuitem value="adwaita" toggled>
-                    <x-label>Adwaita</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-card">
+                <x-navitem>
+                  <x-label>x-card</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="adwaita-dark">
-                    <x-label>Adwaita Dark</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-checkbox">
+                <x-navitem>
+                  <x-label>x-checkbox</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="cupertino">
-                    <x-label>Cupertino</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-colorpicker">
+                <x-navitem>
+                  <x-label>x-colorpicker</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="cupertino-dark">
-                    <x-label>Cupertino Dark</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-colorselect">
+                <x-navitem>
+                  <x-label>x-colorselect</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="fluent">
-                    <x-label>Fluent</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-contextmenu">
+                <x-navitem>
+                  <x-label>x-contextmenu</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="fluent-dark">
-                    <x-label>Fluent Dark</x-label>
-                  </x-menuitem>
-                </x-menu>
-              </x-select>
-            </div>
+              <a href="/elements/dialog">
+                <x-navitem>
+                  <x-label>&nbsp;&nbsp;&nbsp;dialog</x-label>
+                </x-navitem>
+              </a>
 
-            <div id="accent-color-subsection">
-              <h3><x-message href="#accent-color" autocapitalize></x-message></h3>
+              <a href="/elements/x-icon">
+                <x-navitem>
+                  <x-label>x-icon</x-label>
+                </x-navitem>
+              </a>
 
-              <x-box>
-                <x-select id="accent-preset-select">
-                  <x-menu id="accent-preset-menu"></x-menu>
-                </x-select>
+              <a href="/elements/x-input">
+                <x-navitem>
+                  <x-label>x-input</x-label>
+                </x-navitem>
+              </a>
 
-                <x-colorselect id="accent-color-select" spaces="srgb"></x-colorselect>
-              </x-box>
-            </div>
+              <a href="/elements/x-label">
+                <x-navitem>
+                  <x-label>x-label</x-label>
+                </x-navitem>
+              </a>
 
-            <div id="icons-subsection">
-              <h3><x-message href="#icons" autocapitalize></x-message></h3>
+              <a href="/elements/x-menu">
+                <x-navitem>
+                  <x-label>x-menu</x-label>
+                </x-navitem>
+              </a>
 
-              <x-select id="icons-select">
-                <x-menu>
-                  <x-menuitem value="material" toggled>
-                    <x-label>Material</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-menuitem">
+                <x-navitem>
+                  <x-label>x-menuitem</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="material-outlined">
-                    <x-label>Material Outlined</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-menubar">
+                <x-navitem>
+                  <x-label>x-menubar</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="fluent">
-                    <x-label>Fluent</x-label>
-                  </x-menuitem>
+              <a href="/elements/x-message">
+                <x-navitem>
+                  <x-label>x-message</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="fluent-outlined">
-                    <x-label>Fluent Outlined</x-label>
-                  </x-menuitem>
-                </x-menu>
-              </x-select>
-            </div>
+              <a href="/elements/x-nav">
+                <x-navitem>
+                  <x-label>x-nav</x-label>
+                </x-navitem>
+              </a>
 
-            <div id="locale-subsection">
-              <h3><x-message href="#locale" autocapitalize></x-message></h3>
+              <a href="/elements/x-navitem">
+                <x-navitem>
+                  <x-label>x-navitem</x-label>
+                </x-navitem>
+              </a>
 
-              <x-select id="locale-select">
-                <x-menu>
-                  <x-menuitem value="en" toggled>
-                    <x-label><x-message href="#locale-en" autocapitalize></x-message></x-label>
-                  </x-menuitem>
+              <a href="/elements/x-notification">
+                <x-navitem>
+                  <x-label>x-notification</x-label>
+                </x-navitem>
+              </a>
 
-                  <x-menuitem value="pl">
-                    <x-label><x-message href="#locale-pl" autocapitalize></x-message></x-label>
-                  </x-menuitem>
-                </x-menu>
-              </x-select>
-            </div>
+              <a href="/elements/x-numberinput">
+                <x-navitem>
+                  <x-label>x-numberinput</x-label>
+                </x-navitem>
+              </a>
 
-          </section>
+              <a href="/elements/x-popover">
+                <x-navitem>
+                  <x-label>x-popover</x-label>
+                </x-navitem>
+              </a>
 
-          <hr/>
+              <a href="/elements/x-progressbar">
+                <x-navitem>
+                  <x-label>x-progressbar</x-label>
+                </x-navitem>
+              </a>
 
-          <section>
-            <h3><x-message href="#containers" autocapitalize></x-message></h3>
+              <a href="/elements/x-radio">
+                <x-navitem>
+                  <x-label>x-radio</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-box">
-              <x-button skin="nav">
-                <x-label>x-box</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-radios">
+                <x-navitem>
+                  <x-label>x-radios</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-card">
-              <x-button skin="nav">
-                <x-label>x-card</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-select">
+                <x-navitem>
+                  <x-label>x-select</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-accordion">
-              <x-button skin="nav">
-                <x-label>x-accordion</x-label>
-              </x-button>
-            </a>
-          </section>
+              <a href="/elements/x-shortcut">
+                <x-navitem>
+                  <x-label>x-shortcut</x-label>
+                </x-navitem>
+              </a>
 
-          <hr/>
+              <a href="/elements/x-slider">
+                <x-navitem>
+                  <x-label>x-slider</x-label>
+                </x-navitem>
+              </a>
 
-          <section>
-            <h3><x-message href="#primitives" autocapitalize></x-message></h3>
+              <a href="/elements/x-stepper">
+                <x-navitem>
+                  <x-label>x-stepper</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-icon">
-              <x-button skin="nav">
-                <x-label>x-icon</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-swatch">
+                <x-navitem>
+                  <x-label>x-swatch</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-label">
-              <x-button skin="nav">
-                <x-label>x-label</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-switch">
+                <x-navitem>
+                  <x-label>x-switch</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-message">
-              <x-button skin="nav">
-                <x-label>x-message</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-tab">
+                <x-navitem>
+                  <x-label>x-tab</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-tooltip">
-              <x-button skin="nav">
-                <x-label>x-tooltip</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-tabs">
+                <x-navitem>
+                  <x-label>x-tabs</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-shortcut">
-              <x-button skin="nav">
-                <x-label>x-shortcut</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-tag">
+                <x-navitem>
+                  <x-label>x-tag</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-stepper">
-              <x-button skin="nav">
-                <x-label>x-stepper</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-tags">
+                <x-navitem>
+                  <x-label>x-tags</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-swatch">
-              <x-button skin="nav">
-                <x-label>x-swatch</x-label>
-              </x-button>
-            </a>
-          </section>
+              <a href="/elements/x-tagsinput">
+                <x-navitem>
+                  <x-label>x-tagsinput</x-label>
+                </x-navitem>
+              </a>
 
-          <hr/>
+              <a href="/elements/x-texteditor">
+                <x-navitem>
+                  <x-label>x-texteditor</x-label>
+                </x-navitem>
+              </a>
 
-          <section>
-            <h3><x-message href="#buttons" autocapitalize></x-message></h3>
+              <a href="/elements/x-throbber">
+                <x-navitem>
+                  <x-label>x-throbber</x-label>
+                </x-navitem>
+              </a>
 
-            <a href="/elements/x-button">
-              <x-button skin="nav">
-                <x-label>x-button</x-label>
-              </x-button>
-            </a>
+              <a href="/elements/x-tooltip">
+                <x-navitem>
+                  <x-label>x-tooltip</x-label>
+                </x-navitem>
+              </a>
+            </x-nav>
+          </x-navitem>
 
-            <a href="/elements/x-buttons">
-              <x-button skin="nav">
-                <x-label>x-buttons</x-label>
-              </x-button>
-            </a>
-          </section>
+          <a href="/changelog">
+            <x-navitem>
+              <x-icon href="#calendar"></x-icon>
+              <x-label><x-message href="#changelog" autocapitalize></x-message></x-label>
+            </x-navitem>
+          </a>
 
-          <hr/>
+          <a href="/license">
+            <x-navitem>
+              <x-icon href="#paste"></x-icon>
+              <x-label><x-message href="#license" autocapitalize></x-message></x-label>
+            </x-navitem>
+          </a>
 
-          <section>
-            <h3><x-message href="#tags" autocapitalize></x-message></h3>
-
-            <a href="/elements/x-tag">
-              <x-button skin="nav">
-                <x-label>x-tag</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-tags">
-              <x-button skin="nav">
-                <x-label>x-tags</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-tagsinput">
-              <x-button skin="nav">
-                <x-label>x-tagsinput</x-label>
-              </x-button>
-            </a>
-          </section>
-
-          <hr/>
-
-          <section>
-            <h3><x-message href="#navigation" autocapitalize></x-message></h3>
-
-            <a href="/elements/x-tab">
-              <x-button skin="nav">
-                <x-label>x-tab</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-tabs">
-              <x-button skin="nav">
-                <x-label>x-tabs</x-label>
-              </x-button>
-            </a>
-          </section>
-
-          <hr/>
-
-          <section>
-            <h3><x-message href="#menus" autocapitalize></x-message></h3>
-
-            <a href="/elements/x-menu">
-              <x-button skin="nav">
-                <x-label>x-menu</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-menuitem">
-              <x-button skin="nav">
-                <x-label>x-menuitem</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-menubar">
-              <x-button skin="nav">
-                <x-label>x-menubar</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-contextmenu">
-              <x-button skin="nav">
-                <x-label>x-contextmenu</x-label>
-              </x-button>
-            </a>
-          </section>
-
-          <hr/>
-
-          <section>
-            <h3><x-message href="#popups" autocapitalize></x-message></h3>
-
-            <a href="/elements/dialog">
-              <x-button skin="nav">
-                <x-label>dialog</x-label>
-              </x-button>
+          <a href="https://github.com/jarek-foksa/xel/issues" target="_blank">
+            <x-navitem>
+              <x-icon href="#visibility-visible"></x-icon>
+              <x-label><x-message href="#issues" autocapitalize></x-message></x-label>
+              <x-icon href="#open"></x-icon>
+            </x-navitem>
             </a>
 
-            <a href="/elements/x-popover">
-              <x-button skin="nav">
-                <x-label>x-popover</x-label>
-              </x-button>
-            </a>
+          <a href="https://github.com/jarek-foksa/xel" target="_blank">
+            <x-navitem>
+              <x-icon href="#code"></x-icon>
+              <x-label><x-message href="#source-code" autocapitalize></x-message></x-label>
+              <x-icon href="#open"></x-icon>
+            </x-navitem>
+          </a>
+        </x-nav>
 
-            <a href="/elements/x-notification">
-              <x-button skin="nav">
-                <x-label>x-notification</x-label>
-              </x-button>
-            </a>
-          </section>
+        <hr/>
 
-          <hr/>
-
-          <section>
-            <h3><x-message href="#forms" autocapitalize></x-message></h3>
-
-            <a href="/elements/x-checkbox">
-              <x-button skin="nav">
-                <x-label>x-checkbox</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-radio">
-              <x-button skin="nav">
-                <x-label>x-radio</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-radios">
-              <x-button skin="nav">
-                <x-label>x-radios</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-switch">
-              <x-button skin="nav">
-                <x-label>x-switch</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-select">
-              <x-button skin="nav">
-                <x-label>x-select</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-colorpicker">
-              <x-button skin="nav">
-                <x-label>x-colorpicker</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-colorselect">
-              <x-button skin="nav">
-                <x-label>x-colorselect</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-input">
-              <x-button skin="nav">
-                <x-label>x-input</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-numberinput">
-              <x-button skin="nav">
-                <x-label>x-numberinput</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-texteditor">
-              <x-button skin="nav">
-                <x-label>x-texteditor</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-slider">
-              <x-button skin="nav">
-                <x-label>x-slider</x-label>
-              </x-button>
-            </a>
-          </section>
-
-          <hr/>
-
-          <section>
-            <h3><x-message href="#indicators" autocapitalize></x-message></h3>
-
-            <a href="/elements/x-progressbar">
-              <x-button skin="nav">
-                <x-label>x-progressbar</x-label>
-              </x-button>
-            </a>
-
-            <a href="/elements/x-throbber">
-              <x-button skin="nav">
-                <x-label>x-throbber</x-label>
-              </x-button>
-            </a>
-          </section>
-        </nav>
+        <pt-settings id="settings"></pt-settings>
 
         <hr/>
 
         <footer id="footer">
-          <section id="footer-links">
-            <a id="contact-anchor" href="mailto:jarek@xel-toolkit.org">Contact</a> •
-            <a id="privacy-anchor" href="/privacy">Privacy</a> •
-            <a id="terms-anchor" href="/terms">Terms</a>
-          </section>
-
-          <p id="copyright">© 2016-2024 Jarosław Foksa</p>
+          © 2016-2025 <a id="contact-anchor" href="mailto:jarek@xel-toolkit.org">Jarosław Foksa</a>
         </footer>
       </sidebar>
 
       <main id="main"></main>
-      <div id="dialogs"></div>
     </template>
   `;
 
@@ -501,11 +355,25 @@ export default class PTAppElement extends HTMLElement {
 
     #sidebar {
       width: 280px;
+      display: flex;
+      flex-flow: column;
       overflow: auto;
       position: relative;
+      background: var(--foreground-color);
+      border-right: 1px solid var(--border-color);
     }
 
-    #sidebar #branding {
+    #sidebar > hr {
+      margin: 0;
+    }
+
+    /* Header */
+
+    #header {
+      background: var(--background-color);
+    }
+
+    #branding {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -517,107 +385,37 @@ export default class PTAppElement extends HTMLElement {
       color: var(--accent-color);
     }
 
-    #sidebar #branding h1 {
+    #branding h1 {
       margin-left: 8px;
       line-height: 1;
     }
 
-    #sidebar #header + hr {
-      margin-top: -1px;
+    #header + hr {
+      margin-top: 0px;
     }
 
-    #sidebar a {
-      text-decoration: none;
-    }
+    /* Nav */
 
-    #sidebar #nav {
-      box-sizing: border-box;
-      padding: 0 20px;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-
-    #sidebar #nav x-icon[href="#open"] {
-      margin: 0;
-      width: 20px;
-      height: 20px;
-    }
-
-    #sidebar #nav x-button[skin="nav"] {
-      --min-pressed-time: 0ms;
-    }
-
-    #collapse-sidebar-button {
-      position: absolute;
-      top: 16px;
-      left: 11px;
-      padding: 0px;
-      width: 37px;
-      height: 37px;
-      min-height: 38px;
-    }
-
-    #expand-sidebar-button {
-      position: absolute;
-      top: 16px;
-      left: 11px;
-      z-index: 10;
-      padding: 0;
-      width: 37px;
-      height: 37px;
-      min-height: 37px;
-    }
-
-    #settings-section {
-      padding: 10px 0px;
-    }
-
-    /* Theme */
-
-    #settings-section #theme-heading {
-      margin-top: 0;
-    }
-
-    #settings-section #theme-select {
-      width: 100%;
-    }
-
-    /* Accent color */
-
-    #settings-section #accent-color-subsection {
-      margin-top: 14px;
-    }
-    #settings-section #accent-preset-select {
+    #nav {
+      padding: 12px;
+      overflow: auto;
       flex: 1;
     }
-    #settings-section #accent-color-select {
-      margin-left: 8px;
-    }
 
-    /* Icons */
-
-    #settings-section #icons-subsection {
-      margin-top: 14px;
-    }
-    #settings-section #icons-select {
-      width: 100%;
-    }
-
-    /* Locale */
-
-    #settings-section #locale-subsection {
-      margin-top: 14px;
-    }
-    #settings-section #locale-select {
-      width: 100%;
+    #nav > x-navitem::part(button):hover {
+      cursor: pointer;
     }
 
     /* Footer */
 
-    #sidebar #footer {
-      padding: 16px 30px 18px;
+    #footer {
+      padding: 12px 20px;
       line-height: 1;
-      font-size: 12.5px;
+      font-size: 11px;
+    }
+
+    #footer a {
+      color: inherit;
     }
 
     /**
@@ -637,34 +435,15 @@ export default class PTAppElement extends HTMLElement {
 
     #main > * {
       margin: 35px auto;
-      padding: 0 70px;
-      max-width: 790px;
+      padding: 0 20px;
+      max-width: 700px;
     }
     #main > pt-aboutpage {
       margin: 0;
       padding: 0 100px;
       max-width: none;
     }
-
-    /**
-     * Dialogs
-     */
-
-    /* Sidebar */
-
-    #sidebar-dialog {
-      display: flex;
-      width: 270px;
-      height: 100%;
-      left: 0;
-      right: auto;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-    #sidebar-dialog:not([open]) {
-      display: none;
-    }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -699,10 +478,10 @@ export default class PTAppElement extends HTMLElement {
   }
 
   async connectedCallback() {
-    let theme       = Xel.getConfig("pt-app:theme", "adwaita");
-    let accentColor = Xel.getConfig("pt-app:accentColor", "blue");
-    let icons       = Xel.getConfig("pt-app:icons", "material");
-    let locale      = Xel.getConfig("pt-app:locale", "en");
+    let theme       = Xel.getConfig("pt-settings:theme", "fluent");
+    let accentColor = Xel.getConfig("pt-settings:accentColor", "blue");
+    let icons       = Xel.getConfig("pt-settings:icons", "fluent");
+    let locale      = Xel.getConfig("pt-settings:locale", "en");
 
     Xel.theme       = `/themes/${theme}-portal.css`;
     Xel.accentColor = accentColor;
@@ -740,34 +519,11 @@ export default class PTAppElement extends HTMLElement {
     window.addEventListener("popstate", (event) => this.#onPopState(event));
     window.addEventListener("beforeunload", (event) => this.#onWindowBeforeUnload(event));
 
-    Xel.addEventListener("themechange", () => this.#onXelThemeChange());
-    Xel.addEventListener("accentcolorchange", () => this.#onXelAccentColorChange());
-    Xel.addEventListener("iconschange", () => this.#onXelIconsChange());
-    Xel.addEventListener("localeschange", () => this.#onXelLocalesChange());
-
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
-    this["#expand-sidebar-button"].addEventListener("click", (e) => this.#onExpandSidebarButtonClick(e));
-    this["#collapse-sidebar-button"].addEventListener("click", (e) => this.#onCollapseSidebarButtonClick(e));
-    this["#theme-select"].addEventListener("change", (e) => this.#onThemeSelectChange(e));
-    this["#accent-preset-select"].addEventListener("change", (e) => this.#onAccentPresetSelectChange(e));
-    this["#accent-color-select"].addEventListener("change", (e) => this.#onAccentColorSelectChange(e));
-    this["#icons-select"].addEventListener("change", (e) => this.#onIconsSelectChange(e));
-    this["#locale-select"].addEventListener("change", (e) => this.#onLocaleSelectChange(e));
     this["#main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
 
-    // Sidebar
-    {
-      let mediaQueryList = window.matchMedia("(min-width: 900px)");
-      this.#toggleSidebarMode(mediaQueryList.matches ? "normal" : "overlay");
-
-      mediaQueryList.addListener((event) => {
-        this.#toggleSidebarMode(mediaQueryList.matches ? "normal" : "overlay");
-      });
-    }
-
     this.#updateSidebarNav();
-    this.#updateSidebarSettingsSection();
 
     await this.#updateMain();
     this.#maybeDispatchLocationChangeEvent("load");
@@ -775,47 +531,8 @@ export default class PTAppElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  #onXelThemeChange() {
-    this.#updateSidebarSettingsSection();
-
-    let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
-    Xel.setConfig("pt-app:theme", themeName);
-  }
-
-  #onXelAccentColorChange() {
-    let color = Xel.accentColor;
-
-    // Custom color
-    if (Xel.presetAccentColors[color] === undefined) {
-      this["#accent-preset-select"].value = "custom";
-      this["#accent-color-select"].value = color;
-    }
-    // Preset color
-    else {
-      this["#accent-preset-select"].value = color;
-      this["#accent-color-select"].value = Xel.presetAccentColors[color];
-    }
-
-    Xel.setConfig("pt-app:accentColor", color);
-  }
-
-  #onXelIconsChange() {
-    this.#updateSidebarSettingsSection();
-    Xel.setConfig("pt-app:icons", this["#icons-select"].value);
-  }
-
-  #onXelLocalesChange() {
-    this.#updateSidebarSettingsSection();
-    Xel.setConfig("pt-app:locale", this["#locale-select"].value);
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   async #onLocationChange(event) {
-    let {method, fromLocation, toLocation, state} = event.detail;
-    let fromParams = new URLSearchParams(fromLocation ? fromLocation.search : "");
-    let toParams = new URLSearchParams(toLocation.search);
-    let changedParamNames = removeDuplicates([...fromParams.keys(), ...toParams.keys()]);
+    let {method, fromLocation, toLocation} = event.detail;
 
     // Handle path change
     {
@@ -849,25 +566,6 @@ export default class PTAppElement extends HTMLElement {
 
       if (hashChanged) {
         this.restoreMainScrollOffset();
-      }
-    }
-
-    // Handle "dialog" param change
-    {
-      let dialogParamChanged = changedParamNames.includes("dialog");
-
-      if (dialogParamChanged) {
-        let fromValue = fromParams.get("dialog");
-        let toValue = toParams.get("dialog");
-
-        if (toValue === null) {
-          let param = fromValue.split("→")[0];
-          let fromDialog = this["#dialogs"].querySelector(`:scope > dialog[data-param="${param}"]`);
-
-          if (fromDialog && fromDialog.open) {
-            fromDialog.close();
-          }
-        }
       }
     }
   }
@@ -922,72 +620,6 @@ export default class PTAppElement extends HTMLElement {
       this.storeMainScrollOffset();
     }
   }, 400);
-
-  #onExpandSidebarButtonClick(event) {
-    if (event.buttons <= 1) {
-      this["#sidebar-dialog"].showModal();
-    }
-  }
-
-  #onCollapseSidebarButtonClick(event) {
-    if (event.buttons <= 1) {
-      this["#sidebar-dialog"].close();
-    }
-  }
-
-  #onDialogClose(event) {
-    let dialog = event.target;
-    let url = new URL(location.href);
-    let params = new URLSearchParams(location.search);
-    let dialogParam = params.get("dialog");
-    let dialogName = null;
-
-    if (dialogParam) {
-      if (dialogParam.includes("→")) {
-        dialogName = dialogParam.split("→")[0];
-      }
-      else {
-        dialogName = dialogParam;
-      }
-    }
-
-    dialog.remove();
-    delete this["#" + dialog.id];
-
-    if (dialog.dataset.param === dialogName) {
-      params.delete("dialog");
-      url.search = params.toString();
-      this.navigate(url.href);
-    }
-  }
-
-  #onThemeSelectChange() {
-    Xel.theme = "/themes/" + this["#theme-select"].value + "-portal.css";
-  }
-
-  #onAccentPresetSelectChange() {
-    let value = this["#accent-preset-select"].value;
-    Xel.accentColor = (value === "custom") ? Xel.presetAccentColors[Xel.accentColor] : value;
-  }
-
-  #onAccentColorSelectChange() {
-    Xel.accentColor = this["#accent-color-select"].value;
-  }
-
-  #onIconsSelectChange() {
-    Xel.icons = ["/icons/" + this["#icons-select"].value + ".svg"];
-  }
-
-  #onLocaleSelectChange() {
-    let [languageCode, territory] = this["#locale-select"].value.split("-");
-
-    if (territory === undefined) {
-      Xel.locales = [`/locales/${languageCode}.ftl`];
-    }
-    else {
-      Xel.locales = [`/locales/${languageCode}-${territory}.ftl`, `/locales/${languageCode}.ftl`];
-    }
-  }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1058,50 +690,6 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  // @type "normal" || "overlay"
-  #toggleSidebarMode(mode) {
-    if (mode === "overlay") {
-      if (!this["#sidebar-dialog"]) {
-        this["#sidebar-dialog"] = html`<dialog id="sidebar-dialog" tabindex="0"></dialog>`;
-        this["#sidebar-dialog"].append(this["#sidebar"]);
-        this["#dialogs"].append(this["#sidebar-dialog"]);
-        this["#expand-sidebar-button"].hidden = false;
-        this["#collapse-sidebar-button"].hidden = false;
-      }
-    }
-    else if (mode === "normal") {
-      if (this["#sidebar-dialog"]) {
-        this["#sidebar-dialog"].remove();
-        this["#sidebar-dialog"] = null;
-        this["#main"].before(this["#sidebar"]);
-        this["#expand-sidebar-button"].hidden = true;
-        this["#collapse-sidebar-button"].hidden = true;
-      }
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // @type (boolean) => Promise
-  #closeDialog(immidiate = false) {
-    return new Promise( async (resolve) => {
-      let dialog = this["#dialogs"].querySelector("dialog:not(#sidebar-dialog)");
-
-      if (dialog && dialog.id) {
-        if (immidiate) {
-          dialog.close();
-        }
-        else {
-          await dialog.close();
-        }
-
-        dialog.remove();
-      }
-
-      resolve();
-    });
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   lockInput() {
@@ -1153,10 +741,6 @@ export default class PTAppElement extends HTMLElement {
           title.textContent = "Xel | Setup";
           this["#main"].innerHTML = "<pt-setuppage></pt-setuppage>";
         }
-        else if (path === "/faq") {
-          title.textContent = "Xel | FAQ";
-          this["#main"].innerHTML = "<pt-faqpage></pt-faqpage>";
-        }
         else if (path === "/changelog") {
           title.textContent = "Xel | Changelog";
           this["#main"].innerHTML = "<pt-changelogpage></pt-changelogpage>";
@@ -1164,14 +748,6 @@ export default class PTAppElement extends HTMLElement {
         else if (path === "/license") {
           title.textContent = "Xel | License";
           this["#main"].innerHTML = "<pt-licensepage></pt-licensepage>";
-        }
-        else if (path === "/privacy") {
-          title.textContent = "Xel | Privacy";
-          this["#main"].innerHTML = "<pt-privacypage></pt-privacypage>";
-        }
-        else if (path === "/terms") {
-          title.textContent = "Xel | Terms";
-          this["#main"].innerHTML = "<pt-termspage></pt-termspage>";
         }
         else if (path.startsWith("/elements/")) {
           let elementName = path.substring(10);
@@ -1196,93 +772,19 @@ export default class PTAppElement extends HTMLElement {
   }
 
   #updateSidebarNav() {
-    for (let section of this["#nav"].querySelectorAll(":scope > section")) {
-      if (section.id !== "settings-section") {
-        for (let button of section.querySelectorAll("x-button")) {
-          let anchor = button.closest("a");
+    for (let item of this["#nav"].querySelectorAll("x-navitem")) {
+      let anchor = item.closest("a");
 
-          if (anchor) {
-            let url = new URL(anchor);
+      if (anchor) {
+        let url = new URL(anchor);
 
-            if (url.origin === location.origin) {
-              if (url.pathname === location.pathname) {
-                button.setAttribute("toggled", "");
-              }
-              else {
-                button.removeAttribute("toggled");
-              }
-            }
-            else {
-              button.removeAttribute("toggled");
-            }
-          }
-        }
-      }
-    }
-  }
-
-  #updateSidebarSettingsSection() {
-    // Update theme subsection
-    {
-      let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
-
-      for (let item of this["#theme-select"].querySelectorAll("x-menuitem")) {
-        if (item.getAttribute("value") === themeName) {
-          item.setAttribute("toggled", "");
+        if (url.origin === location.origin) {
+          item.toggled = (url.pathname === location.pathname)
         }
         else {
-          item.removeAttribute("toggled");
+          item.toggled = false;
         }
       }
-    }
-
-    // Update accent color subsection
-    {
-      let itemsHTML = "";
-
-      for (let [colorName, colorValue] of Object.entries(Xel.presetAccentColors)) {
-        itemsHTML += `
-          <x-menuitem value="${colorName}">
-            <x-swatch value="${colorValue}"></x-swatch>
-            <x-label><x-message href="#accent-color-${colorName}" autocapitalize></x-message></x-label>
-          </x-menuitem>
-        `;
-      }
-
-      itemsHTML += `
-        <hr/>
-        <x-menuitem value="custom">
-          <x-icon href="/icons/portal.svg#color-wheel"></x-icon>
-          <x-label>Custom</x-label>
-        </x-menuitem>
-      `;
-
-      this["#accent-preset-menu"].innerHTML = itemsHTML;
-
-      // Preset color
-      if (Xel.presetAccentColors[Xel.accentColor]) {
-        this["#accent-preset-select"].value = Xel.accentColor;
-        this["#accent-color-select"].value = Xel.presetAccentColors[Xel.accentColor];
-      }
-      // Custom color
-      else {
-        this["#accent-preset-select"].value = "custom";
-        this["#accent-color-select"].value = Xel.accentColor;
-      }
-    }
-
-    // Update icons subsection
-    {
-      let iconsPath = Xel.icons[0];
-      let iconsName = iconsPath.substring(iconsPath.lastIndexOf("/") + 1, iconsPath.lastIndexOf("."));
-      this["#icons-select"].value = iconsName;
-    }
-
-    // Update locale subsection
-    {
-      let localePath = Xel.locales[0];
-      let localeTag = localePath.substring(localePath.lastIndexOf("/") + 1, localePath.lastIndexOf("."));
-      this["#locale-select"].value = localeTag;
     }
   }
 }

@@ -1,24 +1,15 @@
 
 /*
  * @copyright
- *   © 2016-2024 Jarosław Foksa
+ *   © 2016-2025 Jarosław Foksa
  * @license
  *   Xel Cupertino License v1 (check LICENSE.md for details)
  */
 
 @import url("/node_modules/xel/themes/cupertino-dark.css");
 
-body {
-  --green-status-color: #93d872;
-  --red-status-color: #ff8e9d;
-}
-
-/******************************************************************************************************************
- * PAGES
- *****************************************************************************************************************/
-
 /**
- * About
+ * "About" page
  */
 
 pt-aboutpage {
@@ -26,24 +17,23 @@ pt-aboutpage {
 }
 
 /**
- * Privacy, Terms
+ * Code
  */
 
-pt-privacypage::part(card-footer),
-pt-termspage::part(card-footer) {
-  background: var(--light-background-color);
+pt-code {
+  background-color: var(--foreground-color);
+  border-width: 1px;
+  border-style: solid;
   border-color: var(--border-color);
+  border-radius: 7px;
+}
+x-card pt-code {
+  background: var(--background-color);
 }
 
-/******************************************************************************************************************
- * WIDGETS
- *****************************************************************************************************************/
-
 /**
- * Tag
+ * Tag ("colored" skin)
  */
-
-/* @skin colored */
 
 x-tag[skin="colored"] {
   height: 18px;
@@ -56,56 +46,4 @@ x-tag[skin="colored"]::part(scope) {
   background: none;
   color: #fff;
   border-color: rgba(255, 255, 255, 0.3);
-}
-
-/**
- * Code
- */
-
-pt-code {
-  background: var(--dark-background-color);
-  border: 1px solid var(--dark-border-color);
-  border-radius: 7px;
-}
-
-/******************************************************************************************************************
- * SIDEBAR
- *****************************************************************************************************************/
-
-#sidebar {
-  background: var(--dark-background-color);
-  border-right: 1px solid var(--dark-border-color);
-}
-
-#nav {
-  box-sizing: border-box;
-  padding: 0 30px;
-}
-
-#nav > section {
-  margin: 15px 0;
-}
-
-#nav > section h3 {
-  opacity: 0.65;
-  margin: 12px 0 6px 0;
-  padding: 0;
-  font-size: 13px;
-  font-weight: 700;
-  user-select: none;
-  -webkit-user-select: none;
-  cursor: default;
-}
-
-#nav > hr {
-  margin: 0 0 0 -30px;
-  width: calc(100% + 50px);
-}
-
-#nav x-button[skin="nav"] {
-  width: 100%;
-}
-
-#nav x-icon[href="#open"] {
-  color: var(--light-accent-color);
 }

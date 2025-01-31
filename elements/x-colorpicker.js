@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -5618,6 +5618,8 @@ class XLCHPlanarSlidersElement extends HTMLElement {
       position: absolute;
       width: 100%;
       height: 100%;
+      overflow: hidden;
+      border-radius: inherit;
     }
 
     #planar-slider-gamut-svg {
@@ -6449,6 +6451,8 @@ class XLABPlanarSlidersElement extends HTMLElement {
       position: absolute;
       width: 100%;
       height: 100%;
+      overflow: hidden;
+      border-radius: inherit;
     }
 
     #planar-slider-gamut-svg {
@@ -7335,6 +7339,8 @@ class XXYZPlanarSlidersElement extends HTMLElement {
       position: absolute;
       width: 100%;
       height: 100%;
+      overflow: hidden;
+      border-radius: inherit;
     }
 
     #planar-slider-gamut-svg {

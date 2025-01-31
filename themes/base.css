@@ -1,7 +1,7 @@
 
 /*
  * @copyright
- *   © 2016-2024 Jarosław Foksa
+ *   © 2016-2025 Jarosław Foksa
  * @license
  *   MIT License (check LICENSE.md for details)
  */
@@ -16,6 +16,7 @@ html {
   width: 100%;
   height: 100%;
   margin: 0;
+  interpolate-size: allow-keywords;
 }
 
 body {
@@ -404,6 +405,9 @@ x-button {
     --min-pressed-time: 600ms;
   }
 }
+a:has(x-button) {
+  text-decoration: none;
+}
 x-button[condensed] {
   padding: 2px 7px;
 }
@@ -458,15 +462,6 @@ x-buttons[vertical] > x-button[skin="flat"][size="small"]:not(:first-of-type) {
   margin-top: 5px;
 }
 
-/* Arrow */
-x-button[skin="flat"]::part(arrow) {
-  width: 10px;
-  height: 10px;
-}
-x-button[skin="^flat"]::part(arrow) {
-  margin: 0 0 0 2px;
-}
-
 /* Icon */
 x-button[skin="flat"] > x-icon {
   width: 26px;
@@ -498,43 +493,14 @@ x-button[skin="recessed"][size="large"] {
   padding: 6px 8px;
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Button ("nav" skin)
- */
-
-x-button[skin="nav"] {
-  padding: 8px 15px;
+/* Horizontal siblings */
+x-buttons:not([vertical]) > x-button[skin="recessed"] + x-button[skin="recessed"] {
+  margin-left: 4px;
 }
 
-/* Icon */
-x-button[skin="nav"] > x-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-}
-x-button[skin="nav"][size="small"] > x-icon {
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-}
-x-button[skin="nav"][size="large"] > x-icon {
-  width: 26px;
-  height: 26px;
-  margin-right: 12px;
-}
-
-/* Label */
-x-button[skin="nav"] > x-label {
-  flex: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-weight: 500;
-  font-size: 15px;
-  text-align: start;
-  max-width: 100%;
+/* Vertical siblings */
+x-buttons[vertical] > x-button[skin="recessed"] + x-button[skin="recessed"] {
+  margin-top: 4px;
 }
 
 /*****************************************************************************************************************/
@@ -572,43 +538,6 @@ x-buttons:not([vertical]) > x-button[skin="dock"] + x-button[skin="dock"] {
 /* Vertical siblings */
 x-buttons[vertical] > x-button[skin="dock"] + x-button[skin="dock"] {
   margin-top: -1px;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("circular" skin)
- */
-
-x-button[skin="circular"] {
-  width: 32px;
-  height: 32px;
-  min-height: 32px;
-  padding: 0;
-}
-x-button[skin="circular"][size="small"] {
-  width: 24px;
-  height: 24px;
-  min-height: 24px;
-}
-x-button[skin="circular"][size="large"] {
-  width: 38px;
-  height: 38px;
-  min-height: 38px;
-}
-
-/* Icon */
-x-button[skin="circular"] > x-icon {
-  width: 18px;
-  height: 18px;
-}
-x-button[skin="circular"][size="small"] > x-icon {
-  width: 14px;
-  height: 14px;
-}
-x-button[skin="circular"][size="large"] > x-icon {
-  width: 22px;
-  height: 22px;
 }
 
 /*****************************************************************************************************************/
@@ -662,6 +591,12 @@ x-tag > x-label {
 }
 x-tag :not(x-label) + x-label {
   margin-left: 4px;
+}
+
+/* Icon */
+x-tag > x-icon {
+  width: 15px;
+  height: 15px;
 }
 
 /*****************************************************************************************************************/
@@ -891,6 +826,62 @@ x-menubar > x-menuitem {
   height: 100%;
   padding: 0 11px;
   min-height: 0;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Nav
+ */
+
+x-navitem + x-navitem,
+a:has(x-navitem) + a:has(x-navitem),
+a:has(x-navitem) + x-navitem,
+x-navitem + a:has(x-navitem) {
+  margin: 3px 0;
+}
+x-nav x-nav > *:first-child {
+  margin-top: 3px;
+}
+x-nav x-nav > *:last-child {
+  margin-bottom: 0;
+}
+x-nav x-nav > * {
+  margin-left: 34px !important;
+}
+
+/* Link */
+x-nav > a {
+  display: block;
+  text-decoration: none;
+}
+
+/* Label */
+x-nav x-label {
+  max-width: 100%;
+  flex: 1 1 0%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  font-size: 15px;
+  text-align: start;
+}
+x-nav x-icon + x-label {
+  margin-left: 14px;
+}
+
+/* Primary icon */
+x-nav x-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Secondary icon */
+x-nav x-label + x-icon {
+  width: 18px;
+  height: 18px;
+  margin: 0 0 0 20px;
 }
 
 /*****************************************************************************************************************/
@@ -1216,14 +1207,6 @@ x-numberinput:focus {
 }
 x-numberinput:not(:defined) {
   display: none;
-}
-
-/* Stepper */
-x-numberinput > x-stepper {
-  margin-right: -20px;
-  margin-left: 5px;
-  margin-top: -1px;
-  height: calc(100% + 2px);
 }
 
 /* Placeholder */

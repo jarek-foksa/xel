@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -198,8 +198,11 @@ export default class XSelectElement extends HTMLElement {
     this.#resizeObserver.observe(this);
 
     this.#updateButton();
-    this.#updateArrowPathData();
     this.#updateAccessabilityAttributes();
+
+    Xel.whenThemeReady.then(() => {
+      this.#updateArrowPathData();
+    });
 
     if (DEBUG) {
       this.setAttribute("debug", "");

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+<svg xmlns="http://www.w3.org/2000/svg">
   <symbol id="add" viewBox="0 0 20 20">
     <path d="M 18 11 L 11 11 L 11 18 L 9 18 L 9 11 L 2 11 L 2 9 L 9 9 L 9 2 L 11 2 L 11 9 L 18 9 L 18 11 Z"/>
   </symbol>
@@ -144,7 +144,7 @@
     <path d="M 1 16 L 7 16 L 7 14 L 1 14 L 1 16 Z M 1 4 L 1 6 L 19 6 L 19 4 L 1 4 Z M 1 11 L 13 11 L 13 9 L 1 9 L 1 11 Z"/>
   </symbol>
   <symbol id="square" viewBox="0 0 20 20">
-    <rect height="18" width="18" x="1" y="1" style="fill: inherit;"/>
+    <rect style="fill: inherit;" x="1" y="1" width="18" height="18" rx="2" ry="2"/>
   </symbol>
   <symbol id="toggle-off" viewBox="0 0 20 20">
     <path d="M 15 5 L 5 5 C 2.24 5 0 7.24 0 10 C 0 12.76 2.24 15 5 15 L 15 15 C 17.76 15 20 12.76 20 10 C 20 7.24 17.76 5 15 5 Z M 5 13 C 3.34 13 2 11.66 2 10 C 2 8.34 3.34 7 5 7 C 6.66 7 8 8.34 8 10 C 8 11.66 6.66 13 5 13 Z"/>

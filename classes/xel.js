@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -8,7 +8,6 @@ import DOMPurify from "../node_modules/dompurify/dist/purify.es.mjs";
 import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
-import {convertColor, parseColor, serializeColor} from "../utils/color.js";
 import {getIcons} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
@@ -162,8 +161,14 @@ export default new class Xel extends EventEmitter {
         let unparsedValue = rule.style.getPropertyValue("--preset-accent-colors");
 
         if (unparsedValue !== "") {
-          let entries = unparsedValue.split(",").map($0 => $0.trim()).map($0 => $0.split(" "));
-          colors = Object.fromEntries(entries);
+          let entries = unparsedValue.split(",").map($0 => $0.trim());
+
+          for (let entry of entries) {
+            let displayName = entry.substring(0, entry.indexOf(" "));
+            let value = entry.substring(entry.indexOf(" ") + 1).trim();
+            colors[displayName] = value;
+          }
+
           break;
         }
       }
@@ -583,21 +588,8 @@ export default new class Xel extends EventEmitter {
       serializedColor = this.presetAccentColors[serializedColor];
     }
 
-    let color = convertColor(parseColor(serializedColor), "hsl");
-    let [h, s, l] = color.coords;
     let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
-
-    // @bugfix
-    //   https://github.com/LeaVerou/color.js/issues/328
-    //   https://github.com/color-js/color.js/issues/409
-    if (h === null || Number.isNaN(h)) {
-      h = 0;
-    }
-
-    rule.style.setProperty("--accent-color-h", h);
-    rule.style.setProperty("--accent-color-s", `${s}%`);
-    rule.style.setProperty("--accent-color-l", `${l}%`);
-    rule.style.setProperty("--accent-color-a", color.alpha);
+    rule.style.setProperty("--accent-color", serializedColor);
   }
 
   #getSettings() {

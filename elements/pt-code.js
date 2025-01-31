@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -45,7 +45,9 @@ export default class PTCodeElement extends HTMLElement {
 
     #code,
     #code * {
-      text-shadow: none !important;
+      /* Override Prism.js stylsheet */
+      text-shadow: none;
+      box-shadow: none;
       opacity: 1;
     }
   `

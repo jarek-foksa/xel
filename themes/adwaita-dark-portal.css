@@ -1,24 +1,15 @@
 
 /*
  * @copyright
- *   © 2016-2024 Jarosław Foksa
+ *   © 2016-2025 Jarosław Foksa
  * @license
  *   MIT License (check LICENSE.md for details)
  */
 
 @import url("/node_modules/xel/themes/adwaita-dark.css");
 
-body {
-  --green-status-color: #519d3a;
-  --red-status-color: #e0383e;
-}
-
-/******************************************************************************************************************
- * PAGES
- *****************************************************************************************************************/
-
 /**
- * About
+ * "About" page
  */
 
 pt-aboutpage {
@@ -26,24 +17,23 @@ pt-aboutpage {
 }
 
 /**
- * Privacy, Terms
+ * Code
  */
 
-pt-privacypage::part(card-footer),
-pt-termspage::part(card-footer) {
-  background: var(--dark-background-color);
+pt-code {
+  background-color: var(--foreground-color);
+  border-width: 1px;
+  border-style: solid;
   border-color: var(--border-color);
+  border-radius: 12px;
+}
+x-card pt-code {
+  background: var(--background-color);
 }
 
-/******************************************************************************************************************
- * WIDGETS
- *****************************************************************************************************************/
-
 /**
- * Tag
+ * Tag ("colored" skin)
  */
-
-/* @skin colored */
 
 x-tag[skin="colored"] {
   height: 18px;
@@ -56,52 +46,4 @@ x-tag[skin="colored"]::part(scope) {
   background: none;
   color: #fff;
   border-color: rgba(0, 0, 0, 0.3);
-}
-
-/**
- * Code
- */
-
-pt-code {
-  background: var(--light-background-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-}
-
-/******************************************************************************************************************
- * SIDEBAR
- *****************************************************************************************************************/
-
-#sidebar {
-  border-right: 1px solid var(--border-color);
-}
-
-#sidebar #header {
-  background: var(--dark-background-color);
-}
-#sidebar #header + hr {
-  background: var(--border-color);
-}
-
-#nav > section {
-  margin: 15px 0;
-}
-
-#nav > section h3 {
-  margin: 12px 0 6px 0;
-  padding: 0;
-  color: var(--text-color);
-  font-size: 13px;
-  font-weight: 800;
-  user-select: none;
-  -webkit-user-select: none;
-  cursor: default;
-}
-
-#nav x-button[skin="nav"] {
-  width: 100%;
-}
-
-#nav x-icon[href="#open"] {
-  color: var(--accent-color);
 }

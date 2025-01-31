@@ -1,0 +1,155 @@
+<article>
+  <section id="intro-section">
+    <h2>Navigation</h2>
+
+    <p><strong>&lt;x-nav&gt;</strong> should be used to implement the main app navigation.</p>
+
+    <x-nav>
+      <x-navitem toggled>
+        <x-icon href="#home"></x-icon>
+        <x-label>First page</x-label>
+      </x-navitem>
+
+      <x-navitem>
+        <x-icon href="#flag"></x-icon>
+        <x-label>Second page</x-label>
+      </x-navitem>
+
+      <x-navitem>
+        <x-icon href="#earth"></x-icon>
+        <x-label>Third page</x-label>
+      </x-navitem>
+    </x-nav>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-nav.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Icons and labels</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem value="first" toggled>
+              <x-icon href="#mail"></x-icon>
+              <x-label>First page</x-label>
+            </x-navitem>
+
+            <x-navitem value="second">
+              <x-icon href="#send"></x-icon>
+              <x-label>Second page</x-label>
+            </x-navitem>
+
+            <x-navitem value="third">
+              <x-icon href="#wrench"></x-icon>
+              <x-label>Third page</x-label>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only icons</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem toggled>
+              <x-icon href="#mail"></x-icon>
+            </x-navitem>
+
+            <x-navitem>
+              <x-icon href="#send"></x-icon>
+            </x-navitem>
+
+            <x-navitem>
+              <x-icon href="#wrench"></x-icon>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only labels</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem toggled>
+              <x-label>First page</x-label>
+            </x-navitem>
+
+            <x-navitem>
+              <x-label>Second page</x-label>
+            </x-navitem>
+
+            <x-navitem>
+              <x-label>Third page</x-label>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Nested</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem toggled>
+              <x-icon href="#mail"></x-icon>
+              <x-label>First page</x-label>
+            </x-navitem>
+
+            <x-navitem>
+              <x-icon href="#send"></x-icon>
+              <x-label>Second page</x-label>
+
+              <x-nav>
+                <x-navitem>
+                  <x-icon href="#mail"></x-icon>
+                  <x-label>First subpage</x-label>
+                </x-navitem>
+
+                <x-navitem>
+                  <x-icon href="#send"></x-icon>
+                  <x-label>Second subpage</x-label>
+                </x-navitem>
+
+                <x-navitem>
+                  <x-icon href="#wrench"></x-icon>
+                  <x-label>Third subpage</x-label>
+                </x-navitem>
+              </x-nav>
+            </x-navitem>
+
+            <x-navitem>
+              <x-icon href="#wrench"></x-icon>
+              <x-label>Third page</x-label>
+              <x-icon href="#open"></x-icon>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

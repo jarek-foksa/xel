@@ -6,7 +6,7 @@ slogan-3 = For <em>Web</em>, <em>Electron</em> and <em>Hybrid</em> apps.
 # Sidebar nav
 about = About
 setup = Setup
-faq = FAQ
+elements = Elements
 changelog = Changelog
 license = License
 issues = Issues

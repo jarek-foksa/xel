@@ -1,0 +1,146 @@
+<article>
+  <section id="intro-section">
+    <h2>Navigation item</h2>
+
+    <p><strong>&lt;x-navitem&gt;</strong> is not meant to be used as a stand-alone widget, instead it should be
+    always placed inside <strong>&lt;x-nav&gt;</strong>.</p>
+
+    <x-nav>
+      <x-navitem>
+        <x-icon href="#home"></x-icon>
+        <x-label>Home</x-label>
+      </x-navitem>
+    </x-nav>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-navitem.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Icon and label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem>
+              <x-icon href="#home"></x-icon>
+              <x-label>Home</x-label>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only icon</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem>
+              <x-icon href="#home"></x-icon>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Only label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem>
+              <x-label>Home</x-label>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Toggled</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem toggled>
+              <x-icon href="#home"></x-icon>
+              <x-label>Home</x-label>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Expandable</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <x-navitem>
+              <x-icon href="#home"></x-icon>
+              <x-label>Home</x-label>
+
+              <x-nav>
+                <x-navitem>
+                  <x-icon href="#search"></x-icon>
+                  <x-label>Search</x-label>
+                </x-navitem>
+
+                <x-navitem>
+                  <x-icon href="#tune"></x-icon>
+                  <x-label>Settings</x-label>
+                </x-navitem>
+
+                <x-navitem>
+                  <x-icon href="#mail"></x-icon>
+                  <x-label>Contact</x-label>
+                </x-navitem>
+              </x-nav>
+            </x-navitem>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Link</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-nav>
+            <a href="https://xel-toolkit.org" target="_blank">
+              <x-navitem>
+                <x-icon href="#home"></x-icon>
+                <x-label>Home</x-label>
+                <x-icon href="#open"></x-icon>
+              </x-navitem>
+            </a>
+          </x-nav>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

@@ -8,46 +8,60 @@ import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
 
-// @element x-accordion
-// @part arrow - Arrow icon indicating whether the accordion is expanded or collapsed.
-// @event expand - User expanded the accordion by clicking the arrow icon.
-// @event collapse - User collapsed the accordion by clicking the arrow icon.
-export default class XAccordionElement extends HTMLElement {
-  static observedAttributes = ["expanded"];
+// @element x-navitem
+// @event ^expand - User expanded a collapsed navigation item.
+// @event ^collapse - User collapsed an expanded navigation item.
+export default class XNavItemElement extends HTMLElement {
+  static observedAttributes = ["disabled"];
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
-        <div id="arrow" part="arrow" tabindex="1">
+      <div id="button" part="button">
+        <slot></slot>
+
+        <div id="arrow" part="arrow">
           <svg id="arrow-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path id="arrow-path"></path>
           </svg>
         </div>
+      </div>
 
-        <slot></slot>
-      </main>
+      <div id="main">
+        <slot name="expandable"></slot>
+      </div>
     </template>
   `;
 
   static #shadowStyleSheet = css`
     :host {
       display: block;
-      width: 100%;
-      margin: 8px 0;
       box-sizing: border-box;
     }
     :host([disabled]) {
       pointer-events: none;
       opacity: 0.5;
     }
-    :host([animating]) {
-      overflow: hidden;
+
+    #button {
+      display: flex;
+      align-items: center;
+      padding: 8px 15px;
+      min-height: 36px;
+      box-sizing: border-box;
     }
 
     #main {
-      position: relative;
-      width: 100%;
-      height: 100%;
+      height: 0;
+      display: none;
+      overflow: hidden;
+    }
+    :host([expanded]) #main,
+    :host([animating]) #main {
+      display: block;
+      height: auto;
+    }
+    :host([expanded]:not([animating])) #main {
+      overflow: visible;
     }
 
     /**
@@ -55,15 +69,17 @@ export default class XAccordionElement extends HTMLElement {
      */
 
     #arrow {
-      position: absolute;
-      top: 0;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: flex-start;
       pointer-events: none;
-      transform: translateY(-50%);
+      margin-left: auto;
       --path-data: M 26 20 L 26 80 L 74 50 Z;
     }
+    :host([expandable]) #arrow {
+      display: flex;
+    }
+
     :host([animating]) #arrow {
       outline: none !important;
     }
@@ -86,20 +102,19 @@ export default class XAccordionElement extends HTMLElement {
     #arrow-path {
       fill: currentColor;
     }
-  `
+  `;
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // @property
   // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the accordion is expanded.
-  get expanded() {
-    return this.hasAttribute("expanded");
+  // @type string
+  // @default ""
+  get value() {
+    return this.hasAttribute("value") ? this.getAttribute("value") : "";
   }
-  set expanded(expanded) {
-    expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
+  set value(value) {
+    this.setAttribute("value", value);
   }
 
   // @property
@@ -107,7 +122,18 @@ export default class XAccordionElement extends HTMLElement {
   // @type boolean
   // @default false
   //
-  // Whether the accordion is disabled.
+  // Whether this navigation item is toggled.
+  get toggled() {
+    return this.hasAttribute("toggled");
+  }
+  set toggled(toggled) {
+    toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
+  }
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -115,23 +141,34 @@ export default class XAccordionElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
+  // @property readOnly
   // @attribute
-  // @type "small" || "large" || null
-  // @default null
-  get size() {
-    let size = this.getAttribute("size");
-    return (size === "small" || size === "large") ? size : null;
+  // @type boolean
+  // @default false
+  //
+  // Whether the navigation item is expanded.
+  get expanded() {
+    return this.hasAttribute("expanded");
   }
-  set size(size) {
-    (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
+  set expanded(expanded) {
+    expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
   }
 
-  #shadowRoot = null;
-  #resizeObserver = null;
+  // @property readOnly
+  // @attribute
+  // @type boolean
+  // @default false
+  // @readOnly
+  //
+  // Whether the navigation item could be expanded.
+  get expandable() {
+    return this.hasAttribute("expandable");
+  }
+
+  #shadowRoot;
+  #xelThemeChangeListener;
   #currentAnimations = [];
-
-  #xelThemeChangeListener = null;
+  #lastTabIndex = 0;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -139,17 +176,14 @@ export default class XAccordionElement extends HTMLElement {
     super();
 
     this.#shadowRoot = this.attachShadow({mode: "closed"});
-    this.#shadowRoot.adoptedStyleSheets = [XAccordionElement.#shadowStyleSheet];
-    this.#shadowRoot.append(document.importNode(XAccordionElement.#shadowTemplate.content, true));
+    this.#shadowRoot.adoptedStyleSheets = [XNavItemElement.#shadowStyleSheet];
+    this.#shadowRoot.append(document.importNode(XNavItemElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
     }
 
-    this.#resizeObserver = new ResizeObserver(() => this.#updateArrowPosition());
-
     this.addEventListener("click", (event) => this.#onClick(event));
-    this["#arrow"].addEventListener("keydown", (event) => this.#onArrowKeyDown(event));
   }
 
   connectedCallback() {
@@ -159,21 +193,21 @@ export default class XAccordionElement extends HTMLElement {
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
 
-    this.#resizeObserver.observe(this);
+    // Make the parent anchor element non-focusable (nav item should be focused instead)
+    if (this.parentElement && this.parentElement.localName === "a" && this.parentElement.tabIndex !== -1) {
+      this.parentElement.tabIndex = -1;
+    }
+
+    this.#updateAccessabilityAttributes();
   }
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
-
-    this.#resizeObserver.unobserve(this);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "expanded") {
-      this.#updateArrowPosition();
+  attributeChangedCallback(name) {
+    if (name === "disabled") {
+      this.#updateAccessabilityAttributes();
     }
   }
 
@@ -182,7 +216,7 @@ export default class XAccordionElement extends HTMLElement {
   // @method
   // @type () => Promise
   //
-  // Expand the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+  // Expand the navigation item. Returns a promise which will be resolved when the animation ends.
   expand(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === false) {
@@ -192,17 +226,17 @@ export default class XAccordionElement extends HTMLElement {
           this.expanded = true;
         }
         else if (animate === true) {
-          let startBBox = this.getBoundingClientRect();
+          let startBBox = this["#main"].getBoundingClientRect();
 
           this.#clearCurrentAnimations();
           this.removeAttribute("animating");
           this.expanded = true;
 
-          let endBBox = this.getBoundingClientRect();
+          let endBBox = this["#main"].getBoundingClientRect();
           this.setAttribute("animating", "");
 
           let animations = [
-            this.animate(
+            this["#main"].animate(
               { height: [`${startBBox.height}px`, `${endBBox.height}px`]},
               { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
             ),
@@ -224,11 +258,10 @@ export default class XAccordionElement extends HTMLElement {
       resolve();
     });
   }
-
   // @method
   // @type () => Promise
   //
-  // Collapse the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+  // Collapse the navigation item. Returns a promise will be resolved when the animation ends.
   collapse(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === true) {
@@ -238,17 +271,17 @@ export default class XAccordionElement extends HTMLElement {
           this.expanded = false;
         }
         else if (animate === true) {
-          let startBBox = this.getBoundingClientRect();
+          let startBBox = this["#main"].getBoundingClientRect();
 
           this.#clearCurrentAnimations();
           this.removeAttribute("animating");
           this.expanded = false;
 
-          let endBBox = this.getBoundingClientRect();
+          let endBBox = this["#main"].getBoundingClientRect();
           this.setAttribute("animating", "");
 
           let animations = [
-            this.animate(
+            this["#main"].animate(
               { height: [`${startBBox.height}px`, `${endBBox.height}px`]},
               { duration: 200, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
             ),
@@ -271,6 +304,33 @@ export default class XAccordionElement extends HTMLElement {
     });
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onClick(event) {
+    if (this === event.target.closest("x-navitem") && this.hasAttribute("expandable")) {
+      if (event.target.localName !== "x-nav") {
+        if (this.expanded) {
+          let event = new CustomEvent("collapse", {bubbles: true, cancelable: true});
+          this.dispatchEvent(event);
+
+          if (event.defaultPrevented === false) {
+            this.collapse();
+          }
+        }
+        else {
+          let event = new CustomEvent("expand", {bubbles: true, cancelable: true});
+          this.dispatchEvent(event);
+
+          if (event.defaultPrevented === false) {
+            this.expand();
+          }
+        }
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   #clearCurrentAnimations() {
     if (this.#currentAnimations.length > 0) {
       this.#currentAnimations.map(animation => animation.finish())
@@ -279,14 +339,20 @@ export default class XAccordionElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  #updateArrowPosition() {
-    let header = this.querySelector(":scope > header");
+  #updateAccessabilityAttributes() {
+    this.setAttribute("role", "button");
+    this.setAttribute("aria-disabled", this.disabled);
 
-    if (header) {
-      this["#arrow"].style.top = (header.getBoundingClientRect().height / 2) + "px";
+    if (this.disabled) {
+      this.#lastTabIndex = (this.tabIndex > 0 ? this.tabIndex : 0);
+      this.tabIndex = -1;
     }
     else {
-      this["#arrow"].style.height = null;
+      if (this.tabIndex < 0) {
+        this.tabIndex = (this.#lastTabIndex > 0) ? this.#lastTabIndex : 0;
+      }
+
+      this.#lastTabIndex = 0;
     }
   }
 
@@ -294,30 +360,6 @@ export default class XAccordionElement extends HTMLElement {
     let pathData = getComputedStyle(this["#arrow"]).getPropertyValue("--path-data");
     this["#arrow-path"].setAttribute("d", pathData);
   }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  #onArrowKeyDown(event) {
-    if (event.code === "Enter" || event.code === "NumpadEnter") {
-      this.querySelector("header").click();
-    }
-  }
-
-  #onClick(event) {
-    let header = this.querySelector("header");
-    let closestFocusableElement = event.target.closest("[tabindex]");
-
-    if (header.contains(event.target) && this.contains(closestFocusableElement) === false) {
-      if (this.expanded) {
-        this.collapse();
-        this.dispatchEvent(new CustomEvent("collapse"));
-      }
-      else {
-        this.expand();
-        this.dispatchEvent(new CustomEvent("expand"));
-      }
-    }
-  }
 }
 
-customElements.define("x-accordion", XAccordionElement);
+customElements.define("x-navitem", XNavItemElement);

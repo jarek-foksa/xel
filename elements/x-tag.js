@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -188,7 +188,10 @@ export default class XTagElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.#updateRemoveButtonPathData();
+    Xel.whenThemeReady.then(() => {
+      this.#updateRemoveButtonPathData();
+    });
+
     this.#updateScopedAttribute();
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateRemoveButtonPathData());

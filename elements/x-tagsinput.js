@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -39,7 +39,6 @@ export default class XTagsInputElement extends HTMLElement {
     :host {
       display: block;
       position: relative;
-      min-height: 32px;
       font-size: 12px;
       box-sizing: border-box;
     }

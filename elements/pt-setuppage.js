@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -21,7 +21,7 @@ export default class PTSetupPageElement extends PTPage {
 
             <p>Run from the console:</p>
             <pt-code>npm install xel</pt-code>
-            <p><strong>Note:</strong> Xel NPM package has no dependencies and it does not execute any install scripts.</p>
+            <p><strong>Note:</strong> Xel NPM package has no dependencies and it does not execute any scripts during installation.</p>
           </main>
         </x-card>
 

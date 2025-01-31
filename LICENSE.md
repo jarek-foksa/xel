@@ -22,7 +22,7 @@ The full text of each license is provided below.
 
 ## Xel License
 
-    Copyright © 2016-2024 Jarosław Foksa
+    Copyright © 2016-2025 Jarosław Foksa
 
     MIT License
 
@@ -49,7 +49,7 @@ The full text of each license is provided below.
 
 ## Xel Cupertino License v1
 
-    Copyright © 2016-2024 Jarosław Foksa
+    Copyright © 2016-2025 Jarosław Foksa
 
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

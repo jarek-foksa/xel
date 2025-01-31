@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -27,6 +27,8 @@ import "./elements/x-message.js";
 import "./elements/x-menu.js";
 import "./elements/x-menubar.js";
 import "./elements/x-menuitem.js";
+import "./elements/x-nav.js";
+import "./elements/x-navitem.js";
 import "./elements/x-notification.js";
 import "./elements/x-numberinput.js";
 import "./elements/x-popover.js";

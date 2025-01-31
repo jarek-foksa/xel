@@ -1,6 +1,6 @@
 
 // @copyright
-//   © 2016-2024 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
 // @license
 //   MIT License (check LICENSE.md for details)
 
@@ -338,11 +338,11 @@ export default class PTApiBlockElement extends HTMLElement {
 
           let rowsHTML = `
             <tr>
-              <th>Name</th>
-              <th>Material</th>
-              <th>Material Outlined</th>
+              <th>ID</th>
               <th>Fluent</th>
               <th>Fluent Outlined</th>
+              <th>Material</th>
+              <th>Material Outlined</th>
             </tr>
           `;
 
@@ -350,10 +350,10 @@ export default class PTApiBlockElement extends HTMLElement {
             rowsHTML += `
               <tr>
                 <td>${id}</td>
-                <td><x-icon href="/node_modules/xel/icons/material.svg#${id}"></x-icon></td>
-                <td><x-icon href="/node_modules/xel/icons/material-outlined.svg#${id}"></x-icon></td>
                 <td><x-icon href="/node_modules/xel/icons/fluent.svg#${id}"></x-icon></td>
                 <td><x-icon href="/node_modules/xel/icons/fluent-outlined.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/icons/material.svg#${id}"></x-icon></td>
+                <td><x-icon href="/node_modules/xel/icons/material-outlined.svg#${id}"></x-icon></td>
               </tr>
             `;
           }
