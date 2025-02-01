@@ -37,6 +37,13 @@ export default class PTChangelogPageElement extends PTPage {
       margin-right: 4px;
       background: #ec407a;
       font-size: 13px;
+      color: white;
+      border-width: 0px;
+    }
+    article x-tag:hover,
+    article x-tag:active {
+      background: #ec407a;
+      color: white;
     }
   `
 
@@ -70,7 +77,7 @@ export default class PTChangelogPageElement extends PTPage {
           }
 
           for (let item of release.items) {
-            let tagsHTML = item.tags.map(tag => `<x-tag size="small" skin="colored">${tag}</x-tag>`).join("");
+            let tagsHTML = item.tags.map(tag => `<x-tag size="small">${tag}</x-tag>`).join("");
 
             itemsHTML += `
               <li>${tagsHTML} ${this.#markdownToHTML(item.text)}</li>
