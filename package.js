@@ -125,9 +125,7 @@ let createPortalPackage = (minify = true, publish = false) => {
         let srcPaths = [
           `${projectPath}/node_modules/cantarell/cantarell.woff2`,
           `${projectPath}/node_modules/marked/marked.min.js`,
-          `${projectPath}/node_modules/prismjs/prism.js`,
-          `${projectPath}/node_modules/prismjs/themes/prism-coy.css`,
-          `${projectPath}/node_modules/prismjs/themes/prism-dark.css`
+          `${projectPath}/node_modules/prismjs/prism.js`
         ];
 
         for (let srcPath of srcPaths) {
@@ -236,7 +234,7 @@ let createNpmPackage = (minify = true, publish = false) => {
         let paths = Glob.sync(`${projectPath}/themes/*.css`);
 
         for (let path of paths) {
-          if (path.endsWith("base.css") === false && path.endsWith("-portal.css") === false) {
+          if (path.endsWith("base.css") === false) {
             let relPath = path.substring(projectPath.length);
             let themeCSS = Fse.readFileSync(path, "utf8");
             themeCSS = themeCSS.replace("/node_modules/xel/themes/base.css", "./base.css");

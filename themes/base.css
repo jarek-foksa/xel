@@ -171,12 +171,26 @@ em {
   font-weight: 500;
 }
 
-pre,
-code,
-var {
+/*****************************************************************************************************************/
+
+/**
+ * Code
+ */
+
+pre, code, var {
   font-size: 14px;
   font-style: normal;
   padding: 0 4px;
+}
+pre {
+  padding: 4px 6px;
+}
+pre > code {
+  display: block;
+  padding: 0;
+  background-color: transparent;
+  outline-width: 0px;
+  line-height: 18px;
 }
 
 /*****************************************************************************************************************/

@@ -29,8 +29,8 @@ body {
   --light-accent-color:         oklch(from var(--accent-color) calc(l + 0.10) calc(c + 0.02) h);
   --lighter-accent-color:       oklch(from var(--accent-color) calc(l + 0.15) c h);
   --dark-accent-color:          oklch(from var(--accent-color) calc(l - 0.04) calc(c - 0.02) h);
-  --background-color:           color(srgb 0.22 0.22 0.22);
   --foreground-color:           color(srgb 0.26 0.26 0.26);
+  --background-color:           color(srgb 0.22 0.22 0.22);
   --light-foreground-color:     color(srgb 0.39 0.39 0.39);
   --border-color:               color(srgb 1 1 1 / 0.1);
   --text-color:                 color(srgb 1 1 1 / 0.8);
@@ -81,11 +81,17 @@ a::selection {
 }
 
 pre, code, var {
-  background-color: var(--background-color);
+  background-color: color(srgb 1 1 1 / 0.06);
   outline-width: 1px;
   outline-style: solid;
   outline-color: var(--border-color);
   font-family: "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
+}
+pre {
+  border-radius: 7px;
+}
+code, var {
+  border-radius: 4px;
 }
 
 blockquote {

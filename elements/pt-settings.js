@@ -171,7 +171,7 @@ export default class PTSettingsElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onXelThemeChange() {
-    let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
+    let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.indexOf(".css"));
     Xel.setConfig("pt-settings:theme", themeName);
 
     this.#update();
@@ -203,7 +203,8 @@ export default class PTSettingsElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onThemeSelectChange() {
-    Xel.theme = "/themes/" + this["#theme-select"].value + "-portal.css";
+    let value = this["#theme-select"].value;
+    Xel.theme = `/themes/${value}.css`;
   }
 
   #onAccentPresetSelectChange() {
@@ -224,7 +225,7 @@ export default class PTSettingsElement extends HTMLElement {
   #update() {
     // Update theme section
     {
-      let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
+      let themeName = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.indexOf(".css"));
 
       for (let item of this["#theme-select"].querySelectorAll("x-menuitem")) {
         if (item.getAttribute("value") === themeName) {

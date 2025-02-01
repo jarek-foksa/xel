@@ -26,6 +26,7 @@ export default class PTAboutPageElement extends PTPage {
       height: 100vh;
       display: flex;
       align-items: center;
+      background: var(--accent-color);
     }
 
     ::selection {

@@ -30,9 +30,13 @@ body {
                                 green    color(srgb 0.18 0.76 0.49),
                                 graphite color(srgb 0.60 0.60 0.59);
   --light-accent-color:         oklch(from var(--accent-color) calc(l + 0.07) calc(c - 0.02) h);
+  --lighter-accent-color:       oklch(from var(--accent-color) calc(l + 0.17) calc(c - 0.07) h);
   --dark-accent-color:          oklch(from var(--accent-color) calc(l + 0.04) calc(c + 0.02) h);
-  --background-color:           color(srgb 0.14 0.14 0.14);
+  --darker-accent-color:        oklch(from var(--accent-color) calc(l - 0.15) calc(c - 0.02) h);
   --foreground-color:           color(srgb 0.21 0.21 0.21);
+  --background-color:           color(srgb 0.14 0.14 0.14);
+  --light-background-color:     color(srgb 0.21 0.21 0.21);
+  --dark-background-color:      color(srgb 0 0 0);
   --border-color:               color(srgb 0.32 0.32 0.32);
   --text-color:                 color(srgb 1 1 1 / 0.8);
   --error-color:                color(srgb 0.77 0.19 0.24);
@@ -78,11 +82,14 @@ a:hover {
 }
 
 pre, code, var {
-  background-color: var(--background-color);
-  outline-width: 1px;
-  outline-style: solid;
-  outline-color: var(--border-color);
+  background-color: color(srgb 1 1 1 / 0.06);
   font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
+}
+pre {
+  border-radius: 12px;
+}
+code, var {
+  border-radius: 4px;
 }
 
 blockquote {
@@ -318,7 +325,7 @@ x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="d
 }
 x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed],
 x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
-  border-left-color: var(--lightest-accent-color) !important;
+  border-left-color: var(--lighter-accent-color) !important;
 }
 
 /* Vertical siblings */
@@ -345,7 +352,7 @@ x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default
 }
 x-buttons[vertical] > x-button[skin="default"][toggled][pressed],
 x-buttons[vertical] > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
-  border-top-color: var(--lightest-accent-color) !important;
+  border-top-color: var(--lighter-accent-color) !important;
 }
 
 /* Label */
@@ -771,8 +778,8 @@ x-checkbox[toggled]::part(indicator) {
   border-color: var(--accent-color);
 }
 x-checkbox[toggled]:active::part(indicator) {
-  background-color: var(--darkest-accent-color);
-  border-color: var(--darkest-accent-color);
+  background-color: var(--darker-accent-color);
+  border-color: var(--darker-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -802,7 +809,7 @@ x-radio[toggled]::part(indicator) {
   border-color: var(--accent-color);
 }
 x-radio[toggled]:active::part(indicator) {
-  background-color: var(--darkest-accent-color);
+  background-color: var(--darker-accent-color);
 }
 
 /* Indicator dot */
@@ -935,7 +942,7 @@ x-slider[dragging="end"]::part(end-thumb) {
 }
 x-slider::part(thumb):focus {
   border-color: var(--accent-color);
-  box-shadow: 0 0 0px 3px var(--lightest-accent-color);
+  box-shadow: 0 0 0px 3px var(--lighter-accent-color);
 }
 
 /*****************************************************************************************************************/
@@ -1127,57 +1134,4 @@ x-progressbar::part(bar) {
 
 x-throbber {
   color: var(--light-accent-color);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*****************************************************************************************************************
- DEPRECATED
- ****************************************************************************************************************/
-
-body {
-  /* @todo: deprecate */
-  --light-background-color: color(srgb 0.21 0.21 0.21);
-  --dark-background-color: color(srgb 0 0 0);
-  --light-text-color: color(srgb 1 1 1 / 0.92);
-  --error-background-color: color(srgb 0.96 0.9 0.9);
-  --lightest-accent-color: oklch(from var(--accent-color) calc(l + 0.17) calc(c - 0.07) h);
-  --darker-accent-color: oklch(from var(--accent-color) calc(l - 0.06) c h);
-  --darkest-accent-color: oklch(from var(--accent-color) calc(l - 0.15) calc(c - 0.02) h);
 }

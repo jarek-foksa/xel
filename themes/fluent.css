@@ -28,8 +28,8 @@ body {
                                 yellow   color(srgb 1.00 0.73 0.00),
                                 green    color(srgb 0.06 0.49 0.06),
                                 graphite color(srgb 0.48 0.46 0.45);
-  --background-color:           color(srgb 0.95 0.95 0.95);
   --foreground-color:           color(srgb 0.98 0.98 0.98);
+  --background-color:           color(srgb 0.95 0.95 0.95);
   --border-color:               color(srgb 0.88 0.88 0.88);
   --text-color:                 color(srgb 0 0 0 / 0.8);
   --error-color:                color(srgb 0.77 0.17 0.11);
@@ -80,11 +80,13 @@ a:focus {
 }
 
 pre, code, var {
-  background-color: color(srgb 0 0 0 / 0.1);
+  background-color: color(srgb 0 0 0 / 0.02);
+  border-radius: 4px;
   outline-width: 1px;
   outline-style: solid;
   outline-color: color(srgb 0 0 0 / 0.1);
   font-family: "Consolas", "Inconsolata", ui-monospace, monospace;
+  font-weight: 500;
 }
 
 blockquote {

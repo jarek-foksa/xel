@@ -31,11 +31,17 @@ body {
                                 graphite color(srgb 0.60 0.60 0.59);
   --light-accent-color:         oklch(from var(--accent-color) calc(l + 0.07) calc(c - 0.02) h);
   --dark-accent-color:          oklch(from var(--accent-color) calc(l + 0.04) calc(c + 0.02) h);
-  --background-color:           color(srgb 0.96 0.96 0.96);
+  --darker-accent-color:        oklch(from var(--accent-color) calc(l - 0.06) c h);
+  --darkest-accent-color:       oklch(from var(--accent-color) calc(l - 0.15) calc(c - 0.02) h);
   --foreground-color:           color(srgb 0.99 0.99 0.99);
+  --background-color:           color(srgb 0.96 0.96 0.96);
+  --light-background-color:     color(srgb 0.99 0.99 0.99);
+  --dark-background-color:      color(srgb 0.92 0.92 0.92);
   --border-color:               color(srgb 0.86 0.86 0.86);
+  --dark-border-color:          color(srgb 0.82 0.82 0.82);
   --text-color:                 color(srgb 0 0 0 / 0.8);
   --error-color:                color(srgb 0.77 0.19 0.24);
+  --error-background-color:     color(srgb 0.96 0.9 0.9);
   --selection-color:            currentColor;
   --selection-background-color: oklch(from var(--accent-color) l c h / 0.2);
   --autofill-background-color:  color(srgb 0.95 0.93 0.89);
@@ -78,11 +84,17 @@ a:hover {
 }
 
 pre, code, var {
-  background-color: var(--background-color);
+  background-color: color(srgb 0 0 0 / 0.02);
   outline-width: 1px;
   outline-style: solid;
-  outline-color: var(--border-color);
+  outline-color: rgba(0, 0, 0, 0.14);
   font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
+}
+pre {
+  border-radius: 12px;
+}
+code, var {
+  border-radius: 4px;
 }
 
 blockquote {
@@ -940,7 +952,7 @@ x-slider[dragging="end"]::part(end-thumb) {
 }
 x-slider::part(thumb):focus {
   border-color: var(--accent-color);
-  box-shadow: 0 0 0px 3px var(--lightest-accent-color);
+  box-shadow: 0 0 0px 3px oklch(from var(--accent-color) calc(l + 0.17) calc(c - 0.07) h);
 }
 
 /*****************************************************************************************************************/
@@ -1132,58 +1144,4 @@ x-progressbar::part(bar) {
 
 x-throbber {
   color: var(--light-accent-color);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*****************************************************************************************************************
- DEPRECATED
- ****************************************************************************************************************/
-
-body {
-
-  /* @todo: deprecate */
-  --light-background-color: color(srgb 0.99 0.99 0.99);
-  --dark-background-color: color(srgb 0.92 0.92 0.92);
-  --dark-border-color: color(srgb 0.82 0.82 0.82);
-  --error-background-color: color(srgb 0.96 0.9 0.9);
-  --lightest-accent-color: oklch(from var(--accent-color) calc(l + 0.17) calc(c - 0.07) h);
-  --darker-accent-color: oklch(from var(--accent-color) calc(l - 0.06) c h);
-  --darkest-accent-color: oklch(from var(--accent-color) calc(l - 0.15) calc(c - 0.02) h);
 }

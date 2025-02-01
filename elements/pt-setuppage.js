@@ -266,7 +266,7 @@ export default class PTSetupPageElement extends PTPage {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onThemeSelectChange() {
-    Xel.theme = `/themes/${this._elements["theme-select"].value}-portal.css`;
+    Xel.theme = `/themes/${this._elements["theme-select"].value}.css`;
   }
 
   #onAccentPresetSelectChange() {
@@ -287,7 +287,7 @@ export default class PTSetupPageElement extends PTPage {
   #update() {
     // Theme
     {
-      let name = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.lastIndexOf("-portal"));
+      let name = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.indexOf(".css"));
       let meta = `<meta name="xel-theme" content="node_modules/xel/themes/${name}.css">`;
 
       this._elements["theme-select"].value = name;

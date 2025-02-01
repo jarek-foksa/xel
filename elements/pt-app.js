@@ -434,8 +434,8 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #main > * {
-      margin: 35px auto;
-      padding: 0 20px;
+      margin: 35px 0;
+      padding: 0 30px;
       max-width: 700px;
     }
     #main > pt-aboutpage {
@@ -483,7 +483,7 @@ export default class PTAppElement extends HTMLElement {
     let icons       = Xel.getConfig("pt-settings:icons", "fluent");
     let locale      = Xel.getConfig("pt-settings:locale", "en");
 
-    Xel.theme       = `/themes/${theme}-portal.css`;
+    Xel.theme       = `/themes/${theme}.css`;
     Xel.accentColor = accentColor;
     Xel.icons       = [`/icons/${icons}.svg`];
 
