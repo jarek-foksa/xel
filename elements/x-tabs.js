@@ -99,7 +99,6 @@ export default class XTabsElement extends HTMLElement {
   #onKeyDown(event) {
     if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
       let tab = event.target;
-      let label = tab.querySelector("x-label");
 
       event.preventDefault();
       tab.click();

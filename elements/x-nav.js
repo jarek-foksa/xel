@@ -57,6 +57,7 @@ export default class XNavElement extends HTMLElement {
 
     this.addEventListener("click", (event) => this.#onClick(event));
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("keydown", (event) => this.#onKeyDown(event));
   }
 
   connectedCallback() {
@@ -90,6 +91,8 @@ export default class XNavElement extends HTMLElement {
 
     return navElement;
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onClick(event) {
     let clickedItem = event.target.closest("x-navitem");
@@ -187,6 +190,48 @@ export default class XNavElement extends HTMLElement {
           item.setAttribute("pressed", "");
         }
       })();
+    }
+  }
+
+  #onKeyDown(event) {
+    let navElement = this.#getOutermostNavElement();
+    let focusedItem = navElement.querySelector("x-navitem:focus");
+
+    if (event.code === "Enter" || event.code === "NumpadEnter" || event.code === "Space") {
+      event.preventDefault();
+      event.stopPropagation();
+
+      focusedItem.click();
+    }
+    else if (event.code === "ArrowLeft") {
+      if (focusedItem.expandable && focusedItem.expanded) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        focusedItem.click();
+      }
+    }
+    else if (event.code === "ArrowRight") {
+      if (focusedItem.expandable && focusedItem.expanded === false) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        focusedItem.click();
+      }
+    }
+    else if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+      let items = [...navElement.querySelectorAll("x-navitem:not([disabled])")];
+      items = items.filter(item => item.clientHeight !== 0); // Filter out collapsed items
+
+      let focusedItemIndex = items.indexOf(focusedItem);
+      let siblingItem = event.code === "ArrowUp" ? items[focusedItemIndex-1] : items[focusedItemIndex+1];
+
+      if (siblingItem) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        siblingItem.focus();
+      }
     }
   }
 }
