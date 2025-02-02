@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.29.0 (PENDING)
+## 0.29.0 (2025-02-02)
 
 - Update Fluent theme to match the latest Windows 11 UI guidelines
 - Allow wide gamut accent color
