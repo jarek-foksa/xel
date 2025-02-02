@@ -98,8 +98,8 @@ export default class PTSettingsElement extends HTMLElement {
   static #shadowStyleSheet = css`
     :host {
       display: block;
-      padding: 16px 20px;
       box-sizing: border-box;
+      width: 100%;
     }
 
     h4 {

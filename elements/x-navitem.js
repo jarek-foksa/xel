@@ -45,6 +45,7 @@ export default class XNavItemElement extends HTMLElement {
     #button {
       display: flex;
       align-items: center;
+      justify-content: center;
       padding: 8px 15px;
       min-height: 36px;
       box-sizing: border-box;
@@ -74,6 +75,7 @@ export default class XNavItemElement extends HTMLElement {
       justify-content: flex-start;
       pointer-events: none;
       margin-left: auto;
+      padding-left: 4px;
       --path-data: M 26 20 L 26 80 L 74 50 Z;
     }
     :host([expandable]) #arrow {

@@ -16,6 +16,7 @@ import "./pt-apiblock.js";
 import "./pt-demoblock.js";
 import "./pt-code.js";
 import "./pt-settings.js";
+import "./pt-sidebar.js";
 
 import {removeDuplicates} from "../utils/array.js";
 import {html, css} from "../utils/template.js";
@@ -25,13 +26,13 @@ import {sleep, debounce} from "../utils/time.js";
 export default class PTAppElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
-      <sidebar id="sidebar">
-        <header id="header">
-          <div id="branding">
+      <pt-sidebar id="sidebar">
+        <div id="branding">
+          <x-box>
             <x-icon href="/icons/portal.svg#xel"></x-icon>
             <h1>Xel</h1>
-          </div>
-        </header>
+          </x-box>
+        </div>
 
         <hr/>
 
@@ -328,12 +329,28 @@ export default class PTAppElement extends HTMLElement {
 
         <hr/>
 
-        <footer id="footer">
-          © 2016-2025 <a id="contact-anchor" href="mailto:jarek@xel-toolkit.org">Jarosław Foksa</a>
-        </footer>
-      </sidebar>
+        <div id="copyright">© 2016-2025 <a id="contact-anchor" href="mailto:jarek@xel-toolkit.org">Jarosław Foksa</a></div>
+      </pt-sidebar>
 
-      <main id="main"></main>
+      <div id="container">
+        <header id="header">
+          <div id="header-inner">
+            <x-button id="sidebar-button" skin="flat">
+              <x-icon href="#menu"></x-icon>
+              <dialog id="sidebar-drawer"></dialog>
+            </x-button>
+
+            <x-box>
+              <x-icon id="logo" href="/icons/portal.svg#xel"></x-icon>
+              <h1>Xel</h1>
+            </x-box>
+
+            <div id="header-placeholder"></div>
+          </div>
+        </header>
+
+        <main id="main"></main>
+      </div>
     </template>
   `;
 
@@ -349,80 +366,7 @@ export default class PTAppElement extends HTMLElement {
       display: none;
     }
 
-    /**
-     * Sidebar
-     */
-
-    #sidebar {
-      width: 280px;
-      display: flex;
-      flex-flow: column;
-      overflow: auto;
-      position: relative;
-      background: var(--foreground-color);
-      border-right: 1px solid var(--border-color);
-    }
-
-    #sidebar > hr {
-      margin: 0;
-    }
-
-    /* Header */
-
-    #header {
-      background: var(--background-color);
-    }
-
-    #branding {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #sidebar #branding x-icon {
-      width: 50px;
-      height: 50px;
-      color: var(--accent-color);
-    }
-
-    #branding h1 {
-      margin-left: 8px;
-      line-height: 1;
-    }
-
-    #header + hr {
-      margin-top: 0px;
-    }
-
-    /* Nav */
-
-    #nav {
-      padding: 12px;
-      overflow: auto;
-      flex: 1;
-    }
-
-    #nav > x-navitem::part(button):hover {
-      cursor: pointer;
-    }
-
-    /* Footer */
-
-    #footer {
-      padding: 12px 20px;
-      line-height: 1;
-      font-size: 11px;
-    }
-
-    #footer a {
-      color: inherit;
-    }
-
-    /**
-     * Main
-     */
-
-    #main {
+    #container {
       display: block;
       width: 100%;
       height: 100%;
@@ -433,15 +377,151 @@ export default class PTAppElement extends HTMLElement {
       overflow: auto;
     }
 
-    #main > * {
-      margin: 35px 0;
+    /**
+     * Header
+     */
+
+    #header {
+      background-color: var(--foreground-color);
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: var(--border-color);
+    }
+
+    #header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 0 30px;
       max-width: 700px;
+      box-sizing: border-box;
+    }
+    :host([layout="collapsed"]) #header-inner {
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    #header #sidebar-button > x-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    #header #logo {
+      width: 38px;
+      height: 38px;
+      color: var(--accent-color);
+    }
+
+    #header h1 {
+      margin: 0 0 0 4px;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    #header-placeholder {
+      width: 26px;
+    }
+
+    /**
+     * Main
+     */
+
+    #main > * {
+      margin: 0;
+      padding: 0 30px;
+      max-width: 700px;
+    }
+    :host([layout="collapsed"]) #main > * {
+      margin: 0 auto;
+      padding: 0 15px;
     }
     #main > pt-aboutpage {
       margin: 0;
       padding: 0 100px;
       max-width: none;
+    }
+
+    /**
+     * Sidebar
+     */
+
+    #sidebar-drawer {
+      left: 0;
+      right: auto;
+      width: fit-content;
+      height: 100%;
+      min-width: 0;
+      max-width: none;
+      overflow: visible;
+      background: none;
+      border-width: 0px;
+      border-radius: 0;
+    }
+
+    #sidebar {
+      width: 280px;
+      background: var(--foreground-color);
+      border-right-width: 1px;
+      border-right-style: solid;
+      border-right-color: var(--border-color);
+    }
+    #sidebar-drawer #sidebar {
+      border: none;
+      outline: none;
+    }
+
+    #sidebar hr {
+      margin: 0;
+    }
+
+    /* Branding */
+
+    #branding {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--background-color);
+    }
+
+    #branding x-icon {
+      width: 50px;
+      height: 50px;
+      color: var(--accent-color);
+    }
+
+    #branding h1 {
+      margin-left: 6px;
+      line-height: 1;
+    }
+
+    /* Nav */
+
+    #nav {
+      padding: 12px;
+      overflow: auto;
+    }
+
+    #nav > x-navitem::part(button):hover {
+      cursor: pointer;
+    }
+
+    /* Settings */
+
+    #settings {
+      padding: 16px 20px;
+      flex: 1;
+    }
+
+    /* Copyright */
+
+    #copyright {
+      padding: 12px 20px;
+      line-height: 1;
+      font-size: 11px;
+    }
+
+    #copyright a {
+      color: inherit;
     }
   `;
 
@@ -455,10 +535,10 @@ export default class PTAppElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #authReadyCallbacks = [];
   #currentLocation = null;
   #oldLocation = null;
   #lockInputListeners = null;
+  #layout = "normal";
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -474,6 +554,32 @@ export default class PTAppElement extends HTMLElement {
       if (history.state === null) {
         history.replaceState({index: history.length-1, scrollTop: 0}, null, location.href);
       }
+    }
+
+    // Update layout depending on the current window size
+    {
+      let mediaQuery = window.matchMedia("(min-width: 880px )");
+      let layout = mediaQuery.matches ? "normal" : "collapsed";
+
+      if (this.#layout !== layout) {
+        this.#layout = layout;
+
+        if (this.#shadowRoot) {
+          this.#updateForLayoutChange();
+        }
+      }
+
+      mediaQuery.addEventListener("change", (event) => {
+        let layout = event.matches ? "normal" : "collapsed";
+
+        if (this.#layout !== layout) {
+          this.#layout = layout;
+
+          if (this.#shadowRoot) {
+            this.#updateForLayoutChange();
+          }
+        }
+      });
     }
   }
 
@@ -522,10 +628,10 @@ export default class PTAppElement extends HTMLElement {
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
     this["#main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
+    this["#nav"].addEventListener("toggle", (event) => event.preventDefault());
 
-    this.#updateSidebarNav();
-
-    await this.#updateMain();
+    this.#updateForLayoutChange();
+    await this.#updateForLocationChange();
     this.#maybeDispatchLocationChangeEvent("load");
   }
 
@@ -539,22 +645,19 @@ export default class PTAppElement extends HTMLElement {
       let pathChanged = (fromLocation === null) || (fromLocation.pathname !== toLocation.pathname);
 
       if (method === "load") {
-        this.#updateSidebarNav();
-        await this.#updateMain()
+        await this.#updateForLocationChange()
         await sleep(100);
         this.restoreMainScrollOffset();
       }
       else if (method === "push" || method === "replace") {
         if (pathChanged) {
-          this.#updateSidebarNav();
-          this.#updateMain();
+          this.#updateForLocationChange();
           this.resetMainScrollOffset();
         }
       }
       else if (method === "pop") {
         if (pathChanged) {
-          this.#updateSidebarNav();
-          await this.#updateMain()
+          await this.#updateForLocationChange()
           this.restoreMainScrollOffset();
         }
       }
@@ -727,63 +830,86 @@ export default class PTAppElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  #updateMain() {
+  #updateForLocationChange() {
     return new Promise(async (resolve) => {
       let path = location.pathname;
       let title = document.querySelector("title");
 
-      if (this["#main"].dataset.path !== path) {
-        if (path === "/") {
-          title.textContent = "Xel";
-          this["#main"].innerHTML = "<pt-aboutpage></pt-aboutpage>";
-        }
-        else if (path === "/setup") {
-          title.textContent = "Xel | Setup";
-          this["#main"].innerHTML = "<pt-setuppage></pt-setuppage>";
-        }
-        else if (path === "/changelog") {
-          title.textContent = "Xel | Changelog";
-          this["#main"].innerHTML = "<pt-changelogpage></pt-changelogpage>";
-        }
-        else if (path === "/license") {
-          title.textContent = "Xel | License";
-          this["#main"].innerHTML = "<pt-licensepage></pt-licensepage>";
-        }
-        else if (path.startsWith("/elements/")) {
-          let elementName = path.substring(10);
-          title.textContent = "Xel | " + elementName;
-          this["#main"].innerHTML = `<pt-elementpage value="${elementName}"></pt-elementpage>`;
-        }
-        else {
-          this["#main"].innerHTML = "";
-        }
+      // Toggle navigation item
+      {
+        for (let item of this["#nav"].querySelectorAll("x-navitem")) {
+          let anchor = item.closest("a");
 
-        this["#main"].dataset.path = path;
+          if (anchor) {
+            let url = new URL(anchor);
+
+            if (url.origin === location.origin) {
+              item.toggled = (url.pathname === location.pathname)
+            }
+            else {
+              item.toggled = false;
+            }
+          }
+        }
       }
 
-      let page = this["#main"].firstElementChild;
+      // Load page
+      {
+        if (this["#main"].dataset.path !== path) {
+          if (path === "/") {
+            title.textContent = "Xel";
+            this["#main"].innerHTML = "<pt-aboutpage></pt-aboutpage>";
+          }
+          else if (path === "/setup") {
+            title.textContent = "Xel | Setup";
+            this["#main"].innerHTML = "<pt-setuppage></pt-setuppage>";
+          }
+          else if (path === "/changelog") {
+            title.textContent = "Xel | Changelog";
+            this["#main"].innerHTML = "<pt-changelogpage></pt-changelogpage>";
+          }
+          else if (path === "/license") {
+            title.textContent = "Xel | License";
+            this["#main"].innerHTML = "<pt-licensepage></pt-licensepage>";
+          }
+          else if (path.startsWith("/elements/")) {
+            let elementName = path.substring(10);
+            title.textContent = "Xel | " + elementName;
+            this["#main"].innerHTML = `<pt-elementpage value="${elementName}"></pt-elementpage>`;
+          }
+          else {
+            this["#main"].innerHTML = "";
+          }
 
-      if (page) {
-        await page.whenReady;
+          this["#main"].dataset.path = path;
+        }
+
+        let page = this["#main"].firstElementChild;
+
+        if (page) {
+          await page.whenReady;
+        }
       }
 
       resolve();
     });
   }
 
-  #updateSidebarNav() {
-    for (let item of this["#nav"].querySelectorAll("x-navitem")) {
-      let anchor = item.closest("a");
+  #updateForLayoutChange() {
+    this.setAttribute("layout", this.#layout);
 
-      if (anchor) {
-        let url = new URL(anchor);
+    // Toggle header visibility
+    {
+      this["#header"].hidden = (this.#layout === "normal");
+    }
 
-        if (url.origin === location.origin) {
-          item.toggled = (url.pathname === location.pathname)
-        }
-        else {
-          item.toggled = false;
-        }
+    // Move sidebar
+    {
+      if (this.#layout === "collapsed") {
+        this["#sidebar-drawer"].append(this["#sidebar"]);
+      }
+      else {
+        this.#shadowRoot.prepend(this["#sidebar"]);
       }
     }
   }

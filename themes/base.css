@@ -101,7 +101,7 @@ h5[disabled] {
  */
 
 article h2 {
-  margin: 35px 0 15px 0;
+  margin: 20px 0 15px 0;
   box-sizing: border-box;
   font-size: 42px;
   font-weight: 400;
@@ -884,6 +884,9 @@ x-nav x-label {
 x-nav x-icon + x-label {
   margin-left: 14px;
 }
+x-nav[collapsed] x-navitem > x-label {
+  display: none;
+}
 
 /* Primary icon */
 x-nav x-icon {
@@ -895,7 +898,20 @@ x-nav x-icon {
 x-nav x-label + x-icon {
   width: 18px;
   height: 18px;
-  margin: 0 0 0 20px;
+  margin: 0 0 0 10px;
+}
+x-nav[collapsed] x-navitem > x-label + x-icon {
+  display: none;
+}
+
+/* Button */
+x-nav[collapsed] x-navitem::part(button) {
+  padding: 0;
+}
+
+/* Arrow */
+x-nav[collapsed] x-navitem::part(arrow) {
+  display: none;
 }
 
 /*****************************************************************************************************************/

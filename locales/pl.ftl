@@ -14,6 +14,7 @@ source-code = Kod źródłowy
 
 # Sidebar settings
 theme = Motyw
+settings = Ustawienia
 size = Rozmiar
 size-small = Małe
 size-medium = Średnie
