@@ -284,6 +284,12 @@ export default class PTAppElement extends HTMLElement {
                 </x-navitem>
               </a>
 
+              <a href="/elements/x-titlebar">
+                <x-navitem>
+                  <x-label>x-titlebar</x-label>
+                </x-navitem>
+              </a>
+
               <a href="/elements/x-tooltip">
                 <x-navitem>
                   <x-label>x-tooltip</x-label>
@@ -402,8 +408,8 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #header #sidebar-button > x-icon {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
     }
 
     #header #logo {
@@ -480,6 +486,8 @@ export default class PTAppElement extends HTMLElement {
       display: flex;
       align-items: center;
       justify-content: center;
+      box-sizing: border-box;
+      padding: 4px 0;
       background: var(--background-color);
     }
 
@@ -490,7 +498,7 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #branding h1 {
-      margin-left: 6px;
+      margin: 0 0 0 6px;
       line-height: 1;
     }
 

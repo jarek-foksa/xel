@@ -56,6 +56,9 @@ body {
   --clear-path-data: M 25 16 L 50 41 L 75 16 L 84 25 L 59 50 L 84 75 L 75 84 L 50 59 L 25 84 L 16 75 L 41 50 L 16 25 Z;
   --plus-path-data: M 58 10 L 58 42 L 90 42 L 90 58 L 58 58 L 58 90 L 42 90 L 42 58 L 10 58 L 10 42 L 42 42 L 42 10 Z;
   --minus-path-data: M 10 42 H 90 V 58 H 10 V 42 Z;
+  --close-path-data: M 36 26 L 50 40 L 64 26 L 74 36 L 60 50 L 74 64 L 64 74 L 50 60 L 36 74 L 26 64 L 40 50 L 26 36 L 36 26 Z;
+  --minimize-path-data: M 20 56 L 80 56 L 80 70 L 20 70 L 20 56 Z;
+  --maximize-path-data: M 20 77 L 20 23 L 80 23 L 80 77 L 20 77 Z M 34 37 L 34 63 L 66 63 L 66 37 L 34 37 Z;
 }
 
 h2 {
@@ -1134,4 +1137,52 @@ x-progressbar::part(bar) {
 
 x-throbber {
   color: var(--light-accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Titlebar
+ */
+
+/* Buttons */
+x-titlebar::part(buttons) {
+  right: 10px;
+  gap: 10px;
+}
+
+/* Button */
+x-titlebar::part(button) {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  color: color(srgb 1 1 1 / 0.8);
+  border-radius: 999px;
+}
+x-titlebar::part(button):hover {
+  background: color(srgb 1 1 1 / 0.15);
+}
+x-titlebar::part(button):active {
+  background: color(srgb 1 1 1 / 0.25);
+}
+x-titlebar::part(minimize-button) {
+  --path-data: var(--minimize-path-data);
+}
+x-titlebar::part(maximize-button) {
+  --path-data: var(--maximize-path-data);
+}
+x-titlebar::part(close-button) {
+  --path-data: var(--close-path-data);
+}
+
+/* Button icon */
+x-titlebar::part(icon) {
+  width: 18px;
+  height: 18px;
+}
+
+/* Label */
+x-titlebar x-label {
+  font-weight: 700;
 }

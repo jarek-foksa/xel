@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.30.0 (PENDING)
+
+- Add `<x-titlebar>` element
+
 ## 0.29.0 (2025-02-02)
 
 - Update Fluent theme to match the latest Windows 11 UI guidelines

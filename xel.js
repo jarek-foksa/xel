@@ -48,6 +48,7 @@ import "./elements/x-tags.js";
 import "./elements/x-tagsinput.js";
 import "./elements/x-texteditor.js";
 import "./elements/x-throbber.js";
+import "./elements/x-titlebar.js";
 import "./elements/x-tooltip.js";
 
 export default Xel;

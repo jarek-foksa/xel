@@ -1377,3 +1377,13 @@ x-throbber[size="large"] {
 x-throbber:not(:defined) {
   display: none;
 }
+
+/*****************************************************************************************************************/
+
+/**
+ * Titlebar
+ */
+
+x-titlebar x-icon + x-label {
+  margin-left: 6px;
+}

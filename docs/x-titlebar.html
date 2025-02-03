@@ -1,0 +1,53 @@
+<article>
+  <section id="intro-section">
+    <h2>Titlebar</h2>
+
+    <p><strong>&lt;x-titlebar&gt;</strong> element contains the window title and basic window manager controls.</p>
+
+    <x-titlebar>
+      <x-label>About</x-label>
+    </x-titlebar>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-titlebar.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-titlebar>
+            <x-label>About</x-label>
+          </x-titlebar>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label and title</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-titlebar>
+            <x-box>
+              <x-icon href="#document"></x-icon>
+              <x-label>Untilted.svg</x-label>
+            </x-box>
+          </x-titlebar>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>
