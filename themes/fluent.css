@@ -226,6 +226,7 @@ x-stepper::part(decrement-button):hover {
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
+  color: color(srgb 0 0 0 / 0.5);
   background-color: color(srgb 0 0 0 / 0.0241);
 }
 

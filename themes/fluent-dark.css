@@ -227,7 +227,8 @@ x-stepper::part(decrement-button):hover {
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
-  background-color: color(srgb 1 1 1/ 0.0326);
+  color: inherit;
+  background-color: color(srgb 1 1 1 / 0.0326);
 }
 
 /* Arrows */
