@@ -718,6 +718,36 @@ dialog::backdrop {
 /*****************************************************************************************************************/
 
 /**
+ * Pager
+ */
+
+x-pager::part(item) {
+  color: var(--text-color);
+  background-color: color(srgb 0 0 0 / 0.08);
+  border-color: transparent;
+  border-radius: 6px;
+}
+x-pager::part(item):hover {
+  background-color: color(srgb 0 0 0 / 0.12);
+}
+x-pager::part(item):active {
+  background-color: color(srgb 0 0 0 / 0.2);
+}
+x-pager::part(item):focus {
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--light-accent-color);
+  outline-offset: -1px;
+}
+x-pager::part(toggled-item),
+x-pager::part(toggled-item):hover {
+  color: color(srgb 1 1 1);
+  background-color: var(--accent-color);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Popover
  */
 

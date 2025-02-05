@@ -31,6 +31,7 @@ import "./elements/x-nav.js";
 import "./elements/x-navitem.js";
 import "./elements/x-notification.js";
 import "./elements/x-numberinput.js";
+import "./elements/x-pager.js";
 import "./elements/x-popover.js";
 import "./elements/x-progressbar.js";
 import "./elements/x-radio.js";

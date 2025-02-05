@@ -25,7 +25,7 @@ class PTSidebarElement extends HTMLElement {
       border-right: 1px solid transparent;
       display: block flex;
       flex-flow: column;
-      min-width: 170px;
+      min-width: 185px;
       max-width: 350px;
     }
     :host([hidden]) {

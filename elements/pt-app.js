@@ -182,6 +182,12 @@ export default class PTAppElement extends HTMLElement {
                 </x-navitem>
               </a>
 
+              <a href="/elements/x-pager">
+                <x-navitem>
+                  <x-label>x-pager</x-label>
+                </x-navitem>
+              </a>
+
               <a href="/elements/x-popover">
                 <x-navitem>
                   <x-label>x-popover</x-label>
