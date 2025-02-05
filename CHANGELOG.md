@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.30.0 (PENDING)
+## 0.30.0 (2025-02-05)
 
 - Add `<x-titlebar>` element
 - Add `<x-pager>` element

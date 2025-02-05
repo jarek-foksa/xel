@@ -41,6 +41,9 @@ export default class XDrawerElement extends HTMLElement {
     :host([hidden]) {
       display: none;
     }
+    :host(:focus) {
+      outline: none;
+    }
 
     :host::backdrop {
       background-color: color(srgb 0 0 0 / 0.25);

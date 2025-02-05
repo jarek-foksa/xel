@@ -361,7 +361,7 @@ export default class PTAppElement extends HTMLElement {
           <div id="header-inner">
             <x-button id="sidebar-button" skin="flat">
               <x-icon href="#menu"></x-icon>
-              <dialog id="sidebar-drawer"></dialog>
+              <x-drawer id="sidebar-drawer"></x-drawer>
             </x-button>
 
             <x-box>
@@ -470,10 +470,7 @@ export default class PTAppElement extends HTMLElement {
      */
 
     #sidebar-drawer {
-      left: 0;
-      right: auto;
       width: fit-content;
-      height: 100%;
       min-width: 0;
       max-width: none;
       overflow: visible;
