@@ -1,6 +1,8 @@
 
 // @copyright
-//   © 2012-2025 Jarosław Foksa
+//   © 2016-2025 Jarosław Foksa
+// @license
+//   MIT License (check LICENSE.md for details)
 
 import Xel from "../classes/xel.js";
 
