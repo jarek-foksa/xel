@@ -493,6 +493,31 @@ export default class XButtonElement extends HTMLElement {
     return result;
   }
 
+  #openDrawer() {
+    return new Promise((resolve) => {
+      if (this.#canOpenDrawer()) {
+        let drawer = this.querySelector(":scope > x-drawer");
+        drawer.open();
+      }
+
+      resolve();
+    });
+  }
+
+  #canOpenDrawer() {
+    let result = false;
+
+    if (this.disabled === false) {
+      let drawer = this.querySelector(":scope > x-drawer");
+
+      if (drawer && drawer.matches(":popover-open") === false && drawer.hasAttribute("closing") === false) {
+        result = true;
+      }
+    }
+
+    return result;
+  }
+
   #openNotification() {
     return new Promise((resolve) => {
       if (this.#canOpenNotification()) {
@@ -549,6 +574,7 @@ export default class XButtonElement extends HTMLElement {
     let openedMenu = this.querySelector(":scope > x-menu[opened]");
     let openedPopover = this.querySelector(":scope > x-popover[opened]");
     let openedDialog = this.querySelector(":scope > dialog[open]");
+    let openedDrawer = this.querySelector(":scope > x-drawer[open]");
     let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
     this.#lastPointerDownEvent = event;
@@ -563,6 +589,9 @@ export default class XButtonElement extends HTMLElement {
       return;
     }
     else if (openedDialog && openedDialog.contains(event.target)) {
+      return;
+    }
+    else if (openedDrawer && openedDrawer.contains(event.target)) {
       return;
     }
     else if (openedNotification && openedNotification.contains(event.target)) {
@@ -618,6 +647,7 @@ export default class XButtonElement extends HTMLElement {
     let openedMenu = this.querySelector(":scope > x-menu[opened]");
     let openedPopover = this.querySelector(":scope > x-popover[opened]");
     let openedDialog = this.querySelector(":scope > dialog[open]");
+    let openedDrawer = this.querySelector(":scope > x-drawer[open]");
     let openedNotification = this.querySelector(":scope > x-notification[opened]");
 
     if (event.target === this["#backdrop"]) {
@@ -632,6 +662,9 @@ export default class XButtonElement extends HTMLElement {
       return;
     }
     else if (openedDialog && openedDialog.contains(event.target)) {
+      return;
+    }
+    else if (openedDrawer && openedDrawer.contains(event.target)) {
       return;
     }
     else if (openedNotification && openedNotification.contains(event.target)) {
@@ -653,7 +686,7 @@ export default class XButtonElement extends HTMLElement {
       return;
     }
 
-    if (this.querySelector(":scope > dialog[open]")) {
+    if (this.querySelector(":scope > dialog[open], :scope > x-drawer[open]")) {
       pointerDownEvent.preventDefault();
       return;
     }
@@ -773,6 +806,9 @@ export default class XButtonElement extends HTMLElement {
       if (this.#canOpenDialog()) {
         this.#openDialog();
       }
+      else if (this.#canOpenDrawer()) {
+        this.#openDrawer();
+      }
       else if (this.#canOpenNotification()) {
         this.#openNotification();
       }
@@ -818,6 +854,10 @@ export default class XButtonElement extends HTMLElement {
         else if (this.#canOpenDialog()) {
           event.preventDefault();
           this.#openDialog();
+        }
+        else if (this.#canOpenDrawer()) {
+          event.preventDefault();
+          this.#openDrawer();
         }
         else if (this.#canOpenNotification()) {
           event.preventDefault();

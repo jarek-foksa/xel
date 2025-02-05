@@ -21,6 +21,7 @@ import "./elements/x-colorinput.js";
 import "./elements/x-colorpicker.js";
 import "./elements/x-colorselect.js";
 import "./elements/x-contextmenu.js";
+import "./elements/x-drawer.js";
 import "./elements/x-icon.js";
 import "./elements/x-input.js";
 import "./elements/x-label.js";

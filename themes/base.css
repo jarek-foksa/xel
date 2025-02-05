@@ -971,11 +971,12 @@ x-contextmenu:not(:defined) {
  */
 
 dialog {
+  overflow: hidden;
   position: fixed;
   min-width: 200px;
   min-height: 100px;
   max-height: none;
-  margin: 0 auto;
+  margin: auto;
   padding: 0;
   box-sizing: border-box;
 }

@@ -71,56 +71,6 @@
     <hr/>
 
     <section>
-      <h4>Left side drawer</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <dialog></dialog>
-          </x-button>
-
-          <style>
-            dialog {
-              width: 300px;
-              height: 100%;
-              left: 0;
-              right: auto;
-              border-radius: 0;
-            }
-          </style>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Right side drawer</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <dialog></dialog>
-          </x-button>
-
-          <style>
-            dialog {
-              width: 300px;
-              height: 100%;
-              right: 0;
-              left: auto;
-              border-radius: 0;
-            }
-          </style>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
       <h4>Do not close when backdrop clicked</h4>
 
       <pt-demoblock>
@@ -168,22 +118,17 @@
 
           <style>
             dialog {
-              width: 30vw;
-              height: 70vh;
-              margin: 0;
-              top: 15vh;
-              left: 0;
-              right: auto;
-              color: white;
+              width: 70vw;
+              height: 30vh;
               background: #009788;
-              border-radius: 0 15px 15px 0;
+              border-radius: 15px;
               opacity: 0.85;
               border: 1px solid #326960;
               padding: 10px 20px;
             }
 
             dialog::backdrop {
-              background: rgba(0, 0, 0, 0);
+              background: rgba(0, 0, 0, 0.3);
             }
           </style>
         </template>

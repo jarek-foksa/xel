@@ -715,8 +715,6 @@ x-menubar > x-menuitem[size="large"] {
  */
 
 dialog {
-  overflow: hidden;
-  margin: auto;
   color: inherit;
   background-color: var(--background-color);
   border-width: 1px;

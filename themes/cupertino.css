@@ -636,19 +636,16 @@ x-menubar {
  */
 
 dialog {
-  top: 0;
-  overflow: hidden;
   color: inherit;
   background-color: var(--background-color);
   border-width: 1px;
   border-style: solid;
   border-color: color(srgb 0.8 0.8 0.8);
-  border-top: none;
-  border-bottom-left-radius: 7px;
-  border-bottom-right-radius: 7px;
+  border-radius: 7px;
   box-shadow: 0px 4px 22px color(srgb 0 0 0 / 0.3);
-  transition-duration: 300ms;
+  transition-duration: 120ms;
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  --transition-type: grow;
 }
 dialog::backdrop {
   background-color: color(srgb 0 0 0 / 0.3);

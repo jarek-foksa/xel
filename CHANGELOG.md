@@ -6,6 +6,8 @@
 - Add `<x-titlebar>` element
 - Add `<x-pager>` element
 - Add `<x-avatar>` element
+- Add `<x-drawer>` element
+- [Changed API] Remove support for manual positioning of `<dialog>` elements
 
 ## 0.29.0 (2025-02-02)
 

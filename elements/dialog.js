@@ -83,39 +83,14 @@ let DialogElementMixin = {
           let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
           let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function");
           let transitionType = computedStyle.getPropertyValue("--transition-type") || "stretch";
-          let dialogRect = this.getBoundingClientRect();
 
-          // Animate from left
-          if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
-            this._showAnimation = this.animate(
-              { transform: [`translateX(-${dialogRect.right}px)`, "translateX(0px)"]},
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
-          // Animate from right
-          else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
-            this._showAnimation = this.animate(
-              { transform: [`translateX(${dialogRect.width}px)`, "translateX(0px)"]},
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
-          // Animate from top
-          else if (getComputedStyle(this).marginTop === "0px" && getComputedStyle(this).marginBottom === "0px") {
-            this._showAnimation = this.animate(
-              { transform: [`translateY(-${dialogRect.bottom}px)`, "translateY(0px)"]},
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
-          // Animate from center
-          else {
-            this._showAnimation = this.animate(
-              {
-                transform: transitionType === "grow" ? [`scale(0.9)`, "scale(1)"] : [`scaleY(0)`, "scaleY(1)"],
-                opacity: ["0", "1"]
-              },
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
+          this._showAnimation = this.animate(
+            {
+              transform: transitionType === "grow" ? [`scale(0.9)`, "scale(1)"] : [`scaleY(0)`, "scaleY(1)"],
+              opacity: ["0", "1"]
+            },
+            { duration: transitionDuration, easing: transitionTimingFunction }
+          );
         }
       }
 
@@ -220,39 +195,14 @@ let DialogElementMixin = {
           let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
           let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function") || "ease";
           let transitionType = computedStyle.getPropertyValue("--transition-type") || "stretch";
-          let dialogRect = this.getBoundingClientRect();
 
-          // Animate to left
-          if (getComputedStyle(this).left === "0px" && getComputedStyle(this).right !== "0px") {
-            this._closeAnimation = this.animate(
-              { transform: ["translateX(0px)", `translateX(-${dialogRect.right}px)`]},
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
-          // Animate to right
-          else if (getComputedStyle(this).right === "0px" && getComputedStyle(this).left !== "0px") {
-            this._closeAnimation = this.animate(
-              { transform: ["translateX(0px)", `translateX(${dialogRect.width}px)`]},
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
-          // Animate to top
-          else if (getComputedStyle(this).marginTop === "0px" && getComputedStyle(this).marginBottom === "0px") {
-            this._closeAnimation = this.animate(
-              { transform: [ "translateY(0px)", `translateY(-${dialogRect.bottom + 50}px)`]},
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
-          // Animate to center
-          else {
-            this._closeAnimation = this.animate(
-              {
-                transform: transitionType === "grow" ? [`scale(1)`, "scale(0.9)"] : [`scaleY(1)`, "scaleY(0)"],
-                opacity: ["1", "0"],
-              },
-              { duration: transitionDuration, easing: transitionTimingFunction }
-            );
-          }
+          this._closeAnimation = this.animate(
+            {
+              transform: transitionType === "grow" ? [`scale(1)`, "scale(0.9)"] : [`scaleY(1)`, "scaleY(0)"],
+              opacity: ["1", "0"],
+            },
+            { duration: transitionDuration, easing: transitionTimingFunction }
+          );
         }
       }
 

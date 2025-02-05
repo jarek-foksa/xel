@@ -754,7 +754,6 @@ x-menubar > x-menuitem:hover {
  */
 
 dialog {
-  margin: auto;
   color: inherit;
   background-color: color(srgb 1 1 1);
   border-width: 0px;
