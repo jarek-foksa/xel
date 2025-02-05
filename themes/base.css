@@ -288,6 +288,46 @@ x-card h3:first-child {
 /*****************************************************************************************************************/
 
 /**
+ * Avatar
+ */
+
+x-avatar[size="small"] {
+  width: 28px;
+  height: 28px;
+}
+x-avatar[size="large"] {
+  width: 54px;
+  height: 54px;
+}
+
+/* Image */
+x-avatar > img {
+  width: 100%;
+  height: 100%;
+  -webkit-user-drag: none;
+}
+
+/* Placeholder icon */
+x-avatar > x-icon {
+  width: 55%;
+  height: 55%;
+}
+
+/* Placeholder text */
+x-avatar > x-label {
+  font-size: 16px;
+  pointer-events: none;
+}
+x-avatar[size="small"] > x-label {
+  font-size: 12px;
+}
+x-avatar[size="large"] > x-label {
+  font-size: 24px;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Accordion
  */
 

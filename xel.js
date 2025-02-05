@@ -10,6 +10,7 @@ import Xel from "./classes/xel.js";
 
 import "./elements/dialog.js";
 import "./elements/x-accordion.js";
+import "./elements/x-avatar.js";
 import "./elements/x-backdrop.js";
 import "./elements/x-box.js";
 import "./elements/x-button.js";

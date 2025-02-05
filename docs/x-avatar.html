@@ -1,0 +1,113 @@
+<article>
+  <section id="intro-section">
+    <h2>Avatar</h2>
+    <p><strong>&lt;x-avatar&gt;</strong> is used to display a user image.</p>
+
+    <x-avatar>
+      <x-icon href="#person"></x-icon>
+    </x-avatar>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-avatar.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+    <section>
+      <h4>Image</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-avatar>
+            <img src="https://boxy-svg.com/box.jpg">
+          </x-avatar>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Placeholder icon</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-avatar>
+            <x-icon href="#person"></x-icon>
+          </x-avatar>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Placeholder initials</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-avatar>
+            <x-label>AB</x-label>
+          </x-avatar>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Custom color</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-avatar style="color: white; background-color: #e16daa;">
+            <x-icon href="#person"></x-icon>
+          </x-avatar>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Size variants</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-box style="gap: 6px;">
+            <x-avatar size="small">
+              <img src="https://boxy-svg.com/box.jpg">
+            </x-avatar>
+
+            <x-avatar size="small">
+              <x-icon href="#person"></x-icon>
+            </x-avatar>
+
+            <x-avatar size="small">
+              <x-label>AB</x-label>
+            </x-avatar>
+
+            <x-avatar size="large">
+              <img src="https://boxy-svg.com/box.jpg">
+            </x-avatar>
+
+            <x-avatar size="large">
+              <x-icon href="#person"></x-icon>
+            </x-avatar>
+
+            <x-avatar size="large">
+              <x-label>AB</x-label>
+            </x-avatar>
+          </x-box>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>

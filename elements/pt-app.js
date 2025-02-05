@@ -62,6 +62,12 @@ export default class PTAppElement extends HTMLElement {
                 </x-navitem>
               </a>
 
+              <a href="/elements/x-avatar">
+                <x-navitem>
+                  <x-label>x-avatar</x-label>
+                </x-navitem>
+              </a>
+
               <a href="/elements/x-box">
                 <x-navitem>
                   <x-label>x-box</x-label>

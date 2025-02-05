@@ -5,6 +5,7 @@
 
 - Add `<x-titlebar>` element
 - Add `<x-pager>` element
+- Add `<x-avatar>` element
 
 ## 0.29.0 (2025-02-02)
 
