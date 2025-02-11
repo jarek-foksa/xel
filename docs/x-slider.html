@@ -43,18 +43,6 @@
     <hr/>
 
     <section>
-      <h4>Buffer</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-slider value="50" buffer="50 65"></x-slider>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
       <h4>Custom step</h4>
 
       <pt-demoblock>
@@ -79,11 +67,11 @@
     <hr/>
 
     <section>
-      <h4>Vertical</h4>
+      <h4>Range with custom step</h4>
 
       <pt-demoblock>
         <template>
-          <x-slider vertical></x-slider>
+          <x-slider value="20 80" step="5"></x-slider>
         </template>
       </pt-demoblock>
     </section>
@@ -103,15 +91,13 @@
     <hr/>
 
     <section>
-      <h4>Labels</h4>
+      <h4>Size variants</h4>
 
       <pt-demoblock>
         <template>
-          <x-slider min="0" max="100" value="100">
-            <x-label value="0">Small</x-label>
-            <x-label value="50"></x-label>
-            <x-label value="100">Large</x-label>
-          </x-slider>
+          <x-slider value="10" size="small"></x-slider>
+          <x-slider value="10" style="margin: 20px 0;"></x-slider>
+          <x-slider value="10" size="large"></x-slider>
         </template>
       </pt-demoblock>
     </section>
@@ -127,6 +113,16 @@
 
       <pt-demoblock>
         <template>
+          <style>
+            x-slider {
+              flex: 1;
+            }
+            x-numberinput {
+              margin-left: 12px;
+              width: 70px;
+            }
+          </style>
+
           <script>
             let input = document.querySelector("x-numberinput");
             let slider = document.querySelector("x-slider");
@@ -135,50 +131,12 @@
             input.addEventListener("change", () => slider.value = input.value);
           </script>
 
-          <style>
-            x-icon {
-              width: 22px;
-              height: 22px;
-            }
-            x-slider {
-              margin: 0 10px;
-              flex: 1;
-            }
-            x-numberinput {
-              margin-left: 8px;
-              min-width: 50px;
-              text-align: center;
-            }
-          </style>
-
           <x-box>
-            <x-icon href="#visibility-hidden"></x-icon>
             <x-slider min="0" max="100" value="100"></x-slider>
-            <x-icon href="#visibility-visible"></x-icon>
-            <x-numberinput value="100" min="0" max="100" suffix="%" condensed></x-numberinput>
+            <x-numberinput value="100" min="0" max="100" suffix="%">
+              <x-stepper></x-stepper>
+            </x-numberinput>
           </x-box>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Temperature range slider</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-slider min="0" max="40" step="5" value="10 25" vertical>
-            <x-label value="0">0° C</x-label>
-            <x-label value="5">5° C</x-label>
-            <x-label value="10">10° C</x-label>
-            <x-label value="15">15° C</x-label>
-            <x-label value="20">20° C</x-label>
-            <x-label value="25">25° C</x-label>
-            <x-label value="30">30° C</x-label>
-            <x-label value="35">35° C</x-label>
-            <x-label value="40">40° C</x-label>
-          </x-slider>
         </template>
       </pt-demoblock>
     </section>

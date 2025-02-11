@@ -1,6 +1,15 @@
 
 # CHANGELOG
 
+## 0.31.0 (PENDING)
+
+- Material and Material Dark themes
+- Add `position` property to `<x-drawer>`
+- Add `maximized` property to `<x-titlebar>`
+- [Fixed] Scroll offset is not preserved when reloading the demo website
+- [Changed API] Remove `vertical` property from `<x-slider>`
+- [Changed API] Remove `buffer` property from `<x-slider>`
+
 ## 0.30.0 (2025-02-05)
 
 - Add `<x-titlebar>` element

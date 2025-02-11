@@ -54,7 +54,12 @@ export default class XColorSelectElement extends HTMLElement {
     }
 
     #popover {
+      overflow: visible;
       --align: left;
+    }
+
+    #popover main {
+      overflow: visible;
     }
   `
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

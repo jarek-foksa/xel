@@ -32,6 +32,19 @@ export default class XDrawerElement extends HTMLElement {
       transition-duration: 200ms;
       transition-timing-function: linear;
     }
+    :host([position="right"]) {
+      right: 0px;
+    }
+    :host([position="top"]) {
+      top: 0px;
+      width: 100%;
+      height: 300px;
+    }
+    :host([position="bottom"]) {
+      bottom: 0px;
+      width: 100%;
+      height: 300px;
+    }
     :host([popover]) {
       display: block;
     }
@@ -58,6 +71,19 @@ export default class XDrawerElement extends HTMLElement {
 
   // @property
   // @attribute
+  // @type "left" || "right" || "top" || "bottom"
+  // @default "left"
+  //
+  // Position of the drawer on the screen.
+  get position() {
+    return this.hasAttribute("position") ? this.getAttribute("position") : "left";
+  }
+  set position(position) {
+    this.setAttribute("position", position);
+  }
+
+  // @property
+  // @attribute
   // @type boolean
   // @default false
   //
@@ -70,7 +96,6 @@ export default class XDrawerElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #position = "left";
   #openAnimation;
   #closeAnimation;
   #windowClickListener;
@@ -114,45 +139,32 @@ export default class XDrawerElement extends HTMLElement {
 
       this.setAttribute("popover", "manual");
       this.setAttribute("tabindex", "0");
+      this.setAttribute("position", this.position);
 
       let computedStyle = getComputedStyle(this);
       let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
       let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function");
       let drawerRect = this.getBoundingClientRect();
-      let {left, right, top, bottom} = computedStyle;
 
-      if (right === "0px" && left !== "0px") {
-        this.#position = "right";
-      }
-      else if (top === "0px" && bottom !== "0px") {
-        this.#position = "top";
-      }
-      else if (bottom === "0px" && top !== "0px") {
-        this.#position = "bottom";
-      }
-      else {
-        this.#position = "left";
-      }
-
-      if (this.#position === "left") {
+      if (this.position === "left") {
         this.#openAnimation = this.animate(
           { transform: [`translateX(-${drawerRect.right}px)`, "translateX(0px)"]},
           { duration: transitionDuration, easing: transitionTimingFunction }
         );
       }
-      else if (this.#position === "right") {
+      else if (this.position === "right") {
         this.#openAnimation = this.animate(
           { transform: [`translateX(${drawerRect.width}px)`, "translateX(0px)"]},
           { duration: transitionDuration, easing: transitionTimingFunction }
         );
       }
-      else if (this.#position === "top") {
+      else if (this.position === "top") {
         this.#openAnimation = this.animate(
           { transform: [`translateY(-${drawerRect.bottom}px)`, "translateY(0px)"]},
           { duration: transitionDuration, easing: transitionTimingFunction }
         );
       }
-      else if (this.#position === "bottom") {
+      else if (this.position === "bottom") {
         this.#openAnimation = this.animate(
           { transform: [`translateY(${drawerRect.height}px)`, "translateY(0px)"]},
           { duration: transitionDuration, easing: transitionTimingFunction }
@@ -194,25 +206,25 @@ export default class XDrawerElement extends HTMLElement {
       let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function") || "ease";
       let drawerRect = this.getBoundingClientRect();
 
-      if (this.#position === "left") {
+      if (this.position === "left") {
         this.#closeAnimation = this.animate(
           { transform: ["translateX(0px)", `translateX(-${drawerRect.right}px)`]},
           { duration: transitionDuration, easing: transitionTimingFunction }
         );
       }
-      else if (this.#position === "right") {
+      else if (this.position === "right") {
         this.#closeAnimation = this.animate(
           { transform: ["translateX(0px)", `translateX(${drawerRect.width}px)`]},
           { duration: transitionDuration, easing: transitionTimingFunction }
         );
       }
-      else if (this.#position === "top") {
+      else if (this.position === "top") {
         this.#closeAnimation = this.animate(
           { transform: [ "translateY(0px)", `translateY(-${drawerRect.bottom + 50}px)`]},
           { duration: transitionDuration, easing: transitionTimingFunction }
         );
       }
-      else if (this.#position === "bottom") {
+      else if (this.position === "bottom") {
         this.#closeAnimation = this.animate(
           { transform: ["translateY(0px)", `translateY(${drawerRect.height}px)`]},
           { duration: transitionDuration, easing: transitionTimingFunction }

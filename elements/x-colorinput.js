@@ -49,7 +49,6 @@ export default class XColorInputElement extends HTMLElement {
       height: 32px;
       padding: 0 2px 0 8px;
       box-sizing: border-box;
-      background: white;
       font-size: 14px;
     }
     :host([size="small"]) {
@@ -108,10 +107,6 @@ export default class XColorInputElement extends HTMLElement {
     :host(:not(:focus)) ::selection {
       color: inherit;
       background: transparent;
-    }
-    :host([error]) ::selection {
-      color: white;
-      background-color: #d50000;
     }
 
     /**

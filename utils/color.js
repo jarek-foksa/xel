@@ -14,6 +14,7 @@ import serializeColor from "../node_modules/colorjs.io/src/serialize.js";
 import {normalize, toPrecision} from "../utils/math.js";
 
 import a98rgb from "../node_modules/colorjs.io/src/spaces/a98rgb.js";
+import hct from "../node_modules/colorjs.io/src/spaces/hct.js";
 import hsl from "../node_modules/colorjs.io/src/spaces/hsl.js";
 import hsluv from "../node_modules/colorjs.io/src/spaces/hsluv.js";
 import hsv from "../node_modules/colorjs.io/src/spaces/hsv.js";
@@ -36,6 +37,7 @@ import xyzabsd65 from "../node_modules/colorjs.io/src/spaces/xyz-abs-d65.js";
 let {isNaN} = Number;
 
 ColorSpace.register(a98rgb);
+ColorSpace.register(hct);
 ColorSpace.register(hsl);
 ColorSpace.register(hsluv);
 ColorSpace.register(hsv);
@@ -54,6 +56,113 @@ ColorSpace.register(srgbLinear);
 ColorSpace.register(xyzd50);
 ColorSpace.register(xyzd65);
 ColorSpace.register(xyzabsd65);
+
+// @src: https://github.com/material-components/material-components-android/blob/master/docs/theming/Color.md
+const MATERIAL_COLORS = [
+  // Color name                  Light [palette, tone]   Dark [palette, tone]
+  ["primary",                    ["primary",        40], ["primary",        80]],
+  ["on-primary",                 ["greyscale",     100], ["primary",        20]],
+  ["primary-container",          ["primary",        90], ["primary",        30]],
+  ["on-primary-container",       ["primary",        10], ["primary",        90]],
+  ["primary-inverse",            ["primary",        80], ["primary",        40]],
+  ["primary-fixed",              ["primary",        90], ["primary",        90]],
+  ["primary-fixed-dim",          ["primary",        80], ["primary",        80]],
+  ["on-primary-fixed",           ["primary",        10], ["primary",        10]],
+  ["on-primary-fixed-variant",   ["primary",        30], ["primary",        30]],
+  ["secondary",                  ["secondary",      40], ["secondary",      80]],
+  ["on-secondary",               ["greyscale",     100], ["secondary",      20]],
+  ["secondary-container",        ["secondary",      90], ["secondary",      30]],
+  ["on-secondary-container",     ["secondary",      10], ["secondary",      90]],
+  ["secondary-fixed",            ["secondary",      90], ["secondary",      90]],
+  ["secondary-fixed-dim",        ["secondary",      80], ["secondary",      80]],
+  ["on-secondary-fixed",         ["secondary",      10], ["secondary",      10]],
+  ["on-secondary-fixed-variant", ["secondary",      30], ["secondary",      30]],
+  ["tertiary",                   ["tertiary",       40], ["tertiary",       80]],
+  ["on-tertiary",                ["greyscale",     100], ["tertiary",       20]],
+  ["tertiary-container",         ["tertiary",       90], ["tertiary",       30]],
+  ["on-tertiary-container",      ["tertiary",       10], ["tertiary",       90]],
+  ["tertiary-fixed",             ["tertiary",       90], ["tertiary",       90]],
+  ["tertiary-fixed-dim",         ["tertiary",       80], ["tertiary",       80]],
+  ["on-tertiary-fixed",          ["tertiary",       10], ["tertiary",       10]],
+  ["on-tertiary-fixed-variant",  ["tertiary",       30], ["tertiary",       30]],
+  ["error",                      ["error",          40], ["error",          80]],
+  ["on-error",                   ["greyscale",     100], ["error",          20]],
+  ["error-container",            ["error",          90], ["error",          30]],
+  ["on-error-container",         ["error",          10], ["error",          90]],
+  ["outline",                    ["neutralVariant", 50], ["neutralVariant", 60]],
+  ["outline-variant",            ["neutralVariant", 80], ["neutralVariant", 30]],
+  ["background",                 ["neutral",        98], ["neutral",         6]],
+  ["on-background",              ["neutral",        10], ["neutral",        90]],
+  ["surface",                    ["neutral",        98], ["neutral",         6]],
+  ["on-surface",                 ["neutral",        10], ["neutral",        90]],
+  ["surface-variant",            ["neutralVariant", 90], ["neutralVariant", 30]],
+  ["on-surface-variant",         ["neutralVariant", 30], ["neutralVariant", 80]],
+  ["surface-inverse",            ["neutral",        20], ["neutral",        90]],
+  ["on-surface-inverse",         ["neutral",        95], ["neutral",        20]],
+  ["surface-bright",             ["neutral",        98], ["neutral",        24]],
+  ["surface-dim",                ["neutral",        87], ["neutral",         6]],
+  ["surface-container",          ["neutral",        94], ["neutral",        12]],
+  ["surface-container-low",      ["neutral",        96], ["neutral",        10]],
+  ["surface-container-lowest",   ["greyscale",     100], ["neutral",         4]],
+  ["surface-container-high",     ["neutral",        92], ["neutral",        17]],
+  ["surface-container-highest",  ["neutral",        90], ["neutral",        22]],
+  ["scrim",                      ["greyscale",       0], ["greyscale",        0]],
+];
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// @doc
+//   https://medium.com/@iam_riyas/f490ef2fdee5
+//   https://m3.material.io/styles/color/system/how-the-system-works
+//   https://material-foundation.github.io/material-theme-builder/
+// @type
+//   (string, boolean) => Object
+export let getMaterialCSSColorVariables = (serializedAccentColor, dark = false) => {
+  let accentColor = convertColor(parseColor(serializedAccentColor), "hct");
+  let materialColors = {};
+
+  for (let colorDesc of MATERIAL_COLORS) {
+    let [palette, tone] = dark ? colorDesc[2] : colorDesc[1];
+    let [h, c, t] = accentColor.coords;
+
+    if (palette === "primary") {
+      c = Math.max(48, c);
+      t = tone;
+    }
+    else if (palette === "secondary") {
+      c = 16;
+      t = tone;
+    }
+    else if (palette === "tertiary") {
+      h += 60;
+      c = 24;
+      t = tone;
+    }
+    else if (palette === "neutral") {
+      c = 4;
+      t = tone;
+    }
+    else if (palette === "neutralVariant") {
+      c = 8;
+      t = tone;
+    }
+    else if (palette === "error") {
+      h = 25;
+      c = 84;
+      t = tone;
+    }
+    else if (palette === "greyscale") {
+      h = 0;
+      c = 0;
+      t = tone;
+    }
+
+    let color = convertColor({space: "hct", coords: [h, c, t]}, "oklch");
+    materialColors[`--material-${colorDesc[0]}-color`] = serializeColor(color, "oklch");
+  }
+
+  return materialColors;
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -337,131 +446,6 @@ let normalizeColorSpaceName = (space, format = "css") => {
   return space;
 };
 
-// @src http://goo.gl/J9ra3
-// @type (number, number, number) => [number, number, number]
-//
-// Perform fast conversion from HSV to RGB color model.
-// All numbers are in 0-1 range.
-let hsvToRgb = (h, s, v) => {
-  let i = Math.floor(h * 6);
-  let f = (h * 6) - i;
-  let p = v * (1 - s);
-  let q = v * (1 - (f * s));
-  let t = v * (1 - (1 - f) * s);
-
-  let r = 0;
-  let g = 0;
-  let b = 0;
-
-  if (i % 6 === 0) {
-    r = v;
-    g = t;
-    b = p;
-  }
-  else if (i % 6 === 1) {
-    r = q;
-    g = v;
-    b = p;
-  }
-  else if (i % 6 === 2) {
-    r = p;
-    g = v;
-    b = t;
-  }
-  else if (i % 6 === 3) {
-    r = p;
-    g = q;
-    b = v;
-  }
-  else if (i % 6 === 4) {
-    r = t;
-    g = p;
-    b = v;
-  }
-  else if (i % 6 === 5) {
-    r = v;
-    g = p;
-    b = q;
-  }
-
-  return [r, g, b];
-};
-
-// @src https://drafts.csswg.org/css-color/#hwb-to-rgb
-// @type (number, number, number) => [number, number, number]
-//
-// Perform fast conversion from HWB to RGB color model.
-// All numbers are in 0-1 range.
-let hwbToRgb = (hue, white, black) => {
-    if (white + black >= 1) {
-      let gray = white / (white + black);
-      return [gray, gray, gray];
-    }
-
-    let rgb = hslToRgb(hue, 1, 0.5);
-
-    for (let i = 0; i < 3; i++) {
-      rgb[i] *= (1 - white - black);
-      rgb[i] += white;
-    }
-
-    return rgb;
-};
-
-// @src http://goo.gl/J9ra3
-// @type (number, number, number) => [number, number, number]
-//
-// Perform fast conversion from HSL to RGB color model.
-// All numbers are in 0-1 range.
-let hslToRgb = (h, s, l) => {
-  let r;
-  let g;
-  let b;
-
-  if (s === 0) {
-    r = g = b = l;
-  }
-  else {
-    let hue2rgb = (p, q, t) => {
-      if (t < 0) {
-        t += 1;
-      }
-      if (t > 1) {
-        t -= 1;
-      }
-      if (t < 1/6) {
-        return p + (q - p) * 6 * t;
-      }
-      if (t < 1/2) {
-        return q;
-      }
-      if (t < 2/3) {
-        return p + (q - p) * (2/3 - t) * 6;
-      }
-
-      return p;
-    };
-
-    let q;
-    let p;
-
-    if (l < 0.5) {
-      q = l * (1 + s);
-    }
-    else {
-      q = l + s - l * s;
-    }
-
-    p = 2 * l - q;
-
-    r = hue2rgb(p, q, h + 1/3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1/3);
-  }
-
-  return [r, g, b];
-};
-
 // @type (string) => boolean
 //
 // Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
@@ -485,9 +469,6 @@ export {
   serializeColor,
   prettySerializeColor,
   normalizeColorSpaceName,
-  hsvToRgb,
-  hwbToRgb,
-  hslToRgb,
   isColorInGamut,
   isValidColorString
 };

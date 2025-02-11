@@ -39,7 +39,6 @@ export default class XInputElement extends HTMLElement {
       max-width: 160px;
       height: 32px;
       box-sizing: border-box;
-      background: white;
       font-size: 12.5px;
     }
     :host(:focus) {
@@ -62,10 +61,6 @@ export default class XInputElement extends HTMLElement {
     ::selection {
       color: var(--selection-color);
       background-color: var(--selection-background-color);
-    }
-    :host([error]) ::selection {
-      color: white;
-      background-color: #d50000;
     }
 
     #main {

@@ -21,6 +21,11 @@ export default class PTSettingsElement extends HTMLElement {
               <x-label>Fluent</x-label>
             </x-menuitem>
 
+            <x-menuitem value="material">
+              <x-icon href="/icons/portal.svg#material"></x-icon>
+              <x-label>Material</x-label>
+            </x-menuitem>
+
             <x-menuitem value="cupertino">
               <x-icon href="/icons/portal.svg#cupertino"></x-icon>
               <x-label>Cupertino</x-label>
@@ -36,6 +41,11 @@ export default class PTSettingsElement extends HTMLElement {
             <x-menuitem value="fluent-dark">
               <x-icon href="/icons/portal.svg#fluent"></x-icon>
               <x-label>Fluent Dark</x-label>
+            </x-menuitem>
+
+            <x-menuitem value="material-dark">
+              <x-icon href="/icons/portal.svg#material"></x-icon>
+              <x-label>Material Dark</x-label>
             </x-menuitem>
 
             <x-menuitem value="cupertino-dark">

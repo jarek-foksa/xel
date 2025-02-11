@@ -8,7 +8,22 @@
 
     <x-button>
       <x-label>Open dialog</x-label>
-      <dialog></dialog>
+      <dialog>
+        <main>
+          <h3>Sample dialog</h3>
+          <p>Lorem ipsum dolor sit amet.</p>
+        </main>
+
+        <footer>
+          <x-button>
+            <x-label>Cancel</x-label>
+          </x-button>
+
+          <x-button autofocus toggled>
+            <x-label>OK</x-label>
+          </x-button>
+        </footer>
+      </dialog>
     </x-button>
 
   </section>
@@ -48,7 +63,7 @@
           <x-button>
             <x-label>Open</x-label>
 
-            <dialog>
+            <dialog style="max-width: 500px;">
               <main>
                 <h3>Use Google's location service?</h3>
                 <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
@@ -82,7 +97,7 @@
                 <p>This dialog can't be closed by clicking the backdrop, you must click the "Close" button.</p>
               </main>
               <footer>
-                <x-button id="close-button">
+                <x-button id="close-button" toggled>
                   <x-label>Close</x-label>
                 </x-button>
               </footer>

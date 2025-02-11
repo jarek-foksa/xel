@@ -26,7 +26,19 @@
 
       <pt-demoblock>
         <template>
-          <x-numberinput>
+          <x-numberinput value="0"></x-numberinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Stepper</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-numberinput value="0">
             <x-stepper></x-stepper>
           </x-numberinput>
         </template>
@@ -112,6 +124,31 @@
       <pt-demoblock>
         <template>
           <x-numberinput value="0" disabled>
+            <x-stepper></x-stepper>
+          </x-numberinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Size variants</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-numberinput size="small">
+            <x-label>Small</x-label>
+            <x-stepper></x-stepper>
+          </x-numberinput>
+
+          <x-numberinput style="margin: 10px 0;">
+            <x-label>Normal</x-label>
+            <x-stepper></x-stepper>
+          </x-numberinput>
+
+          <x-numberinput size="large">
+            <x-label>Large</x-label>
             <x-stepper></x-stepper>
           </x-numberinput>
         </template>

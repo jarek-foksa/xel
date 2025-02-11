@@ -53,6 +53,7 @@ body {
   --clear-path-data: M 50 55.57 L 25.59 79.97 C 24.82 80.75 23.87 81.14 22.8 81.14 C 21.71 81.14 20.78 80.75 20.07 79.97 C 19.3 79.19 18.91 78.34 18.91 77.18 C 18.91 76.16 19.3 75.23 20.07 74.45 L 44.48 50.05 L 20.07 25.56 C 19.3 24.78 18.91 23.85 18.91 22.76 C 18.91 22.23 18.98 21.76 19.21 21.28 C 19.45 20.82 19.69 20.36 20.07 20.04 C 20.39 19.65 20.85 19.41 21.32 19.26 C 21.79 19.02 22.26 18.87 22.8 18.87 C 23.87 18.87 24.82 19.26 25.59 20.04 L 50 44.53 L 74.49 20.04 C 75.27 19.26 76.13 18.87 77.2 18.87 C 78.29 18.87 79.22 19.26 80 20.04 C 80.79 20.82 81.09 21.76 81.09 22.83 C 81.09 23.92 80.79 24.78 80 25.56 L 55.52 50.05 L 80 74.45 C 80.79 75.23 81.09 76.16 81.09 77.25 C 81.09 77.78 81.02 78.34 80.79 78.8 C 80.62 79.27 80.31 79.65 79.93 80.04 C 79.61 80.36 79.22 80.66 78.68 80.83 C 78.29 81.05 77.74 81.14 77.2 81.14 C 76.13 81.14 75.27 80.75 74.49 79.97 L 50 55.57 Z;
   --minimize-path-data: M 15 46 L 85 46 L 85 54 L 15 54 L 15 46 Z;
   --maximize-path-data: M 27 16 L 74 16 C 79 16 85 21 85 27 L 85 73 C 85 79 79 85 74 85 L 27 85 C 21 85 16 79 16 73 L 16 27 C 16 21 21 16 27 16 Z M 27 24 C 25 24 24 25 24 27 L 24 73 C 24 76 25 77 27 77 L 74 77 C 76 77 77 76 77 73 L 77 27 C 77 25 76 24 74 24 L 27 24 Z;
+  --restore-path-data: M 27 32 L 58 32 C 63 32 69 37 69 43 L 69 73 C 69 79 63 85 58 85 L 27 85 C 21 85 16 79 16 73 L 16 43 C 16 37 21 32 27 32 Z M 27 40 C 25 40 24 41 24 43 L 24 73 C 24 76 25 77 27 77 L 58 77 C 60 77 61 76 61 73 L 61 43 C 61 41 60 40 58 40 Z M 80 64.83 C 80 68.15 77.43 70.88 74.15 71.14 L 74.15 35.63 C 74.15 31.33 68.67 25.85 64.37 25.85 L 28.86 25.85 C 29.12 22.57 31.85 20 35.17 20 L 66.8 20 C 72.98 20 80 27.02 80 33.2 Z;
 }
 
 h2 {
@@ -1032,8 +1033,8 @@ x-switch[disabled] {
 
 /* Indicator */
 x-switch::part(indicator) {
-  width: 40px;
-  height: 18px;
+  width: 34px;
+  height: 15px;
 }
 
 /* Indicator thumb */
@@ -1185,14 +1186,6 @@ x-slider::part(groove-track) {
   border-radius: 99px;
 }
 
-/* Buffer track */
-x-slider::part(buffer-track) {
-  background-color: color(srgb 1 1 1 / 0.4);
-}
-x-slider[disabled]::part(buffer-track) {
-  display: none;
-}
-
 /* Range track */
 x-slider::part(range-track) {
   background-color: var(--accent-color);
@@ -1223,6 +1216,11 @@ x-slider::part(thumb):focus {
   outline-color: color(srgb 1 1 1);
 }
 
+/* Stops */
+x-slider::part(stop) {
+  background-color: color(srgb 1 1 1 / 0.5442);
+}
+
 /*****************************************************************************************************************/
 
 /**
@@ -1241,6 +1239,10 @@ x-input:hover {
 }
 x-input:focus {
   background-color: color(srgb 1 1 1 / 0);
+}
+x-input[error] {
+  --selection-color: white;
+  --selection-background-color: var(--error-color);
 }
 
 /* Focus/error indicator */
@@ -1269,15 +1271,6 @@ x-input[disabled]::before {
 x-input > x-label {
   color: color(srgb 1 1 1 / 0.4);
 }
-x-input > x-icon + x-label {
-  padding: 2px 5px 0px 29px;
-}
-x-input[size="small"] > x-icon + x-label {
-  padding: 2px 5px 0px 29px;
-}
-x-input[size="large"] > x-icon + x-label {
-  padding: 2px 5px 0px 33px;
-}
 
 /*****************************************************************************************************************/
 
@@ -1298,6 +1291,10 @@ x-numberinput:hover {
 }
 x-numberinput:focus {
   background-color: color(srgb 1 1 1 / 0);
+}
+x-numberinput[error] {
+  --selection-color: white;
+  --selection-background-color: var(--error-color);
 }
 
 /* Focus/error indicator */
@@ -1344,6 +1341,12 @@ x-numberinput:not(:focus) > x-stepper {
   background-color: transparent;
   border-width: 0;
   pointer-events: none;
+}
+x-numberinput[size="small"]:not(:focus) > x-stepper {
+  transform: scale(0.6);
+}
+x-numberinput[size="large"]:not(:focus) > x-stepper {
+  transform: scale(0.9);
 }
 x-numberinput:not(:focus) > x-stepper::part(increment-button),
 x-numberinput:not(:focus) > x-stepper::part(decrement-button) {
@@ -1555,6 +1558,9 @@ x-titlebar::part(minimize-button) {
 }
 x-titlebar::part(maximize-button) {
   --path-data: var(--maximize-path-data);
+}
+x-titlebar[maximized]::part(maximize-button) {
+  --path-data: var(--restore-path-data);
 }
 x-titlebar::part(close-button) {
   --path-data: var(--clear-path-data);

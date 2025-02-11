@@ -8,6 +8,7 @@ import DOMPurify from "../node_modules/dompurify/dist/purify.es.mjs";
 import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
+import {getMaterialCSSColorVariables} from "../utils/color.js"
 import {getIcons} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
@@ -590,6 +591,15 @@ export default new class Xel extends EventEmitter {
 
     let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
     rule.style.setProperty("--accent-color", serializedColor);
+
+    // Set "--material-<colorName>" CSS properties on <body> element
+    if (this.theme.includes("material")) {
+      let materialColors = getMaterialCSSColorVariables(serializedColor, this.theme.endsWith("-dark.css"));
+
+      for (let [propertyName, value] of Object.entries(materialColors)) {
+        rule.style.setProperty(propertyName, value);
+      }
+    }
   }
 
   #getSettings() {

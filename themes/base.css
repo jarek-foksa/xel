@@ -989,14 +989,14 @@ dialog:not(:defined) {
 
 /* Main */
 dialog > main {
-  padding: 20px 24px 0px;
+  padding: 20px 24px;
   font-size: 13px;
   line-height: 1.6;
 }
 
 /* Footer */
 dialog > footer {
-  padding: 12px;
+  padding: 12px 24px;
   display: flex;
   flex-flow: row;
   justify-content: flex-end;
@@ -1004,7 +1004,7 @@ dialog > footer {
 }
 
 /* Footer button */
-dialog > footer x-button {
+dialog > footer x-button + x-button {
   margin-left: 8px;
 }
 
@@ -1223,6 +1223,12 @@ x-input > x-icon {
   min-width: 15px;
   margin: 0 0 0 8px;
 }
+x-input[size="small"] > x-icon {
+  transform: scale(0.8);
+}
+x-input[size="large"] > x-icon {
+  transform: scale(1.1);
+}
 x-input > x-icon:hover {
   cursor: default;
 }
@@ -1247,15 +1253,7 @@ x-input[empty] > x-label {
   display: block;
 }
 x-input > x-icon + x-label {
-  padding: 0 5px 0 32px;
-}
-
-/* Error message */
-x-input[size="small"][error]::before {
-  top: 27px;
-}
-x-input[size="large"][error]::before {
-  top: 41px;
+  padding: 0 5px 0 29px;
 }
 
 /*****************************************************************************************************************/
@@ -1344,35 +1342,8 @@ x-texteditor[empty] > x-label {
  * Slider
  */
 
-x-slider[size="small"]::part(thumb) {
-  width: 17px;
-  height: 17px;
-}
-x-slider[size="large"]::part(thumb) {
-  width: 23px;
-  height: 23px;
-}
 x-slider:not(:defined) {
   display: none;
-}
-
-/* Track */
-x-slider:not([vertical])[size="small"]::part(track) {
-  height: 2px;
-}
-x-slider[vertical][size="small"]::part(track) {
-  width: 2px;
-}
-x-slider:not([vertical])[size="large"]::part(track) {
-  height: 6px;
-}
-x-slider[vertical][size="large"]::part(track) {
-  width: 6px;
-}
-
-/* Label */
-x-slider > x-label {
-  font-size: 11px;
 }
 
 /*****************************************************************************************************************/

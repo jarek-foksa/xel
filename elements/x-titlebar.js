@@ -75,6 +75,21 @@ class XTitlebarElement extends HTMLElement {
     }
   `;
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether the window is maximized.
+  get maximized() {
+    return this.hasAttribute("maximized");
+  }
+  set maximized(maximized) {
+    maximized ? this.setAttribute("maximized", "") : this.removeAttribute("maximized");
+  }
+
   #shadowRoot;
   #xelThemeChangeListener;
 

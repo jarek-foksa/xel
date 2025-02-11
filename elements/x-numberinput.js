@@ -84,7 +84,6 @@ export default class XNumberInputElement extends HTMLElement {
 
     #editor {
       width: 100%;
-      overflow: auto;
       color: inherit;
       background: none;
       border: none;
@@ -114,7 +113,7 @@ export default class XNumberInputElement extends HTMLElement {
     :host([empty]) #editor::after,
     :host(:focus) #editor::before,
     :host(:focus) #editor::after {
-      content: "";
+      display: none;
     }
   `
 

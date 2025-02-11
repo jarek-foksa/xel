@@ -479,6 +479,7 @@ x-tagsinput:focus-within {
 x-tagsinput[error] {
   border-color: var(--error-color);
   box-shadow: 0 0 0px 3px color(srgb 1 0 0 / 0.49);
+  --selection-background-color: oklch(from var(--error-color) l c h / 0.3);
 }
 
 /* Placeholder */
@@ -654,6 +655,11 @@ dialog::backdrop {
 /* Heading */
 dialog h3 {
   color: color(srgb 0 0 0 / 0.95);
+}
+
+/* Footer */
+dialog > footer {
+  padding-top: 0;
 }
 
 /*****************************************************************************************************************/
@@ -903,12 +909,6 @@ x-slider::part(groove-track) {
   border-radius: 5px;
 }
 
-/* Buffer track */
-x-slider::part(buffer-track) {
-  background-color: color(srgb 0 0 0 / 0.4);
-  border-radius: 5px;
-}
-
 /* Range track */
 x-slider::part(range-track) {
   background-color: var(--accent-color);
@@ -927,6 +927,11 @@ x-slider[dragging="end"]::part(end-thumb) {
 x-slider::part(thumb):focus {
   border-color: var(--accent-color);
   box-shadow: 0 0 0px 3px var(--lighter-accent-color);
+}
+
+/* Stops */
+x-slider::part(stop) {
+  background-color: color(srgb 0 0 0 / 0.5);
 }
 
 /*****************************************************************************************************************/
@@ -952,6 +957,7 @@ x-input[error] {
   outline-width: 3px;
   outline-style: solid;
   outline-color: color(srgb 1 0 0 / 0.49);
+  --selection-background-color: oklch(from var(--error-color) l c h / 0.3);
 }
 
 /* Icon */
@@ -964,13 +970,7 @@ x-input > x-label {
   color: color(srgb 0 0 0 / 0.4);
 }
 x-input > x-icon + x-label {
-  padding: 2px 5px 0px 29px;
-}
-x-input[size="small"] > x-icon + x-label {
-  padding: 2px 5px 0px 29px;
-}
-x-input[size="large"] > x-icon + x-label {
-  padding: 2px 5px 0px 33px;
+  padding-top: 1px;
 }
 
 /*****************************************************************************************************************/
@@ -996,6 +996,7 @@ x-numberinput[error] {
   outline-width: 3px;
   outline-style: solid;
   outline-color: color(srgb 1 0 0 / 0.49);
+  --selection-background-color: oklch(from var(--error-color) l c h / 0.3);
 }
 
 /* Placeholder */
@@ -1031,6 +1032,7 @@ x-texteditor[error] {
   outline-width: 3px;
   outline-style: solid;
   outline-color: color(srgb 1 0 0 / 0.49);
+  --selection-background-color: oklch(from var(--error-color) l c h / 0.3);
 }
 
 /* Placeholder */
@@ -1061,6 +1063,7 @@ x-colorinput[error] {
   outline-width: 3px;
   outline-style: solid;
   outline-color: color(srgb 1 0 0 / 0.49);
+  --selection-background-color: oklch(from var(--error-color) l c h / 0.3);
 }
 
 /* Arrow */

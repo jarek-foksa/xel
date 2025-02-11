@@ -406,6 +406,9 @@ export default class PTAppElement extends HTMLElement {
      */
 
     #header {
+      position: sticky;
+      top: 0;
+      z-index: 1;
       background-color: var(--foreground-color);
       border-bottom-width: 1px;
       border-bottom-style: solid;
@@ -473,10 +476,6 @@ export default class PTAppElement extends HTMLElement {
       width: fit-content;
       min-width: 0;
       max-width: none;
-      overflow: visible;
-      background: none;
-      border-width: 0px;
-      border-radius: 0;
     }
 
     #sidebar {
@@ -489,6 +488,7 @@ export default class PTAppElement extends HTMLElement {
     #sidebar-drawer #sidebar {
       border: none;
       outline: none;
+      background: none;
     }
 
     #sidebar hr {
@@ -762,7 +762,7 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  storeMainScrollOffset(offset = this["#main"].scrollTop) {
+  storeMainScrollOffset(offset = this["#container"].scrollTop) {
     history.replaceState({index: history.state.index, scrollTop: offset}, null, location.href);
   }
 
@@ -775,7 +775,7 @@ export default class PTAppElement extends HTMLElement {
       page.scrollElementIntoView(elementID);
     }
     else {
-      this["#main"].scrollTop = history.state.scrollTop;
+      this["#container"].scrollTop = history.state.scrollTop;
     }
   }
 

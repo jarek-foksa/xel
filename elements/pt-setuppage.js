@@ -38,35 +38,53 @@ export default class PTSetupPageElement extends PTPage {
           <main>
             <h3><strong>3</strong> Set theme</h3>
 
-            <p>Add to the <code>&lt;head&gt;</code> to use
+            Add to the <code>&lt;head&gt;</code> to use
               <x-select id="theme-select">
                 <x-menu>
-                  <x-menuitem value="adwaita" toggled>
-                    <x-label>Adwaita</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="adwaita-dark">
-                    <x-label>Adwaita Dark</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="cupertino">
-                    <x-label>Cupertino</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="cupertino-dark">
-                    <x-label>Cupertino Dark</x-label>
-                  </x-menuitem>
-
                   <x-menuitem value="fluent">
+                    <x-icon href="/icons/portal.svg#fluent"></x-icon>
                     <x-label>Fluent</x-label>
                   </x-menuitem>
 
+                  <x-menuitem value="material">
+                    <x-icon href="/icons/portal.svg#material"></x-icon>
+                    <x-label>Material</x-label>
+                  </x-menuitem>
+
+                  <x-menuitem value="cupertino">
+                    <x-icon href="/icons/portal.svg#cupertino"></x-icon>
+                    <x-label>Cupertino</x-label>
+                  </x-menuitem>
+
+                  <x-menuitem value="adwaita">
+                    <x-icon href="/icons/portal.svg#adwaita"></x-icon>
+                    <x-label>Adwaita</x-label>
+                  </x-menuitem>
+
+                  <hr/>
+
                   <x-menuitem value="fluent-dark">
+                    <x-icon href="/icons/portal.svg#fluent"></x-icon>
                     <x-label>Fluent Dark</x-label>
+                  </x-menuitem>
+
+                  <x-menuitem value="material-dark">
+                    <x-icon href="/icons/portal.svg#material"></x-icon>
+                    <x-label>Material Dark</x-label>
+                  </x-menuitem>
+
+                  <x-menuitem value="cupertino-dark">
+                    <x-icon href="/icons/portal.svg#cupertino"></x-icon>
+                    <x-label>Cupertino Dark</x-label>
+                  </x-menuitem>
+
+                  <x-menuitem value="adwaita-dark">
+                    <x-icon href="/icons/portal.svg#adwaita"></x-icon>
+                    <x-label>Adwaita Dark</x-label>
                   </x-menuitem>
                 </x-menu>
               </x-select>
-              theme:</p>
+              theme:
             <pt-code id="theme-code"></pt-code>
 
             <p><strong>Note:</strong> You can also link a custom theme CSS file. To make it a subtheme of an existing

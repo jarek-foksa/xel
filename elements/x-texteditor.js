@@ -36,7 +36,6 @@ export default class XTextEditorElement extends HTMLElement {
       width: 100%;
       min-height: 100px;
       box-sizing: border-box;
-      background: white;
       font-size: 12.5px;
       overflow: auto;
     }
@@ -61,10 +60,6 @@ export default class XTextEditorElement extends HTMLElement {
     :host(:not(:focus)) ::selection {
       color: inherit;
       background: none;
-    }
-    :host([error]) ::selection {
-      color: white;
-      background-color: #d50000;
     }
 
     ::-webkit-scrollbar {
