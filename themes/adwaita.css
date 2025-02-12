@@ -1229,7 +1229,7 @@ x-titlebar::part(minimize-button) {
 x-titlebar::part(maximize-button) {
   --path-data: var(--maximize-path-data);
 }
-x-titlebar[maximized]::part(maximize-button) {
+x-titlebar::part(restore-button) {
   --path-data: var(--restore-path-data);
 }
 x-titlebar::part(close-button) {

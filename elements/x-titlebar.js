@@ -15,6 +15,7 @@ import {html, css} from "../utils/template.js";
 // @part minimize-button
 // @part maximize-button
 // @part icon
+// @event buttonclick - User clicked a titlebar button.
 class XTitlebarElement extends HTMLElement {
   static observedAttributes = ["title"];
 
@@ -23,15 +24,19 @@ class XTitlebarElement extends HTMLElement {
       <slot></slot>
 
       <x-buttons part="buttons" id="buttons">
-        <x-button id="minimize-button" skin="flat" part="button minimize-button" condensed>
+        <x-button id="minimize-button" value="minimize" skin="flat" part="button minimize-button" condensed>
           <svg part="icon" viewBox="0 0 100 100"><path></path></svg>
         </x-button>
 
-        <x-button id="maximize-button" skin="flat" part="button maximize-button" condensed>
+        <x-button id="maximize-button" value="maximize" skin="flat" part="button maximize-button" condensed>
           <svg part="icon" viewBox="0 0 100 100"><path></path></svg>
         </x-button>
 
-        <x-button id="close-button" skin="flat" part="button close-button" condensed>
+        <x-button id="restore-button" value="restore" skin="flat" part="button restore-button" condensed>
+          <svg part="icon" viewBox="0 0 100 100"><path></path></svg>
+        </x-button>
+
+        <x-button id="close-button" value="close" skin="flat" part="button close-button" condensed>
           <svg part="icon" viewBox="0 0 100 100"><path></path></svg>
         </x-button>
       </x-buttons>
@@ -48,6 +53,7 @@ class XTitlebarElement extends HTMLElement {
       gap: 16px;
       position: relative;
       box-sizing: border-box;
+      app-region: drag;
     }
 
     /**
@@ -65,9 +71,16 @@ class XTitlebarElement extends HTMLElement {
     #buttons {
       position: absolute;
     }
+    :host([maximized])::part(maximize-button) {
+      display: none;
+    }
+    :host(:not([maximized]))::part(restore-button) {
+      display: none;
+    }
 
     #buttons > x-button {
       margin: 0;
+      app-region: no-drag;
     }
 
     #buttons > x-button > svg {
@@ -105,6 +118,8 @@ class XTitlebarElement extends HTMLElement {
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
       this["#" + element.id] = element;
     }
+
+    this["#buttons"].addEventListener("click", (event) => this.#onButtonsClick(event));
   }
 
   async connectedCallback() {
@@ -117,6 +132,16 @@ class XTitlebarElement extends HTMLElement {
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onButtonsClick(event) {
+    let button = event.target.closest("x-button");
+
+    if (button) {
+      this.dispatchEvent(new CustomEvent("buttonclick", {detail: button.value}));
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

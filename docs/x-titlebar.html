@@ -63,5 +63,39 @@
         </template>
       </pt-demoblock>
     </section>
+
+    <hr/>
+
+    <section>
+      <h4>Events</h4>
+
+      <pt-demoblock>
+        <template>
+          <script>
+            let titlebar = document.querySelector("x-titlebar");
+
+            titlebar.addEventListener("buttonclick", (event) => {
+              if (event.detail === "minimize") {
+                window.alert("Minimize window");
+              }
+              else if (event.detail === "maximize") {
+                titlebar.maximized = true;
+              }
+              else if (event.detail === "restore") {
+                titlebar.maximized = false;
+              }
+              if (event.detail === "close") {
+                window.alert("Close window");
+              }
+            });
+          </script>
+
+          <x-titlebar maximized>
+            <x-label>About</x-label>
+          </x-titlebar>
+        </template>
+      </pt-demoblock>
+    </section>
+
   </section>
 </article>
