@@ -110,45 +110,6 @@
     <hr/>
 
     <section>
-      <h4>Colored</h4>
-
-      <pt-demoblock>
-        <template>
-          <style>
-            x-tag[value="red"] {
-              color: black;
-              background: #fc7b7e;
-            }
-            x-tag[value="green"] {
-              color: black;
-              background: #83e283;
-            }
-            x-tag[value="yellow"] {
-              color: black;
-              background: #fde05b;
-            }
-          </style>
-
-          <x-tagsinput>
-            <x-tag value="red">
-              <x-label>Red</x-label>
-            </x-tag>
-
-            <x-tag value="green">
-              <x-label>Green</x-label>
-            </x-tag>
-
-            <x-tag value="yellow">
-              <x-label>Yellow</x-label>
-            </x-tag>
-          </x-tagsinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
       <h4>Placeholder</h4>
 
       <pt-demoblock>
@@ -176,6 +137,32 @@
               <x-label>Tag 2</x-label>
             </x-tag>
           </x-tagsinput>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Size variants</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-tagsinput size="small">
+            <x-tag value="tag-1"><x-label>Tag 1</x-label></x-tag>
+            <x-tag value="tag-2"><x-label>Tag 2</x-label></x-tag>
+          </x-tagsinput>
+
+          <x-tagsinput style="margin: 12px 0;">
+            <x-tag value="tag-1"><x-label>Tag 1</x-label></x-tag>
+            <x-tag value="tag-2"><x-label>Tag 2</x-label></x-tag>
+          </x-tagsinput>
+
+          <x-tagsinput size="large">
+            <x-tag value="tag-1"><x-label>Tag 1</x-label></x-tag>
+            <x-tag value="tag-2"><x-label>Tag 2</x-label></x-tag>
+          </x-tagsinput>
+
         </template>
       </pt-demoblock>
     </section>

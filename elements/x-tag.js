@@ -33,12 +33,13 @@ export default class XTagElement extends HTMLElement {
   static #shadowStyleSheet = css`
     :host {
       display: inline-block;
-      height: 25px;
+      height: 24px;
       box-sizing: border-box;
       overflow: hidden;
       color: var(--text-color);
       border-width: 1px;
       border-style: solid;
+      cursor: default;
     }
     :host([toggled]) {
       background: gray;
@@ -46,6 +47,7 @@ export default class XTagElement extends HTMLElement {
       outline: none;
     }
     :host([disabled]) {
+      pointer-events: none;
       opacity: 0.5;
     }
     :host([hidden]) {
@@ -99,7 +101,6 @@ export default class XTagElement extends HTMLElement {
       display: block;
     }
     #remove-button:hover {
-      background: rgba(0, 0, 0, 0.1);
       opacity: 1;
     }
 

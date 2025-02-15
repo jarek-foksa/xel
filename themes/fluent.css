@@ -492,7 +492,6 @@ x-tag::part(remove-button) {
 }
 x-tag::part(remove-button):hover {
   color: color(srgb 0 0 0);
-  background-color: transparent;
 }
 
 /* Scope prefix */

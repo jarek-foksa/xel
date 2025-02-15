@@ -163,6 +163,9 @@ export default class XTabElement extends HTMLElement {
       if (getComputedStyle(this["#selection-indicator"]).height !== "0px") {
         let fromBBox = this.getBoundingClientRect();
         let toBBox = toTab.getBoundingClientRect();
+        let computedStyle = getComputedStyle(this["#selection-indicator"]);
+        let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
+        let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function") || "linear";
 
         let animation = this["#selection-indicator"].animate(
           [
@@ -176,10 +179,10 @@ export default class XTabElement extends HTMLElement {
             }
           ],
           {
-            duration: 100,
+            duration: transitionDuration,
+            easing: transitionTimingFunction,
             iterations: 1,
-            delay: 0,
-            easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
+            delay: 0
           }
         );
 

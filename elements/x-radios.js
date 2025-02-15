@@ -52,7 +52,7 @@ export default class XRadiosElement extends HTMLElement {
   #onClick(event) {
     let clickedRadio = event.target.closest("x-radio");
 
-    if (clickedRadio && !clickedRadio.toggled && !clickedRadio.disabled && event.buttons <= 1) {
+    if (clickedRadio && !clickedRadio.disabled && event.buttons <= 1) {
       let radios = [...this.querySelectorAll("x-radio")];
       let otherRadios = radios.filter(radio => radio.closest("x-radios") === this && radio !== clickedRadio);
 
@@ -63,6 +63,7 @@ export default class XRadiosElement extends HTMLElement {
 
         for (let radio of otherRadios) {
           radio.toggled = false;
+          radio.mixed = false;
           radio.tabIndex = -1;
         }
 

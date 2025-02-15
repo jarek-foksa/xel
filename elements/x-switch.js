@@ -40,6 +40,9 @@ export default class XSwitchElement extends HTMLElement {
       width: fit-content;
       margin: 2px 0;
     }
+    :host(:focus) {
+      outline: none;
+    }
     :host([disabled]) {
       opacity: 0.4;
       pointer-events: none;

@@ -494,9 +494,6 @@ x-tag[toggled]:active {
 x-tag::part(remove-button) {
   --path-data: var(--clear-path-data);
 }
-x-tag::part(remove-button):hover {
-  background-color: transparent;
-}
 
 /* Scope prefix */
 x-tag::part(scope) {
@@ -514,7 +511,7 @@ x-tagsinput {
   background-color: color(srgb 0 0 0 / 0.08);
   border-radius: 6px;
 }
-x-tagsinput:focus-within {
+x-tagsinput:focus {
   outline-width: 2px;
   outline-style: solid;
   outline-color: var(--light-accent-color);
@@ -896,10 +893,6 @@ x-radio[mixed]::part(indicator-dot) {
  * Switch
  */
 
-x-switch:focus {
-  outline-width: 0;
-}
-
 /* Indicator thumb */
 x-switch::part(indicator-thumb) {
   background-color: color(srgb 1 1 1);
@@ -937,7 +930,6 @@ x-switch[toggled]::part(indicator-track) {
   background-color: var(--accent-color);
   box-shadow: 0 0 0 4px var(--accent-color);
 }
-
 x-switch:focus::part(indicator-track) {
   outline-width: 2px;
   outline-style: solid;

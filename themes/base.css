@@ -150,6 +150,7 @@ p:last-child {
 
 table {
   border-collapse: collapse;
+  width: 100%;
 }
 
 th {
@@ -462,6 +463,9 @@ x-button {
 a:has(x-button) {
   text-decoration: none;
 }
+x-button[toggled] {
+  z-index: 1;
+}
 x-button[condensed] {
   padding: 2px 7px;
 }
@@ -497,6 +501,21 @@ x-button > x-icon ~ x-label {
 /*****************************************************************************************************************/
 
 /**
+ * Button ("default" skin)
+ */
+
+x-button[skin="default"][size="small"] > x-icon {
+  width: 14px;
+  height: 14px;
+}
+x-button[skin="default"][size="large"] > x-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Button ("flat" skin)
  */
 
@@ -526,8 +545,8 @@ x-button[skin="flat"][size="small"] > x-icon {
   height: 22px;
 }
 x-button[skin="flat"][size="large"] > x-icon {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
 
 /*****************************************************************************************************************/
@@ -541,10 +560,10 @@ x-button[skin="recessed"] {
   padding: 4px 8px;
 }
 x-button[skin="recessed"][size="small"] {
-  padding: 2px 8px;
+  padding: 3px 8px;
 }
 x-button[skin="recessed"][size="large"] {
-  padding: 6px 8px;
+  padding: 5px 8px;
 }
 
 /* Horizontal siblings */
@@ -555,6 +574,20 @@ x-buttons:not([vertical]) > x-button[skin="recessed"] + x-button[skin="recessed"
 /* Vertical siblings */
 x-buttons[vertical] > x-button[skin="recessed"] + x-button[skin="recessed"] {
   margin-top: 4px;
+}
+
+/* Icon */
+x-button[skin="recessed"] > x-icon {
+  width: 16px;
+  height: 16px;
+}
+x-button[skin="recessed"][size="small"] > x-icon {
+  width: 12px;
+  height: 12px;
+}
+x-button[skin="recessed"][size="large"] > x-icon {
+  width: 20px;
+  height: 20px;
 }
 
 /*****************************************************************************************************************/
@@ -592,6 +625,20 @@ x-buttons:not([vertical]) > x-button[skin="dock"] + x-button[skin="dock"] {
 /* Vertical siblings */
 x-buttons[vertical] > x-button[skin="dock"] + x-button[skin="dock"] {
   margin-top: -1px;
+}
+
+/* Icon */
+x-button[skin="dock"] > x-icon {
+  width: 17px;
+  height: 17px;
+}
+x-button[skin="dock"][size="small"] > x-icon {
+  width: 14px;
+  height: 14px;
+}
+x-button[skin="dock"][size="large"] > x-icon {
+  width: 20px;
+  height: 20px;
 }
 
 /*****************************************************************************************************************/
@@ -679,30 +726,22 @@ x-tags x-tag {
  */
 
 x-tagsinput[size="small"] {
-  min-height: 24px;
+  padding: 0px;
+  gap: 0px;
+}
+x-tagsinput[size="small"] > x-tag {
+  height: 22px;
+  transform: scale(0.92);
 }
 x-tagsinput[size="large"] {
-  min-height: 34px;
+  padding: 6px;
+  gap: 6px;
 }
 x-tagsinput:focus-within {
   z-index: 10;
 }
-x-tagsinput[size="small"]::part(input) {
-  height: 20px;
-  line-height: 20px;
-}
-x-tagsinput[size="large"]::part(input) {
-  height: 30px;
-  line-height: 30px;
-}
 x-tagsinput:not(:defined) {
   display: none;
-}
-
-/* Tag */
-x-tagsinput > x-tag {
-  margin: 2px;
-  cursor: default;
 }
 
 /* Placeholder */

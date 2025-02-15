@@ -70,7 +70,7 @@ class XColorPickerElement extends HTMLElement {
       <footer id="footer">
         <x-colorinput id="input" space="srgb" size="small"></x-colorinput>
 
-        <x-button id="grab-button" size="small" condensed togglable>
+        <x-button id="grab-button" part="grab-button" size="small" condensed togglable>
           <x-icon href="#eye-dropper"></x-icon>
         </x-button>
       </footer>

@@ -28,10 +28,8 @@ body {
                                 yellow   lch(40.2 47 88.5),
                                 green    lch(40 36.9 134),
                                 graphite lch(40.4 7.86 199);
-
-  /* @todo: Should be redefined as aliases for --material-* variables (don't use the aliases here) */
   --foreground-color:           var(--material-surface-color);
-  --background-color:           lch(from var(--accent-color) 92.5 5 h);
+  --background-color:           var(--material-surface-container-color);
   --border-color:               var(--material-outline-variant-color);
   --text-color:                 var(--material-on-surface-color);
   --error-color:                var(--material-error-color);
@@ -39,25 +37,11 @@ body {
   --selection-background-color: var(--material-secondary-fixed-dim-color);
   --autofill-background-color:  color(srgb 0.95 0.93 0.89);
   --titlebar-color:             auto;
-
-  /* @todo: Should be removed (use --material-* variables instead) */
-  --light-accent-color:         oklch(from var(--accent-color) calc(l + 0.07) calc(c - 0.02) h);
-  --dark-accent-color:          oklch(from var(--accent-color) calc(l + 0.04) calc(c + 0.02) h);
-  --darker-accent-color:        oklch(from var(--accent-color) calc(l - 0.06) c h);
-  --darkest-accent-color:       oklch(from var(--accent-color) calc(l - 0.15) calc(c - 0.02) h);
-  --light-background-color:     color(srgb 0.99 0.99 0.99);
-  --dark-background-color:      color(srgb 0.92 0.92 0.92);
-  --dark-border-color:          color(srgb 0.82 0.82 0.82);
-
-
-
   --autocapitalize:             titlecase;
   --checkboard-background:      linear-gradient( 45deg, #dedede 25%, #0000   25%)  0px  0px / 10px 10px,
                                 linear-gradient(-45deg, #dedede 25%, #0000   25%)  0px  5px / 10px 10px,
                                 linear-gradient( 45deg, #0000   75%, #dedede 75%)  5px -5px / 10px 10px,
                                 linear-gradient(-45deg, #0000   75%, #dedede 75%) -5px  0px / 10px 10px, #ffffff;
-
-  /* Shape */
   --arrow-right-path-data: M 29.88 90.25 L 29.88 9.75 L 70.12 50 L 29.88 90.25 Z;
   --arrow-up-path-data: M 9.75 70.12 L 90.25 70.12 L 50 29.88 L 9.75 70.12 Z;
   --arrow-down-path-data: M 9.75 29.88 L 90.25 29.88 L 50 70.12 L 9.75 29.88 Z;
@@ -70,21 +54,17 @@ body {
   --maximize-path-data: M 18 18 L 82 18 L 82 82 L 18 82 L 18 18 Z M 72 28 L 28 28 L 28 72 L 72 72 L 72 28 Z;
   --restore-path-data: M 41.71 21.24 L 85.71 21.24 L 85.71 64.24 L 41.71 64.24 L 41.71 21.24 Z M 75.71 31.24 L 51.71 31.24 L 51.71 54.24 L 75.71 54.24 L 75.71 31.24 Z M 65 73 L 65 83 L 24 83 L 24 42 L 34 42 L 34 73 L 65 73 Z;
   --close-path-data: M 19.95 72.98 L 42.93 50 L 19.95 27.02 L 27.02 19.95 L 50 42.93 L 72.98 19.95 L 80.05 27.02 L 57.07 50 L 80.05 72.98 L 72.98 80.05 L 50 57.07 L 27.02 80.05 L 19.95 72.98 Z;
-
-  /* Elevation */
   --material-elevation-1:                  0px 1px  2px 0px rgba(0, 0, 0, 0.30), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
   --material-elevation-2:                  0px 1px  2px 0px rgba(0, 0, 0, 0.30), 0px 3px 4px 0px rgba(0, 0, 0, 0.14);
   --material-elevation-3:                  0px 4px  8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30);
   --material-elevation-4:                  0px 6px 10px 4px rgba(0, 0, 0, 0.15), 0px 2px 3px 0px rgba(0, 0, 0, 0.30);
   --material-elevation-5:                  0px 8px 12px 6px rgba(0, 0, 0, 0.15), 0px 4px 4px 0px rgba(0, 0, 0, 0.30);
-  /* Easing function */
   --material-easing-emphasized:            cubic-bezier( 0.2, 0.0,   0,  1.0);
   --material-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1,  1.0);
   --material-easing-emphasized-accelerate: cubic-bezier( 0.3, 0.0, 0.8, 0.15);
   --material-easing-standard:              cubic-bezier( 0.2, 0.0,   0,  1.0);
   --material-easing-standard-decelerate:   cubic-bezier(   0,   0,   0,    1);
   --material-easing-standard-accelerate:   cubic-bezier( 0.3,   0,   1,    1);
-  /* Motion duration */
   --material-motion-duration-short-1:        50ms;
   --material-motion-duration-short-2:       100ms;
   --material-motion-duration-short-3:       150ms;
@@ -103,14 +83,20 @@ body {
   --material-motion-duration-extra-long-4: 1000ms;
 }
 
+/*****************************************************************************************************************/
+
+/**
+ * HTML elements
+ */
+
 h2 {
-  color: color(srgb 0 0 0);
+  color: var(--material-on-background-color);
 }
 h3 {
-  color: color(srgb 0 0 0);
+  color: var(--material-on-background-color);
 }
 h4 {
-  color: color(srgb 0 0 0);
+  color: var(--material-on-background-color);
 }
 
 a {
@@ -139,7 +125,7 @@ code, var {
 }
 
 blockquote {
-  border-color: color(srgb 0.97 0.39 0.4);
+  border-color:var(--material-tertiary-color);
 }
 
 mark, ::highlight(mark) {
@@ -164,42 +150,32 @@ th, td {
   border-color: var(--material-outline-variant-color);
 }
 
+/*****************************************************************************************************************/
+
+/**
+ * Selection
+ */
+
 ::selection {
   color: var(--selection-color);
   background-color: var(--selection-background-color);
 }
 
+/*****************************************************************************************************************/
+
+/**
+ * Scrollbar
+ */
+
 ::-webkit-scrollbar {
   background-color: transparent;
 }
-::-webkit-scrollbar:hover {
-  background-color: color(srgb 0 0 0 / 0.08);
-}
-::-webkit-scrollbar-thumb:vertical {
-  background-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent 25%,
-    color(srgb 0 0 0 / 0.15) 25%,
-    color(srgb 0 0 0 / 0.15) 75%,
-    transparent 75%,
-    transparent 100%
-  );
-}
-::-webkit-scrollbar-thumb:horizontal {
-  background-image: linear-gradient(
-    180deg,
-    transparent 0%,
-    transparent 25%,
-    color(srgb 0 0 0 / 0.15) 25%,
-    color(srgb 0 0 0 / 0.15) 75%,
-    transparent 75%,
-    transparent 100%
-  );
+::-webkit-scrollbar-thumb {
+  background-color: var(--material-outline-variant-color);
+  border-radius: 25px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: color(srgb 0.48 0.48 0.48);
-  border-radius: 4px;
+  background-color: var(--material-outline-color);
 }
 
 /*****************************************************************************************************************/
@@ -209,7 +185,7 @@ th, td {
  */
 
 x-avatar {
-  background-color: color(srgb 0 0 0 / 0.08);
+  background-color: var(--material-surface-container-highest-color);
   border-width: 0px;
   border-radius: 999px;
 }
@@ -222,7 +198,7 @@ x-avatar > x-label {
 /*****************************************************************************************************************/
 
 /**
- * Card [DONE]
+ * Card
  */
 
 x-card {
@@ -259,7 +235,7 @@ x-accordion > header > x-label {
 /*****************************************************************************************************************/
 
 /**
- * Tooltip [DONE]
+ * Tooltip
  */
 
 x-tooltip {
@@ -272,7 +248,7 @@ x-tooltip {
 /*****************************************************************************************************************/
 
 /**
- * Stepper [DONE]
+ * Stepper
  */
 
 x-stepper {
@@ -317,7 +293,7 @@ x-stepper::part(decrement-arrow) {
  */
 
 x-swatch {
-  border-color: var(--dark-border-color);
+  border-color: var(--material-outline-variant-color);
   border-radius: 99px;
 }
 
@@ -327,11 +303,25 @@ x-swatch {
  * Button
  */
 
+/* Focus ring */
 x-button:focus {
   outline-width: 3px;
   outline-style: solid;
   outline-color: var(--material-primary-color);
   outline-offset: -1px;
+}
+
+/* State layer */
+x-button::before {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 /*****************************************************************************************************************/
@@ -342,43 +332,19 @@ x-button:focus {
 
 x-button[skin="default"] {
   color: var(--material-on-surface-color);
-  background-color: color(srgb 0 0 0 / 0);
   border-style: solid;
   border-width: 1px;
   border-color: var(--material-outline-color);
-  border-radius: 30px;
-}
-x-button[skin="default"][size="small"] {
-  border-radius: 10px;
-}
-x-button[skin="default"]:hover {
-  background-color: oklch(from var(--material-primary-color) l c h / 0.08);
-}
-x-button[skin="default"][pressed] {
-  background-color: oklch(from var(--material-primary-color) l c h / 0.12);
-}
-x-button[skin="default"]:focus {
-  background-color: oklch(from var(--material-primary-color) l c h / 0.12);
+  border-radius: 40px;
 }
 x-button[skin="default"][toggled] {
   color: var(--material-on-primary-color);
   background-color: var(--material-primary-color);
   border-color: transparent;
 }
-x-button[skin="default"][toggled]:hover {
-  background-color: oklch(from var(--material-primary-color) l c h / 0.92);
-  box-shadow: var(--material-elevation-2);
-}
-x-button[skin="default"][toggled][expanded] {
-  background-color: var(--dark-accent-color);
-}
-x-button[skin="default"][toggled][pressed] {
-  background-color: var(--darker-accent-color);
-}
 
 /* Horizontal siblings */
 x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
-  border-left: 1px solid color(srgb 0 0 0 / 0.12);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -386,26 +352,15 @@ x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-x-buttons:not([vertical]) > x-button[skin="default"][pressed] {
-  border-left-color: color(srgb 0 0 0 / 0.12);
-}
-x-buttons:not([vertical]) > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
-  border-left-color: color(srgb 0 0 0 / 0.2);
-}
-x-buttons:not([vertical]) > x-button[skin="default"][toggled],
-x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"] {
-  border-left-color: var(--darker-accent-color);
-}
-x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed],
-x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
-  border-left-color: var(--darkest-accent-color) !important;
+x-buttons:not([vertical]) > x-button[skin="default"] + x-button[skin="default"] {
+  margin-left: -1px;
 }
 
 /* Vertical siblings */
+x-buttons[vertical] > x-button[skin="default"] {
+  border-radius: 8px;
+}
 x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
-  border-top-width: 1px;
-  border-top-style: solid;
-  border-top-color: color(srgb 0 0 0 / 0.12);
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -413,50 +368,46 @@ x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-x-buttons[vertical] > x-button[skin="default"][pressed] {
-  border-top-color: color(srgb 0 0 0 / 0.12);
+x-buttons[vertical] > x-button[skin="default"] + x-button[skin="default"] {
+  margin-top: -1px;
 }
-x-buttons[vertical] > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
-  border-top-color: color(srgb 0 0 0 / 0.2);
+
+/* Focus ring */
+x-button[skin="default"][toggled]:focus {
+  outline-offset: 1px;
 }
-x-buttons[vertical] > x-button[skin="default"][toggled],
-x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"] {
-  border-top-color: var(--darker-accent-color);
+
+/* State layer */
+x-button[skin="default"]:hover::before,
+x-button[skin="default"][expanded]::before {
+  display: block;
+  background-color: var(--material-on-surface-color);
+  opacity: 0.08;
 }
-x-buttons[vertical] > x-button[skin="default"][toggled][pressed],
-x-buttons[vertical] > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
-  border-top-color: var(--darkest-accent-color) !important;
+x-button[skin="default"]:focus::before {
+  display: block;
+  background-color: var(--material-primary-color);
+  opacity: 0.1;
+}
+x-button[skin="default"][pressed]::before {
+  display: block;
+  background-color: var(--material-on-secondary-container-color);
+  opacity: 0.1;
+}
+x-button[skin="default"][toggled]:hover::before {
+  display: block;
+  background-color: var(--material-on-secondary-container-color);
+  opacity: 0.08;
+}
+x-button[skin="default"][toggled][pressed]::before {
+  display: block;
+  background-color: var(--material-on-secondary-container-color);
+  opacity: 0.1;
 }
 
 /* Label */
 x-button > x-label {
   font-weight: 500;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("dock" skin)
- */
-
-x-button[skin="dock"] {
-  color: var(--material-on-surface-color);
-  background-color: var(--light-background-color);
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--dark-border-color);
-}
-x-button[skin="dock"]:hover {
-  background-color: color(srgb 0 0 0 / 0.08);
-}
-x-button[skin="dock"][pressed] {
-  background-color: color(srgb 0 0 0 / 0.12);
-}
-x-button[skin="dock"][toggled] {
-  color: var(--light-background-color);
-  background-color: var(--accent-color);
-  border-color: var(--darkest-accent-color);
-  z-index: 1;
 }
 
 /*****************************************************************************************************************/
@@ -476,7 +427,7 @@ x-button[skin="flat"][expanded] {
   color: var(--material-primary-color);
 }
 x-button[skin="flat"][pressed] {
-  color: var(--dark-accent-color);
+  color: var(--material-on-primary-container-color);
 }
 
 /*****************************************************************************************************************/
@@ -487,18 +438,23 @@ x-button[skin="flat"][pressed] {
 
 x-button[skin="recessed"] {
   color: var(--material-on-surface-color);
-  border-radius: 6px;
-}
-x-button[skin="recessed"]:hover {
-  background-color: color(srgb 0 0 0 / 0.07);
+  border-radius: 8px;
 }
 x-button[skin="recessed"][toggled] {
-  color: color(srgb 1 1 1 / 0.95);
-  background-color: color(srgb 0 0 0 / 0.42);
+  color: var(--material-on-primary-fixed-color);
+  background-color: var(--material-primary-fixed-dim-color);
 }
-x-button[skin="recessed"][pressed] {
-  color: color(srgb 1 1 1 / 0.95);
-  background-color: color(srgb 0 0 0 / 0.6);
+
+/* State layer */
+x-button[skin="recessed"]:hover::before {
+  display: block;
+  background-color: var(--material-on-secondary-container-color);
+  opacity: 0.08;
+}
+x-button[skin="recessed"][pressed]::before {
+  display: block;
+  background-color: var(--material-on-secondary-container-color);
+  opacity: 0.1;
 }
 
 /* Label */
@@ -510,16 +466,56 @@ x-button[skin="recessed"] > x-label {
 /*****************************************************************************************************************/
 
 /**
+ * Button ("dock" skin)
+ */
+
+x-button[skin="dock"] {
+  color: var(--material-on-surface-color);
+  background-color: var(--material-surface-bright-color);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--material-outline-variant-color);
+}
+x-button[skin="dock"][toggled] {
+  color: var(--material-on-surface-inverse-color);
+  background-color: var(--material-primary-color);
+  border-color: var(--material-on-primary-fixed-variant-color);
+  z-index: 1;
+}
+
+/* State layer */
+x-button[skin="dock"]:hover::before {
+  display: block;
+  background-color: var(--material-on-surface-color);
+  opacity: 0.08;
+}
+x-button[skin="dock"][toggled]:hover::before {
+  display: none;
+}
+x-button[skin="dock"][pressed]::before,
+x-button[skin="dock"][toggled][pressed]::before  {
+  display: block;
+  background-color: var(--material-on-secondary-container-color);
+  opacity: 0.1;
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Tag
  */
 
 x-tag {
-  background-color: var(--light-background-color);
-  border-color: var(--border-color);
-  border-radius: 4px;
+  color: var(--material-on-surface-variant-color);
+  background-color: var(--material-surface-container-low-color);
+  border-width: 1px;
+  border-tyle: solid;
+  border-color: var(--material-outline-variant-color);
+  border-radius: 8px;
+  position: relative;
 }
-x-tag:active {
-  filter: brightness(0.97);
+x-tag:hover {
+  color: var(--material-on-surface-color);
 }
 x-tag:focus {
   outline-width: 3px;
@@ -527,29 +523,60 @@ x-tag:focus {
   outline-color: var(--material-primary-color);
   outline-offset: -1px;
 }
-x-tag[scoped]::part(main) {
-  background-color: var(--light-background-color);
-}
 x-tag[toggled] {
-  color: color(srgb 0 0 0 / 0.8);
-  filter: brightness(0.8);
+  color: var(--material-on-primary-color);
+  background-color: var(--material-primary-color);
+  border-color: transparent;
 }
-x-tag[toggled]:active {
-  filter: brightness(0.7);
+x-tag[toggled]:hover {
+  filter: brightness(0.95);
+}
+x-tag[toggled]:focus {
+  outline-offset: 1px;
+}
+
+/* Hover/active indicator */
+x-tag::before {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  pointer-events: none;
+  z-index: 1;
+}
+x-tag:hover::before {
+  display: block;
+  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+}
+x-tag:active::before {
+  display: block;
+  background-color: oklch(from var(--material-on-surface-color) l c h / 0.1);
 }
 
 /* Remove button */
 x-tag::part(remove-button) {
   --path-data: var(--clear-path-data);
 }
-x-tag::part(remove-button):hover {
-  background-color: transparent;
-}
 
 /* Scope prefix */
 x-tag::part(scope) {
-  background-color: color(srgb 1 1 1);
-  border-color: var(--border-color);
+  background-color: var(--material-surface-bright-color);
+  border-color: var(--material-outline-variant-color);
+}
+x-tag[toggled]::part(scope) {
+  color: var(--material-on-surface-color);;
+  border-color: var(--material-primary-color);
+}
+
+/* Icon */
+x-tag > x-icon {
+  color: var(--material-primary-color);
+}
+x-tag[toggled] > x-icon {
+  color: var(--material-on-primary-color);
 }
 
 /*****************************************************************************************************************/
@@ -559,10 +586,16 @@ x-tag::part(scope) {
  */
 
 x-tagsinput {
-  background-color: color(srgb 0 0 0 / 0.08);
-  border-radius: 6px;
+  color: var(--material-on-surface-color);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--material-outline-color);
+  border-radius: 4px;
 }
-x-tagsinput:focus-within {
+x-tagsinput:hover {
+  border-color: var(--material-on-surface-color);
+}
+x-tagsinput:focus {
   outline-width: 3px;
   outline-style: solid;
   outline-color: var(--material-primary-color);
@@ -576,10 +609,14 @@ x-tagsinput[error] {
   --selection-background-color: oklch(from var(--material-error-color) l c h / 0.2);
 }
 
+x-tagsinput > x-tag {
+  background-color: transparent;
+}
+
 /* Placeholder */
 x-tagsinput > x-label {
-  color: color(srgb 0 0 0 / 0.4);
-  font-weight: 600;
+  color: oklch(from var(--material-on-surface-variant-color) l c h / 0.7);
+  font-weight: 400;
 }
 
 /*****************************************************************************************************************/
@@ -589,44 +626,39 @@ x-tagsinput > x-label {
  */
 
 x-tabs {
-  width: 100%;
-  justify-content: flex-start;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: var(--border-color);
+  color: var(--material-on-surface-variant-color);
+  background-color: var(--material-surface-color);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--material-surface-variant-color);
 }
 
 /* Tab */
-x-tab {
-  border-bottom-width: 4px;
-  border-bottom-style: solid;
-  border-bottom-color: transparent;
-  margin-bottom: -1px;
-}
-x-tab + x-tab {
-  margin-left: 5px;
-}
-x-tab:hover {
-  background-color: var(--dark-background-color);
-  border-color: color(srgb 0 0 0 / 0.1);
-}
+x-tab:hover,
 x-tab:focus {
-  outline-width: 3px;
-  outline-style: solid;
-  outline-color: var(--material-primary-color);
-  outline-offset: -1px;
+  color: var(--material-on-surface-color);
+  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+}
+x-tab[pressed] {
+  background-color: oklch(from var(--material-on-surface-color) l c h / 0.1);
 }
 x-tab[toggled] {
-  border-color: var(--accent-color);
+  color: var(--material-on-surface-color);
 }
-x-tab:active {
-  background-color: color(srgb 0 0 0 / 0.12);
+
+x-tab::part(selection-indicator) {
+  margin-bottom: -0.5px;
+  width: 100%;
+  height: 2px;
+  background-color: var(--material-primary-color);
+  transition-timing-function: var(--material-easing-standard);
+  transition-duration: var(--material-motion-duration-short-2);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Nav item [DONE]
+ * Nav item
  */
 
 x-navitem:focus {
@@ -711,7 +743,7 @@ x-navitem > x-label + x-icon {
 /*****************************************************************************************************************/
 
 /**
- * Menu [DONE]
+ * Menu
  */
 
 x-menu {
@@ -738,16 +770,16 @@ x-menuitem[expanded] {
   background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
 }
 x-menuitem[pressed] {
-  background-color: var(--material-secondary-container-color);
+  background-color: oklch(from var(--material-on-surface-color) l c h / 0.1);
 }
 
-/* Checkmark icon */
+/* Checkmark */
 x-menuitem::part(checkmark) {
   color: var(--material-on-surface-variant-color);
   --path-data: var(--checkmark-path-data);
 }
 
-/* Arrow icon */
+/* Arrow */
 x-menuitem::part(arrow) {
   color: var(--material-on-surface-variant-color);
   width: 14px;
@@ -755,16 +787,15 @@ x-menuitem::part(arrow) {
   --path-data: var(--arrow-right-path-data);
 }
 
-/* Shortcut */
+/* Icon */
 
-x-menuitem > x-shortcut {
-  color: color(srgb 0 0 0 / 0.4);
+x-menuitem > x-icon {
+  color: var(--material-on-surface-variant-color);
 }
 
-/* Swatch */
-x-menuitem:focus > x-swatch,
-x-menuitem[expanded] > x-swatch {
-  border-color: color(srgb 1 1 1 / 0.8);
+/* Shortcut */
+x-menuitem > x-shortcut {
+  color: oklch(from var(--material-on-surface-color) l c h / 0.5);
 }
 
 /*****************************************************************************************************************/
@@ -777,6 +808,12 @@ x-menubar {
   padding: 0 3px;
 }
 
+x-menubar > x-menuitem {
+  border-radius: 4px;
+}
+x-menubar > x-menuitem[pressed] {
+  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+}
 x-menubar > x-menuitem,
 x-menubar > x-menuitem[size="small"],
 x-menubar > x-menuitem[size="large"] {
@@ -811,7 +848,7 @@ dialog > footer {
 /*****************************************************************************************************************/
 
 /**
- * Drawer [DONE}
+ * Drawer
  */
 
 x-drawer {
@@ -846,7 +883,7 @@ x-drawer[position="bottom"] {
 /*****************************************************************************************************************/
 
 /**
- * Pager [DONE]
+ * Pager
  */
 
 x-pager::part(item) {
@@ -881,19 +918,20 @@ x-pager::part(toggled-item):hover {
 
 x-popover {
   color: var(--material-on-surface-color);
-  background-color: var(--light-background-color);
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--dark-border-color);
-  border-radius: 12px;
-  box-shadow: 0px 3px 6px color(srgb 0 0 0 / 0.15);
+  background-color: var(--material-surface-container-high-color);
+  border-radius: 4px;
+  box-shadow: var(--material-elevation-2);
   --open-transition: none;
+}
+
+x-popover::part(arrow-path) {
+  filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 6px 10px);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Notification [DONE]
+ * Notification
  */
 
 x-notification {
@@ -922,57 +960,66 @@ x-checkbox::part(indicator) {
   overflow: visible;
   border-width: 2px;
   border-style: solid;
-  border-color: var(--material-on-surface-variant);
+  border-color: var(--material-on-surface-variant-color);
   border-radius: 2px;
   --path-data: var(--checkmark-path-data);
+}
+x-checkbox:hover::part(indicator) {
+  border-color: var(--material-on-surface-color);
+}
+x-radio:active::part(indicator) {
+  border-color: var(--material-on-surface-color);
 }
 x-checkbox[mixed]::part(indicator) {
   --path-data: var(--mixed-checkmark-path-data);
 }
 x-checkbox[toggled]::part(indicator) {
   color: var(--material-on-primary-color);
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
+  background-color: var(--material-primary-color);
+  border-color: var(--material-primary-color);
 }
 
-/* Focus indicator */
+/* Hover/active/focus ring */
 x-checkbox::part(indicator)::before {
   display: none;
   position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  margin: -50% 0 0 -50%;
+  transform: scale(1.45);
   z-index: -1;
-  border-radius: 99px;
   content: "";
   pointer-events: none;
 }
 x-checkbox:hover::part(indicator)::before {
   display: block;
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
-}
-x-checkbox:focus::part(indicator)::before {
-  display: block;
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.12);
+  transform: scale(1);
+  background-color: var(--material-on-surface-color);
+  opacity: 0.08;
 }
 x-checkbox:active::part(indicator)::before {
   display: block;
-  /* Ripple */
-  background-color: oklch(from var(--material-primary-color) l c h / 0.2);
+  transform: scale(1);
+  background-color: var(--material-primary-color);
+  opacity: 0.1;
+}
+x-checkbox:focus::part(indicator)::before {
+  display: block;
+  transform: scale(2.5);
+  background-color: var(--material-on-surface-color);
+  border-radius: 99px;
+  opacity: 0.1;
 }
 x-checkbox[toggled]:hover::part(indicator)::before {
-  display: block;
-  background-color: oklch(from var(--material-primary-color) l c h / 0.08);
-}
-x-checkbox[toggled]:focus::part(indicator)::before {
-  display: block;
-  background-color: oklch(from var(--material-primary-color) l c h / 0.12);
+  background-color: var(--material-primary-color);
 }
 x-checkbox[toggled]:active::part(indicator)::before {
-  display: block;
-  /* Ripple */
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.1);
+  background-color: var(--material-on-surface-color);
+}
+x-checkbox[toggled]:focus::part(indicator)::before {
+  background-color: var(--material-primary-color);
 }
 
 /*****************************************************************************************************************/
@@ -983,57 +1030,101 @@ x-checkbox[toggled]:active::part(indicator)::before {
 
 /* Indicator */
 x-radio::part(indicator) {
-  background-color: color(srgb 1 1 1);
-  border-width: 1px;
+  border-width: 2px;
   border-style: solid;
-  border-color: var(--dark-border-color);
+  border-color: var(--material-on-surface-variant-color);
 }
-x-radio:not([toggled]):active::part(indicator) {
-  background-color: color(srgb 0 0 0 / 0.2);
+x-radio:hover::part(indicator) {
+  border-color: var(--material-on-surface-color);
 }
-x-radio:focus::part(indicator) {
-  outline-width: 2px;
-  outline-style: solid;
-  outline-color: var(--light-accent-color);
-  outline-offset: 1px;
+x-radio:active::part(indicator) {
+  border-color: var(--material-on-surface-color);
 }
 x-radio[toggled]::part(indicator) {
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-}
-x-radio[toggled]:active::part(indicator) {
-  background-color: var(--darkest-accent-color);
+  border-color: var(--material-primary-color);
 }
 
 /* Indicator dot */
 x-radio::part(indicator-dot) {
-  background-color: color(srgb 1 1 1);
+  background-color: var(--material-primary-color);
 }
 x-radio[toggled]::part(indicator-dot) {
-  transform: scale(0.4);
+  transform: scale(0.6);
 }
-x-radio[mixed]::part(indicator-dot) {
-  transform: scale(0.5);
+x-radio[toggled][mixed]::part(indicator-dot) {
+  transform: scale(0.55);
   border-radius: 3px;
+}
+
+/* Hover/active/focus ring */
+x-radio::part(indicator)::before {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  margin: -50% 0 0 -50%;
+  transform: scale(1.45);
+  z-index: -1;
+  border-radius: 99px;
+  content: "";
+  pointer-events: none;
+}
+x-radio:hover::part(indicator)::before {
+  display: block;
+  transform: scale(1);
+  background-color: var(--material-on-surface-color);
+  opacity: 0.08;
+}
+x-radio:active::part(indicator)::before {
+  display: block;
+  transform: scale(1);
+  background-color: var(--material-primary-color);
+  opacity: 0.1;
+}
+x-radio:focus::part(indicator)::before {
+  display: block;
+  transform: scale(2.2);
+  background-color: var(--material-on-surface-color);
+  opacity: 0.1;
+}
+x-radio[toggled]:hover::part(indicator)::before {
+  background-color: var(--material-primary-color);
+}
+x-radio[toggled]:active::part(indicator)::before {
+  background-color: var(--material-on-surface-color);
+}
+x-radio[toggled]:focus::part(indicator)::before {
+  background-color: var(--material-primary-color);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Switch [DONE]
+ * Switch
  */
 
-x-switch:focus {
-  outline-width: 0;
+/* Indicator track */
+x-switch::part(indicator-track) {
+  height: 100%;
+  background-color: var(--material-surface-container-highest-color);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--material-outline-color);
+}
+x-switch[toggled]::part(indicator-track) {
+  background-color: var(--material-primary-color);
+  border-color: var(--material-primary-color);
 }
 
 /* Indicator thumb */
 x-switch::part(indicator-thumb) {
-  background-color: var(--material-outline-color);
   left: 2px;
   width: 15px;
   height: 15px;
   transform: scale(0.6);
+  background-color: var(--material-outline-color);
 }
 x-switch:hover::part(indicator-thumb) {
   background-color: var(--material-on-surface-variant-color);
@@ -1061,47 +1152,35 @@ x-switch[size="large"][toggled]::part(indicator-thumb) {
   left: calc(100% - 21px);
 }
 
-/* Indicator track */
-x-switch::part(indicator-track) {
-  height: 100%;
-  background-color: var(--material-surface-container-highest-color);
-  border-width: 2px;
-  border-style: solid;
-  border-color: var(--material-outline-color);
-}
-x-switch[toggled]::part(indicator-track) {
-  background-color: var(--material-primary-color);
-  border-color: var(--material-primary-color);
-}
-
-/* Focus indicator */
+/* Focus ring */
 x-switch::part(indicator-thumb)::before {
   display: none;
   position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  margin: -50% 0 0 -50%;
+  transform: scale(4.5);
   z-index: -1;
   border-radius: 99px;
   content: "";
   pointer-events: none;
-  transform: scale(1.45);
 }
 x-switch:focus::part(indicator-thumb)::before {
   display: block;
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.12);
+  background-color: var(--material-on-surface-color);
+  opacity: 0.12;
 }
 x-switch[toggled]:focus::part(indicator-thumb)::before {
-  transform: scale(1);
-  display: block;
-  background-color: oklch(from var(--material-primary-color) l c h / 0.12);
+  transform: scale(3);
+  background-color: var(--material-primary-color);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Select [DONE]
+ * Select
  */
 
 x-select {
@@ -1131,7 +1210,7 @@ x-select::part(arrow) {
 /*****************************************************************************************************************/
 
 /**
- * Slider [DONE]
+ * Slider
  */
 
 /* Groove track */
@@ -1163,7 +1242,7 @@ x-slider::part(thumb) {
   width: 4px;
   height: 120%;
   top: -10%;
-  background-color: var(--material-primary-color);;
+  background-color: var(--material-primary-color);
   border-width: 0px;
   border-radius: 99px;
 }
@@ -1190,13 +1269,13 @@ x-slider::part(last-stop) {
   margin-left: -4px;
 }
 x-slider::part(range-stop) {
-  background-color: var(--material-secondary-fixed-color);
+  background-color: var(--material-on-surface-inverse-color);
 }
 
 /*****************************************************************************************************************/
 
 /**
- * Input [DONE]
+ * Input
  */
 
 x-input {
@@ -1240,7 +1319,7 @@ x-input > x-icon + x-label {
 /*****************************************************************************************************************/
 
 /**
- * Number input [DONE]
+ * Number input
  */
 
 x-numberinput {
@@ -1314,7 +1393,7 @@ x-numberinput:not(:focus) > x-stepper::part(decrement-button) {
 /*****************************************************************************************************************/
 
 /**
- * Text editor [DONE]
+ * Text editor
  */
 
 x-texteditor {
@@ -1350,7 +1429,7 @@ x-texteditor > x-label {
 /*****************************************************************************************************************/
 
 /**
- * Color input [DONE]
+ * Color input
  */
 
 x-colorinput {
@@ -1395,7 +1474,7 @@ x-colorinput > x-label {
 /*****************************************************************************************************************/
 
 /**
- * Color picker [DONE]
+ * Color picker
  */
 
 x-colorpicker::part(slider) {
@@ -1410,7 +1489,7 @@ x-colorselect {
 /*****************************************************************************************************************/
 
 /**
- * Progressbar [DONE]
+ * Progressbar
  */
 
 x-progressbar {
@@ -1427,7 +1506,7 @@ x-progressbar::part(bar) {
 /*****************************************************************************************************************/
 
 /**
- * Throbber [DONE]
+ * Throbber
  */
 
 x-throbber {
@@ -1437,7 +1516,7 @@ x-throbber {
 /*****************************************************************************************************************/
 
 /**
- * Titlebar [DONE]
+ * Titlebar
  */
 
 x-titlebar {

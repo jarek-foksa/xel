@@ -58,6 +58,7 @@ ColorSpace.register(xyzd65);
 ColorSpace.register(xyzabsd65);
 
 // @src: https://github.com/material-components/material-components-android/blob/master/docs/theming/Color.md
+// @src: https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-main/compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3/DynamicTonalPalette.android.kt
 const MATERIAL_COLORS = [
   // Color name                  Light [palette, tone]   Dark [palette, tone]
   ["primary",                    ["primary",        40], ["primary",        80]],

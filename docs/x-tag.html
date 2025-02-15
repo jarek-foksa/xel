@@ -113,19 +113,23 @@
     <hr/>
 
     <section>
-      <h4>Custom color</h4>
+      <h4>Custom style</h4>
 
       <pt-demoblock>
         <template>
           <style>
+            x-tag, x-tag:hover {
+              color: white;
+              border: none;
+            }
             x-tag[value="red"] {
-              background: #fc7b7e;
+              background: #d02b2b;
             }
             x-tag[value="green"] {
-              background: #83e283;
+              background: #62a81c;
             }
-            x-tag[value="yellow"] {
-              background: #fde05b;
+            x-tag[value="blue"] {
+              background: #3168c6;
             }
           </style>
 
@@ -137,8 +141,8 @@
             <x-label>Green</x-label>
           </x-tag>
 
-          <x-tag value="yellow">
-            <x-label>Yellow</x-label>
+          <x-tag value="blue">
+            <x-label>Blue</x-label>
           </x-tag>
         </template>
       </pt-demoblock>

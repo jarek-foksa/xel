@@ -7,6 +7,7 @@
 import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
+import {getTimeStamp} from "../utils/time.js";
 
 // @element x-tagsinput
 // @event input
@@ -23,10 +24,8 @@ export default class XTagsInputElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
       <main id="main">
-        <div id="tags">
-          <slot></slot>
-          <input id="input" type="text" part="input" spellcheck="false" tabindex="0"></input>
-        </div>
+        <slot></slot>
+        <input id="input" type="text" part="input" spellcheck="false" tabindex="0"></input>
       </main>
 
       <x-popover id="suggestions-popover" part="suggestions">
@@ -41,6 +40,8 @@ export default class XTagsInputElement extends HTMLElement {
       position: relative;
       font-size: 12px;
       box-sizing: border-box;
+      padding: 3px;
+      gap: 3px;
     }
     :host(:focus) {
       z-index: 10;
@@ -62,17 +63,12 @@ export default class XTagsInputElement extends HTMLElement {
       width: 100%;
       height: 100%;
       cursor: text;
-    }
-
-    /**
-     * Tags
-     */
-
-    #tags {
       display: flex;
+      align-items: center;
       flex-wrap: wrap;
+      gap: inherit;
     }
-    :host([mixed]) #tags {
+    :host([mixed]) #main {
       opacity: 0.7;
     }
 
@@ -82,16 +78,17 @@ export default class XTagsInputElement extends HTMLElement {
 
     #input {
       width: 10px;
-      height: 25px;
+      height: 16px;
       margin: 2px;
-      padding: 0px 3px 0 6px;
+      padding: 0px 3px 0 5px;
       box-sizing: border-box;
-      line-height: 25px;
+      line-height: 22px;
       color: inherit;
       background: none;
       border: none;
       outline: none;
       font-size: inherit;
+      font-family: inherit;
     }
 
     /**
@@ -215,6 +212,7 @@ export default class XTagsInputElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("remove", (event) => this.#onRemoveButtonClick(event));
     this.#shadowRoot.addEventListener("keydown", (event) => this.#onKeyDown(event));
@@ -326,13 +324,24 @@ export default class XTagsInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  #lastShadowRootPointerDownTime = 0;
+
+  #onPointerDown(event) {
+    if (event.target === this && event.defaultPrevented === false) {
+      event.preventDefault();
+      this["#input"].focus();
+    }
+  }
+
   #onShadowRootPointerDown(event) {
+    this.#lastShadowRootPointerDownTime = getTimeStamp();
+
     if (event.target === this["#input"]) {
       if (this["#input"].value.length > 0) {
         this.#clearSuggestions();
       }
     }
-    else if (event.target === this["#main"] || event.target === this["#tags"]) {
+    else if (event.target === this["#main"]) {
       event.preventDefault();
       this["#input"].focus();
       this.#updateSuggestions(false);
