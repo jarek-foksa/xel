@@ -17,7 +17,7 @@
 body {
   color: var(--text-color);
   background-color: var(--background-color);
-  font-family: BlinkMacSystemFont, -apple-system, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
+  font-family: BlinkMacSystemFont, -apple-system, "Inter", "Roboto Flex", "Roboto", "Noto Sans", "Helvetica Neue", "Arial", sans-serif;
   --preset-accent-colors:       blue     color(srgb 0.00 0.48 1.00),
                                 purple   color(srgb 0.58 0.24 0.59),
                                 pink     color(srgb 0.97 0.31 0.62),
@@ -91,7 +91,7 @@ pre, code, var {
   outline-width: 1px;
   outline-style: solid;
   outline-color: var(--border-color);
-  font-family: "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
+  font-family: ui-monospace, "Noto Sans Mono", "Menlo", "Consolas", monospace;
 }
 pre {
   border-radius: 7px;

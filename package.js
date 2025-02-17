@@ -123,7 +123,6 @@ let createPortalPackage = (minify = true, publish = false) => {
       // Dependencies
       {
         let srcPaths = [
-          `${projectPath}/node_modules/cantarell/cantarell.woff2`,
           `${projectPath}/node_modules/marked/marked.min.js`,
           `${projectPath}/node_modules/prismjs/prism.js`
         ];

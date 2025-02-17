@@ -19,7 +19,7 @@
 body {
   color: var(--text-color);
   background-color: var(--background-color);
-  font-family: "Segoe UI", "SegoeUI", "Helvetica Neue", "Helvetica", "Arial", "Roboto", sans-serif;
+  font-family: "Segoe UI", "SegoeUI", "Helvetica Neue", "Helvetica", "Arial", "Roboto Flex", "Roboto", sans-serif;
   --preset-accent-colors:       blue     color(srgb 0.30 0.76 1.00),
                                 purple   color(srgb 0.85 0.36 0.90),
                                 pink     color(srgb 1.00 0.31 0.80),

@@ -109,7 +109,7 @@ a:hover {
 
 pre, code, var {
   background-color: var(--material-surface-container-low-color);
-  font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
+  font-family: "Roboto Mono", "Noto Sans Mono", "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
 }
 pre {
   border-radius: 12px;

@@ -19,7 +19,7 @@ export default class XLabelElement extends HTMLElement {
       box-sizing: border-box;
       font-size: 13px;
       font-weight: 400;
-      line-height: 1;
+      line-height: 1.2;
     }
     :host([disabled]) {
       opacity: 0.5;

@@ -20,8 +20,7 @@
 body {
   color: var(--text-color);
   background-color: var(--background-color);
-  font-family: "Cantarell", BlinkMacSystemFont, -apple-system, "Inter", "Roboto", "Helvetica Neue", "Lucida Grande", "Arial", sans-serif;
-  font-weight: 500;
+  font-family: "Adwaita Sans", "Inter", "Roboto Flex", "Roboto", "Noto Sans", "Helvetica Neue", "Arial", sans-serif;
   --preset-accent-colors:       blue     color(srgb 0.21 0.52 0.89),
                                 purple   color(srgb 0.57 0.25 0.67),
                                 pink     color(srgb 0.97 0.31 0.62),
@@ -93,7 +92,7 @@ pre, code, var {
   outline-width: 1px;
   outline-style: solid;
   outline-color: rgba(0, 0, 0, 0.14);
-  font-family: "Source Code Pro", "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
+  font-family: "Adwaita Mono", "Iosevka", "Noto Sans Mono", "Inconsolata", "Menlo", "Andale Mono", monospace;
 }
 pre {
   border-radius: 12px;
@@ -617,11 +616,6 @@ x-navitem:focus::part(button) {
   outline-style: solid;
   outline-color: var(--light-accent-color);
   outline-offset: -1px;
-}
-
-/* Label */
-x-nav x-label {
-  font-weight: 700;
 }
 
 /* Arrow */

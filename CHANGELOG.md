@@ -4,6 +4,7 @@
 ## 0.32.0 (PENDING)
 
 - Add `level` property to `<x-label>`
+- Use Adwaita Sans (Inter) instead of Cantarell fonts
 
 ## 0.31.0 (2025-02-15)
 
