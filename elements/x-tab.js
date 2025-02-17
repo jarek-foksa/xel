@@ -76,7 +76,7 @@ export default class XTabElement extends HTMLElement {
     :host([toggled]) #selection-indicator {
       display: block;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

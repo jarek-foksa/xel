@@ -1,153 +1,151 @@
-<article>
-  <section id="intro-section">
-    <h2>Dialog</h2>
+<section id="intro-section">
+  <h1>Dialog</h1>
 
-    <p>Xel does not implement a custom <strong>&lt;x-dialog&gt;</strong> element because of the limitations of
-    the underlying Custom Elements API. Instead the standard HTML <strong>&lt;dialog&gt;</strong> element is
-    augmented to make it work and look consistent with other Xel elements.</p>
+  <p>Xel does not implement a custom <strong>&lt;x-dialog&gt;</strong> element because of the limitations of
+  the underlying Custom Elements API. Instead the standard HTML <strong>&lt;dialog&gt;</strong> element is
+  augmented to make it work and look consistent with other Xel elements.</p>
 
-    <x-button>
-      <x-label>Open dialog</x-label>
-      <dialog>
-        <main>
-          <h3>Sample dialog</h3>
-          <p>Lorem ipsum dolor sit amet.</p>
-        </main>
+  <x-button>
+    <x-label>Open dialog</x-label>
+    <dialog>
+      <main>
+        <h3>Sample dialog</h3>
+        <p>Lorem ipsum dolor sit amet.</p>
+      </main>
 
-        <footer>
-          <x-button>
-            <x-label>Cancel</x-label>
-          </x-button>
+      <footer>
+        <x-button>
+          <x-label>Cancel</x-label>
+        </x-button>
 
-          <x-button autofocus toggled>
-            <x-label>OK</x-label>
-          </x-button>
-        </footer>
-      </dialog>
-    </x-button>
+        <x-button autofocus toggled>
+          <x-label>OK</x-label>
+        </x-button>
+      </footer>
+    </dialog>
+  </x-button>
 
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/dialog.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <dialog></dialog>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/dialog.js"></pt-apiblock>
+  <section>
+    <h3>Confirmation</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+
+          <dialog style="max-width: 500px;">
+            <main>
+              <h3>Use Google's location service?</h3>
+              <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
+            </main>
+
+            <footer>
+              <x-button id="disagree-button">
+                <x-label>Disagree</x-label>
+              </x-button>
+              <x-button autofocus toggled id="agree-button">
+                <x-label>Agree</x-label>
+              </x-button>
+            </footer>
+          </dialog>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Do not close when backdrop clicked</h3>
 
-    <section>
-      <h4>Basic</h4>
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <dialog id="dialog">
+            <main>
+              <p>This dialog can't be closed by clicking the backdrop, you must click the "Close" button.</p>
+            </main>
+            <footer>
+              <x-button id="close-button" toggled>
+                <x-label>Close</x-label>
+              </x-button>
+            </footer>
+          </dialog>
+        </x-button>
 
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <dialog></dialog>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
+        <style>
+          dialog::backdrop {
+            pointer-events: none;
+          }
+        </style>
 
-    <hr/>
-
-    <section>
-      <h4>Confirmation</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-
-            <dialog style="max-width: 500px;">
-              <main>
-                <h3>Use Google's location service?</h3>
-                <p>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</p>
-              </main>
-
-              <footer>
-                <x-button id="disagree-button">
-                  <x-label>Disagree</x-label>
-                </x-button>
-                <x-button autofocus toggled id="agree-button">
-                  <x-label>Agree</x-label>
-                </x-button>
-              </footer>
-            </dialog>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Do not close when backdrop clicked</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <dialog id="dialog">
-              <main>
-                <p>This dialog can't be closed by clicking the backdrop, you must click the "Close" button.</p>
-              </main>
-              <footer>
-                <x-button id="close-button" toggled>
-                  <x-label>Close</x-label>
-                </x-button>
-              </footer>
-            </dialog>
-          </x-button>
-
-          <style>
-            dialog::backdrop {
-              pointer-events: none;
-            }
-          </style>
-
-          <script>
-            let dialog = document.querySelector("#dialog");
-            let closeButton = document.querySelector("#close-button");
-            closeButton.addEventListener("click", () => dialog.close());
-          </script>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Custom style</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <dialog></dialog>
-          </x-button>
-
-          <style>
-            dialog {
-              width: 70vw;
-              height: 30vh;
-              background: #009788;
-              border-radius: 15px;
-              opacity: 0.85;
-              border: 1px solid #326960;
-              padding: 10px 20px;
-            }
-
-            dialog::backdrop {
-              background: rgba(0, 0, 0, 0.3);
-            }
-          </style>
-        </template>
-      </pt-demoblock>
-    </section>
+        <script>
+          let dialog = document.querySelector("#dialog");
+          let closeButton = document.querySelector("#close-button");
+          closeButton.addEventListener("click", () => dialog.close());
+        </script>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Custom style</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <dialog></dialog>
+        </x-button>
+
+        <style>
+          dialog {
+            width: 70vw;
+            height: 30vh;
+            background: #009788;
+            border-radius: 15px;
+            opacity: 0.85;
+            border: 1px solid #326960;
+            padding: 10px 20px;
+          }
+
+          dialog::backdrop {
+            background: rgba(0, 0, 0, 0.3);
+          }
+        </style>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

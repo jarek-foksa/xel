@@ -9,6 +9,7 @@ import Xel from "../classes/xel.js";
 import "./pt-aboutpage.js";
 import "./pt-setuppage.js";
 import "./pt-changelogpage.js";
+import "./pt-typographypage.js";
 import "./pt-licensepage.js";
 import "./pt-elementpage.js";
 
@@ -316,6 +317,13 @@ export default class PTAppElement extends HTMLElement {
             </x-nav>
           </x-navitem>
 
+          <a href="/typography">
+            <x-navitem>
+              <x-icon href="#text-underline"></x-icon>
+              <x-label><x-message href="#typography" autocapitalize></x-message></x-label>
+            </x-navitem>
+          </a>
+
           <a href="/changelog">
             <x-navitem>
               <x-icon href="#calendar"></x-icon>
@@ -515,6 +523,8 @@ export default class PTAppElement extends HTMLElement {
     #branding h1 {
       margin: 0 0 0 6px;
       line-height: 1;
+      font-size: 34px;
+      font-weight: 700;
     }
 
     /* Nav */
@@ -886,6 +896,10 @@ export default class PTAppElement extends HTMLElement {
           else if (path === "/setup") {
             title.textContent = "Xel | Setup";
             this["#main"].innerHTML = "<pt-setuppage></pt-setuppage>";
+          }
+          else if (path === "/typography") {
+            title.textContent = "Xel | Typography";
+            this["#main"].innerHTML = "<pt-typographypage></pt-typographypage>";
           }
           else if (path === "/changelog") {
             title.textContent = "Xel | Changelog";

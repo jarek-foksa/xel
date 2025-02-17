@@ -11,27 +11,26 @@ import {css} from "../utils/template.js";
 
 export default class PTChangelogPageElement extends PTPage {
   static _shadowStyleSheet = css`
-    article h3 {
+    h3 {
       margin: 0;
-      font-size: 22px;
-      font-weight: 500;
+      line-height: 1;
     }
 
-    article h4 {
+    h4 {
       margin-top: 4px;
       opacity: 0.6;
       font-size: 14px;
     }
 
-    article ul {
+    ul {
       margin-bottom: 0;
     }
 
-    article ul li > p {
+    ul li > p {
       display: inline;
     }
 
-    article x-tag {
+    x-tag {
       vertical-align: middle;
       margin-bottom: 2px;
       margin-right: 4px;
@@ -40,12 +39,12 @@ export default class PTChangelogPageElement extends PTPage {
       color: white;
       border-width: 0px;
     }
-    article x-tag:hover,
-    article x-tag:active {
+    x-tag:hover,
+    x-tag:active {
       background: #ec407a;
       color: white;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +61,7 @@ export default class PTChangelogPageElement extends PTPage {
       if (this._shadowRoot.childElementCount === 0) {
         let changelogMarkdown = await (await fetch("/CHANGELOG.md")).text();
         let changelog = new ChangelogParser().parse(changelogMarkdown);
-        let changelogHTML = "";
+        let changelogHTML = "<h1>Changelog</h1>";
 
         for (let release of changelog) {
           let itemsHTML = `<ul>`;
@@ -97,12 +96,7 @@ export default class PTChangelogPageElement extends PTPage {
           `;
         }
 
-        this._shadowRoot.innerHTML = `
-          <article>
-            <h2>Changelog</h2>
-            ${changelogHTML}
-          </article>
-        `;
+        this._shadowRoot.innerHTML = changelogHTML;
       }
 
       resolve();

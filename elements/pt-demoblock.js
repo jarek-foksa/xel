@@ -14,10 +14,8 @@ let counter = 0;
 export default class PTDemoBlockElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
-      <main>
-        <div id="live-view"></div>
-        <pt-code id="code-view"></pt-code>
-      </main>
+      <div id="live-view"></div>
+      <pt-code id="code-view"></pt-code>
     </template>
   `;
 
@@ -33,7 +31,7 @@ export default class PTDemoBlockElement extends HTMLElement {
       max-height: 350px;
       overflow: scroll;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

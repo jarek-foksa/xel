@@ -1,75 +1,88 @@
-<article>
-  <section id="intro-section">
-    <h2>Label</h2>
+<section id="intro-section">
+  <h1>Label</h1>
 
-    <p><strong>&lt;x-label&gt;</strong> is a generic element similar to <strong>&lt;label&gt;</strong>, but can
-    be used in any place rather than just inside HTML forms.</p>
+  <p><strong>&lt;x-label&gt;</strong> is a generic element similar to <strong>&lt;label&gt;</strong>, but can
+  be used in any place rather than just inside HTML forms.</p>
 
-    <x-label>Label</x-label>
+  <x-label>Label</x-label>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-label.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-label>Name</x-label>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-label.js"></pt-apiblock>
+  <section>
+    <h3>Levels</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-label level="1">Level 1</x-label>
+        <x-label level="2">Level 2</x-label>
+        <x-label level="3">Level 3</x-label>
+        <x-label>Level 4</x-label>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Button label</h3>
 
-    <section>
-      <h4>Basic</h4>
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Button</x-label>
+        </x-button>
+      </template>
+    </pt-demoblock>
+  </section>
 
-      <pt-demoblock>
-        <template>
+  <hr/>
+
+  <section>
+    <h3>Input label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-input>
           <x-label>Name</x-label>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Button label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Button</x-label>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Input label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-input>
-            <x-label>Name</x-label>
-          </x-input>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Checkbox label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox>
-            <x-label>Show tooltips</x-label>
-          </x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
+        </x-input>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Checkbox label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox>
+          <x-label>Show tooltips</x-label>
+        </x-checkbox>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

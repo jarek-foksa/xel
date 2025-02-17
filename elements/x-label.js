@@ -13,11 +13,13 @@ export default class XLabelElement extends HTMLElement {
   static #shadowStyleSheet = css`
     :host {
       display: block;
-      line-height: 1.2;
       cursor: inherit;
       user-select: none;
       -webkit-user-select: none;
       box-sizing: border-box;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1;
     }
     :host([disabled]) {
       opacity: 0.5;
@@ -25,11 +27,26 @@ export default class XLabelElement extends HTMLElement {
     :host([hidden]) {
       display: none;
     }
+    :host([level="1"]) {
+      margin: 12px 0px;
+      font-size: 26px;
+      font-weight: 500;
+    }
+    :host([level="2"]) {
+      margin: 10px 0px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    :host([level="3"]) {
+      margin: 8px 0px;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
     slot {
       text-decoration: inherit;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,6 +60,16 @@ export default class XLabelElement extends HTMLElement {
   }
   set value(value) {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
+  }
+
+  // @attribute
+  // @type number
+  // @default 3
+  get level() {
+    return this.hasAttribute("level") ? parseInt(this.getAttribute("level")) : 3;
+  }
+  set level(level) {
+    this.setAttribute("level", level);
   }
 
   // @attribute

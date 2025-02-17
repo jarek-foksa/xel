@@ -1,101 +1,98 @@
-<article>
-  <section id="intro-section">
-    <h2>Titlebar</h2>
+<section id="intro-section">
+  <h1>Titlebar</h1>
 
-    <p><strong>&lt;x-titlebar&gt;</strong> element contains the window title and basic window manager controls.</p>
+  <p><strong>&lt;x-titlebar&gt;</strong> element contains the window title and basic window manager controls.</p>
 
-    <x-titlebar>
-      <x-label>About</x-label>
-    </x-titlebar>
+  <x-titlebar>
+    <x-label>About</x-label>
+  </x-titlebar>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-titlebar.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-titlebar>
+          <x-label>About</x-label>
+        </x-titlebar>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-titlebar.js"></pt-apiblock>
+  <section>
+    <h3>Label and title</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-titlebar>
+          <x-box>
+            <x-icon href="#document"></x-icon>
+            <x-label>Untilted.svg</x-label>
+          </x-box>
+        </x-titlebar>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Maximized</h3>
 
-    <section>
-      <h4>Label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-titlebar>
-            <x-label>About</x-label>
-          </x-titlebar>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Label and title</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-titlebar>
-            <x-box>
-              <x-icon href="#document"></x-icon>
-              <x-label>Untilted.svg</x-label>
-            </x-box>
-          </x-titlebar>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Maximized</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-titlebar maximized>
-            <x-label>About</x-label>
-          </x-titlebar>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Events</h4>
-
-      <pt-demoblock>
-        <template>
-          <script>
-            let titlebar = document.querySelector("x-titlebar");
-
-            titlebar.addEventListener("buttonclick", (event) => {
-              if (event.detail === "minimize") {
-                window.alert("Minimize window");
-              }
-              else if (event.detail === "maximize") {
-                titlebar.maximized = true;
-              }
-              else if (event.detail === "restore") {
-                titlebar.maximized = false;
-              }
-              if (event.detail === "close") {
-                window.alert("Close window");
-              }
-            });
-          </script>
-
-          <x-titlebar maximized>
-            <x-label>About</x-label>
-          </x-titlebar>
-        </template>
-      </pt-demoblock>
-    </section>
-
+    <pt-demoblock>
+      <template>
+        <x-titlebar maximized>
+          <x-label>About</x-label>
+        </x-titlebar>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Events</h3>
+
+    <pt-demoblock>
+      <template>
+        <script>
+          let titlebar = document.querySelector("x-titlebar");
+
+          titlebar.addEventListener("buttonclick", (event) => {
+            if (event.detail === "minimize") {
+              window.alert("Minimize window");
+            }
+            else if (event.detail === "maximize") {
+              titlebar.maximized = true;
+            }
+            else if (event.detail === "restore") {
+              titlebar.maximized = false;
+            }
+            if (event.detail === "close") {
+              window.alert("Close window");
+            }
+          });
+        </script>
+
+        <x-titlebar maximized>
+          <x-label>About</x-label>
+        </x-titlebar>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

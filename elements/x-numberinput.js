@@ -115,7 +115,7 @@ export default class XNumberInputElement extends HTMLElement {
     :host(:focus) #editor::after {
       display: none;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

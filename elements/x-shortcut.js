@@ -49,7 +49,7 @@ export default class XShortcutElement extends HTMLElement {
       color: var(--selection-color);
       background-color: var(--selection-background-color);
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

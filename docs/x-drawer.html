@@ -1,146 +1,144 @@
-<article>
-  <section id="intro-section">
-    <h2>Drawer</h2>
+<section id="intro-section">
+  <h1>Drawer</h1>
 
-    <p>Drawer is similar to <strong>&lt;x-dialog&gt;</strong>, but it expands from the window edge.</p>
+  <p>Drawer is similar to <strong>&lt;x-dialog&gt;</strong>, but it expands from the window edge.</p>
 
-    <x-button>
-      <x-label>Toggle drawer</x-label>
-      <x-drawer></x-drawer>
-    </x-button>
+  <x-button>
+    <x-label>Toggle drawer</x-label>
+    <x-drawer></x-drawer>
+  </x-button>
 
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-drawer.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <x-drawer></x-drawer>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-drawer.js"></pt-apiblock>
+  <section>
+    <h3>Position "right"</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <x-drawer position="right"></x-drawer>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Position "top"</h3>
 
-    <section>
-      <h4>Basic</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <x-drawer></x-drawer>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Position "right"</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <x-drawer position="right"></x-drawer>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Position "top"</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <x-drawer position="top"></x-drawer>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Position "bottom"</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <x-drawer position="bottom"></x-drawer>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Manual (don't auto-close)</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <x-drawer id="drawer" manual>
-              <x-button id="close-button" style="margin: 10px auto;">
-                <x-label>Close this drawer</x-label>
-              </x-button>
-            </x-drawer>
-          </x-button>
-
-          <script>
-            let drawer = document.querySelector("#drawer");
-            let closeButton = document.querySelector("#close-button");
-            closeButton.addEventListener("click", () => drawer.close());
-          </script>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Custom style</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open</x-label>
-            <x-drawer position="left"></x-drawer>
-          </x-button>
-
-          <style>
-            x-drawer {
-              color: white;
-              background: #009788;
-              border-width: 1px;
-              border-style: solid;
-              border-color: #326960;
-              border-radius: 0 15px 15px 0;
-              opacity: 0.85;
-            }
-            x-drawer[position="left"] {
-              width: 300px;
-              height: calc(100% - 100px);
-              margin: 50px 0;
-              padding: 10px 20px;
-            }
-
-            x-drawer::backdrop {
-              background: rgba(0, 0, 0, 0);
-            }
-          </style>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <x-drawer position="top"></x-drawer>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Position "bottom"</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <x-drawer position="bottom"></x-drawer>
+        </x-button>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Manual (don't auto-close)</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <x-drawer id="drawer" manual>
+            <x-button id="close-button" style="margin: 10px auto;">
+              <x-label>Close this drawer</x-label>
+            </x-button>
+          </x-drawer>
+        </x-button>
+
+        <script>
+          let drawer = document.querySelector("#drawer");
+          let closeButton = document.querySelector("#close-button");
+          closeButton.addEventListener("click", () => drawer.close());
+        </script>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Custom style</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open</x-label>
+          <x-drawer position="left"></x-drawer>
+        </x-button>
+
+        <style>
+          x-drawer {
+            color: white;
+            background: #009788;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #326960;
+            border-radius: 0 15px 15px 0;
+            opacity: 0.85;
+          }
+          x-drawer[position="left"] {
+            width: 300px;
+            height: calc(100% - 100px);
+            margin: 50px 0;
+            padding: 10px 20px;
+          }
+
+          x-drawer::backdrop {
+            background: rgba(0, 0, 0, 0);
+          }
+        </style>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

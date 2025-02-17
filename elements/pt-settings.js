@@ -12,7 +12,7 @@ export default class PTSettingsElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
       <section id="theme-section">
-        <h4 id="theme-heading"><x-message href="#theme" autocapitalize></x-message></h4>
+        <x-label id="theme-heading" level="3"><x-message href="#theme" autocapitalize></x-message></x-label>
 
         <x-select id="theme-select">
           <x-menu>
@@ -62,7 +62,7 @@ export default class PTSettingsElement extends HTMLElement {
       </section>
 
       <section id="accent-color-section">
-        <h4><x-message href="#accent-color" autocapitalize></x-message></h4>
+        <x-label level="3"><x-message href="#accent-color" autocapitalize></x-message></x-label>
 
         <x-box>
           <x-select id="accent-preset-select">
@@ -74,7 +74,7 @@ export default class PTSettingsElement extends HTMLElement {
       </section>
 
       <section id="icons-section">
-        <h4><x-message href="#icons" autocapitalize></x-message></h4>
+        <x-label level="3"><x-message href="#icons" autocapitalize></x-message></x-label>
 
         <x-select id="icons-select">
           <x-menu>

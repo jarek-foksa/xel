@@ -65,13 +65,13 @@ body {
   --close-path-data: M 36 26 L 50 40 L 64 26 L 74 36 L 60 50 L 74 64 L 64 74 L 50 60 L 36 74 L 26 64 L 40 50 L 26 36 L 36 26 Z;
 }
 
-h2 {
-  color: color(srgb 0 0 0);
-}
-h3 {
-  color: color(srgb 0 0 0);
-}
-h4 {
+/*****************************************************************************************************************/
+
+/**
+ * HTML elements
+ */
+
+h1, h2, h3, h4, h5, h6 {
   color: color(srgb 0 0 0);
 }
 
@@ -128,10 +128,22 @@ th, td {
   border-color: var(--border-color);
 }
 
+/*****************************************************************************************************************/
+
+/**
+ * Selection
+ */
+
 ::selection {
   color: var(--selection-color);
   background-color: var(--selection-background-color);
 }
+
+/*****************************************************************************************************************/
+
+/**
+ * Scrollbar
+ */
 
 ::-webkit-scrollbar {
   background-color: transparent;

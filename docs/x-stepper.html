@@ -1,47 +1,45 @@
-<article>
-  <section id="intro-section">
-    <h2>Stepper</h2>
+<section id="intro-section">
+  <h1>Stepper</h1>
 
-    <p><strong>&lt;x-stepper&gt;</strong> provides buttons for incrementing and decrementing a numerical value.
-    It can be placed inside <strong>&lt;x-numberinput&gt;</strong>.</p>
+  <p><strong>&lt;x-stepper&gt;</strong> provides buttons for incrementing and decrementing a numerical value.
+  It can be placed inside <strong>&lt;x-numberinput&gt;</strong>.</p>
 
-    <x-stepper></x-stepper>
+  <x-stepper></x-stepper>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-stepper.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-stepper></x-stepper>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-stepper.js"></pt-apiblock>
+  <section>
+    <h3>Disabled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-stepper disabled></x-stepper>
+        <x-stepper disabled="increment" style="margin: 5px 0;"></x-stepper>
+        <x-stepper disabled="decrement"></x-stepper>
+      </template>
+    </pt-demoblock>
   </section>
-
-  <hr/>
-
-  <section id="examples-section">
-    <h3>Examples</h3>
-
-    <section>
-      <h4>Basic</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-stepper></x-stepper>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Disabled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-stepper disabled></x-stepper>
-          <x-stepper disabled="increment" style="margin: 5px 0;"></x-stepper>
-          <x-stepper disabled="decrement"></x-stepper>
-        </template>
-      </pt-demoblock>
-    </section>
-  </section>
-</article>
+</section>

@@ -1,158 +1,156 @@
-<article>
-  <section id="intro-section">
-    <h2>Number input</h2>
+<section id="intro-section">
+  <h1>Number input</h1>
 
-    <p><strong>&lt;x-numberinput&gt;</strong> allows user to enter a raw numerical value.</p>
+  <p><strong>&lt;x-numberinput&gt;</strong> allows user to enter a raw numerical value.</p>
 
-    <x-numberinput value="100">
-      <x-stepper></x-stepper>
-    </x-numberinput>
+  <x-numberinput value="100">
+    <x-stepper></x-stepper>
+  </x-numberinput>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-numberinput.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput value="0"></x-numberinput>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-numberinput.js"></pt-apiblock>
+  <section>
+    <h3>Stepper</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput value="0">
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Prefix</h3>
 
-    <section>
-      <h4>Basic</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput value="0"></x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Stepper</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput value="0">
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Prefix</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput value="499" prefix="$" min="0">
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Suffix</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput value="100" suffix=" px">
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Min and max</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput value="0" min="0" max="100">
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Placeholder</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput>
-            <x-label>Width</x-label>
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Step</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput value="0.50" min="0" max="1" step="0.01">
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Disabled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput value="0" disabled>
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Size variants</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-numberinput size="small">
-            <x-label>Small</x-label>
-            <x-stepper></x-stepper>
-          </x-numberinput>
-
-          <x-numberinput style="margin: 10px 0;">
-            <x-label>Normal</x-label>
-            <x-stepper></x-stepper>
-          </x-numberinput>
-
-          <x-numberinput size="large">
-            <x-label>Large</x-label>
-            <x-stepper></x-stepper>
-          </x-numberinput>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-numberinput value="499" prefix="$" min="0">
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Suffix</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput value="100" suffix=" px">
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Min and max</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput value="0" min="0" max="100">
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Placeholder</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput>
+          <x-label>Width</x-label>
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Step</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput value="0.50" min="0" max="1" step="0.01">
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Disabled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput value="0" disabled>
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Size variants</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-numberinput size="small">
+          <x-label>Small</x-label>
+          <x-stepper></x-stepper>
+        </x-numberinput>
+
+        <x-numberinput style="margin: 10px 0;">
+          <x-label>Normal</x-label>
+          <x-stepper></x-stepper>
+        </x-numberinput>
+
+        <x-numberinput size="large">
+          <x-label>Large</x-label>
+          <x-stepper></x-stepper>
+        </x-numberinput>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

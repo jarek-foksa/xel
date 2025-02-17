@@ -43,7 +43,7 @@ export default class XTooltipElement extends HTMLElement {
     :host([animating]) {
       display: block;
     }
-  `
+  `;
 
   // @property
   // @attribute

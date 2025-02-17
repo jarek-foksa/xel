@@ -1,67 +1,65 @@
-<article>
-  <section id="intro-section">
-    <h2>Card</h2>
+<section id="intro-section">
+  <h1>Card</h1>
 
-    <p><strong>&lt;x-card&gt;</strong> is a generic element similar to <strong>&lt;div&gt;</strong>, but styled to
-    stand out from the background and surrounding content.</p>
+  <p><strong>&lt;x-card&gt;</strong> is a generic element similar to <strong>&lt;div&gt;</strong>, but styled to
+  stand out from the background and surrounding content.</p>
 
-    <x-card>
-      <main>
-        <x-label>Card</x-label>
-      </main>
-    </x-card>
+  <x-card>
+    <main>
+      <x-label>Card</x-label>
+    </main>
+  </x-card>
+</section>
+
+<hr>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-card.js"></pt-apiblock>
+</section>
+
+<hr>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Default</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-card></x-card>
+      </template>
+    </pt-demoblock>
   </section>
 
-  <hr/>
+  <hr>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-card.js"></pt-apiblock>
+  <section>
+    <h3>Rich text</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-card>
+          <main>
+            <h2 style="margin-top: 0px;">Heading 2</h2>
+            <h3>Heading 3</h3>
+            <h4>Heading 4</h4>
+            <p>Sample paragraph with <strong>strong text</strong>, <em>emphasized text</em>, <mark>marked text</mark>, <a href="https://boxy-svg.com">link</a> and <code>code</code>.</p>
+            <blockquote>Sample blockquote</blockquote>
+            <table>
+              <thead>
+                <tr><th>Year</th>     <th>Visits</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>2025</td>     <td>237.452</td></tr>
+                <tr><td>2024</td>     <td>193.433</td></tr>
+                <tr><td>2023</td>     <td>140.192</td></tr>
+              </tbody>
+            </table>
+          </main>
+        </x-card>
+      </template>
+    </pt-demoblock>
   </section>
-
-  <hr/>
-
-  <section id="examples-section">
-    <h3>Examples</h3>
-
-    <section>
-      <h4>Default</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-card></x-card>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Content</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-card>
-            <main>
-              <h2 style="margin-top: 0px;">Heading 2</h2>
-              <h3>Heading 3</h3>
-              <h4>Heading 4</h4>
-              <p>Sample paragraph with <strong>strong text</strong>, <em>emphasized text</em>, <mark>marked text</mark>, <a href="https://boxy-svg.com">link</a> and <code>code</code>.</p>
-              <blockquote>Sample blockquote</blockquote>
-              <table>
-                <thead>
-                  <tr><th>Year</th>     <th>Visits</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>2025</td>     <td>237.452</td></tr>
-                  <tr><td>2024</td>     <td>193.433</td></tr>
-                  <tr><td>2023</td>     <td>140.192</td></tr>
-                </tbody>
-              </table>
-            </main>
-          </x-card>
-        </template>
-      </pt-demoblock>
-    </section>
-  </section>
-</article>
+</section>

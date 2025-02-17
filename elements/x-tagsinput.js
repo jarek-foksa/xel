@@ -114,7 +114,7 @@ export default class XTagsInputElement extends HTMLElement {
     #suggestions-popover x-tag:first-child {
       margin-top: 0;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

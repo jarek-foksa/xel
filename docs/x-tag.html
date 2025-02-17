@@ -1,151 +1,149 @@
-<article>
-  <section id="intro-section">
-    <h2>Tag</h2>
+<section id="intro-section">
+  <h1>Tag</h1>
 
-    <p><strong>&lt;x-tag&gt;</strong> can be used a stand-alone element or as part of
-       <strong>&lt;x-tags&gt;</strong> or <strong>&lt;x-tagsinput&gt;</strong>.</p>
+  <p><strong>&lt;x-tag&gt;</strong> can be used a stand-alone element or as part of
+     <strong>&lt;x-tags&gt;</strong> or <strong>&lt;x-tagsinput&gt;</strong>.</p>
 
-    <x-tag>
-      <x-icon href="#bookmark"></x-icon>
-      <x-label>Tag</x-label>
-    </x-tag>
+  <x-tag>
+    <x-icon href="#bookmark"></x-icon>
+    <x-label>Tag</x-label>
+  </x-tag>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-tag.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-tag>
+          <x-label>Tag</x-label>
+        </x-tag>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-tag.js"></pt-apiblock>
+  <section>
+    <h3>Icon and label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-tag>
+          <x-icon href="#bookmark"></x-icon>
+          <x-label>Tag</x-label>
+        </x-tag>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Swatch and label</h3>
 
-    <section>
-      <h4>Label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tag>
-            <x-label>Tag</x-label>
-          </x-tag>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Icon and label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tag>
-            <x-icon href="#bookmark"></x-icon>
-            <x-label>Tag</x-label>
-          </x-tag>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Swatch and label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tag>
-            <x-swatch value="red"></x-swatch>
-            <x-label>Tag</x-label>
-          </x-tag>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Toggled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tag toggled>
-            <x-icon href="#bookmark"></x-icon>
-            <x-label>Tag</x-label>
-          </x-tag>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Scoped</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tag>
-            <x-label slot="scope">OS</x-label>
-            <x-label>Linux</x-label>
-          </x-tag>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Disabled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tag disabled>
-            <x-icon href="#bookmark"></x-icon>
-            <x-label>Tag</x-label>
-          </x-tag>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Custom style</h4>
-
-      <pt-demoblock>
-        <template>
-          <style>
-            x-tag, x-tag:hover {
-              color: white;
-              border: none;
-            }
-            x-tag[value="red"] {
-              background: #d02b2b;
-            }
-            x-tag[value="green"] {
-              background: #62a81c;
-            }
-            x-tag[value="blue"] {
-              background: #3168c6;
-            }
-          </style>
-
-          <x-tag value="red">
-            <x-label>Red</x-label>
-          </x-tag>
-
-          <x-tag value="green">
-            <x-label>Green</x-label>
-          </x-tag>
-
-          <x-tag value="blue">
-            <x-label>Blue</x-label>
-          </x-tag>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-tag>
+          <x-swatch value="red"></x-swatch>
+          <x-label>Tag</x-label>
+        </x-tag>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Toggled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-tag toggled>
+          <x-icon href="#bookmark"></x-icon>
+          <x-label>Tag</x-label>
+        </x-tag>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Scoped</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-tag>
+          <x-label slot="scope">OS</x-label>
+          <x-label>Linux</x-label>
+        </x-tag>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Disabled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-tag disabled>
+          <x-icon href="#bookmark"></x-icon>
+          <x-label>Tag</x-label>
+        </x-tag>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Custom style</h3>
+
+    <pt-demoblock>
+      <template>
+        <style>
+          x-tag, x-tag:hover {
+            color: white;
+            border: none;
+          }
+          x-tag[value="red"] {
+            background: #d02b2b;
+          }
+          x-tag[value="green"] {
+            background: #62a81c;
+          }
+          x-tag[value="blue"] {
+            background: #3168c6;
+          }
+        </style>
+
+        <x-tag value="red">
+          <x-label>Red</x-label>
+        </x-tag>
+
+        <x-tag value="green">
+          <x-label>Green</x-label>
+        </x-tag>
+
+        <x-tag value="blue">
+          <x-label>Blue</x-label>
+        </x-tag>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

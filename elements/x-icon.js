@@ -46,7 +46,7 @@ export default class XIconElement extends HTMLElement {
       /* @bugfix: pointerOverEvent.relatedTarget leaks shadow DOM of <x-icon> */
       pointer-events: none;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

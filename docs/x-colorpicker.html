@@ -1,57 +1,55 @@
-<article>
-  <section id="intro-section">
-    <h2>Color picker</h2>
+<section id="intro-section">
+  <h1>Color picker</h1>
 
-    <p><strong>&lt;x-colorpicker&gt;</strong> allows user to choose a color value.</p>
+  <p><strong>&lt;x-colorpicker&gt;</strong> allows user to choose a color value.</p>
 
-    <x-colorpicker value="#bada5580" alpha></x-colorpicker>
+  <x-colorpicker value="#bada5580" alpha></x-colorpicker>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-colorpicker.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-colorpicker value="#bada55"></x-colorpicker>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-colorpicker.js"></pt-apiblock>
+  <section>
+    <h3>Alpha slider</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-colorpicker value="#bada55" alpha></x-colorpicker>
+      </template>
+    </pt-demoblock>
   </section>
+</section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Small size</h3>
 
-    <section>
-      <h4>Basic</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-colorpicker value="#bada55"></x-colorpicker>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Alpha slider</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-colorpicker value="#bada55" alpha></x-colorpicker>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-colorpicker value="#bada55" size="small"></x-colorpicker>
+      </template>
+    </pt-demoblock>
   </section>
-
-    <hr/>
-
-    <section>
-      <h4>Small size</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-colorpicker value="#bada55" size="small"></x-colorpicker>
-        </template>
-      </pt-demoblock>
-    </section>
-  </section>
-</article>
+</section>

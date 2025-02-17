@@ -1,110 +1,108 @@
-<article>
-  <section id="intro-section">
-    <h2>Tabs</h2>
+<section id="intro-section">
+  <h1>Tabs</h1>
 
-    <p><strong>&lt;x-tabs&gt;</strong> are usually used to toggle between different views.</p>
+  <p><strong>&lt;x-tabs&gt;</strong> are usually used to toggle between different views.</p>
 
-    <x-tabs>
-      <x-tab toggled>
-        <x-icon href="#home"></x-icon>
-        <x-label>First tab</x-label>
-      </x-tab>
+  <x-tabs>
+    <x-tab toggled>
+      <x-icon href="#home"></x-icon>
+      <x-label>First tab</x-label>
+    </x-tab>
 
-      <x-tab>
-        <x-icon href="#flag"></x-icon>
-        <x-label>Second tab</x-label>
-      </x-tab>
+    <x-tab>
+      <x-icon href="#flag"></x-icon>
+      <x-label>Second tab</x-label>
+    </x-tab>
 
-      <x-tab>
-        <x-icon href="#earth"></x-icon>
-        <x-label>Third tab</x-label>
-      </x-tab>
-    </x-tabs>
+    <x-tab>
+      <x-icon href="#earth"></x-icon>
+      <x-label>Third tab</x-label>
+    </x-tab>
+  </x-tabs>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-tabs.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Icons and labels</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-tabs>
+          <x-tab toggled>
+            <x-icon href="#mail"></x-icon>
+            <x-label>Item one</x-label>
+          </x-tab>
+
+          <x-tab>
+            <x-icon href="#send"></x-icon>
+            <x-label>Item two</x-label>
+          </x-tab>
+
+          <x-tab>
+            <x-icon href="#wrench"></x-icon>
+            <x-label>Item three</x-label>
+          </x-tab>
+        </x-tabs>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-tabs.js"></pt-apiblock>
+  <section>
+    <h3>Only icons</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-tabs>
+          <x-tab toggled>
+            <x-icon href="#mail"></x-icon>
+          </x-tab>
+
+          <x-tab>
+            <x-icon href="#send"></x-icon>
+          </x-tab>
+
+          <x-tab>
+            <x-icon href="#wrench"></x-icon>
+          </x-tab>
+        </x-tabs>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Only labels</h3>
 
-    <section>
-      <h4>Icons and labels</h4>
+    <pt-demoblock>
+      <template>
+        <x-tabs>
+          <x-tab toggled>
+            <x-label>Item one</x-label>
+          </x-tab>
 
-      <pt-demoblock>
-        <template>
-          <x-tabs>
-            <x-tab toggled>
-              <x-icon href="#mail"></x-icon>
-              <x-label>Item one</x-label>
-            </x-tab>
+          <x-tab>
+            <x-label>Item two</x-label>
+          </x-tab>
 
-            <x-tab>
-              <x-icon href="#send"></x-icon>
-              <x-label>Item two</x-label>
-            </x-tab>
-
-            <x-tab>
-              <x-icon href="#wrench"></x-icon>
-              <x-label>Item three</x-label>
-            </x-tab>
-          </x-tabs>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Only icons</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tabs>
-            <x-tab toggled>
-              <x-icon href="#mail"></x-icon>
-            </x-tab>
-
-            <x-tab>
-              <x-icon href="#send"></x-icon>
-            </x-tab>
-
-            <x-tab>
-              <x-icon href="#wrench"></x-icon>
-            </x-tab>
-          </x-tabs>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Only labels</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-tabs>
-            <x-tab toggled>
-              <x-label>Item one</x-label>
-            </x-tab>
-
-            <x-tab>
-              <x-label>Item two</x-label>
-            </x-tab>
-
-            <x-tab>
-              <x-label>Item three</x-label>
-            </x-tab>
-          </x-tabs>
-        </template>
-      </pt-demoblock>
-    </section>
+          <x-tab>
+            <x-label>Item three</x-label>
+          </x-tab>
+        </x-tabs>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+</section>

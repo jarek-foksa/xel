@@ -1,261 +1,259 @@
-<article>
-  <section id="intro-section">
-    <h2>Context menu</h2>
+<section id="intro-section">
+  <h1>Context menu</h1>
 
-    <p><strong>&lt;x-contextmenu&gt;</strong> is a menu that appears when user clicks the right mouse button.</p>
+  <p><strong>&lt;x-contextmenu&gt;</strong> is a menu that appears when user clicks the right mouse button.</p>
 
-    <x-card>
-      <main>
-        <x-label>Right-click to open the context menu.</x-label>
-      </main>
+  <x-card>
+    <main>
+      <x-label>Right-click to open the context menu.</x-label>
+    </main>
 
-      <x-contextmenu>
-        <x-menu>
-          <x-menuitem>
-            <x-label>Undo</x-label>
-          </x-menuitem>
+    <x-contextmenu>
+      <x-menu>
+        <x-menuitem>
+          <x-label>Undo</x-label>
+        </x-menuitem>
 
-          <x-menuitem>
-            <x-label>Redo</x-label>
-          </x-menuitem>
+        <x-menuitem>
+          <x-label>Redo</x-label>
+        </x-menuitem>
 
-          <hr>
+        <hr>
 
-          <x-menuitem>
-            <x-label>Cut</x-label>
-          </x-menuitem>
+        <x-menuitem>
+          <x-label>Cut</x-label>
+        </x-menuitem>
 
-          <x-menuitem>
-            <x-label>Copy</x-label>
-          </x-menuitem>
+        <x-menuitem>
+          <x-label>Copy</x-label>
+        </x-menuitem>
 
-          <x-menuitem>
-            <x-label>Paste</x-label>
-          </x-menuitem>
+        <x-menuitem>
+          <x-label>Paste</x-label>
+        </x-menuitem>
 
-          <hr>
+        <hr>
 
-          <x-menuitem>
-            <x-label>Refresh</x-label>
-          </x-menuitem>
-        </x-menu>
-      </x-contextmenu>
-    </x-card>
+        <x-menuitem>
+          <x-label>Refresh</x-label>
+        </x-menuitem>
+      </x-menu>
+    </x-contextmenu>
+  </x-card>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-contextmenu.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-card>
+          <main>
+            <x-label>Right-click to open the context menu.</x-label>
+          </main>
+
+          <x-contextmenu>
+            <x-menu>
+              <x-menuitem>
+                <x-label>Undo</x-label>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-label>Redo</x-label>
+              </x-menuitem>
+
+              <hr/>
+
+              <x-menuitem>
+                <x-label>Cut</x-label>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-label>Copy</x-label>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-label>Paste</x-label>
+              </x-menuitem>
+
+              <hr/>
+
+              <x-menuitem>
+                <x-label>Refresh</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-contextmenu>
+        </x-card>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-contextmenu.js"></pt-apiblock>
+  <section>
+    <h3>With icons</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-card>
+          <main>
+            <x-label>Right-click to open the context menu.</x-label>
+          </main>
+
+          <x-contextmenu>
+            <x-menu>
+              <x-menuitem>
+                <x-icon href="#history-undo"></x-icon>
+                <x-label>Undo</x-label>
+                <x-shortcut value="Control+Z"></x-shortcut>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-icon href="#history-redo"></x-icon>
+                <x-label>Redo</x-label>
+                <x-shortcut value="Control+Shift+Z"></x-shortcut>
+              </x-menuitem>
+
+              <hr/>
+
+              <x-menuitem>
+                <x-icon href="#cut"></x-icon>
+                <x-label>Cut</x-label>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-icon href="#copy"></x-icon>
+                <x-label>Copy</x-label>
+              </x-menuitem>
+
+              <x-menuitem>
+                <x-icon href="#paste"></x-icon>
+                <x-label>Paste</x-label>
+              </x-menuitem>
+
+              <hr/>
+
+              <x-menuitem>
+                <x-icon></x-icon>
+                <x-label>Refresh</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-contextmenu>
+        </x-card>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Nested</h3>
 
-    <section>
-      <h4>Basic</h4>
+    <pt-demoblock>
+      <template>
+        <x-card>
+          <main>
+            <x-label>Right-click to open the context menu.</x-label>
+          </main>
 
-      <pt-demoblock>
-        <template>
-          <x-card>
-            <main>
-              <x-label>Right-click to open the context menu.</x-label>
-            </main>
+          <x-contextmenu>
+            <x-menu>
+              <x-menuitem>
+                <x-icon href="#history-undo"></x-icon>
+                <x-label>Undo</x-label>
+                <x-shortcut value="Control+Z"></x-shortcut>
+              </x-menuitem>
 
-            <x-contextmenu>
-              <x-menu>
-                <x-menuitem>
-                  <x-label>Undo</x-label>
-                </x-menuitem>
+              <x-menuitem>
+                <x-icon href="#history-redo"></x-icon>
+                <x-label>Redo</x-label>
+                <x-shortcut value="Control+Shift+Z"></x-shortcut>
+              </x-menuitem>
 
-                <x-menuitem>
-                  <x-label>Redo</x-label>
-                </x-menuitem>
+              <hr/>
 
-                <hr/>
+              <x-menuitem>
+                <x-icon href="#cut"></x-icon>
+                <x-label>Cut</x-label>
+              </x-menuitem>
 
-                <x-menuitem>
-                  <x-label>Cut</x-label>
-                </x-menuitem>
+              <x-menuitem>
+                <x-icon href="#copy"></x-icon>
+                <x-label>Copy</x-label>
+              </x-menuitem>
 
-                <x-menuitem>
-                  <x-label>Copy</x-label>
-                </x-menuitem>
+              <x-menuitem>
+                <x-icon href="#paste"></x-icon>
+                <x-label>Paste</x-label>
+              </x-menuitem>
 
-                <x-menuitem>
-                  <x-label>Paste</x-label>
-                </x-menuitem>
+              <hr/>
 
-                <hr/>
+              <x-menuitem>
+                <x-icon></x-icon>
+                <x-label>Insert</x-label>
 
-                <x-menuitem>
-                  <x-label>Refresh</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-contextmenu>
-          </x-card>
-        </template>
-      </pt-demoblock>
-    </section>
+                <x-menu>
+                  <x-menuitem>
+                    <x-icon href="#image"></x-icon>
+                    <x-label>Image</x-label>
+                  </x-menuitem>
 
-    <hr/>
+                  <x-menuitem>
+                    <x-icon href="#link"></x-icon>
+                    <x-label>Link</x-label>
+                  </x-menuitem>
 
-    <section>
-      <h4>With icons</h4>
+                  <x-menuitem>
+                    <x-icon href="#edit"></x-icon>
+                    <x-label>Drawing</x-label>
+                  </x-menuitem>
 
-      <pt-demoblock>
-        <template>
-          <x-card>
-            <main>
-              <x-label>Right-click to open the context menu.</x-label>
-            </main>
+                  <x-menuitem>
+                    <x-icon></x-icon>
+                    <x-label>Metadata</x-label>
+                    <x-menu>
+                      <x-menuitem>
+                        <x-icon href="#bookmark"></x-icon>
+                        <x-label>Bookmark</x-label>
+                      </x-menuitem>
 
-            <x-contextmenu>
-              <x-menu>
-                <x-menuitem>
-                  <x-icon href="#history-undo"></x-icon>
-                  <x-label>Undo</x-label>
-                  <x-shortcut value="Control+Z"></x-shortcut>
-                </x-menuitem>
+                      <x-menuitem>
+                        <x-icon href="#comment"></x-icon>
+                        <x-label>Comment</x-label>
+                      </x-menuitem>
 
-                <x-menuitem>
-                  <x-icon href="#history-redo"></x-icon>
-                  <x-label>Redo</x-label>
-                  <x-shortcut value="Control+Shift+Z"></x-shortcut>
-                </x-menuitem>
+                      <x-menuitem>
+                        <x-icon href="#note"></x-icon>
+                        <x-label>Footnote</x-label>
+                      </x-menuitem>
+                    </x-menu>
+                  </x-menuitem>
 
-                <hr/>
+                  <hr/>
 
-                <x-menuitem>
-                  <x-icon href="#cut"></x-icon>
-                  <x-label>Cut</x-label>
-                </x-menuitem>
-
-                <x-menuitem>
-                  <x-icon href="#copy"></x-icon>
-                  <x-label>Copy</x-label>
-                </x-menuitem>
-
-                <x-menuitem>
-                  <x-icon href="#paste"></x-icon>
-                  <x-label>Paste</x-label>
-                </x-menuitem>
-
-                <hr/>
-
-                <x-menuitem>
-                  <x-icon></x-icon>
-                  <x-label>Refresh</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-contextmenu>
-          </x-card>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Nested</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-card>
-            <main>
-              <x-label>Right-click to open the context menu.</x-label>
-            </main>
-
-            <x-contextmenu>
-              <x-menu>
-                <x-menuitem>
-                  <x-icon href="#history-undo"></x-icon>
-                  <x-label>Undo</x-label>
-                  <x-shortcut value="Control+Z"></x-shortcut>
-                </x-menuitem>
-
-                <x-menuitem>
-                  <x-icon href="#history-redo"></x-icon>
-                  <x-label>Redo</x-label>
-                  <x-shortcut value="Control+Shift+Z"></x-shortcut>
-                </x-menuitem>
-
-                <hr/>
-
-                <x-menuitem>
-                  <x-icon href="#cut"></x-icon>
-                  <x-label>Cut</x-label>
-                </x-menuitem>
-
-                <x-menuitem>
-                  <x-icon href="#copy"></x-icon>
-                  <x-label>Copy</x-label>
-                </x-menuitem>
-
-                <x-menuitem>
-                  <x-icon href="#paste"></x-icon>
-                  <x-label>Paste</x-label>
-                </x-menuitem>
-
-                <hr/>
-
-                <x-menuitem>
-                  <x-icon></x-icon>
-                  <x-label>Insert</x-label>
-
-                  <x-menu>
-                    <x-menuitem>
-                      <x-icon href="#image"></x-icon>
-                      <x-label>Image</x-label>
-                    </x-menuitem>
-
-                    <x-menuitem>
-                      <x-icon href="#link"></x-icon>
-                      <x-label>Link</x-label>
-                    </x-menuitem>
-
-                    <x-menuitem>
-                      <x-icon href="#edit"></x-icon>
-                      <x-label>Drawing</x-label>
-                    </x-menuitem>
-
-                    <x-menuitem>
-                      <x-icon></x-icon>
-                      <x-label>Metadata</x-label>
-                      <x-menu>
-                        <x-menuitem>
-                          <x-icon href="#bookmark"></x-icon>
-                          <x-label>Bookmark</x-label>
-                        </x-menuitem>
-
-                        <x-menuitem>
-                          <x-icon href="#comment"></x-icon>
-                          <x-label>Comment</x-label>
-                        </x-menuitem>
-
-                        <x-menuitem>
-                          <x-icon href="#note"></x-icon>
-                          <x-label>Footnote</x-label>
-                        </x-menuitem>
-                      </x-menu>
-                    </x-menuitem>
-
-                    <hr/>
-
-                    <x-menuitem>
-                      <x-icon></x-icon>
-                      <x-label>Special characters…</x-label>
-                    </x-menuitem>
-                  </x-menu>
-                </x-menuitem>
-              </x-menu>
-            </x-contextmenu>
-          </x-card>
-        </template>
-      </pt-demoblock>
-    </section>
+                  <x-menuitem>
+                    <x-icon></x-icon>
+                    <x-label>Special characters…</x-label>
+                  </x-menuitem>
+                </x-menu>
+              </x-menuitem>
+            </x-menu>
+          </x-contextmenu>
+        </x-card>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+</section>

@@ -1,135 +1,133 @@
-<article>
-  <section id="intro-section">
-    <h2>Menu item</h2>
+<section id="intro-section">
+  <h1>Menu item</h1>
 
-    <p><strong>&lt;x-menuitem&gt;</strong> is not meant to be used as a stand-alone widget, instead it should be
-    always placed inside <strong>&lt;x-menu&gt;</strong> or <strong>&lt;x-menubar&gt;</strong>.</p>
+  <p><strong>&lt;x-menuitem&gt;</strong> is not meant to be used as a stand-alone widget, instead it should be
+  always placed inside <strong>&lt;x-menu&gt;</strong> or <strong>&lt;x-menubar&gt;</strong>.</p>
 
-    <x-menu opened>
-      <x-menuitem>
-        <x-icon href="#copy"></x-icon>
-        <x-label>Copy</x-label>
-        <x-shortcut value="Control+C"></x-shortcut>
-      </x-menuitem>
-    </x-menu>
+  <x-menu opened>
+    <x-menuitem>
+      <x-icon href="#copy"></x-icon>
+      <x-label>Copy</x-label>
+      <x-shortcut value="Control+C"></x-shortcut>
+    </x-menuitem>
+  </x-menu>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-menuitem.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-menu opened>
+          <x-menuitem>
+            <x-label>Copy</x-label>
+          </x-menuitem>
+        </x-menu>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-menuitem.js"></pt-apiblock>
+  <section>
+    <h3>Icon and label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-menu opened>
+          <x-menuitem>
+            <x-icon href="#copy"></x-icon>
+            <x-label>Copy</x-label>
+          </x-menuitem>
+        </x-menu>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Icon, label and shortcut</h3>
 
-    <section>
-      <h4>Label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-menu opened>
-            <x-menuitem>
-              <x-label>Copy</x-label>
-            </x-menuitem>
-          </x-menu>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Icon and label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-menu opened>
-            <x-menuitem>
-              <x-icon href="#copy"></x-icon>
-              <x-label>Copy</x-label>
-            </x-menuitem>
-          </x-menu>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Icon, label and shortcut</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-menu opened>
-            <x-menuitem>
-              <x-icon href="#copy"></x-icon>
-              <x-label>Copy</x-label>
-              <x-shortcut value="Control+C"></x-shortcut>
-            </x-menuitem>
-          </x-menu>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Disabled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-menu opened>
-            <x-menuitem disabled>
-              <x-icon href="#copy"></x-icon>
-              <x-label>Copy</x-label>
-            </x-menuitem>
-          </x-menu>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Toggled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-menu opened>
-            <x-menuitem toggled>
-              <x-label>Inspector</x-label>
-            </x-menuitem>
-          </x-menu>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Togglable</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-menu opened>
-            <x-menuitem togglable toggled>
-              <x-label>Show Grid</x-label>
-            </x-menuitem>
-
-            <x-menuitem togglable>
-              <x-label>Show Guides</x-label>
-            </x-menuitem>
-          </x-menu>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <p>Check <a href="/elements/x-menubar">&lt;x-menubar&gt;</a> and <a href="/elements/x-contextmenu">&lt;x-contextmenu&gt;</a> for more examples.</p>
+    <pt-demoblock>
+      <template>
+        <x-menu opened>
+          <x-menuitem>
+            <x-icon href="#copy"></x-icon>
+            <x-label>Copy</x-label>
+            <x-shortcut value="Control+C"></x-shortcut>
+          </x-menuitem>
+        </x-menu>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Disabled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-menu opened>
+          <x-menuitem disabled>
+            <x-icon href="#copy"></x-icon>
+            <x-label>Copy</x-label>
+          </x-menuitem>
+        </x-menu>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Toggled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-menu opened>
+          <x-menuitem toggled>
+            <x-label>Inspector</x-label>
+          </x-menuitem>
+        </x-menu>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Togglable</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-menu opened>
+          <x-menuitem togglable toggled>
+            <x-label>Show Grid</x-label>
+          </x-menuitem>
+
+          <x-menuitem togglable>
+            <x-label>Show Guides</x-label>
+          </x-menuitem>
+        </x-menu>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <p>Check <a href="/elements/x-menubar">&lt;x-menubar&gt;</a> and <a href="/elements/x-contextmenu">&lt;x-contextmenu&gt;</a> for more examples.</p>
+</section>

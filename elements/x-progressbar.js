@@ -78,7 +78,7 @@ export default class XProgressbarElement extends HTMLElement {
       background: #3B99FB;
       will-change: left, right;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

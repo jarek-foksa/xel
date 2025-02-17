@@ -9,7 +9,7 @@
 /*****************************************************************************************************************/
 
 /**
- * Wrappers
+ * HTML elements
  */
 
 html {
@@ -17,6 +17,8 @@ html {
   height: 100%;
   margin: 0;
   interpolate-size: allow-keywords;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 body {
@@ -24,133 +26,70 @@ body {
   height: 100%;
   margin: 0;
   overflow-y: overlay;
-  font-size: 15px;
-  line-height: 1.6;
 }
 
-/*****************************************************************************************************************/
+/* Headings */
 
-/**
- * Scrollbar
- */
-
-::-webkit-scrollbar {
-  max-width: 6px;
-  max-height: 6px;
-}
-
-/* Corner */
-::-webkit-scrollbar-corner {
-  display: none
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Headings
- */
-
-h2 {
-  margin: 18px 0;
+h1 {
+  margin: 22px 0 16px;
   box-sizing: border-box;
   line-height: 1.1;
-  font-size: 26px;
+  font-size: 52px;
   font-weight: 500;
 }
-h2[disabled] {
-  opacity: 0.5;
+
+h2 {
+  margin: 18px 0 14px 0;
+  box-sizing: border-box;
+  line-height: 1.1;
+  font-size: 40px;
+  font-weight: 500;
 }
 
 h3 {
-  margin: 10px 0;
+  margin: 16px 0 12px 0;
   box-sizing: border-box;
   line-height: 1.2;
-  font-size: 16px;
-  font-weight: 700;
-}
-h3[disabled] {
-  opacity: 0.5;
+  font-size: 28px;
+  font-weight: 500;
 }
 
 h4 {
-  margin: 6px 0;
+  margin: 14px 0 10px 0;
   box-sizing: border-box;
   line-height: 1.1;
-  font-size: 12px;
-  font-weight: 700;
-}
-h4[disabled] {
-  opacity: 0.5;
+  font-size: 24px;
+  font-weight: 500;
 }
 
 h5 {
-  margin: 5px 0;
+  margin: 12px 0 8px 0;
   box-sizing: border-box;
   line-height: 1.1;
-  font-size: 11px;
+  font-size: 20px;
   font-weight: 500;
 }
-h5[disabled] {
-  opacity: 0.5;
-}
 
-/*****************************************************************************************************************/
-
-/**
- * Article
- */
-
-article h2 {
-  margin: 20px 0 15px 0;
+h6 {
+  margin: 8px 0 5px 0;
   box-sizing: border-box;
-  font-size: 42px;
-  font-weight: 400;
   line-height: 1.1;
-}
-
-article h3 {
-  margin: 27px 0 18px 0;
-  box-sizing: border-box;
-  font-size: 36px;
-  font-weight: 400;
-  line-height: 1.2;
-}
-
-article h4 {
-  margin: 34px 0 18px 0;
-  box-sizing: border-box;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 1.1;
 }
 
-article h5 {
-  margin: 10px 0 8px 0;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.1;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Paragraph
- */
+/* Paragraph */
 
 p:last-child {
   margin-bottom: 0;
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Table
- */
+/* Table */
 
 table {
   border-collapse: collapse;
   width: 100%;
+  margin: 16px 0;
 }
 
 th {
@@ -162,21 +101,13 @@ td {
   padding: 8px 14px;
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Markers
- */
+/* Markers */
 
 em {
   font-weight: 500;
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Code
- */
+/* Code */
 
 pre, code, var {
   font-size: 14px;
@@ -194,11 +125,7 @@ pre > code {
   line-height: 18px;
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Separator
- */
+/* Separator */
 
 hr {
   width: 100%;
@@ -209,11 +136,7 @@ hr {
   border: none;
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Blockquote
- */
+/* Blockquote */
 
 blockquote {
   box-sizing: border-box;
@@ -230,11 +153,7 @@ blockquote > p:first-child {
   margin-top: 0;
 }
 
-/*****************************************************************************************************************/
-
-/**
- * Lists
- */
+/* Lists */
 
 ul,
 ol {
@@ -263,6 +182,21 @@ ol li {
 
 li > p {
   margin-bottom: 0;
+}
+
+/*****************************************************************************************************************/
+
+/**
+ * Scrollbar
+ */
+
+::-webkit-scrollbar {
+  max-width: 6px;
+  max-height: 6px;
+}
+
+::-webkit-scrollbar-corner {
+  display: none
 }
 
 /*****************************************************************************************************************/
@@ -401,9 +335,6 @@ x-icon:not(:defined) {
  * Label
  */
 
-x-label {
-  font-size: 13px;
-}
 x-label:not(:defined) {
   display: none;
 }

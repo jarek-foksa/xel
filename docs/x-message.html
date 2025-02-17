@@ -1,67 +1,65 @@
-<article>
-  <section id="intro-section">
-    <h2>Message</h2>
+<section id="intro-section">
+  <h1>Message</h1>
 
-    <p><strong>&lt;x-message&gt;</strong> is used to display a specific localized text from FTL locale file(s).
-    You must follow the last setup step (<a href="/setup#locale-card">set locale</a>) to make this element functional.</p>
+  <p><strong>&lt;x-message&gt;</strong> is used to display a specific localized text from FTL locale file(s).
+  You must follow the last setup step (<a href="/setup#locale-card">set locale</a>) to make this element functional.</p>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-message.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Plain text message</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-message href="#about"></x-message>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-message.js"></pt-apiblock>
+  <section>
+    <h3>Message with markup</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-message href="#slogan-1"></x-message>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Message with args</h3>
 
-    <section>
-      <h4>Plain text message</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-message href="#about"></x-message>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Message with markup</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-message href="#slogan-1"></x-message>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Message with args</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-message href="#unread-emails" args="count:4, date:2024-05-01"></x-message>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Automatic capitalization</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-message href="#source-code" autocapitalize></x-message>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-message href="#unread-emails" args="count:4, date:2024-05-01"></x-message>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Automatic capitalization</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-message href="#source-code" autocapitalize></x-message>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

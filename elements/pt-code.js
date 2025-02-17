@@ -27,6 +27,10 @@ export default class PTCodeElement extends HTMLElement {
       white-space: pre-wrap;
       overflow-x: auto;
     }
+    #code[data-scroll] {
+      max-height: 400px;
+      overflow-x: auto;
+    }
   `;
 
   static #lightHighlightStylSheet = css`
@@ -205,6 +209,13 @@ export default class PTCodeElement extends HTMLElement {
 
   #updateCode() {
     this["#code"].textContent = this.textContent;
+
+    if (this["#code"].clientHeight > 1000) {
+      this["#code"].setAttribute("data-scroll", "");
+    }
+    else {
+      this["#code"].removeAttribute("data-scroll");
+    }
 
     if (this["#code"].textContent !== "") {
       Prism.highlightElement(this["#code"], true);

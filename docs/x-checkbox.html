@@ -1,125 +1,123 @@
-<article>
-  <section id="intro-section">
-    <h2>Checkbox</h2>
+<section id="intro-section">
+  <h1>Checkbox</h1>
 
-    <p><strong>&lt;x-checkbox&gt;</strong> is a widget that allows user to perform a binary choice.</p>
+  <p><strong>&lt;x-checkbox&gt;</strong> is a widget that allows user to perform a binary choice.</p>
 
-    <x-checkbox toggled>
-      <x-label>Checkbox</x-label>
-    </x-checkbox>
+  <x-checkbox toggled>
+    <x-label>Checkbox</x-label>
+  </x-checkbox>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-checkbox.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Basic</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox></x-checkbox>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-checkbox.js"></pt-apiblock>
+  <section>
+    <h3>Toggled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox toggled></x-checkbox>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Mixed</h3>
 
-    <section>
-      <h4>Basic</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox></x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Toggled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox toggled></x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Mixed</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox mixed></x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Toggled, mixed</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox toggled mixed></x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Disabled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox toggled disabled></x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox>
-            <x-label>This is sample description</x-label>
-          </x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Multiline label</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox>
-            <x-label><strong>Option</strong></x-label>
-            <x-label>Description with a <a href="#">link</a>.</x-label>
-          </x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Size variants</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-checkbox size="small"></x-checkbox>
-          <x-checkbox></x-checkbox>
-          <x-checkbox size="large"></x-checkbox>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-checkbox mixed></x-checkbox>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Toggled, mixed</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox toggled mixed></x-checkbox>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Disabled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox toggled disabled></x-checkbox>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox>
+          <x-label>This is sample description</x-label>
+        </x-checkbox>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Multiline label</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox>
+          <x-label><strong>Option</strong></x-label>
+          <x-label>Description with a <a href="#">link</a>.</x-label>
+        </x-checkbox>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Size variants</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-checkbox size="small"></x-checkbox>
+        <x-checkbox></x-checkbox>
+        <x-checkbox size="large"></x-checkbox>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

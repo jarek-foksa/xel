@@ -48,7 +48,7 @@ export default class XThrobberElement extends HTMLElement {
       transform-box: fill-box;
       transform-origin: 50% 50%;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

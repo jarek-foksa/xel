@@ -1,82 +1,80 @@
-<article>
-  <section id="intro-section">
-    <h2>Pager</h2>
+<section id="intro-section">
+  <h1>Pager</h1>
 
-    <p><strong>&lt;x-pager&gt;</strong> allows user to switch between multiple pages.</p>
+  <p><strong>&lt;x-pager&gt;</strong> allows user to switch between multiple pages.</p>
 
-    <x-pager></x-pager>
+  <x-pager></x-pager>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-pager.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Normal</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-pager value="1" max="5"></x-pager>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-pager.js"></pt-apiblock>
+  <section>
+    <h3>Full (show first/last)</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-pager value="1" max="5" controls="first last prev next nth"></x-pager>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Minimal</h3>
 
-    <section>
-      <h4>Normal</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-pager value="1" max="5"></x-pager>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Full (show first/last)</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-pager value="1" max="5" controls="first last prev next nth"></x-pager>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Minimal</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-pager value="2" max="5" controls="prev next"></x-pager>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Ellipsis</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-pager max="200"></x-pager>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Links</h4>
-
-      <p><strong>Note:</strong> <code>page</code> parameter with the page number will be automatically added to the specified href.</p>
-
-      <pt-demoblock>
-        <template>
-          <x-pager href="https://boxy-svg.com/ideas"></x-pager>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-pager value="2" max="5" controls="prev next"></x-pager>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Ellipsis</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-pager max="200"></x-pager>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Links</h3>
+
+    <p><strong>Note:</strong> <code>page</code> parameter with the page number will be automatically added to the specified href.</p>
+
+    <pt-demoblock>
+      <template>
+        <x-pager href="https://boxy-svg.com/ideas"></x-pager>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

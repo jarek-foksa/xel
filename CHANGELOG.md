@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.32.0 (PENDING)
+
+- Add `level` property to `<x-label>`
+
 ## 0.31.0 (2025-02-15)
 
 - Material and Material Dark themes

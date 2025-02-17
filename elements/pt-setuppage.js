@@ -12,160 +12,158 @@ import {html, css} from "../utils/template.js";
 export default class PTSetupPageElement extends PTPage {
   static _shadowTemplate = html`
     <template>
-      <article>
-        <h2>Setup</h2>
+      <h1>Setup</h1>
 
-        <x-card>
-          <main>
-            <h3><strong>1</strong> Install Xel</h3>
+      <x-card>
+        <main>
+          <h3><strong>1</strong> Install Xel</h3>
 
-            <p>Run from the console:</p>
-            <pt-code>npm install xel</pt-code>
-            <p><strong>Note:</strong> Xel NPM package has no dependencies and it does not execute any scripts during installation.</p>
-          </main>
-        </x-card>
+          <p>Run from the console:</p>
+          <pt-code>npm install xel</pt-code>
+          <p><strong>Note:</strong> Xel NPM package has no dependencies and it does not execute any scripts during installation.</p>
+        </main>
+      </x-card>
 
-        <x-card>
-          <main>
-            <h3><strong>2</strong> Link Xel</h3>
+      <x-card>
+        <main>
+          <h3><strong>2</strong> Link Xel</h3>
 
-            <p>Add to the  <code>&lt;head&gt;</code>:</p>
-            <pt-code>&lt;script src="node_modules/xel/xel.js" type="module"&gt;&lt;/script&gt;</pt-code>
-          </main>
-        </x-card>
+          <p>Add to the  <code>&lt;head&gt;</code>:</p>
+          <pt-code>&lt;script src="node_modules/xel/xel.js" type="module"&gt;&lt;/script&gt;</pt-code>
+        </main>
+      </x-card>
 
-        <x-card>
-          <main>
-            <h3><strong>3</strong> Set theme</h3>
+      <x-card>
+        <main>
+          <h3><strong>3</strong> Set theme</h3>
 
-            Add to the <code>&lt;head&gt;</code> to use
-              <x-select id="theme-select">
-                <x-menu>
-                  <x-menuitem value="fluent">
-                    <x-icon href="/icons/portal.svg#fluent"></x-icon>
-                    <x-label>Fluent</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="material">
-                    <x-icon href="/icons/portal.svg#material"></x-icon>
-                    <x-label>Material</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="cupertino">
-                    <x-icon href="/icons/portal.svg#cupertino"></x-icon>
-                    <x-label>Cupertino</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="adwaita">
-                    <x-icon href="/icons/portal.svg#adwaita"></x-icon>
-                    <x-label>Adwaita</x-label>
-                  </x-menuitem>
-
-                  <hr/>
-
-                  <x-menuitem value="fluent-dark">
-                    <x-icon href="/icons/portal.svg#fluent"></x-icon>
-                    <x-label>Fluent Dark</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="material-dark">
-                    <x-icon href="/icons/portal.svg#material"></x-icon>
-                    <x-label>Material Dark</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="cupertino-dark">
-                    <x-icon href="/icons/portal.svg#cupertino"></x-icon>
-                    <x-label>Cupertino Dark</x-label>
-                  </x-menuitem>
-
-                  <x-menuitem value="adwaita-dark">
-                    <x-icon href="/icons/portal.svg#adwaita"></x-icon>
-                    <x-label>Adwaita Dark</x-label>
-                  </x-menuitem>
-                </x-menu>
-              </x-select>
-              theme:
-            <pt-code id="theme-code"></pt-code>
-
-            <p><strong>Note:</strong> You can also link a custom theme CSS file. To make it a subtheme of an existing
-            Xel theme you just have to use <code>@import</code> CSS rule.</p>
-          </main>
-        </x-card>
-
-        <x-card>
-          <main>
-            <h3><strong>4</strong> Set accent color</h3>
-
-            <p>Add to the <code>&lt;head&gt;</code> to use
-
-            <x-select id="accent-preset-select">
-              <x-menu id="accent-preset-menu"></x-menu>
-            </x-select>
-
-            accent color:</p>
-            <pt-code id="accent-code"></pt-code>
-          </main>
-        </x-card>
-
-        <x-card id="icons-card">
-          <main>
-            <h3><strong>5</strong> Set icons</h3>
-
-            <p>Add to the <code>&lt;head&gt;</code> to use
-            <x-select id="icons-select">
+          Add to the <code>&lt;head&gt;</code> to use
+            <x-select id="theme-select">
               <x-menu>
-                <x-menuitem value="material" toggled>
-                  <x-label>Material</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="material-outlined">
-                  <x-label>Material Outlined</x-label>
-                </x-menuitem>
-
                 <x-menuitem value="fluent">
+                  <x-icon href="/icons/portal.svg#fluent"></x-icon>
                   <x-label>Fluent</x-label>
                 </x-menuitem>
 
-                <x-menuitem value="fluent-outlined">
-                  <x-label>Fluent Outlined</x-label>
+                <x-menuitem value="material">
+                  <x-icon href="/icons/portal.svg#material"></x-icon>
+                  <x-label>Material</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="cupertino">
+                  <x-icon href="/icons/portal.svg#cupertino"></x-icon>
+                  <x-label>Cupertino</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="adwaita">
+                  <x-icon href="/icons/portal.svg#adwaita"></x-icon>
+                  <x-label>Adwaita</x-label>
+                </x-menuitem>
+
+                <hr/>
+
+                <x-menuitem value="fluent-dark">
+                  <x-icon href="/icons/portal.svg#fluent"></x-icon>
+                  <x-label>Fluent Dark</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="material-dark">
+                  <x-icon href="/icons/portal.svg#material"></x-icon>
+                  <x-label>Material Dark</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="cupertino-dark">
+                  <x-icon href="/icons/portal.svg#cupertino"></x-icon>
+                  <x-label>Cupertino Dark</x-label>
+                </x-menuitem>
+
+                <x-menuitem value="adwaita-dark">
+                  <x-icon href="/icons/portal.svg#adwaita"></x-icon>
+                  <x-label>Adwaita Dark</x-label>
                 </x-menuitem>
               </x-menu>
             </x-select>
-            icons:</p>
-            <pt-code id="icons-code"></pt-code>
+            theme:
+          <pt-code id="theme-code"></pt-code>
 
-            <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If an icon
-            is not found in the first file, Xel will look for it in the subsequent files.</p>
-          </main>
-        </x-card>
+          <p><strong>Note:</strong> You can also link a custom theme CSS file. To make it a subtheme of an existing
+          Xel theme you just have to use <code>@import</code> CSS rule.</p>
+        </main>
+      </x-card>
 
-        <x-card id="locale-card">
-          <main>
-            <h3><strong>6</strong> Set locale (optional)</h3>
+      <x-card>
+        <main>
+          <h3><strong>4</strong> Set accent color</h3>
 
-            <p>Add to the <code>&lt;head&gt;</code> to use
-            <x-select id="locale-select">
-              <x-menu>
-                <x-menuitem value="en" toggled>
-                  <x-label>English</x-label>
-                </x-menuitem>
+          <p>Add to the <code>&lt;head&gt;</code> to use
 
-                <x-menuitem value="pl">
-                  <x-label>Polish</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-select>
-            locale:</p>
-            <pt-code id="locale-code"></pt-code>
+          <x-select id="accent-preset-select">
+            <x-menu id="accent-preset-menu"></x-menu>
+          </x-select>
 
-            <p><strong>Note:</strong> You can skip this step if your aren't planning to translate your app UI
-              into multiple languages. Otherwise you should provide a path to your own <a href="https://projectfluent.org/fluent/guide/" target="_blank">FTL locale file</a>. The file name should consist from ISO 639 language code, optionally followed by "-" and ISO 3166 territory code, e.g. <code>en.ftl</code>, <code>en-US.ftl</code> or <code>en-GB.ftl</code>.</p>
+          accent color:</p>
+          <pt-code id="accent-code"></pt-code>
+        </main>
+      </x-card>
 
-            <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If a message
-            is not found in the first locale file, Xel will look for it in the subsequent locale files.</p>
-          </main>
-        </x-card>
-      </article>
+      <x-card id="icons-card">
+        <main>
+          <h3><strong>5</strong> Set icons</h3>
+
+          <p>Add to the <code>&lt;head&gt;</code> to use
+          <x-select id="icons-select">
+            <x-menu>
+              <x-menuitem value="material" toggled>
+                <x-label>Material</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="material-outlined">
+                <x-label>Material Outlined</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="fluent">
+                <x-label>Fluent</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="fluent-outlined">
+                <x-label>Fluent Outlined</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+          icons:</p>
+          <pt-code id="icons-code"></pt-code>
+
+          <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If an icon
+          is not found in the first file, Xel will look for it in the subsequent files.</p>
+        </main>
+      </x-card>
+
+      <x-card id="locale-card">
+        <main>
+          <h3><strong>6</strong> Set locale (optional)</h3>
+
+          <p>Add to the <code>&lt;head&gt;</code> to use
+          <x-select id="locale-select">
+            <x-menu>
+              <x-menuitem value="en" toggled>
+                <x-label>English</x-label>
+              </x-menuitem>
+
+              <x-menuitem value="pl">
+                <x-label>Polish</x-label>
+              </x-menuitem>
+            </x-menu>
+          </x-select>
+          locale:</p>
+          <pt-code id="locale-code"></pt-code>
+
+          <p><strong>Note:</strong> You can skip this step if your aren't planning to translate your app UI
+            into multiple languages. Otherwise you should provide a path to your own <a href="https://projectfluent.org/fluent/guide/" target="_blank">FTL locale file</a>. The file name should consist from ISO 639 language code, optionally followed by "-" and ISO 3166 territory code, e.g. <code>en.ftl</code>, <code>en-US.ftl</code> or <code>en-GB.ftl</code>.</p>
+
+          <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If a message
+          is not found in the first locale file, Xel will look for it in the subsequent locale files.</p>
+        </main>
+      </x-card>
     </template>
   `;
 
@@ -174,7 +172,7 @@ export default class PTSetupPageElement extends PTPage {
       margin-bottom: 0;
     }
 
-    article h3 strong {
+    h3 strong {
       display: inline-block;
       vertical-align: middle;
       width: 35px;
@@ -189,29 +187,10 @@ export default class PTSetupPageElement extends PTPage {
       text-align: center;
     }
 
-    article h3 span.optional {
+    h3 span.optional {
       font-size: 20px;
       vertical-align: middle;
       opacity: 0.7;
-    }
-
-    article h4 {
-      font-size: 22px;
-      margin-top: 0;
-    }
-
-    pre {
-      display: block;
-      white-space: pre;
-      overflow: auto;
-    }
-
-    th {
-      background: var(--background-color);
-    }
-
-    hr {
-      margin: 24px 0 20px;
     }
 
     #theme-select,
@@ -222,7 +201,7 @@ export default class PTSetupPageElement extends PTPage {
       vertical-align: middle;
       margin: 0 2px;
     }
-  `
+  `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

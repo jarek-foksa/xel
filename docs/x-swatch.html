@@ -1,84 +1,82 @@
-<article>
-  <section id="intro-section">
-    <h2>Swatch</h2>
+<section id="intro-section">
+  <h1>Swatch</h1>
 
-    <p><strong>&lt;x-swatch&gt;</strong> shows a preview of a given color.</p>
+  <p><strong>&lt;x-swatch&gt;</strong> shows a preview of a given color.</p>
 
-    <x-swatch value="#67be3b"></x-swatch>
+  <x-swatch value="#67be3b"></x-swatch>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-swatch.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Default</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-swatch></x-swatch>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-swatch.js"></pt-apiblock>
+  <section>
+    <h3>Hex color value</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-swatch value="#bada55"></x-swatch>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Wide gamut color value</h3>
 
-    <section>
-      <h4>Default</h4>
+    <pt-demoblock>
+      <template>
+        <x-swatch value="color(display-p3 1 0 0)"></x-swatch>
+      </template>
+    </pt-demoblock>
+  </section>
 
-      <pt-demoblock>
-        <template>
-          <x-swatch></x-swatch>
-        </template>
-      </pt-demoblock>
-    </section>
+  <hr/>
 
-    <hr/>
+  <section>
+    <h3>Semi-transparent color value</h3>
 
-    <section>
-      <h4>Hex color value</h4>
+    <pt-demoblock>
+      <template>
+        <x-swatch value="rgb(100% 0% 0% / 30%)"></x-swatch>
+      </template>
+    </pt-demoblock>
+  </section>
 
-      <pt-demoblock>
-        <template>
+  <hr/>
+
+  <section>
+    <h3>Size variants</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-box style="gap: 10px;">
+          <x-swatch value="#bada55" size="small"></x-swatch>
           <x-swatch value="#bada55"></x-swatch>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Wide gamut color value</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-swatch value="color(display-p3 1 0 0)"></x-swatch>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Semi-transparent color value</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-swatch value="rgb(100% 0% 0% / 30%)"></x-swatch>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Size variants</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-box style="gap: 10px;">
-            <x-swatch value="#bada55" size="small"></x-swatch>
-            <x-swatch value="#bada55"></x-swatch>
-            <x-swatch value="#bada55" size="large"></x-swatch>
-          </x-box>
-        </template>
-      </pt-demoblock>
-    </section>
+          <x-swatch value="#bada55" size="large"></x-swatch>
+        </x-box>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+</section>

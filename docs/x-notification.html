@@ -1,79 +1,77 @@
-<article>
-  <section id="intro-section">
-    <h2>Notification</h2>
+<section id="intro-section">
+  <h1>Notification</h1>
 
-    <p><strong>&lt;x-notification&gt;</strong> is responsible for showing non-distracting messages to the user.</p>
+  <p><strong>&lt;x-notification&gt;</strong> is responsible for showing non-distracting messages to the user.</p>
 
-    <x-button>
-      <x-label>Open notification</x-label>
-      <x-notification>Notification</x-notification>
-    </x-button>
+  <x-button>
+    <x-label>Open notification</x-label>
+    <x-notification>Notification</x-notification>
+  </x-button>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-notification.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Default</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open notification</x-label>
+          <x-notification>Sample notification text with a <a href="https://xel-toolkit.org" target="_blank">link</a>.</x-notification>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-notification.js"></pt-apiblock>
+  <section>
+    <h3>Timeout</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-label>Open notification</x-label>
+          <x-notification timeout="2000">This notification will disappear after 2000 miliseconds.</x-notification>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>JS API</h3>
 
-    <section>
-      <h4>Default</h4>
+    <pt-demoblock>
+      <template>
+        <x-notification id="notification" timeout="800"></x-notification>
 
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open notification</x-label>
-            <x-notification>Sample notification text with a <a href="https://xel-toolkit.org" target="_blank">link</a>.</x-notification>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
+        <x-input id="input">
+          <x-label>Enter text here</x-label>
+        </x-input>
 
-    <hr/>
+        <script>
+          let notification = document.querySelector("#notification");
+          let input = document.querySelector("#input");
 
-    <section>
-      <h4>Timeout</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-label>Open notification</x-label>
-            <x-notification timeout="2000">This notification will disappear after 2000 miliseconds.</x-notification>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>JS API</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-notification id="notification" timeout="800"></x-notification>
-
-          <x-input id="input">
-            <x-label>Enter text here</x-label>
-          </x-input>
-
-          <script>
-            let notification = document.querySelector("#notification");
-            let input = document.querySelector("#input");
-
-            input.addEventListener("keydown", (event) => {
-              notification.innerHTML = `You pressed ${event.key} key.`;
-              notification.opened = true;
-            });
-          </script>
-        </template>
-      </pt-demoblock>
-    </section>
+          input.addEventListener("keydown", (event) => {
+            notification.innerHTML = `You pressed ${event.key} key.`;
+            notification.opened = true;
+          });
+        </script>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+</section>

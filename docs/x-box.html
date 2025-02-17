@@ -1,90 +1,88 @@
-<article>
-  <section id="intro-section">
-    <h2>Box</h2>
+<section id="intro-section">
+  <h1>Box</h1>
 
-    <p><strong>&lt;x-box&gt;</strong> is a generic element similar to <strong>&lt;div&gt;</strong> or <strong>&lt;span&gt;</strong>, but styled as a flexbox container by default.</p>
+  <p><strong>&lt;x-box&gt;</strong> is a generic element similar to <strong>&lt;div&gt;</strong> or <strong>&lt;span&gt;</strong>, but styled as a flexbox container by default.</p>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-box.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>Icons</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-box style="gap: 10px;">
+          <x-icon href="#mail"></x-icon>
+          <x-icon href="#delete"></x-icon>
+          <x-icon href="#settings"></x-icon>
+        </x-box>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-box.js"></pt-apiblock>
+  <section>
+    <h3>Icons, vertical</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-box style="gap: 10px;" vertical>
+          <x-icon href="#mail"></x-icon>
+          <x-icon href="#delete"></x-icon>
+          <x-icon href="#settings"></x-icon>
+        </x-box>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Buttons</h3>
 
-    <section>
-      <h4>Icons</h4>
+    <pt-demoblock>
+      <template>
+        <x-box style="gap: 5px;">
+          <x-button>
+            <x-label>Button</x-label>
+          </x-button>
 
-      <pt-demoblock>
-        <template>
-          <x-box style="gap: 10px;">
-            <x-icon href="#mail"></x-icon>
-            <x-icon href="#delete"></x-icon>
-            <x-icon href="#settings"></x-icon>
-          </x-box>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Icons, vertical</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-box style="gap: 10px;" vertical>
-            <x-icon href="#mail"></x-icon>
-            <x-icon href="#delete"></x-icon>
-            <x-icon href="#settings"></x-icon>
-          </x-box>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Buttons</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-box style="gap: 5px;">
-            <x-button>
-              <x-label>Button</x-label>
-            </x-button>
-
-            <x-button>
-              <x-label>Button</x-label>
-            </x-button>
-          </x-box>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Buttons, vertical</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-box style="gap: 5px;" vertical>
-            <x-button>
-              <x-label>Button</x-label>
-            </x-button>
-
-            <x-button>
-              <x-label>Button</x-label>
-            </x-button>
-          </x-box>
-        </template>
-      </pt-demoblock>
-    </section>
+          <x-button>
+            <x-label>Button</x-label>
+          </x-button>
+        </x-box>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Buttons, vertical</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-box style="gap: 5px;" vertical>
+          <x-button>
+            <x-label>Button</x-label>
+          </x-button>
+
+          <x-button>
+            <x-label>Button</x-label>
+          </x-button>
+        </x-box>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

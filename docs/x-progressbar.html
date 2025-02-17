@@ -1,100 +1,98 @@
-<article>
-  <section id="intro-section">
-    <h2>Progress bar</h2>
+<section id="intro-section">
+  <h1>Progress bar</h1>
 
-    <p><strong>&lt;x-progressbar&gt;</strong> displays a horizontal bar to indicate the progress of some operation.</p>
+  <p><strong>&lt;x-progressbar&gt;</strong> displays a horizontal bar to indicate the progress of some operation.</p>
 
-    <x-progressbar></x-progressbar>
+  <x-progressbar></x-progressbar>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-progressbar.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h3>No value</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-progressbar></x-progressbar>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-progressbar.js"></pt-apiblock>
+  <section>
+    <h3>Value</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-progressbar value="0.5"></x-progressbar>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h3>Max</h3>
 
-    <section>
-      <h4>No value</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-progressbar></x-progressbar>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Value</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-progressbar value="0.5"></x-progressbar>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Max</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-progressbar value="50" max="100"></x-progressbar>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Value changing over time</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-progressbar value="0"></x-progressbar>
-
-          <script>
-            let bar = document.querySelector("x-progressbar");
-            let callback = () => bar.value >= 1 ? bar.value = 0 : bar.value += 0.15;
-            setInterval(callback, 1000);
-          </script>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Disabled</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-progressbar disabled></x-progressbar>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Size variants</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-progressbar value="0.5" size="small"></x-progressbar>
-          <x-progressbar value="0.5" style="margin: 20px 0;"></x-progressbar>
-          <x-progressbar value="0.5" size="large"></x-progressbar>
-        </template>
-      </pt-demoblock>
-    </section>
+    <pt-demoblock>
+      <template>
+        <x-progressbar value="50" max="100"></x-progressbar>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h3>Value changing over time</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-progressbar value="0"></x-progressbar>
+
+        <script>
+          let bar = document.querySelector("x-progressbar");
+          let callback = () => bar.value >= 1 ? bar.value = 0 : bar.value += 0.15;
+          setInterval(callback, 1000);
+        </script>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Disabled</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-progressbar disabled></x-progressbar>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h3>Size variants</h3>
+
+    <pt-demoblock>
+      <template>
+        <x-progressbar value="0.5" size="small"></x-progressbar>
+        <x-progressbar value="0.5" style="margin: 20px 0;"></x-progressbar>
+        <x-progressbar value="0.5" size="large"></x-progressbar>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>

@@ -1,109 +1,106 @@
-<article>
-  <section id="intro-section">
-    <h2>Popover</h2>
+<section id="intro-section">
+  <h1>Popover</h1>
 
-    <p><strong>&lt;x-popover&gt;</strong> is a popup widget shown when user clicks a button.</p>
+  <p><strong>&lt;x-popover&gt;</strong> is a popup widget shown when user clicks a button.</p>
 
-    <x-button>
-      <x-label>Open popover</x-label>
+  <x-button>
+    <x-label>Open popover</x-label>
 
-      <x-popover modal>
-        <main>
-          <x-label>Popover</x-label>
-        </main>
-      </x-popover>
-    </x-button>
+    <x-popover modal>
+      <main>
+        <x-label>Popover</x-label>
+      </main>
+    </x-popover>
+  </x-button>
+</section>
+
+<hr/>
+
+<section id="api-section">
+  <h2>API</h2>
+  <pt-apiblock value="elements/x-popover.js"></pt-apiblock>
+</section>
+
+<hr/>
+
+<section id="examples-section">
+  <h2>Examples</h2>
+
+  <section>
+    <h4>Bottom</h4>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-icon href="#settings"></x-icon>
+
+          <x-popover modal>
+            <main>
+              <x-label>Popover</x-label>
+            </main>
+          </x-popover>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="api-section">
-    <h3>API</h3>
-    <pt-apiblock value="elements/x-popover.js"></pt-apiblock>
+  <section>
+    <h4>Top</h4>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-icon href="#settings"></x-icon>
+
+          <x-popover modal style="--align: top;">
+            <main>
+              <x-label>Popover</x-label>
+            </main>
+          </x-popover>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
 
   <hr/>
 
-  <section id="examples-section">
-    <h3>Examples</h3>
+  <section>
+    <h4>Left</h4>
 
-    <section>
-      <h4>Bottom</h4>
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-icon href="#settings"></x-icon>
 
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-icon href="#settings"></x-icon>
-
-            <x-popover modal>
-              <main>
-                <x-label>Popover</x-label>
-              </main>
-            </x-popover>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Top</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-icon href="#settings"></x-icon>
-
-            <x-popover modal style="--align: top;">
-              <main>
-                <x-label>Popover</x-label>
-              </main>
-            </x-popover>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Left</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-icon href="#settings"></x-icon>
-
-            <x-popover modal style="--align: left;">
-              <main>
-                <x-label>Popover</x-label>
-              </main>
-            </x-popover>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
-    <hr/>
-
-    <section>
-      <h4>Right</h4>
-
-      <pt-demoblock>
-        <template>
-          <x-button>
-            <x-icon href="#settings"></x-icon>
-
-            <x-popover modal style="--align: right;">
-              <main>
-                <x-label>Popover</x-label>
-              </main>
-            </x-popover>
-          </x-button>
-        </template>
-      </pt-demoblock>
-    </section>
-
+          <x-popover modal style="--align: left;">
+            <main>
+              <x-label>Popover</x-label>
+            </main>
+          </x-popover>
+        </x-button>
+      </template>
+    </pt-demoblock>
   </section>
-</article>
+
+  <hr/>
+
+  <section>
+    <h4>Right</h4>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-icon href="#settings"></x-icon>
+
+          <x-popover modal style="--align: right;">
+            <main>
+              <x-label>Popover</x-label>
+            </main>
+          </x-popover>
+        </x-button>
+      </template>
+    </pt-demoblock>
+  </section>
+</section>
