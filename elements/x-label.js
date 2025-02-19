@@ -50,6 +50,7 @@ export default class XLabelElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // @property
   // @attribute
   // @type string
   // @default ""
@@ -62,6 +63,7 @@ export default class XLabelElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
+  // @property
   // @attribute
   // @type number
   // @default 3
@@ -72,6 +74,7 @@ export default class XLabelElement extends HTMLElement {
     this.setAttribute("level", level);
   }
 
+  // @property
   // @attribute
   // @type boolean
   // @default false
