@@ -8,7 +8,9 @@ import Path from "path";
 import Semver from "semver";
 
 import HTMLMinifier from "html-minifier-terser";
-import CSSMinifier from "clean-css";
+import PostCSS from "postcss";
+import PostCSSImport from "postcss-import";
+import PostCSSMinify from "@csstools/postcss-minify";
 import * as JSMinifier from "terser";
 import * as JSBundler from "rollup";
 import ChangelogParser from "./classes/changelog-parser.js";
@@ -69,7 +71,7 @@ let createPortalPackage = (minify = true, publish = false) => {
         for (let srcPath of Glob.sync(`${projectPath}/themes/*.css`)) {
           let destPath = `${projectPath}/dist/portal/` + srcPath.substring(projectPath.length);
           let themeCSS = Fse.readFileSync(srcPath, "utf8");
-          let minifiedCSS = new CSSMinifier({level: 1, inline: false}).minify(themeCSS).styles;
+          let minifiedCSS = await PostCSS([PostCSSMinify()]).process(themeCSS , {from: undefined}).css;
 
           Fse.ensureDirSync(dirname(destPath));
           Fse.writeFileSync(destPath, minifiedCSS, "utf8");
@@ -229,21 +231,36 @@ let createNpmPackage = (minify = true, publish = false) => {
 
       // Themes
       {
-        let paths = Glob.sync(`${projectPath}/themes/*.css`);
+        let themeNames = [
+          "fluent",
+          "fluent-dark",
+          "material",
+          "material-dark",
+          "cupertino",
+          "cupertino-dark",
+          "adwaita",
+          "adwaita-dark"
+        ];
 
-        for (let path of paths) {
-          if (path.endsWith("base.css") === false) {
-            let relPath = path.substring(projectPath.length);
-            let themeCSS = Fse.readFileSync(path, "utf8");
-            themeCSS = themeCSS.replace("/node_modules/xel/themes/base.css", "./base.css");
+        for (let themeName of ["base", ...themeNames]) {
+          let themeCSS = Fse.readFileSync(`${projectPath}/themes/${themeName}.css`, "utf8");
+          themeCSS = themeCSS.replace("/node_modules/xel/themes/", "themes/");
+          themeCSS = themeCSS.substring(themeCSS.indexOf("*/") + 2);
 
-            let minifiedCSS = new CSSMinifier({level: 1, inline: "local"}).minify({
-              [path]: {styles: themeCSS}
-            }).styles;
+          Fse.ensureDirSync(`${projectPath}/dist/npm/themes/`);
+          Fse.writeFileSync(`${projectPath}/dist/npm/themes/${themeName}.css`, themeCSS, "utf8");
+        }
 
-            Fse.ensureDirSync(`${projectPath}/dist/npm/themes/`);
-            Fse.writeFileSync(`${projectPath}/dist/npm/${relPath}`, minifiedCSS, "utf8");
-          }
+        for (let themeName of themeNames) {
+          let themeCSS = Fse.readFileSync(`${projectPath}/dist/npm/themes/${themeName}.css`, "utf8");
+
+          let minifiedThemeCSS = (
+            await PostCSS([PostCSSImport(), PostCSSMinify()]).process(themeCSS , {
+              from: `${projectPath}/dist/npm/themes/`
+            })
+          ).css;
+
+          Fse.writeFileSync(`${projectPath}/dist/npm/themes/${themeName}.css`, minifiedThemeCSS, "utf8");
         }
       }
 
@@ -389,7 +406,7 @@ let minifyScript = (code, verbose = false) => {
 
           if (endIndex > -1) {
             let template = code.substring(startIndex, endIndex);
-            let minifiedTemplate = new CSSMinifier({level: 1, inline: false}).minify(template).styles;
+            let minifiedTemplate = await PostCSS([PostCSSMinify()]).process(template, {from: undefined}).css;
 
             code = code.substring(0, startIndex) + minifiedTemplate + code.substring(endIndex);
             currentIndex = startIndex + minifiedTemplate.length;

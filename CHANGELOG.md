@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.32.1 (2025-02-19)
+
+- [Fixed] Minified themes are missing some stylings
+
 ## 0.32.0 (2025-02-19)
 
 - Add `level` property to `<x-label>`

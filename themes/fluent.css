@@ -35,7 +35,7 @@ body {
   --error-color:                color(srgb 0.77 0.17 0.11);
   --selection-color:            color(srgb 1 1 1);
   --selection-background-color: var(--accent-color);
-  --autofill-background-color:  color(srgb 1 0.96 0.81)
+  --autofill-background-color:  color(srgb 1 0.96 0.81);
   --titlebar-color:             auto;
   --autocapitalize:             none;
   --checkboard-background:      linear-gradient( 45deg, #d6d6d6 25%, #0000   25%)  0px  0px / 10px 10px,
