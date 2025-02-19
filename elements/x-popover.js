@@ -36,7 +36,6 @@ export default class XPopoverElement extends HTMLElement {
       z-index: 1001;
       box-sizing: border-box;
       background: white;
-      overflow: auto;
       -webkit-app-region: no-drag;
       --align: bottom;
       --arrow-size: 20px;
@@ -48,7 +47,7 @@ export default class XPopoverElement extends HTMLElement {
     }
     :host([opened]),
     :host([animating]) {
-      display: flex;
+      display: block;
     }
 
     #arrow {

@@ -18,7 +18,7 @@ export default class XRadioElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <div id="indicator" part="indicator">
           <div id="indicator-dot" part="indicator-dot"></div>
         </div>
@@ -26,7 +26,7 @@ export default class XRadioElement extends HTMLElement {
         <div id="description">
           <slot></slot>
         </div>
-      </main>
+      </div>
     </template>
   `;
 
@@ -178,8 +178,11 @@ export default class XRadioElement extends HTMLElement {
     this.#updateAccessabilityAttributes();
   }
 
-  attributeChangedCallback(name) {
-    if (name === "toggled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "toggled") {
       this.#onToggledAttributeChange();
     }
     else if (name === "disabled") {

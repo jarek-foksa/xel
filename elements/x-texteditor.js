@@ -22,10 +22,10 @@ export default class XTextEditorElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <slot></slot>
         <div id="editor" contenteditable="plaintext-only" spellcheck="false"></div>
-      </main>
+      </div>
     </template>
   `;
 
@@ -300,8 +300,11 @@ export default class XTextEditorElement extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name) {
-    if (name === "value") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
       this.#onValueAttributeChange();
     }
     else if (name === "spellcheck") {

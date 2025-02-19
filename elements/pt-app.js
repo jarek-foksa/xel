@@ -462,9 +462,9 @@ export default class PTAppElement extends HTMLElement {
      */
 
     #main > * {
-      margin: 0;
+      margin: 26px 0 30px 0;
       padding: 0 30px;
-      max-width: 700px;
+      max-width: 720px;
     }
     :host([layout="collapsed"]) #main > * {
       margin: 0 auto;

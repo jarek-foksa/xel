@@ -20,7 +20,7 @@ export default class XSwitchElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <div id="indicator" part="indicator">
           <div id="indicator-track" part="indicator-track">
             <div id="indicator-thumb" part="indicator-thumb" style="transition: none;"></div>
@@ -30,7 +30,7 @@ export default class XSwitchElement extends HTMLElement {
         <div id="description">
           <slot></slot>
         </div>
-      </main>
+      </div>
     </template>
   `;
 
@@ -182,8 +182,11 @@ export default class XSwitchElement extends HTMLElement {
     this["#indicator-thumb"].style.transition = "none";
   }
 
-  attributeChangedCallback(name) {
-    if (name === "toggled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "toggled") {
       this.#onToggledAttributeChange();
     }
     else if (name === "disabled") {

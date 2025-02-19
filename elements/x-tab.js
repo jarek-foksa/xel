@@ -147,8 +147,11 @@ export default class XTabElement extends HTMLElement {
     this.#updateAccessabilityAttributes();
   }
 
-  attributeChangedCallback(name) {
-    if (name === "toggled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "toggled") {
       this.#updateAccessabilityAttributes();
     }
     else if (name === "disabled") {

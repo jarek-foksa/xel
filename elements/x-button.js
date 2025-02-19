@@ -137,22 +137,22 @@ export default class XButtonElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type "flat" || "recessed" || "dock" || null
-  // @default null
+  // @type "normal" || "flat" || "recessed" || "dock"
+  // @default "normal"
   get skin() {
-    return this.hasAttribute("skin") ? this.getAttribute("skin") : null;
+    return this.hasAttribute("skin") ? this.getAttribute("skin") : "normal";
   }
   set skin(skin) {
-    skin === null ? this.removeAttribute("skin") : this.setAttribute("skin", skin);
+    this.setAttribute("skin", skin);
   }
 
   // @property
   // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  // @type "normal" || "small" || "large"
+  // @default "normal"
   get size() {
     let size = this.getAttribute("size");
-    return (size === "small" || size === "large") ? size : null;
+    return (size === "small" || size === "large") ? size : "normal";
   }
   set size(size) {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
@@ -247,8 +247,11 @@ export default class XButtonElement extends HTMLElement {
     this.#dismissTooltip = false;
   }
 
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue || this.isConnected === false) {
+      return;
+    }
+    else if (name === "disabled") {
       this.#updateAccessabilityAttributes();
     }
     else if (name === "skin") {
@@ -564,7 +567,7 @@ export default class XButtonElement extends HTMLElement {
 
   #updateSkinAttribute() {
     if (this.hasAttribute("skin") === false) {
-      this.setAttribute("skin", "default");
+      this.setAttribute("skin", "normal");
     }
   }
 

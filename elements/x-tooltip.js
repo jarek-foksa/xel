@@ -96,8 +96,11 @@ export default class XTooltipElement extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "disabled") {
       if (this.disabled && this.opened) {
         this.close();
       }

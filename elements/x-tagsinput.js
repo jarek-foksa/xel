@@ -23,10 +23,10 @@ export default class XTagsInputElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <slot></slot>
         <input id="input" type="text" part="input" spellcheck="false" tabindex="0"></input>
-      </main>
+      </div>
 
       <x-popover id="suggestions-popover" part="suggestions">
         <div id="suggested-tags"></div>

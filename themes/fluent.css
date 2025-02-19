@@ -27,7 +27,7 @@ body {
                                 orange   color(srgb 0.96 0.39 0.05),
                                 yellow   color(srgb 1.00 0.73 0.00),
                                 green    color(srgb 0.06 0.49 0.06),
-                                graphite color(srgb 0.48 0.46 0.45);
+                                gray     color(srgb 0.48 0.46 0.45);
   --foreground-color:           color(srgb 0.98 0.98 0.98);
   --background-color:           color(srgb 0.95 0.95 0.95);
   --border-color:               color(srgb 0.88 0.88 0.88);
@@ -91,7 +91,7 @@ pre, code, var {
   outline-width: 1px;
   outline-style: solid;
   outline-color: color(srgb 0 0 0 / 0.1);
-  font-family: "Consolas", "Inconsolata", ui-monospace, monospace;
+  font-family: "Consolas", ui-monospace, monospace;
   font-weight: 500;
 }
 
@@ -195,6 +195,13 @@ x-card {
   border-radius: 4px;
 }
 
+x-card > footer {
+  background-color: var(--background-color);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--border-color);
+}
+
 /*****************************************************************************************************************/
 
 /**
@@ -294,172 +301,158 @@ x-swatch {
  * Button
  */
 
-x-button:focus {
-  outline-width: 2px;
-  outline-style: solid;
-  outline-color: color(srgb 0 0 0 / 0.9);
-  outline-offset: 2px;
-}
-x-button[mixed] {
-  opacity: 0.7;
-}
-x-button[disabled] {
-  opacity: 0.4;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button (default skin)
- */
-
-x-button[skin="default"] {
-  color: var(--text-color);
-  background-color: color(srgb 1 1 1 / 0.7);
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--border-color);
-  border-radius: 4px;
-}
-x-button[skin="default"]:hover {
-  background-color: color(srgb 0.976 0.976 0.976 / 0.5);
-}
-x-button[skin="default"][pressed] {
-  color: color(srgb 0 0 0 / 0.5);
-  background-color: color(srgb 0.976 0.976 0.976 / 0.3);
-}
-x-button[skin="default"][toggled] {
-  color: color(srgb 1 1 1);
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-}
-x-button[skin="default"][toggled]:hover {
-  background-color: oklch(from var(--accent-color) l c h / 90%);
-}
-x-button[skin="default"][toggled][pressed] {
-  color: color(srgb 1 1 1 / 0.7);
-  background-color: oklch(from var(--accent-color) l c h / 80%);
-}
-x-buttons > x-button[skin="default"][toggled]:hover {
-  background-color: var(--accent-color);
-}
-x-buttons > x-button[skin="default"][toggled][pressed] {
-  background-color: oklch(from var(--accent-color) l c h / 80%);
+x-button {
+  &:focus {
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: color(srgb 0 0 0 / 0.9);
+    outline-offset: 2px;
+  }
+  &[mixed] {
+    opacity: 0.7;
+  }
+  &[disabled] {
+    opacity: 0.4;
+  }
 }
 
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"] {
-  border-left-color: transparent;
+x-button[skin="normal"] {
+  & {
+    color: var(--text-color);
+    background-color: color(srgb 1 1 1 / 0.7);
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border-color);
+    border-radius: 4px;
+  }
+  &:hover {
+    background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+  }
+  &[pressed] {
+    color: color(srgb 0 0 0 / 0.5);
+    background-color: color(srgb 0.976 0.976 0.976 / 0.3);
+  }
+  &[toggled] {
+    color: color(srgb 1 1 1);
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+  }
+  &[toggled]:hover {
+    background-color: oklch(from var(--accent-color) l c h / 90%);
+  }
+  &[toggled][pressed] {
+    color: color(srgb 1 1 1 / 0.7);
+    background-color: oklch(from var(--accent-color) l c h / 80%);
+  }
+  x-buttons > &[toggled]:hover {
+    background-color: var(--accent-color);
+  }
+  x-buttons > &[toggled][pressed] {
+    background-color: oklch(from var(--accent-color) l c h / 80%);
+  }
+
+  /* Horizontal siblings */
+  x-buttons:not([vertical]) > &:not(:first-of-type) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  x-buttons:not([vertical]) > &:not(:last-of-type) {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  x-buttons:not([vertical]) > &[toggled] + & {
+    border-left-color: transparent;
+  }
+
+  /* Vertical siblings */
+  x-buttons[vertical] > &:not(:first-of-type) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  x-buttons[vertical] > &:not(:last-of-type) {
+    border-bottom-width: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  x-buttons[vertical] > &[toggled] + & {
+    border-top-color: transparent;
+  }
 }
 
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+x-button[skin="flat"] {
+  &[pressed] {
+    color: color(srgb 0 0 0 / 0.5);
+  }
+  &[toggled] {
+    color: var(--accent-color);
+  }
+  &[toggled][pressed] {
+    color: oklch(from var(--accent-color) l c h / 80%);
+  }
 }
-x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
-  border-bottom-width: 0;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"] {
-  border-top-color: transparent;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("dock" skin)
- */
-
-x-button[skin="dock"] {
-  color: var(--text-color);
-  background-color: color(srgb 1 1 1);
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--border-color);
-}
-x-button[skin="dock"]:hover {
-  background-color: color(srgb 0.976 0.976 0.976 / 0.5);
-}
-x-button[skin="dock"][pressed] {
-  color: color(srgb 0 0 0 / 0.5);
-  background-color: color(srgb 0.976 0.976 0.976 / 0.3);
-}
-
-x-button[skin="dock"][toggled] {
-  color: color(srgb 1 1 1);
-  background-color: var(--accent-color);
-  border-color: oklch(from var(--accent-color) calc(l - 0.1) c h);
-  z-index: 1;
-}
-x-button[skin="dock"][toggled][pressed] {
-  color: color(srgb 1 1 1 / 0.7);
-  background-color: oklch(from var(--accent-color) l c h / 80%);
-}
-x-button[skin="dock"]:focus {
-  outline-offset: -2px;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("flat" skin)
- */
-
-x-button[skin="flat"][pressed] {
-  color: color(srgb 0 0 0 / 0.5);
-}
-x-button[skin="flat"][toggled] {
-  color: var(--accent-color);
-}
-x-button[skin="flat"][toggled][pressed] {
-  color: oklch(from var(--accent-color) l c h / 80%);
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("recessed" skin)
- */
 
 x-button[skin="recessed"] {
-  color: var(--text-color);
-  border-radius: 4px;
-}
-x-button[skin="recessed"][disabled] {
-  opacity: 0.3;
-}
-x-button[skin="recessed"]:hover {
-  background-color: color(srgb 0 0 0 / 0.1);
-}
-x-button[skin="recessed"][toggled] {
-  color: color(srgb 1 1 1 / 0.95);
-  background-color: var(--text-color);
-}
-x-button[skin="recessed"][toggled]:hover {
-  background-color: color(srgb 0 0 0 / 0.5);
-}
-x-button[skin="recessed"][pressed],
-x-button[skin="recessed"][toggled][pressed] {
-  color: color(srgb 1 1 1 / 0.95);
-  background-color: color(srgb 0 0 0 / 0.7);
+  & {
+    color: var(--text-color);
+    border-radius: 4px;
+  }
+  &[disabled] {
+    opacity: 0.3;
+  }
+  &:hover {
+    background-color: color(srgb 0 0 0 / 0.1);
+  }
+  &[toggled] {
+    color: color(srgb 1 1 1 / 0.95);
+    background-color: var(--text-color);
+  }
+  &[toggled]:hover {
+    background-color: color(srgb 0 0 0 / 0.5);
+  }
+  &[pressed],
+  &[toggled][pressed] {
+    color: color(srgb 1 1 1 / 0.95);
+    background-color: color(srgb 0 0 0 / 0.7);
+  }
+
+  /* Label */
+  & > x-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+  }
 }
 
-/* Label */
-x-button[skin="recessed"] > x-label {
-  font-size: 12px;
-  font-weight: 700;
-  text-align: center;
+x-button[skin="dock"] {
+  & {
+    color: var(--text-color);
+    background-color: color(srgb 1 1 1);
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border-color);
+  }
+  &:hover {
+    background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+  }
+  &[pressed] {
+    color: color(srgb 0 0 0 / 0.5);
+    background-color: color(srgb 0.976 0.976 0.976 / 0.3);
+  }
+
+  &[toggled] {
+    color: color(srgb 1 1 1);
+    background-color: var(--accent-color);
+    border-color: oklch(from var(--accent-color) calc(l - 0.1) c h);
+    z-index: 1;
+  }
+  &[toggled][pressed] {
+    color: color(srgb 1 1 1 / 0.7);
+    background-color: oklch(from var(--accent-color) l c h / 80%);
+  }
+  &:focus {
+    outline-offset: -2px;
+  }
 }
 
 /*****************************************************************************************************************/
@@ -780,10 +773,6 @@ dialog::backdrop {
   background-color: color(srgb 0 0 0 / 0.3);
 }
 
-dialog > main {
-  padding: 20px 24px;
-}
-
 dialog > footer {
   background-color: var(--background-color);
   border-top-width: 1px;
@@ -791,7 +780,7 @@ dialog > footer {
   border-top-color: var(--border-color);
 }
 
-dialog > footer x-button {
+dialog > footer > x-button {
   flex: 1;
 }
 
@@ -857,6 +846,13 @@ x-popover {
   box-shadow: 0px 8px 16px color(srgb 0 0 0 / 0.14);
   --arrow-size: 14px;
   --open-transition: none;
+}
+
+x-popover > footer {
+  background-color: var(--background-color);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--border-color);
 }
 
 /*****************************************************************************************************************/

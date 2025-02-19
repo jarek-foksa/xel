@@ -118,8 +118,11 @@ export default class XMenuElement extends HTMLElement {
     this.setAttribute("tabindex", "0");
   }
 
-  attributeChangedCallback(name) {
-    if (name === "opened") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "opened") {
       this.#onOpenedAttributeChange();
     }
   }

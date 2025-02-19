@@ -87,8 +87,11 @@ export default class XSwatchElement extends HTMLElement {
     this.#updatePreview();
   }
 
-  attributeChangedCallback(name) {
-    if (name === "value") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
       this.#updatePreview();
     }
   }

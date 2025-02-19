@@ -23,9 +23,7 @@ export default class XColorSelectElement extends HTMLElement {
       <div id="preview"></div>
 
       <x-popover id="popover" part="popover" modal>
-        <main>
-          <x-colorpicker id="color-picker"></x-colorpicker>
-        </main>
+        <x-colorpicker id="color-picker"></x-colorpicker>
       </x-popover>
     </template>
   `;
@@ -56,10 +54,6 @@ export default class XColorSelectElement extends HTMLElement {
     #popover {
       overflow: visible;
       --align: left;
-    }
-
-    #popover main {
-      overflow: visible;
     }
   `;
 
@@ -164,8 +158,11 @@ export default class XColorSelectElement extends HTMLElement {
     this.#updatePreview();
   }
 
-  attributeChangedCallback(name) {
-    if (name === "value") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
       this.#onValueAttributeChange();
     }
     else if (name === "alpha") {

@@ -27,8 +27,7 @@
         blob:
         data:
         https://xel-toolkit.org
-        https://boxy-svg.com
-        https://camo.githubusercontent.com;
+        https://boxy-svg.com;
       media-src
         'none';
       connect-src
@@ -54,14 +53,15 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
-    <script src="portal-preload.js"></script>
     <script src="/node_modules/marked/marked.min.js"></script>
     <script src="/node_modules/prismjs/prism.js"></script>
     <script src="portal.js" type="module"></script>
   </head>
 
-  <body></body>
+  <body>
+    <pt-app id="app"></pt-app>
+  </body>
 </html>

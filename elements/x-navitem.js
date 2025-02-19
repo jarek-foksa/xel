@@ -207,8 +207,11 @@ export default class XNavItemElement extends HTMLElement {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
   }
 
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "disabled") {
       this.#updateAccessabilityAttributes();
     }
   }

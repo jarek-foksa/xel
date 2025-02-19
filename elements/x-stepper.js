@@ -184,8 +184,11 @@ export default class XStepperElement extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "disabled") {
       this.#onDisabledAttributeChange();
     }
   }

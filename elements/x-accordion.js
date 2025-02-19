@@ -13,11 +13,9 @@ import {html, css} from "../utils/template.js";
 // @event expand - User expanded the accordion by clicking the arrow icon.
 // @event collapse - User collapsed the accordion by clicking the arrow icon.
 export default class XAccordionElement extends HTMLElement {
-  static observedAttributes = ["expanded"];
-
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <div id="arrow" part="arrow" tabindex="1">
           <svg id="arrow-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path id="arrow-path"></path>
@@ -25,7 +23,7 @@ export default class XAccordionElement extends HTMLElement {
         </div>
 
         <slot></slot>
-      </main>
+      </div>
     </template>
   `;
 
@@ -33,7 +31,7 @@ export default class XAccordionElement extends HTMLElement {
     :host {
       display: block;
       width: 100%;
-      margin: 8px 0;
+      margin: 10px 0;
       box-sizing: border-box;
     }
     :host([disabled]) {
@@ -129,7 +127,9 @@ export default class XAccordionElement extends HTMLElement {
   }
 
   #shadowRoot = null;
-  #resizeObserver = null;
+  #headerElement = null;
+  #headerResizeObserver = null;
+  #childListMutationObserver = null;
   #currentAnimations = [];
 
   #xelThemeChangeListener = null;
@@ -147,35 +147,35 @@ export default class XAccordionElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    this.#resizeObserver = new ResizeObserver(() => this.#updateArrowPosition());
-
     this.addEventListener("click", (event) => this.#onClick(event));
     this["#arrow"].addEventListener("keydown", (event) => this.#onArrowKeyDown(event));
   }
 
-  connectedCallback() {
-    Xel.whenThemeReady.then(() => {
-      this.#updateArrowPathData();
-    });
+  async connectedCallback() {
+    await Xel.whenThemeReady;
+
+    this.#headerResizeObserver = new ResizeObserver(() => this.#onHeaderResize());
+    this.#childListMutationObserver = new MutationObserver((args) => this.#onChildListChange(args));
+    this.#childListMutationObserver.observe(this, {childList: true});
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateArrowPathData());
 
-    this.#resizeObserver.observe(this);
+    this.#updateArrowPathData();
+    this.#updateArrowPosition();
+
+    this.#onChildListChange();
   }
 
   disconnectedCallback() {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
 
-    this.#resizeObserver.unobserve(this);
-  }
+    if (this.#headerElement) {
+      this.#headerResizeObserver.unobserve(this.#headerElement);
+      this.#headerElement = null;
+    }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return;
-    }
-    else if (name === "expanded") {
-      this.#updateArrowPosition();
-    }
+    this.#headerResizeObserver.disconnect();
+    this.#childListMutationObserver.disconnect();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,6 +217,7 @@ export default class XAccordionElement extends HTMLElement {
           await Promise.all(animations.map(animation => animation.finished));
 
           if (this.#currentAnimations === animations) {
+            this.#currentAnimations = [];
             this.removeAttribute("animating");
           }
         }
@@ -263,6 +264,7 @@ export default class XAccordionElement extends HTMLElement {
           await Promise.all(animations.map(animation => animation.finished));
 
           if (this.#currentAnimations === animations) {
+            this.#currentAnimations = [];
             this.removeAttribute("animating");
           }
         }
@@ -275,6 +277,7 @@ export default class XAccordionElement extends HTMLElement {
   #clearCurrentAnimations() {
     if (this.#currentAnimations.length > 0) {
       this.#currentAnimations.map(animation => animation.finish())
+      this.#currentAnimations = [];
     }
   }
 
@@ -297,6 +300,25 @@ export default class XAccordionElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #onChildListChange() {
+    let headerElement = this.querySelector(":scope > header");
+
+    if (headerElement !== this.#headerElement) {
+      if (headerElement === null) {
+        this.#headerResizeObserver.unobserve(this.#headerElement);
+        this.#headerElement = null;
+      }
+      else {
+        this.#headerElement = headerElement;
+        this.#headerResizeObserver.observe(this.#headerElement);
+      }
+    }
+  }
+
+  #onHeaderResize() {
+    this.#updateArrowPosition();
+  }
 
   #onArrowKeyDown(event) {
     if (event.code === "Enter" || event.code === "NumpadEnter") {

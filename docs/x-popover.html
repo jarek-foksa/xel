@@ -7,9 +7,7 @@
     <x-label>Open popover</x-label>
 
     <x-popover modal>
-      <main>
-        <x-label>Popover</x-label>
-      </main>
+      <x-label>Popover</x-label>
     </x-popover>
   </x-button>
 </section>
@@ -27,7 +25,7 @@
   <h2>Examples</h2>
 
   <section>
-    <h4>Bottom</h4>
+    <h4>Footer</h4>
 
     <pt-demoblock>
       <template>
@@ -35,9 +33,10 @@
           <x-icon href="#settings"></x-icon>
 
           <x-popover modal>
-            <main>
-              <x-label>Popover</x-label>
-            </main>
+            <x-label>Primary content</x-label>
+            <footer>
+              <x-label>Footer content</x-label>
+            </footer>
           </x-popover>
         </x-button>
       </template>
@@ -47,7 +46,25 @@
   <hr/>
 
   <section>
-    <h4>Top</h4>
+    <h4>Position "bottom"</h4>
+
+    <pt-demoblock>
+      <template>
+        <x-button>
+          <x-icon href="#settings"></x-icon>
+
+          <x-popover modal>
+            <x-label>Popover</x-label>
+          </x-popover>
+        </x-button>
+      </template>
+    </pt-demoblock>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h4>Position "top"</h4>
 
     <pt-demoblock>
       <template>
@@ -55,9 +72,7 @@
           <x-icon href="#settings"></x-icon>
 
           <x-popover modal style="--align: top;">
-            <main>
-              <x-label>Popover</x-label>
-            </main>
+            <x-label>Popover</x-label>
           </x-popover>
         </x-button>
       </template>
@@ -67,7 +82,7 @@
   <hr/>
 
   <section>
-    <h4>Left</h4>
+    <h4>Position "left"</h4>
 
     <pt-demoblock>
       <template>
@@ -75,9 +90,7 @@
           <x-icon href="#settings"></x-icon>
 
           <x-popover modal style="--align: left;">
-            <main>
-              <x-label>Popover</x-label>
-            </main>
+            <x-label>Popover</x-label>
           </x-popover>
         </x-button>
       </template>
@@ -87,7 +100,7 @@
   <hr/>
 
   <section>
-    <h4>Right</h4>
+    <h4>Position "right"</h4>
 
     <pt-demoblock>
       <template>
@@ -95,9 +108,7 @@
           <x-icon href="#settings"></x-icon>
 
           <x-popover modal style="--align: right;">
-            <main>
-              <x-label>Popover</x-label>
-            </main>
+            <x-label>Popover</x-label>
           </x-popover>
         </x-button>
       </template>

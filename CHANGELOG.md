@@ -1,10 +1,20 @@
 
 # CHANGELOG
 
-## 0.32.0 (PENDING)
+## 0.32.0 (2025-02-19)
 
 - Add `level` property to `<x-label>`
+- Add special stylings for `<footer>` inside `<x-card>`
+- Add special stylings for `<footer>` inside `<x-popover>`
 - Use Adwaita Sans (Inter) instead of Cantarell fonts
+- [Fixed] Accordion arrow is not updated when `<header>` element height changes
+- [Changed API] Set padding directly on `<x-card>` rather than on its child `<main>` element
+- [Changed API] Set padding directly on `<x-popover>` rather than on its child `<main>` element
+- [Changed API] Set padding directly on `<dialog>` rather than on its child `<main>` element
+- [Changed API] Don't require `<x-accordion>` to have child `<main>` element to be expandable
+- [Changed API] Rename "graphite" preset accent color to "gray"
+- [Changed API] Rename "default" button skin to "normal"
+- [Changed API] Changed the default value of "size" property on `<x-button>` to "normal"
 
 ## 0.31.0 (2025-02-15)
 

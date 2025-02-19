@@ -25,10 +25,10 @@ export default class XInputElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <slot></slot>
         <input id="input" spellcheck="false" part="input"></input>
-      </main>
+      </div>
     </template>
   `;
 
@@ -316,8 +316,11 @@ export default class XInputElement extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name) {
-    if (name === "type") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "type") {
       this.#onTypeAttributeChange();
     }
     else if (name === "value") {

@@ -19,7 +19,7 @@ export default class XCheckboxElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <div id="indicator" part="indicator">
           <svg id="checkmark" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path id="checkmark-path"></path>
@@ -29,7 +29,7 @@ export default class XCheckboxElement extends HTMLElement {
         <div id="description">
           <slot></slot>
         </div>
-      </main>
+      </div>
     </template>
   `;
 
@@ -213,8 +213,11 @@ export default class XCheckboxElement extends HTMLElement {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
   }
 
-  attributeChangedCallback(name) {
-    if (name === "toggled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "toggled") {
       this.#onToggledAttributeChange();
     }
     else if (name === "mixed") {

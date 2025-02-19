@@ -30,7 +30,7 @@ export default class XShortcutElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main"></main>
+      <div id="main"></div>
     </template>
   `;
 
@@ -112,8 +112,11 @@ export default class XShortcutElement extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name) {
-    if (name === "value") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
       this.#update();
     }
   }

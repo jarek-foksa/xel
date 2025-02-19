@@ -87,11 +87,9 @@ export default class PTChangelogPageElement extends PTPage {
 
           changelogHTML += `
             <x-card>
-              <main>
-                <h3 id="v${release.version}">Version ${release.version}</h3>
-                <h4>${displayDate}</h4>
-                ${itemsHTML}
-              </main>
+              <h3 id="v${release.version}">Version ${release.version}</h3>
+              <h4>${displayDate}</h4>
+              ${itemsHTML}
             </x-card>
           `;
         }

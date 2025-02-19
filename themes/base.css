@@ -17,7 +17,8 @@ html {
   height: 100%;
   margin: 0;
   interpolate-size: allow-keywords;
-  font-size: 15px;
+  font-size: 16px;
+  font-family: sans-serif;
   line-height: 1.6;
 }
 
@@ -209,14 +210,42 @@ x-card:not(:defined) {
   display: none;
 }
 
-/* Main */
-x-card > main {
+/* Footer */
+x-card > footer {
+  padding: 8px 16px;
+  width: calc(100% + 40px);
+  height: calc(100% + 20px);
+  margin-left: -20px;
+  margin-bottom: -16px;
   box-sizing: border-box;
-  padding: 16px 20px;
+  background: lightgrey;
+}
+x-card > footer:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+x-card > footer:last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
 }
 
 /* Heading */
-x-card h3:first-child {
+x-card > h1:first-child {
+  margin-top: 0;
+}
+x-card > h2:first-child {
+  margin-top: 0;
+}
+x-card > h3:first-child {
+  margin-top: 0;
+}
+x-card > h4:first-child {
+  margin-top: 0;
+}
+x-card > h5:first-child {
+  margin-top: 0;
+}
+x-card > h6:first-child {
   margin-top: 0;
 }
 
@@ -303,12 +332,9 @@ x-accordion > header > *:not(:last-child) {
   margin-right: 20px;
 }
 
-/* Main */
-x-accordion > main {
-  padding: 4px 0 8px 0;
-}
-x-accordion:not([expanded]):not([animating]) > main {
-  display: none;
+/* Content */
+x-accordion:not([expanded]):not([animating]) > *:not(header) {
+  display: none !important;
 }
 
 /*****************************************************************************************************************/
@@ -432,14 +458,14 @@ x-button > x-icon ~ x-label {
 /*****************************************************************************************************************/
 
 /**
- * Button ("default" skin)
+ * Button ("normal" skin)
  */
 
-x-button[skin="default"][size="small"] > x-icon {
+x-button[skin="normal"][size="small"] > x-icon {
   width: 14px;
   height: 14px;
 }
-x-button[skin="default"][size="large"] > x-icon {
+x-button[skin="normal"][size="large"] > x-icon {
   width: 20px;
   height: 20px;
 }
@@ -947,8 +973,10 @@ dialog {
   min-height: 100px;
   max-height: none;
   margin: auto;
-  padding: 0;
+  padding: 20px 24px;
   box-sizing: border-box;
+  font-size: 13px;
+  line-height: 1.6;
 }
 dialog:focus {
   outline: none;
@@ -957,20 +985,27 @@ dialog:not(:defined) {
   display: none;
 }
 
-/* Main */
-dialog > main {
-  padding: 20px 24px;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
 /* Footer */
 dialog > footer {
-  padding: 12px 24px;
   display: flex;
   flex-flow: row;
   justify-content: flex-end;
-  margin-top: auto;
+  padding: 12px 24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 22px);
+  margin-top: 10px;
+  margin-left: -24px;
+  margin-bottom: -20px;
+  box-sizing: border-box;
+  background: lightgrey;
+}
+dialog > footer:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+dialog > footer:last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
 }
 
 /* Footer button */
@@ -980,9 +1015,12 @@ dialog > footer x-button + x-button {
 
 /* Heading */
 dialog h3 {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
-  margin: 0;
+}
+
+dialog > *:first-child {
+  margin-top: 0;
 }
 
 /*****************************************************************************************************************/
@@ -991,15 +1029,35 @@ dialog h3 {
  * Popover
  */
 
+x-popover {
+  padding: 12px;
+  overflow: auto;
+}
+x-popover:has(footer) {
+  overflow: hidden;
+}
 x-popover:not(:defined) {
   display: none;
 }
 
-/* Main */
-x-popover > main {
-  width: 100%;
+/* Footer */
+x-popover > footer {
   padding: 12px;
-  overflow: auto;
+  width: calc(100% + 24px);
+  height: calc(100% + 12px);
+  margin-left: -12px;
+  margin-bottom: -12px;
+  margin-top: 12px;
+  box-sizing: border-box;
+  background: lightgrey;
+}
+x-popover > footer:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+x-popover > footer:last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
 }
 
 /*****************************************************************************************************************/

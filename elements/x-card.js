@@ -10,7 +10,7 @@ import {html, css} from "../utils/template.js";
 export default class XCardElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
-      <slot id="slot"></slot>
+      <slot></slot>
     </template>
   `;
 
@@ -22,17 +22,16 @@ export default class XCardElement extends HTMLElement {
       min-height: 48px;
       box-sizing: border-box;
       margin: 30px 0;
+      padding: 16px 20px;
     }
     :host([hidden]) {
       display: none;
     }
 
-    #slot {
+    slot {
       border-radius: inherit;
     }
   `;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #shadowRoot = null;
 

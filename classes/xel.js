@@ -8,7 +8,7 @@ import DOMPurify from "../node_modules/dompurify/dist/purify.es.mjs";
 import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
-import {getMaterialCSSColorVariables} from "../utils/color.js"
+import {getMaterialCSSColorVariables, isValidColorString} from "../utils/color.js"
 import {getIcons} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
@@ -619,12 +619,30 @@ export default new class Xel extends EventEmitter {
       }
     }
 
-    return {
-      theme       : (themeMeta       && themeMeta.content       !== "") ? themeMeta.content       : null,
-      accentColor : (accentColorMeta && accentColorMeta.content !== "") ? accentColorMeta.content : null,
-      icons       : iconsMeta   ? iconsMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : [],
-      locales     : localesMeta ? localesMeta.content.split(",").map(l => l.trim()).filter(l => l !== "") : []
-    };
+    let theme = null;
+    let accentColor = null;
+    let icons = [];
+    let locales = [];
+
+    if (themeMeta && themeMeta.content !== "") {
+      theme = themeMeta.content;
+    }
+    if (accentColorMeta && accentColorMeta.content !== "") {
+      if (isValidColorString(accentColorMeta.content)) {
+        accentColor = accentColorMeta.content;
+      }
+      else {
+        accentColor = "#000";
+      }
+    }
+    if (iconsMeta) {
+      icons = iconsMeta.content.split(",").map(l => l.trim()).filter(l => l !== "");
+    }
+    if (localesMeta) {
+      locales = localesMeta.content.split(",").map(l => l.trim()).filter(l => l !== "");
+    }
+
+    return {theme, accentColor, icons, locales};
   }
 
   #getThemeImportRules(themeText) {

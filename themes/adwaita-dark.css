@@ -28,7 +28,7 @@ body {
                                 orange   color(srgb 1.00 0.47 0.00),
                                 yellow   color(srgb 0.90 0.65 0.04),
                                 green    color(srgb 0.18 0.76 0.49),
-                                graphite color(srgb 0.60 0.60 0.59);
+                                gray     color(srgb 0.60 0.60 0.59);
   --light-accent-color:         oklch(from var(--accent-color) calc(l + 0.07) calc(c - 0.02) h);
   --lighter-accent-color:       oklch(from var(--accent-color) calc(l + 0.17) calc(c - 0.07) h);
   --dark-accent-color:          oklch(from var(--accent-color) calc(l + 0.04) calc(c + 0.02) h);
@@ -87,7 +87,7 @@ a:hover {
 
 pre, code, var {
   background-color: color(srgb 1 1 1 / 0.06);
-  font-family: "Adwaita Mono", "Iosevka", "Noto Sans Mono", "Inconsolata", "Menlo", "Andale Mono", monospace;
+  font-family: "Adwaita Mono", "Iosevka", ui-monospace, monospace;;
 }
 pre {
   border-radius: 12px;
@@ -203,6 +203,13 @@ x-card {
   border-radius: 12px;
 }
 
+x-card > footer {
+  background-color: var(--background-color);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--border-color);
+}
+
 /*****************************************************************************************************************/
 
 /**
@@ -301,167 +308,153 @@ x-swatch {
  * Button
  */
 
-x-button:focus {
-  outline-width: 2px;
-  outline-style: solid;
-  outline-color: var(--light-accent-color);
-  outline-offset: -1px;
+x-button {
+  &:focus {
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: var(--light-accent-color);
+    outline-offset: -1px;
+  }
+
+  /* Label */
+  & > x-label {
+    font-weight: 700;
+  }
 }
 
-/*****************************************************************************************************************/
+x-button[skin="normal"] {
+  & {
+    color: var(--text-color);
+    background-color: color(srgb 1 1 1 / 0.12);
+    border-radius: 6px;
+  }
+  &:hover {
+    background-color: color(srgb 1 1 1 / 0.18);
+  }
+  &[pressed] {
+    background-color: color(srgb 1 1 1 / 0.28);
+  }
+  &[toggled] {
+    color: color(srgb 1 1 1);
+    background-color: var(--accent-color);
+  }
+  &[toggled][expanded] {
+    background-color: var(--light-accent-color);
+  }
+  &[toggled][pressed] {
+    background-color: var(--light-accent-color);
+  }
 
-/**
- * Button (default skin)
- */
+  /* Horizontal siblings */
+  x-buttons:not([vertical]) > &:not(:first-of-type) {
+    border-left: 1px solid color(srgb 1 1 1 / 0.12);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  x-buttons:not([vertical]) > &:not(:last-of-type) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  x-buttons:not([vertical]) > &[pressed] {
+    border-left-color: color(srgb 1 1 1 / 0.12);
+  }
+  x-buttons:not([vertical]) > &[pressed] + &:not([toggled]) {
+    border-left-color: color(srgb 1 1 1 / 0.28);
+  }
+  x-buttons:not([vertical]) > &[toggled],
+  x-buttons:not([vertical]) > &[toggled] + & {
+    border-left-color: var(--light-accent-color);
+  }
+  x-buttons:not([vertical]) > &[toggled][pressed],
+  x-buttons:not([vertical]) > &[toggled][pressed] + & {
+    border-left-color: var(--lighter-accent-color) !important;
+  }
 
-x-button[skin="default"] {
-  color: var(--text-color);
-  background-color: color(srgb 1 1 1 / 0.12);
-  border-radius: 6px;
+  /* Vertical siblings */
+  x-buttons[vertical] > &:not(:first-of-type) {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: color(srgb 1 1 1 / 0.12);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  x-buttons[vertical] > &:not(:last-of-type) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  x-buttons[vertical] > &[pressed] {
+    border-top-color: color(srgb 1 1 1 / 0.12);
+  }
+  x-buttons[vertical] > &[pressed] + &:not([toggled]) {
+    border-top-color: color(srgb 1 1 1 / 0.28);
+  }
+  x-buttons[vertical] > &[toggled],
+  x-buttons[vertical] > &[toggled] + & {
+    border-top-color: var(--light-accent-color);
+  }
+  x-buttons[vertical] > &[toggled][pressed],
+  x-buttons[vertical] > &[toggled][pressed] + & {
+    border-top-color: var(--lighter-accent-color) !important;
+  }
 }
-x-button[skin="default"]:hover {
-  background-color: color(srgb 1 1 1 / 0.18);
-}
-x-button[skin="default"][pressed] {
-  background-color: color(srgb 1 1 1 / 0.28);
-}
-x-button[skin="default"][toggled] {
-  color: color(srgb 1 1 1);
-  background-color: var(--accent-color);
-}
-x-button[skin="default"][toggled][expanded] {
-  background-color: var(--light-accent-color);
-}
-x-button[skin="default"][toggled][pressed] {
-  background-color: var(--light-accent-color);
-}
-
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
-  border-left: 1px solid color(srgb 1 1 1 / 0.12);
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons:not([vertical]) > x-button[skin="default"][pressed] {
-  border-left-color: color(srgb 1 1 1 / 0.12);
-}
-x-buttons:not([vertical]) > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
-  border-left-color: color(srgb 1 1 1 / 0.28);
-}
-x-buttons:not([vertical]) > x-button[skin="default"][toggled],
-x-buttons:not([vertical]) > x-button[skin="default"][toggled] + x-button[skin="default"] {
-  border-left-color: var(--light-accent-color);
-}
-x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed],
-x-buttons:not([vertical]) > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
-  border-left-color: var(--lighter-accent-color) !important;
-}
-
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
-  border-top-width: 1px;
-  border-top-style: solid;
-  border-top-color: color(srgb 1 1 1 / 0.12);
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons[vertical] > x-button[skin="default"][pressed] {
-  border-top-color: color(srgb 1 1 1 / 0.12);
-}
-x-buttons[vertical] > x-button[skin="default"][pressed] + x-button[skin="default"]:not([toggled]) {
-  border-top-color: color(srgb 1 1 1 / 0.28);
-}
-x-buttons[vertical] > x-button[skin="default"][toggled],
-x-buttons[vertical] > x-button[skin="default"][toggled] + x-button[skin="default"] {
-  border-top-color: var(--light-accent-color);
-}
-x-buttons[vertical] > x-button[skin="default"][toggled][pressed],
-x-buttons[vertical] > x-button[skin="default"][toggled][pressed] + x-button[skin="default"] {
-  border-top-color: var(--lighter-accent-color) !important;
-}
-
-/* Label */
-x-button > x-label {
-  font-weight: 700;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("dock" skin)
- */
-
-x-button[skin="dock"] {
-  color: var(--text-color);
-  background-color: var(--light-background-color);
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--border-color);
-}
-x-button[skin="dock"]:hover {
-  background-color: color(srgb 1 1 1 / 0.18);
-}
-x-button[skin="dock"][pressed] {
-  background-color: color(srgb 1 1 1 / 0.28);
-}
-x-button[skin="dock"][toggled] {
-  color: color(srgb 1 1 1);
-  background-color: var(--accent-color);
-  border-color: var(--light-accent-color);
-  z-index: 1;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("flat" skin)
- */
 
 x-button[skin="flat"] {
-  color: var(--text-color);
+  & {
+    color: var(--text-color);
+  }
+  &[toggled],
+  &[expanded] {
+    color: var(--accent-color);
+  }
+  &[pressed] {
+    color: var(--light-accent-color);
+  }
 }
-x-button[skin="flat"][toggled],
-x-button[skin="flat"][expanded] {
-  color: var(--accent-color);
-}
-x-button[skin="flat"][pressed] {
-  color: var(--light-accent-color);
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("recessed" skin)
- */
 
 x-button[skin="recessed"] {
-  color: var(--text-color);
-  border-radius: 6px;
-}
-x-button[skin="recessed"]:hover {
-  background-color: color(srgb 1 1 1 / 0.07);
-}
-x-button[skin="recessed"][toggled] {
-  color: color(srgb 0 0 0 / 0.95);
-  background-color: color(srgb 1 1 1 / 0.6);
-}
-x-button[skin="recessed"][pressed] {
-  color: color(srgb 0 0 0 / 0.95);
-  background-color: color(srgb 1 1 1 / 0.75);
+  & {
+    color: var(--text-color);
+    border-radius: 6px;
+  }
+  &:hover {
+    background-color: color(srgb 1 1 1 / 0.07);
+  }
+  &[toggled] {
+    color: color(srgb 0 0 0 / 0.95);
+    background-color: color(srgb 1 1 1 / 0.6);
+  }
+  &[pressed] {
+    color: color(srgb 0 0 0 / 0.95);
+    background-color: color(srgb 1 1 1 / 0.75);
+  }
+
+  /* Label */
+  & > x-label {
+    font-size: 12px;
+    text-align: center;
+  }
 }
 
-/* Label */
-x-button[skin="recessed"] > x-label {
-  font-size: 12px;
-  text-align: center;
+x-button[skin="dock"] {
+  & {
+    color: var(--text-color);
+    background-color: var(--light-background-color);
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border-color);
+  }
+  &:hover {
+    background-color: color(srgb 1 1 1 / 0.18);
+  }
+  &[pressed] {
+    background-color: color(srgb 1 1 1 / 0.28);
+  }
+  &[toggled] {
+    color: color(srgb 1 1 1);
+    background-color: var(--accent-color);
+    border-color: var(--light-accent-color);
+    z-index: 1;
+  }
 }
 
 /*****************************************************************************************************************/
@@ -733,7 +726,12 @@ dialog::backdrop {
 
 /* Footer */
 dialog > footer {
-  padding-top: 0;
+  padding-top: 6px;
+  padding-bottom: 20px;
+  background-color: transparent;
+}
+dialog > footer > x-button {
+  flex: 1;
 }
 
 /*****************************************************************************************************************/
@@ -781,6 +779,13 @@ x-popover {
   border-radius: 12px;
   box-shadow: 0px 3px 6px color(srgb 0 0 0 / 0.15);
   --open-transition: none;
+}
+
+x-popover > footer {
+  background-color: var(--background-color);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--border-color);
 }
 
 /*****************************************************************************************************************/

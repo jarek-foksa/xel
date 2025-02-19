@@ -47,11 +47,10 @@ let createPortalPackage = (minify = true, publish = false) => {
         Fse.copySync(`${projectPath}/CHANGELOG.md`, `${projectPath}/dist/portal/CHANGELOG.md`);
       }
 
-      // portal.html, portal-preload.js, favicon.svg
+      // portal.html, favicon.svg
       {
-        Fse.copySync(`${projectPath}/portal.html`,       `${projectPath}/dist/portal/portal.html`);
-        Fse.copySync(`${projectPath}/portal-preload.js`, `${projectPath}/dist/portal/portal-preload.js`);
-        Fse.copySync(`${projectPath}/favicon.svg`,       `${projectPath}/dist/portal/favicon.svg`);
+        Fse.copySync(`${projectPath}/portal.html`, `${projectPath}/dist/portal/portal.html`);
+        Fse.copySync(`${projectPath}/favicon.svg`, `${projectPath}/dist/portal/favicon.svg`);
       }
 
       // portal.js

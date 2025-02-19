@@ -237,8 +237,11 @@ export default class XMenuItemElement extends HTMLElement {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
   }
 
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "disabled") {
       this.#updateAccessabilityAttributes();
     }
   }

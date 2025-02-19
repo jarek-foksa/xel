@@ -10,163 +10,6 @@ import Xel from "../classes/xel.js";
 import {html, css} from "../utils/template.js";
 
 export default class PTSetupPageElement extends PTPage {
-  static _shadowTemplate = html`
-    <template>
-      <h1>Setup</h1>
-
-      <x-card>
-        <main>
-          <h3><strong>1</strong> Install Xel</h3>
-
-          <p>Run from the console:</p>
-          <pt-code>npm install xel</pt-code>
-          <p><strong>Note:</strong> Xel NPM package has no dependencies and it does not execute any scripts during installation.</p>
-        </main>
-      </x-card>
-
-      <x-card>
-        <main>
-          <h3><strong>2</strong> Link Xel</h3>
-
-          <p>Add to the  <code>&lt;head&gt;</code>:</p>
-          <pt-code>&lt;script src="node_modules/xel/xel.js" type="module"&gt;&lt;/script&gt;</pt-code>
-        </main>
-      </x-card>
-
-      <x-card>
-        <main>
-          <h3><strong>3</strong> Set theme</h3>
-
-          Add to the <code>&lt;head&gt;</code> to use
-            <x-select id="theme-select">
-              <x-menu>
-                <x-menuitem value="fluent">
-                  <x-icon href="/icons/portal.svg#fluent"></x-icon>
-                  <x-label>Fluent</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="material">
-                  <x-icon href="/icons/portal.svg#material"></x-icon>
-                  <x-label>Material</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="cupertino">
-                  <x-icon href="/icons/portal.svg#cupertino"></x-icon>
-                  <x-label>Cupertino</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="adwaita">
-                  <x-icon href="/icons/portal.svg#adwaita"></x-icon>
-                  <x-label>Adwaita</x-label>
-                </x-menuitem>
-
-                <hr/>
-
-                <x-menuitem value="fluent-dark">
-                  <x-icon href="/icons/portal.svg#fluent"></x-icon>
-                  <x-label>Fluent Dark</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="material-dark">
-                  <x-icon href="/icons/portal.svg#material"></x-icon>
-                  <x-label>Material Dark</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="cupertino-dark">
-                  <x-icon href="/icons/portal.svg#cupertino"></x-icon>
-                  <x-label>Cupertino Dark</x-label>
-                </x-menuitem>
-
-                <x-menuitem value="adwaita-dark">
-                  <x-icon href="/icons/portal.svg#adwaita"></x-icon>
-                  <x-label>Adwaita Dark</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-select>
-            theme:
-          <pt-code id="theme-code"></pt-code>
-
-          <p><strong>Note:</strong> You can also link a custom theme CSS file. To make it a subtheme of an existing
-          Xel theme you just have to use <code>@import</code> CSS rule.</p>
-        </main>
-      </x-card>
-
-      <x-card>
-        <main>
-          <h3><strong>4</strong> Set accent color</h3>
-
-          <p>Add to the <code>&lt;head&gt;</code> to use
-
-          <x-select id="accent-preset-select">
-            <x-menu id="accent-preset-menu"></x-menu>
-          </x-select>
-
-          accent color:</p>
-          <pt-code id="accent-code"></pt-code>
-        </main>
-      </x-card>
-
-      <x-card id="icons-card">
-        <main>
-          <h3><strong>5</strong> Set icons</h3>
-
-          <p>Add to the <code>&lt;head&gt;</code> to use
-          <x-select id="icons-select">
-            <x-menu>
-              <x-menuitem value="material" toggled>
-                <x-label>Material</x-label>
-              </x-menuitem>
-
-              <x-menuitem value="material-outlined">
-                <x-label>Material Outlined</x-label>
-              </x-menuitem>
-
-              <x-menuitem value="fluent">
-                <x-label>Fluent</x-label>
-              </x-menuitem>
-
-              <x-menuitem value="fluent-outlined">
-                <x-label>Fluent Outlined</x-label>
-              </x-menuitem>
-            </x-menu>
-          </x-select>
-          icons:</p>
-          <pt-code id="icons-code"></pt-code>
-
-          <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If an icon
-          is not found in the first file, Xel will look for it in the subsequent files.</p>
-        </main>
-      </x-card>
-
-      <x-card id="locale-card">
-        <main>
-          <h3><strong>6</strong> Set locale (optional)</h3>
-
-          <p>Add to the <code>&lt;head&gt;</code> to use
-          <x-select id="locale-select">
-            <x-menu>
-              <x-menuitem value="en" toggled>
-                <x-label>English</x-label>
-              </x-menuitem>
-
-              <x-menuitem value="pl">
-                <x-label>Polish</x-label>
-              </x-menuitem>
-            </x-menu>
-          </x-select>
-          locale:</p>
-          <pt-code id="locale-code"></pt-code>
-
-          <p><strong>Note:</strong> You can skip this step if your aren't planning to translate your app UI
-            into multiple languages. Otherwise you should provide a path to your own <a href="https://projectfluent.org/fluent/guide/" target="_blank">FTL locale file</a>. The file name should consist from ISO 639 language code, optionally followed by "-" and ISO 3166 territory code, e.g. <code>en.ftl</code>, <code>en-US.ftl</code> or <code>en-GB.ftl</code>.</p>
-
-          <p><strong>Note:</strong> You can also provide multiple paths separated by commas. If a message
-          is not found in the first locale file, Xel will look for it in the subsequent locale files.</p>
-        </main>
-      </x-card>
-    </template>
-  `;
-
   static _shadowStyleSheet = css`
     h3 {
       margin-bottom: 0;
@@ -209,28 +52,54 @@ export default class PTSetupPageElement extends PTPage {
   #xelAccentColorChangeListener;
   #xelIconsChangeListener;
   #xelLocalesChangeListener;
+  #themeSelectChangeListener;
+  #accentPresetSelectChangeListener;
+  #iconSelectChangeListener;
+  #localeSelectChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   constructor() {
     super();
-
-    this._elements["theme-select"].addEventListener("change", () => this.#onThemeSelectChange());
-    this._elements["accent-preset-select"].addEventListener("change", () => this.#onAccentPresetSelectChange());
-    this._elements["icons-select"].addEventListener("change", () => this.#onIconsSelectChange());
-    this._elements["locale-select"].addEventListener("change", () => this.#onLocaleSelectChange());
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
 
-    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#onXelThemeChange());
-    Xel.addEventListener("accentcolorchange", this.#xelAccentColorChangeListener = () => this.#onXelAccentColorChange());
-    Xel.addEventListener("iconschange", this.#xelIconsChangeListener = () => this.#onXelIconsChange());
-    Xel.addEventListener("localeschange", this.#xelLocalesChangeListener = () => this.#onXelLocalesChange());
+    await this.#update();
 
-    this.#updateAccentColorMenu();
-    this.#update();
+    Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => {
+      this.#onXelThemeChange();
+    });
+
+    Xel.addEventListener("accentcolorchange", this.#xelAccentColorChangeListener = () => {
+      this.#onXelAccentColorChange();
+    });
+
+    Xel.addEventListener("iconschange", this.#xelIconsChangeListener = () => {
+      this.#onXelIconsChange();
+    });
+
+    Xel.addEventListener("localeschange", this.#xelLocalesChangeListener = () => {
+      this.#onXelLocalesChange();
+    });
+
+    this._elements["theme-select"].addEventListener("change", this.#themeSelectChangeListener = () => {
+      this.#onThemeSelectChange();
+    });
+
+    this._elements["accent-preset-select"].addEventListener("change", this.#accentPresetSelectChangeListener = () => {
+      this.#onAccentPresetSelectChange();
+    });
+
+    this._elements["icons-select"].addEventListener("change", this.#iconSelectChangeListener = () => {
+      this.#onIconsSelectChange();
+    });
+
+    this._elements["locale-select"].addEventListener("change", this.#localeSelectChangeListener = () => {
+      this.#onLocaleSelectChange();
+    });
+
     this._onReady();
   }
 
@@ -239,12 +108,15 @@ export default class PTSetupPageElement extends PTPage {
     Xel.removeEventListener("accentcolorchange", this.#xelAccentColorChangeListener);
     Xel.removeEventListener("iconschange", this.#xelIconsChangeListener);
     Xel.removeEventListener("localeschange", this.#xelLocalesChangeListener);
+    this._elements["theme-select"].removeEventListener("change", this.#themeSelectChangeListener);
+    this._elements["accent-preset-select"].removeEventListener("change", this.#accentPresetSelectChangeListener);
+    this._elements["icons-select"].removeEventListener("change", this.#iconSelectChangeListener);
+    this._elements["locale-select"].removeEventListener("change", this.#localeSelectChangeListener);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onXelThemeChange() {
-    this.#updateAccentColorMenu();
     this.#update();
   }
 
@@ -282,48 +154,62 @@ export default class PTSetupPageElement extends PTPage {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #update() {
-    // Theme
-    {
-      let name = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.indexOf(".css"));
-      let meta = `<meta name="xel-theme" content="node_modules/xel/themes/${name}.css">`;
+    return new Promise(async (resolve) => {
+      if (this._shadowRoot.childElementCount === 0) {
+        let viewHTML = await (await fetch(`/docs/setup.html`)).text();
+        this._shadowRoot.innerHTML = viewHTML;
 
-      this._elements["theme-select"].value = name;
-      this._elements["theme-code"].textContent = meta;
-    }
-
-    // Accent color
-    {
-      // Preset color
-      if (Xel.presetAccentColors[Xel.accentColor]) {
-        this._elements["accent-preset-select"].value = Xel.accentColor;
-        this._elements["accent-code"].textContent = `<meta name="xel-accent-color" content="${Xel.accentColor}">`;
+        for (let element of this._shadowRoot.querySelectorAll("[id]")) {
+          this._elements[element.id] = element;
+        }
       }
-      // Custom color
-      else {
-        this._elements["accent-preset-select"].value = "custom";
-        this._elements["accent-code"].textContent = `<meta name="xel-accent-color" content="${Xel.accentColor}">`;
+
+      // Theme
+      {
+        let name = Xel.theme.substring(Xel.theme.lastIndexOf("/") + 1, Xel.theme.indexOf(".css"));
+        let meta = `<meta name="xel-theme" content="node_modules/xel/themes/${name}.css">`;
+
+        this._elements["theme-select"].value = name;
+        this._elements["theme-code"].textContent = meta;
       }
-    }
 
-    // Icons
-    {
-      let iconsPath = Xel.icons[0];
-      let iconsName = iconsPath.substring(iconsPath.lastIndexOf("/") + 1, iconsPath.lastIndexOf("."));
-      let meta = `<meta name="xel-icons" content="node_modules/xel/icons/${iconsName}.svg">`;
+      // Accent color
+      {
+        // Preset color
+        if (Xel.presetAccentColors[Xel.accentColor]) {
+          this._elements["accent-preset-select"].value = Xel.accentColor;
+          this._elements["accent-code"].textContent = `<meta name="xel-accent-color" content="${Xel.accentColor}">`;
+        }
+        // Custom color
+        else {
+          this._elements["accent-preset-select"].value = "custom";
+          this._elements["accent-code"].textContent = `<meta name="xel-accent-color" content="${Xel.accentColor}">`;
+        }
+      }
 
-      this._elements["icons-select"].value = iconsName;
-      this._elements["icons-code"].textContent = meta;
-    }
+      // Icons
+      {
+        let iconsPath = Xel.icons[0];
+        let iconsName = iconsPath.substring(iconsPath.lastIndexOf("/") + 1, iconsPath.lastIndexOf("."));
+        let meta = `<meta name="xel-icons" content="node_modules/xel/icons/${iconsName}.svg">`;
 
-    // Locale
-    {
-      let localePath = Xel.locales[0];
-      let localeName = localePath.substring(localePath.lastIndexOf("/") + 1, localePath.lastIndexOf("."));
-      let meta = `<meta name="xel-locales" content="node_modules/xel/locales/${localeName}.ftl">`;
+        this._elements["icons-select"].value = iconsName;
+        this._elements["icons-code"].textContent = meta;
+      }
 
-      this._elements["locale-select"].value = localeName;
-      this._elements["locale-code"].textContent = meta;
-    }
+      // Locale
+      {
+        let localePath = Xel.locales[0];
+        let localeName = localePath.substring(localePath.lastIndexOf("/") + 1, localePath.lastIndexOf("."));
+        let meta = `<meta name="xel-locales" content="node_modules/xel/locales/${localeName}.ftl">`;
+
+        this._elements["locale-select"].value = localeName;
+        this._elements["locale-code"].textContent = meta;
+      }
+
+      this.#updateAccentColorMenu();
+      resolve();
+    });
   }
 
   #updateAccentColorMenu() {
@@ -347,7 +233,7 @@ export default class PTSetupPageElement extends PTPage {
     `;
 
     this._elements["accent-preset-menu"].innerHTML = itemsHTML;
-    this._elements["accent-preset-select"].value = "blue";
+    this._elements["accent-preset-select"].value = Xel.accentColor;
   }
 }
 

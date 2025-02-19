@@ -127,8 +127,11 @@ export default class XMenuBarElement extends HTMLElement {
     window.removeEventListener("orientationchange", this.#orientationChangeListener);
   }
 
-  attributeChangedCallback(name) {
-    if (name === "disabled") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "disabled") {
       this.#onDisabledAttributeChange();
     }
   }

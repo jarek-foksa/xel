@@ -25,7 +25,7 @@ export default class XColorInputElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <slot></slot>
 
         <input id="input" type="text" spellcheck="false" autocomplete="false" part="input"></input>
@@ -37,7 +37,7 @@ export default class XColorInputElement extends HTMLElement {
         </div>
 
         <slot></slot>
-      </main>
+      </div>
     </template>
   `;
 

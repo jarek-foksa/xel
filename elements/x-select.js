@@ -218,7 +218,10 @@ export default class XSelectElement extends HTMLElement {
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
   }
 
-  attributeChangedCallback(name) {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
     if (name === "disabled") {
       this.#updateAccessabilityAttributes();
     }

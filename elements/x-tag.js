@@ -9,7 +9,9 @@ import Xel from "../classes/xel.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-tag
-// @part main scope remove-button
+// @part main
+// @part scope
+// @part remove-button
 // @event ^remove - User clicked the remove button of a removable tag.
 export default class XTagElement extends HTMLElement {
   static #shadowTemplate = html`
@@ -19,13 +21,13 @@ export default class XTagElement extends HTMLElement {
           <slot id="scope-slot" name="scope"></slot>
         </div>
 
-        <main id="main" part="main">
+        <div id="main" part="main">
           <slot></slot>
 
           <svg id="remove-button" part="remove-button" width="12" height="12" viewBox="0 0 100 100">
             <path id="remove-button-path"></path>
           </svg>
-        </main>
+        </div>
       </div>
     </template>
   `;

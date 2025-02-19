@@ -65,7 +65,7 @@ class XColorPickerElement extends HTMLElement {
         </x-buttons>
       </header>
 
-      <main id="main"></main>
+      <div id="main"></div>
 
       <footer id="footer">
         <x-colorinput id="input" space="srgb" size="small"></x-colorinput>

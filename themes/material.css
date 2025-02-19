@@ -27,7 +27,7 @@ body {
                                 orange   lch(40.5 47.5 58.6),
                                 yellow   lch(40.2 47 88.5),
                                 green    lch(40 36.9 134),
-                                graphite lch(40.4 7.86 199);
+                                gray     lch(40.4 7.86 199);
   --foreground-color:           var(--material-surface-color);
   --background-color:           var(--material-surface-container-color);
   --border-color:               var(--material-outline-variant-color);
@@ -109,7 +109,7 @@ a:hover {
 
 pre, code, var {
   background-color: var(--material-surface-container-low-color);
-  font-family: "Roboto Mono", "Noto Sans Mono", "Inconsolata", "Menlo", "Andale Mono", ui-monospace, monospace;
+  font-family: "Roboto Mono", "Noto Sans Mono", ui-monospace, monospace;
 }
 pre {
   border-radius: 12px;
@@ -201,6 +201,13 @@ x-card {
   border-style: solid;
   border-color: var(--material-outline-variant-color);
   border-radius: 12px;
+}
+
+x-card > footer {
+  background-color: var(--material-surface-container-color);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--material-outline-variant-color);
 }
 
 /*****************************************************************************************************************/
@@ -297,200 +304,190 @@ x-swatch {
  * Button
  */
 
-/* Focus ring */
-x-button:focus {
-  outline-width: 3px;
-  outline-style: solid;
-  outline-color: var(--material-primary-color);
-  outline-offset: -1px;
+x-button {
+  /* Focus ring */
+  &:focus {
+    outline-width: 3px;
+    outline-style: solid;
+    outline-color: var(--material-primary-color);
+    outline-offset: -1px;
+  }
+
+  /* State layer */
+  &::before {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: "";
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Label */
+  & > x-label {
+    font-weight: 500;
+  }
 }
 
-/* State layer */
-x-button::before {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  content: "";
-  pointer-events: none;
-  border-radius: inherit;
-}
+x-button[skin="normal"] {
+  & {
+    color: var(--material-on-surface-color);
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--material-outline-color);
+    border-radius: 40px;
+  }
+  &[toggled] {
+    color: var(--material-on-primary-color);
+    background-color: var(--material-primary-color);
+    border-color: transparent;
+  }
 
-/*****************************************************************************************************************/
+  /* Focus ring */
+  &[toggled]:focus {
+    outline-offset: 1px;
+  }
 
-/**
- * Button (default skin)
- */
+  /* State layer */
+  &:hover::before,
+  &[expanded]::before {
+    display: block;
+    background-color: var(--material-on-surface-color);
+    opacity: 0.08;
+  }
+  &:focus::before {
+    display: block;
+    background-color: var(--material-primary-color);
+    opacity: 0.1;
+  }
+  &[pressed]::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.1;
+  }
+  &[toggled]:hover::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.08;
+  }
+  &[toggled][pressed]::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.1;
+  }
 
-x-button[skin="default"] {
-  color: var(--material-on-surface-color);
-  border-style: solid;
-  border-width: 1px;
-  border-color: var(--material-outline-color);
-  border-radius: 40px;
-}
-x-button[skin="default"][toggled] {
-  color: var(--material-on-primary-color);
-  background-color: var(--material-primary-color);
-  border-color: transparent;
-}
+  /* Horizontal siblings */
+  x-buttons:not([vertical]) > & {
+    &:not(:first-of-type) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    &:not(:last-of-type) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    & + x-button[skin="normal"] {
+      margin-left: -1px;
+    }
+  }
 
-/* Horizontal siblings */
-x-buttons:not([vertical]) > x-button[skin="default"]:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  /* Vertical siblings */
+  x-buttons[vertical] > & {
+    & {
+      border-radius: 8px;
+    }
+    &:not(:first-of-type) {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+    &:not(:last-of-type) {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    & + x-button[skin="normal"] {
+      margin-top: -1px;
+    }
+  }
 }
-x-buttons:not([vertical]) > x-button[skin="default"]:not(:last-of-type) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons:not([vertical]) > x-button[skin="default"] + x-button[skin="default"] {
-  margin-left: -1px;
-}
-
-/* Vertical siblings */
-x-buttons[vertical] > x-button[skin="default"] {
-  border-radius: 8px;
-}
-x-buttons[vertical] > x-button[skin="default"]:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-x-buttons[vertical] > x-button[skin="default"]:not(:last-of-type) {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-x-buttons[vertical] > x-button[skin="default"] + x-button[skin="default"] {
-  margin-top: -1px;
-}
-
-/* Focus ring */
-x-button[skin="default"][toggled]:focus {
-  outline-offset: 1px;
-}
-
-/* State layer */
-x-button[skin="default"]:hover::before,
-x-button[skin="default"][expanded]::before {
-  display: block;
-  background-color: var(--material-on-surface-color);
-  opacity: 0.08;
-}
-x-button[skin="default"]:focus::before {
-  display: block;
-  background-color: var(--material-primary-color);
-  opacity: 0.1;
-}
-x-button[skin="default"][pressed]::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.1;
-}
-x-button[skin="default"][toggled]:hover::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.08;
-}
-x-button[skin="default"][toggled][pressed]::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.1;
-}
-
-/* Label */
-x-button > x-label {
-  font-weight: 500;
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("flat" skin)
- */
 
 x-button[skin="flat"] {
-  color: var(--material-on-surface-variant-color)
+  & {
+    color: var(--material-on-surface-variant-color)
+  }
+  &:hover {
+    color: var(--material-on-surface-color);
+  }
+  &[toggled],
+  &[expanded] {
+    color: var(--material-primary-color);
+  }
+  &[pressed] {
+    color: var(--material-on-primary-container-color);
+  }
 }
-x-button[skin="flat"]:hover {
-  color: var(--material-on-surface-color);
-}
-x-button[skin="flat"][toggled],
-x-button[skin="flat"][expanded] {
-  color: var(--material-primary-color);
-}
-x-button[skin="flat"][pressed] {
-  color: var(--material-on-primary-container-color);
-}
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("recessed" skin)
- */
 
 x-button[skin="recessed"] {
-  color: var(--material-on-surface-color);
-  border-radius: 8px;
-}
-x-button[skin="recessed"][toggled] {
-  color: var(--material-on-primary-fixed-color);
-  background-color: var(--material-primary-fixed-dim-color);
-}
+  & {
+    color: var(--material-on-surface-color);
+    border-radius: 8px;
+  }
+  &[toggled] {
+    color: var(--material-on-primary-fixed-color);
+    background-color: var(--material-primary-fixed-dim-color);
+  }
 
-/* State layer */
-x-button[skin="recessed"]:hover::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.08;
-}
-x-button[skin="recessed"][pressed]::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.1;
-}
+  /* State layer */
+  &:hover::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.08;
+  }
+  &[pressed]::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.1;
+  }
 
-/* Label */
-x-button[skin="recessed"] > x-label {
-  font-size: 12px;
-  text-align: center;
+  /* Label */
+  & > x-label {
+    font-size: 12px;
+    text-align: center;
+  }
 }
-
-/*****************************************************************************************************************/
-
-/**
- * Button ("dock" skin)
- */
 
 x-button[skin="dock"] {
-  color: var(--material-on-surface-color);
-  background-color: var(--material-surface-bright-color);
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--material-outline-variant-color);
-}
-x-button[skin="dock"][toggled] {
-  color: var(--material-on-surface-inverse-color);
-  background-color: var(--material-primary-color);
-  border-color: var(--material-on-primary-fixed-variant-color);
-  z-index: 1;
-}
+  & {
+    color: var(--material-on-surface-color);
+    background-color: var(--material-surface-bright-color);
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--material-outline-variant-color);
+  }
+  &[toggled] {
+    color: var(--material-on-surface-inverse-color);
+    background-color: var(--material-primary-color);
+    border-color: var(--material-on-primary-fixed-variant-color);
+    z-index: 1;
+  }
 
-/* State layer */
-x-button[skin="dock"]:hover::before {
-  display: block;
-  background-color: var(--material-on-surface-color);
-  opacity: 0.08;
-}
-x-button[skin="dock"][toggled]:hover::before {
-  display: none;
-}
-x-button[skin="dock"][pressed]::before,
-x-button[skin="dock"][toggled][pressed]::before  {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.1;
+  /* State layer */
+  &:hover::before {
+    display: block;
+    background-color: var(--material-on-surface-color);
+    opacity: 0.08;
+  }
+  &[toggled]:hover::before {
+    display: none;
+  }
+  &[pressed]::before,
+  &[toggled][pressed]::before  {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.1;
+  }
 }
 
 /*****************************************************************************************************************/
@@ -834,6 +831,7 @@ dialog::backdrop {
 }
 
 dialog > footer {
+  background-color: var(--material-surface-container-highest-color);
   border-top-width: 1px;
   border-top-style: solid;
   border-top-color: var(--material-outline-variant-color);
@@ -916,6 +914,13 @@ x-popover {
   border-radius: 4px;
   box-shadow: var(--material-elevation-2);
   --open-transition: none;
+}
+
+x-popover > footer {
+  background-color: var(--material-surface-container-highest-color);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--material-outline-variant-color);
 }
 
 x-popover::part(arrow-path) {

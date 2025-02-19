@@ -6,10 +6,6 @@
     ],
     "rewrites": [
       {
-        "source": "/fallback",
-        "destination": "/portal-fallback.html"
-      },
-      {
         "source": "**",
         "destination": "/portal.html"
       }

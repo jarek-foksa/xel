@@ -27,12 +27,12 @@ export default class XNumberInputElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <div id="editor-container">
           <div id="editor" contenteditable="plaintext-only" spellcheck="false"></div>
         </div>
         <slot></slot>
-      </main>
+      </div>
     </template>
   `;
 
@@ -308,8 +308,11 @@ export default class XNumberInputElement extends HTMLElement {
     this.#update();
   }
 
-  attributeChangedCallback(name) {
-    if (name === "value") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+    else if (name === "value") {
       this.#onValueAttributeChange();
     }
     else if (name === "min") {

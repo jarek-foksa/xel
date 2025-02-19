@@ -33,7 +33,7 @@ export default class XSliderElement extends HTMLElement {
 
   static #shadowTemplate = html`
     <template>
-      <main id="main">
+      <div id="main">
         <div id="groove-track" part="track groove-track"></div>
         <div id="range-track" part="track range-track"></div>
         <div id="thumbs" part="thumbs">
@@ -41,7 +41,7 @@ export default class XSliderElement extends HTMLElement {
           <div id="start-thumb" class="thumb" part="thumb start-thumb" data-value="start" tabindex="0"></div>
           <div id="end-thumb" class="thumb" part="thumb end-thumb" data-value="end" tabindex="0"></div>
         </div>
-      </main>
+      </div>
     </template>
   `;
 
