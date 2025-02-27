@@ -35,7 +35,7 @@
   --text-color:                 color(srgb 1 1 1 / 0.9);
   --error-color:                color(srgb 1 0.6 0.64);
   --selection-color:            color(srgb 1 1 1);
-  --selection-background-color: var(--accent-color);
+  --selection-background-color: oklch(from var(--accent-color) calc(l - 0.2) c h);
   --autofill-background-color:  color(srgb 0.99 0.88 0 / 0.35);
   --titlebar-color:             auto;
   --autocapitalize:             none;

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.32.3 (PENDING)
+
+- [Fixed] Dark Fluent theme has too low text selection contrast
+
 ## 0.32.2 (2025-02-27)
 
 - [Fixed] `<x-nav>` dispatches the "toggle" event too early
