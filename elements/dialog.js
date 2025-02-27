@@ -47,6 +47,7 @@ let DialogElementMixin = {
         let closeListener;
 
         document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
         openDialogs.push(this);
 
         this.addEventListener("close", closeListener = (event) => {
@@ -58,6 +59,7 @@ let DialogElementMixin = {
 
             if (openDialogs.length === 0) {
               document.body.style.overflow = null;
+              document.documentElement.style.overflow = null;
             }
           }
         });

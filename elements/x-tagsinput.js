@@ -38,10 +38,11 @@ export default class XTagsInputElement extends HTMLElement {
     :host {
       display: block;
       position: relative;
-      font-size: 12px;
       box-sizing: border-box;
       padding: 3px;
+      min-height: 32px;
       gap: 3px;
+      font-size: 12px;
     }
     :host(:focus) {
       z-index: 10;

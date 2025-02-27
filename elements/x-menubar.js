@@ -31,7 +31,7 @@ export default class XMenuBarElement extends HTMLElement {
       align-items: center;
       width: 100%;
       height: 36px;
-      font-size: 14px;
+      font-size: 0.875rem;
       box-sizing: border-box;
     }
     :host([disabled]) {

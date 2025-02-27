@@ -17,7 +17,7 @@ export default class XLabelElement extends HTMLElement {
       user-select: none;
       -webkit-user-select: none;
       box-sizing: border-box;
-      font-size: 13px;
+      font-size: 0.8125rem;
       font-weight: 400;
       line-height: 1.2;
     }
@@ -29,18 +29,23 @@ export default class XLabelElement extends HTMLElement {
     }
     :host([level="1"]) {
       margin: 12px 0px;
-      font-size: 26px;
-      font-weight: 500;
+      font-size: 1.625rem;
+      font-weight: 600;
     }
     :host([level="2"]) {
       margin: 10px 0px;
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 700;
     }
     :host([level="3"]) {
       margin: 8px 0px;
-      font-size: 13px;
+      font-size: 0.8125rem;
       font-weight: 700;
+    }
+    :host([level="4"]) {
+      margin: 4px 0px;
+      font-size: 0.75rem;
+      font-weight: 500;
     }
 
     slot {
@@ -65,13 +70,13 @@ export default class XLabelElement extends HTMLElement {
 
   // @property
   // @attribute
-  // @type number
-  // @default 3
+  // @type number?
+  // @default null
   get level() {
-    return this.hasAttribute("level") ? parseInt(this.getAttribute("level")) : 3;
+    return this.hasAttribute("level") ? parseInt(this.getAttribute("level")) : null;
   }
   set level(level) {
-    this.setAttribute("level", level);
+    level === null ? this.removeAttribute("level") : this.setAttribute("level", level);
   }
 
   // @property

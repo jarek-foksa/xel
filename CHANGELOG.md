@@ -1,6 +1,13 @@
 
 # CHANGELOG
 
+## 0.32.2 (2025-02-27)
+
+- [Fixed] `<x-nav>` dispatches the "toggle" event too early
+- [Fixed] Can't hide `<x-navitem>` elements
+- [Fixed] `<x-pager>.href` does not preserve URL search params
+- [Fixed] `<x-pager>` with only a single page should be hidden
+
 ## 0.32.1 (2025-02-19)
 
 - [Fixed] Minified themes are missing some stylings

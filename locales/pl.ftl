@@ -7,6 +7,7 @@ slogan-3 = Dla aplikacji <em>webowych</em>, <em>hybrydowych</em> i bazujących n
 about = O projekcie
 setup = Konfiguracja
 elements = Elementy
+typography = Typografia
 changelog = Historia zmian
 license = Licencja
 issues = Problemy

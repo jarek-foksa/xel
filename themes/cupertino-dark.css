@@ -14,7 +14,7 @@
 
 /*****************************************************************************************************************/
 
-body {
+:root {
   color: var(--text-color);
   background-color: var(--background-color);
   font-family: BlinkMacSystemFont, -apple-system, "Inter", "Roboto Flex", "Roboto", "Noto Sans", "Helvetica Neue", "Arial", sans-serif;
@@ -26,11 +26,12 @@ body {
                                 yellow   color(srgb 1.00 0.78 0.15),
                                 green    color(srgb 0.38 0.73 0.27),
                                 gray     color(srgb 0.60 0.60 0.60);
+  --accent-color:               color(srgb 0.00 0.48 1.00);
   --light-accent-color:         oklch(from var(--accent-color) calc(l + 0.10) calc(c + 0.02) h);
   --lighter-accent-color:       oklch(from var(--accent-color) calc(l + 0.15) c h);
   --dark-accent-color:          oklch(from var(--accent-color) calc(l - 0.04) calc(c - 0.02) h);
-  --foreground-color:           color(srgb 0.26 0.26 0.26);
   --background-color:           color(srgb 0.22 0.22 0.22);
+  --foreground-color:           color(srgb 0.26 0.26 0.26);
   --light-foreground-color:     color(srgb 0.39 0.39 0.39);
   --border-color:               color(srgb 1 1 1 / 0.1);
   --text-color:                 color(srgb 1 1 1 / 0.8);
@@ -699,7 +700,7 @@ x-pager::part(toggled-item) {
 
 x-popover {
   color: var(--text-color);
-  background-color: var(--background-color);
+  background-color: var(--foreground-color);
   border-width: 1px;
   border-style: solid;
   border-color: var(--border-color);
@@ -709,7 +710,7 @@ x-popover {
 }
 
 x-popover > footer {
-  background-color: color(srgb 0 0 0 / 0.02);
+  background-color: var(--background-color);
   border-top-width: 1px;
   border-top-style: solid;
   border-top-color: var(--border-color);

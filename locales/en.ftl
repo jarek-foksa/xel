@@ -7,6 +7,7 @@ slogan-3 = For <em>Web</em>, <em>Electron</em> and <em>Hybrid</em> apps.
 about = About
 setup = Setup
 elements = Elements
+typography = Typography
 changelog = Changelog
 license = License
 issues = Issues

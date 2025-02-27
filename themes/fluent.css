@@ -16,10 +16,10 @@
 
 /*****************************************************************************************************************/
 
-body {
+:root {
   color: var(--text-color);
   background-color: var(--background-color);
-  font-family: "Segoe UI", "SegoeUI", "Helvetica Neue", "Helvetica", "Arial", "Roboto Flex", "Roboto", sans-serif;
+  font-family: "Segoe UI", "SegoeUI", system-ui, sans-serif;
   --preset-accent-colors:       blue     color(srgb 0.00 0.47 0.83),
                                 purple   color(srgb 0.53 0.09 0.60),
                                 pink     color(srgb 0.89 0.00 0.56),
@@ -28,8 +28,9 @@ body {
                                 yellow   color(srgb 1.00 0.73 0.00),
                                 green    color(srgb 0.06 0.49 0.06),
                                 gray     color(srgb 0.48 0.46 0.45);
-  --foreground-color:           color(srgb 0.98 0.98 0.98);
+  --accent-color:               color(srgb 0.00 0.47 0.83);
   --background-color:           color(srgb 0.95 0.95 0.95);
+  --foreground-color:           color(srgb 0.98 0.98 0.98);
   --border-color:               color(srgb 0.88 0.88 0.88);
   --text-color:                 color(srgb 0 0 0 / 0.8);
   --error-color:                color(srgb 0.77 0.17 0.11);
@@ -109,6 +110,12 @@ hr {
 }
 
 th, td {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-color);
+}
+
+img {
   border-width: 1px;
   border-style: solid;
   border-color: var(--border-color);
@@ -533,6 +540,7 @@ x-tagsinput:focus {
 x-tagsinput::before {
   position: absolute;
   bottom: -1px;
+  left: 0px;
   width: 100%;
   height: 1px;
   background-color: color(srgb 0 0 0 / 0.45);
@@ -760,7 +768,7 @@ x-menubar > x-menuitem:hover {
 
 dialog {
   color: inherit;
-  background-color: color(srgb 1 1 1);
+  background-color: var(--foreground-color);
   border-width: 0px;
   border-radius: 8px;
   box-shadow: 0px 4.8px 14.4px color(srgb 0 0 0 / 0.18),
@@ -1233,6 +1241,7 @@ x-input[error] {
 /* Focus/error indicator */
 x-input::before {
   position: absolute;
+  left: 0px;
   bottom: -1px;
   width: 100%;
   height: 1px;
@@ -1517,7 +1526,7 @@ x-throbber {
  */
 
 x-titlebar {
-  padding-left: 8px;
+  padding-left: 11px;
   justify-content: flex-start;
 }
 

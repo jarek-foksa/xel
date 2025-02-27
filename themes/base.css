@@ -12,7 +12,7 @@
  * HTML elements
  */
 
-html {
+:root {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -34,17 +34,17 @@ body {
 h1 {
   margin: 22px 0 16px;
   box-sizing: border-box;
-  line-height: 1.1;
+  line-height: 1;
   font-size: 52px;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 h2 {
   margin: 18px 0 14px 0;
   box-sizing: border-box;
-  line-height: 1.1;
-  font-size: 40px;
-  font-weight: 500;
+  line-height: 1;
+  font-size: 34px;
+  font-weight: 700;
 }
 
 h3 {
@@ -52,7 +52,7 @@ h3 {
   box-sizing: border-box;
   line-height: 1.2;
   font-size: 28px;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 h4 {
@@ -60,7 +60,7 @@ h4 {
   box-sizing: border-box;
   line-height: 1.1;
   font-size: 24px;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 h5 {
@@ -68,7 +68,7 @@ h5 {
   box-sizing: border-box;
   line-height: 1.1;
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 h6 {
@@ -76,16 +76,43 @@ h6 {
   box-sizing: border-box;
   line-height: 1.1;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700;
 }
 
-/* Paragraph */
+h1 em,
+h2 em,
+h3 em,
+h4 em,
+h5 em,
+h6 em {
+  font-weight: inherit;
+}
+h1 strong,
+h2 strong,
+h3 strong,
+h4 strong,
+h5 strong,
+h6 strong {
+  font-weight: 900;
+}
+
+/* Paragraphs */
+
+p {
+  margin: 16px 0;
+}
 
 p:last-child {
   margin-bottom: 0;
 }
 
-/* Table */
+/* Links */
+
+a {
+  font-weight: 500;
+}
+
+/* Tables */
 
 table {
   border-collapse: collapse;
@@ -111,37 +138,41 @@ em {
 /* Code */
 
 pre, code, var {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: normal;
   padding: 0 4px;
 }
 pre {
+  margin: 14px 0;
   padding: 4px 6px;
+  white-space: pre-wrap;
+  box-sizing: border-box;
 }
 pre > code {
   display: block;
   padding: 0;
+  box-sizing: border-box;
   background-color: transparent;
   outline-width: 0px;
-  line-height: 18px;
+  line-height: 1.3;
 }
 
-/* Separator */
+/* Separators */
 
 hr {
   width: 100%;
   height: 1px;
   min-height: 1px;
+  margin: 24px 0;
   box-sizing: border-box;
-  margin: 2px 0px;
   border: none;
 }
 
-/* Blockquote */
+/* Blockquotes */
 
 blockquote {
   box-sizing: border-box;
-  margin: 14px 0;
+  margin: 16px 0;
   padding: 5px 14px;
   border-left-width: 8px;
   border-left-style: solid;
@@ -182,7 +213,31 @@ ol li {
 }
 
 li > p {
-  margin-bottom: 0;
+  margin: 4px 0;
+}
+
+ol > li::marker {
+  font-weight: 700;
+}
+
+/* Images */
+
+img {
+  display: block;
+  height: auto;
+  margin: 14px auto;
+  max-width: 100%;
+  user-select: none;
+  box-sizing: border-box;
+  background: var(--checkboard-background);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-color);
+  -webkit-user-select: none;
+  -webkit-user-modify: read-only;
+}
+img:active {
+  cursor: -webkit-grabbing;
 }
 
 /*****************************************************************************************************************/
@@ -455,6 +510,11 @@ x-button > x-icon ~ x-label {
   margin: 0 0 0 6px;
 }
 
+/* Menu */
+x-button > x-menu {
+  font-size: 0.875rem;
+}
+
 /*****************************************************************************************************************/
 
 /**
@@ -620,7 +680,7 @@ x-buttons:not(:defined) {
  */
 
 x-tag[size="small"] {
-  height: 20px;
+  height: 18px;
 }
 x-tag[size="large"] {
   height: 30px;
@@ -649,6 +709,9 @@ x-tag > x-label {
 }
 x-tag :not(x-label) + x-label {
   margin-left: 4px;
+}
+x-tag[size="small"] > x-label {
+  font-size: 11px;
 }
 
 /* Icon */
@@ -792,6 +855,14 @@ x-menu:has(x-menu[opened]) {
   overflow: -webkit-paged-x;
 }
 
+/* Image */
+
+x-menu img {
+  margin: 0;
+  background: none;
+  border: none;
+}
+
 /* Separator */
 x-menu hr {
   width: 100%;
@@ -898,6 +969,9 @@ x-nav x-nav > *:last-child {
 }
 x-nav x-nav > * {
   margin-left: 34px !important;
+}
+x-nav x-nav > * {
+  max-width: calc(100% - 34px) !important;
 }
 
 /* Link */

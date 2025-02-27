@@ -41,6 +41,9 @@ export default class XNavItemElement extends HTMLElement {
       pointer-events: none;
       opacity: 0.5;
     }
+    :host([hidden]) {
+      display: none;
+    }
 
     #button {
       display: flex;

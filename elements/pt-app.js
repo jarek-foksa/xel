@@ -661,7 +661,6 @@ export default class PTAppElement extends HTMLElement {
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
     this["#main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
-    this["#nav"].addEventListener("toggle", (event) => event.preventDefault());
 
     this.#updateForLayoutChange();
     await this.#updateForLocationChange();

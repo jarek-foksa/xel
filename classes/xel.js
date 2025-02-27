@@ -158,7 +158,7 @@ export default new class Xel extends EventEmitter {
     let colors = {};
 
     for (let rule of this.#themeStyleSheet.cssRules) {
-      if (rule.type === 1 && rule.selectorText === "body") {
+      if (rule.type === 1 && rule.selectorText === ":root") {
         let unparsedValue = rule.style.getPropertyValue("--preset-accent-colors");
 
         if (unparsedValue !== "") {
@@ -552,7 +552,8 @@ export default new class Xel extends EventEmitter {
 
   #updateAutocapitlizeProperty() {
     if (this.#localesBundle?.locales[0]?.startsWith("en")) {
-      this.#autocapitalize = getComputedStyle(document.body).getPropertyValue("--autocapitalize").trim() || "none";
+      let computedStyle = getComputedStyle(document.documentElement);
+      this.#autocapitalize = computedStyle.getPropertyValue("--autocapitalize").trim() || "none";
     }
     else {
       this.#autocapitalize = "none";
@@ -563,7 +564,8 @@ export default new class Xel extends EventEmitter {
     await this.whenThemeReady;
 
     let meta = document.head.querySelector(`meta[name="theme-color"]`);
-    let titlebarColor = getComputedStyle(document.body).getPropertyValue("--titlebar-color").trim() || "auto";
+    let computedStyle = getComputedStyle(document.documentElement);
+    let titlebarColor = computedStyle.getPropertyValue("--titlebar-color").trim() || "auto";
 
     if (titlebarColor === "auto") {
       if (meta) {
@@ -589,7 +591,7 @@ export default new class Xel extends EventEmitter {
       serializedColor = this.presetAccentColors[serializedColor];
     }
 
-    let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === "body");
+    let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === ":root");
     rule.style.setProperty("--accent-color", serializedColor);
 
     // Set "--material-<colorName>" CSS properties on <body> element

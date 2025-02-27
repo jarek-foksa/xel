@@ -334,12 +334,12 @@ export class XPagerElement extends HTMLElement {
     let itemsHTML = "";
 
     // First item
-    if (this.controls.includes("first")) {
+    if (this.controls.includes("first") && this.max > 1) {
       itemsHTML += this.#getNamedItemHTML(1, "first");
     }
 
     // Previous item
-    if (this.controls.includes("prev")) {
+    if (this.controls.includes("prev") && this.max > 1) {
       itemsHTML += this.#getNamedItemHTML(Math.max(1, this.value - 1), "prev");
     }
 
@@ -404,12 +404,12 @@ export class XPagerElement extends HTMLElement {
     }
 
     // Next item
-    if (this.controls.includes("next")) {
+    if (this.controls.includes("next") && this.max > 1) {
       itemsHTML += this.#getNamedItemHTML(Math.min(this.max, this.value + 1), "next");
     }
 
     // Last item
-    if (this.controls.includes("last")) {
+    if (this.controls.includes("last") && this.max > 1) {
       itemsHTML += this.#getNamedItemHTML(this.max, "last");
     }
 
@@ -467,17 +467,14 @@ export class XPagerElement extends HTMLElement {
   }
 
   #getHrefWithPageParam(page = 1) {
-    let params = new URLSearchParams();
+    let url = new URL(this.href);
 
     if (page === 1) {
-      params.delete("page");
+      url.searchParams.delete("page");
     }
     else {
-      params.set("page", page);
+      url.searchParams.set("page", page);
     }
-
-    let url = new URL(this.href);
-    url.search = params.toString();
 
     return url.href;
   }

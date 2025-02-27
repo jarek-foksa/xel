@@ -15,10 +15,10 @@
 
 /*****************************************************************************************************************/
 
-body {
+:root {
   color: var(--material-on-surface-color);
   background-color: var(--background-color);
-  font-family: "Roboto Flex", "Roboto", "Noto Sans", "Arial", sans-serif;
+  font-family: "Roboto Flex", "Roboto", "Helvetica Neue", "Noto Sans", "Arial", sans-serif;
   font-weight: 400;
   --preset-accent-colors:       blue     lch(39.4 36.3 272),
                                 purple   lch(39.7 39.4 303),
@@ -28,8 +28,9 @@ body {
                                 yellow   lch(40.2 47 88.5),
                                 green    lch(40 36.9 134),
                                 gray     lch(40.4 7.86 199);
-  --foreground-color:           var(--material-surface-color);
+  --accent-color:               lch(39.4 36.3 272);
   --background-color:           var(--material-surface-container-color);
+  --foreground-color:           var(--material-surface-color);
   --border-color:               var(--material-outline-variant-color);
   --text-color:                 var(--material-on-surface-color);
   --error-color:                var(--material-error-color);

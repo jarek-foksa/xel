@@ -265,7 +265,7 @@ class XColorPickerElement extends HTMLElement {
 
     if (DEBUG) {
       this.addEventListener("change", () => {
-        document.body.style.background = this.value;
+        document.documentElement.style.background = this.value;
       });
     }
   }

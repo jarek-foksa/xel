@@ -15,7 +15,7 @@
 
 /*****************************************************************************************************************/
 
-body {
+:root {
   --foreground-color:           lch(from var(--material-primary-color) 25 10 h);
   --selection-color:            var(--material-on-secondary-fixed-color);
   --selection-background-color: var(--material-secondary-fixed-dim-color);

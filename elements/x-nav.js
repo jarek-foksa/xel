@@ -98,23 +98,24 @@ export default class XNavElement extends HTMLElement {
     let clickedItem = event.target.closest("x-navitem");
 
     // Toggle the clicked item
-    if (clickedItem && clickedItem.hasAttribute("expandable") === false) {
+    if (
+      clickedItem &&
+      clickedItem.hasAttribute("expandable") === false &&
+      !(clickedItem.parentElement.localName === "a" && clickedItem.parentElement.getAttribute("target") === "_blank")
+    ) {
       if (clickedItem.closest("x-nav") === this) {
-        let event = new CustomEvent("toggle", {bubbles: true, cancelable: true});
-        clickedItem.dispatchEvent(event);
-
-        if (event.defaultPrevented === false) {
-          for (let item of this.#getOutermostNavElement().querySelectorAll("x-navitem")) {
-            if (item === clickedItem) {
-              if (item.toggled === false) {
-                item.toggled = true;
-              }
-            }
-            else {
-              item.toggled = false;
+        for (let item of this.#getOutermostNavElement().querySelectorAll("x-navitem")) {
+          if (item === clickedItem) {
+            if (item.toggled === false) {
+              item.toggled = true;
             }
           }
+          else {
+            item.toggled = false;
+          }
         }
+
+        clickedItem.dispatchEvent(new CustomEvent("toggle", {bubbles: true}));
       }
     }
   }

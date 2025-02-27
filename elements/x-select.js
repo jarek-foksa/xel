@@ -45,7 +45,7 @@ export default class XSelectElement extends HTMLElement {
       box-sizing: border-box;
       position: relative;
       outline: none;
-      font-size: 14px;
+      font-size: 0.875rem;
       user-select: none;
       -webkit-user-select: none;
     }
