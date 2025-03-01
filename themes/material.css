@@ -136,7 +136,6 @@ table {
   border-radius: 8px;
   border-style: hidden;
   box-shadow: 0 0 0 1px var(--material-outline-variant-color);
-  overflow: hidden;
 }
 
 th, td {

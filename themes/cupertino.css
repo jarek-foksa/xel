@@ -117,7 +117,6 @@ table {
   border-radius: 7px;
   border-style: hidden;
   box-shadow: 0 0 0 1px var(--border-color);
-  overflow: hidden;
 }
 
 th, td {

@@ -110,10 +110,15 @@ hr {
   background-color: var(--border-color);
 }
 
+table {
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color(srgb 1 1 1 / 0.12);
+}
+
 th, td {
   border-width: 1px;
   border-style: solid;
-  border-color: var(--border-color);
+  border-color: color(srgb 1 1 1 / 0.12);
 }
 
 img {

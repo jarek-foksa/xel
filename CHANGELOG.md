@@ -3,6 +3,7 @@
 
 ## 0.32.3 (PENDING)
 
+- Add rounded table borders
 - [Fixed] Dark Fluent theme has too low text selection contrast
 
 ## 0.32.2 (2025-02-27)

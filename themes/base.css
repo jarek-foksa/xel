@@ -115,18 +115,23 @@ a {
 /* Tables */
 
 table {
-  border-collapse: collapse;
   width: 100%;
   margin: 16px 0;
+  border-collapse: collapse;
+  /* Needed to make "border-radius" property work */
+  border-style: hidden;
+  box-shadow: 0 0 0 1px var(--border-color);
 }
 
 th {
   text-align: start;
   padding: 8px 14px;
+  border-spacing: 0;
 }
 
 td {
   padding: 8px 14px;
+  border-spacing: 0;
 }
 
 /* Markers */
