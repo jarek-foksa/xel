@@ -34,7 +34,7 @@
   --darkest-accent-color:       oklch(from var(--accent-color) calc(l - 0.2) calc(c - 0.07) h);
   --background-color:           color(srgb 0.96 0.96 0.96);
   --foreground-color:           color(srgb 0.98 0.98 0.98);
-  --border-color:               color(srgb 0.8 0.8 0.8 / 0.6);
+  --border-color:               color(srgb 0.85 0.85 0.85);
   --text-color:                 color(srgb 0 0 0 / 0.85);
   --error-color:                color(srgb 1 0.23 0.19);
   --selection-color:            currentColor;
@@ -406,7 +406,7 @@ x-button[skin="dock"] {
     background-color: color(srgb 1 1 1);
     border-width: 1px;
     border-style: solid;
-    border-color: color(srgb 0.8 0.8 0.8);
+    border-color: var(--border-color);
   }
   &[toggled] {
     color: color(srgb 1 1 1);
