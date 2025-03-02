@@ -5,6 +5,7 @@
 
 - Support setting `border-radius` on `<table>` elements
 - [Fixed] Text selection contrast is too low (Fluent Dark theme)
+- [Fixed] `<x-drawer>` background is white instead of black (Fluent Dark theme)
 - [Fixed] `<x-numberinput>` placeholder text has wrong color (Adwaita Dark theme)
 
 ## 0.32.2 (2025-02-27)

@@ -658,11 +658,14 @@ export default class PTAppElement extends HTMLElement {
     window.addEventListener("popstate", (event) => this.#onPopState(event));
     window.addEventListener("beforeunload", (event) => this.#onWindowBeforeUnload(event));
 
+    Xel.addEventListener("themechange", (event) => this.#updateForThemeChange());
+
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
     this["#main"].addEventListener("wheel", (e) => this.#onMainWheel(e), {passive: true});
 
     this.#updateForLayoutChange();
+    this.#updateForThemeChange();
     await this.#updateForLocationChange();
     this.#maybeDispatchLocationChangeEvent("load");
   }
@@ -929,6 +932,10 @@ export default class PTAppElement extends HTMLElement {
 
       resolve();
     });
+  }
+
+  #updateForThemeChange() {
+    document.documentElement.setAttribute("data-theme", Xel.theme);
   }
 
   #updateForLayoutChange() {

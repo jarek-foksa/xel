@@ -30,6 +30,12 @@ export default class PTSetupPageElement extends PTPage {
       text-align: center;
     }
 
+    :host-context([data-theme="/themes/fluent-dark.css"]) {
+      h3 > strong {
+        color: var(--background-color);
+      }
+    }
+
     h3 span.optional {
       font-size: 20px;
       vertical-align: middle;

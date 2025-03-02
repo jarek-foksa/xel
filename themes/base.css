@@ -245,6 +245,11 @@ img:active {
   cursor: -webkit-grabbing;
 }
 
+[popover] {
+  color: var(--text-color);
+  background-color: var(--foreground-color);
+}
+
 /*****************************************************************************************************************/
 
 /**
