@@ -1,8 +1,9 @@
 
 # CHANGELOG
 
-## 0.32.3 (PENDING)
+## 0.33.0 (PENDING)
 
+- Add `ticks` property to `<x-slider>`
 - Support setting `border-radius` on `<table>` elements
 - [Fixed] Text selection contrast is too low (Fluent Dark theme)
 - [Fixed] `<x-drawer>` background is white instead of black (Fluent Dark theme)

@@ -24,12 +24,12 @@ let getClosestMultiple = (number, step) => round(round(number / step) * step, ge
 // @part track
 // @part groove-track
 // @part range-track
-// @part stop
-// @part first-stop
-// @part last-stop
-// @part range-stop
+// @part tick
+// @part first-tick
+// @part last-tick
+// @part range-tick
 export default class XSliderElement extends HTMLElement {
-  static observedAttributes = ["value", "min", "max", "disabled"];
+  static observedAttributes = ["value", "min", "max", "ticks", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -37,7 +37,7 @@ export default class XSliderElement extends HTMLElement {
         <div id="groove-track" part="track groove-track"></div>
         <div id="range-track" part="track range-track"></div>
         <div id="thumbs" part="thumbs">
-          <div id="stops"></div>
+          <div id="ticks"></div>
           <div id="start-thumb" class="thumb" part="thumb start-thumb" data-value="start" tabindex="0"></div>
           <div id="end-thumb" class="thumb" part="thumb end-thumb" data-value="end" tabindex="0"></div>
         </div>
@@ -130,21 +130,21 @@ export default class XSliderElement extends HTMLElement {
     }
 
     /**
-     * Stops
+     * Ticks
      */
 
-    #stops {
+    #ticks {
       position: absolute;
       left: 0px;
       bottom: 0px;
       width: 100%;
       height: 100%;
     }
-    #stops:empty {
+    #ticks:empty {
       display: none;
     }
 
-    #stops .stop {
+    #ticks .tick {
       position: absolute;
       left: 0%;
       bottom: -5px;
@@ -218,6 +218,19 @@ export default class XSliderElement extends HTMLElement {
   }
   set step(step) {
     this.setAttribute("step", step);
+  }
+
+  // @property
+  // @attribute
+  // @type boolean
+  // @default false
+  //
+  // Whether to draw a tick mark for each step.
+  get ticks() {
+    return this.hasAttribute("ticks");
+  }
+  set ticks(ticks) {
+    ticks ? this.setAttribute("ticks", "") : this.removeAttribute("ticks");
   }
 
   // @property
@@ -315,6 +328,9 @@ export default class XSliderElement extends HTMLElement {
     else if (name === "max") {
       this.#onMaxAttributeChange();
     }
+    else if (name === "ticks") {
+      this.#onTicksAttributeChange();
+    }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
     }
@@ -331,6 +347,10 @@ export default class XSliderElement extends HTMLElement {
   }
 
   #onMaxAttributeChange() {
+    this.#update();
+  }
+
+  #onTicksAttributeChange() {
     this.#update();
   }
 
@@ -654,22 +674,22 @@ export default class XSliderElement extends HTMLElement {
       }
     }
 
-    // Stops
+    // Ticks
     {
-      this["#stops"].innerHTML = "";
+      this["#ticks"].innerHTML = "";
 
-      let stopsCount = (this.max - this.min) / this.step;
+      if (this.ticks) {
+        let ticksCount = (this.max - this.min) / this.step;
 
-      if (stopsCount <= 20) {
         for (let value = this.min, n = 0; value <= this.max; value += this.step, n += 1) {
           let left = (((value - this.min) / (this.max - this.min)) * 100);
-          let parts = ["stop"];
+          let parts = ["tick"];
 
           if (n === 0) {
-            parts.push("first-stop");
+            parts.push("first-tick");
           }
-          else if (n === stopsCount) {
-            parts.push("last-stop");
+          else if (n === ticksCount) {
+            parts.push("last-tick");
           }
 
           // Range
@@ -677,19 +697,19 @@ export default class XSliderElement extends HTMLElement {
             let [startValue, endValue] = this.value;
 
             if (value >= startValue && value <= endValue) {
-              parts.push("range-stop");
+              parts.push("range-tick");
             }
           }
           // Normal
           else {
             if (value <= this.value) {
-              parts.push("range-stop");
+              parts.push("range-tick");
             }
           }
 
-          this["#stops"].insertAdjacentHTML(
+          this["#ticks"].insertAdjacentHTML(
             "beforeend",
-            `<div class="stop" part="${parts.join(" ")}" data-value="${value}" style="left: ${left}%"></div>`
+            `<div class="tick" part="${parts.join(" ")}" data-value="${value}" style="left: ${left}%"></div>`
           );
         }
       }

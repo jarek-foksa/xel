@@ -1214,8 +1214,8 @@ x-slider::part(thumb):focus {
   outline-color: color(srgb 0 0 0 / 0.9);
 }
 
-/* Stops */
-x-slider::part(stop) {
+/* Ticks */
+x-slider::part(tick) {
   background-color: color(srgb 0 0 0 / 0.4458);
 }
 

@@ -1252,8 +1252,8 @@ x-slider::part(thumb):focus {
   outline-offset: 3px;
 }
 
-/* Stops */
-x-slider::part(stop) {
+/* Ticks */
+x-slider::part(tick) {
   top: 50%;
   width: 4px;
   height: 4px;
@@ -1261,13 +1261,13 @@ x-slider::part(stop) {
   background-color: var(--material-primary-color);
   border-radius: 99px;
 }
-x-slider::part(first-stop) {
+x-slider::part(first-tick) {
   margin-left: 4px;
 }
-x-slider::part(last-stop) {
+x-slider::part(last-tick) {
   margin-left: -4px;
 }
-x-slider::part(range-stop) {
+x-slider::part(range-tick) {
   background-color: var(--material-on-surface-inverse-color);
 }
 

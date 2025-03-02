@@ -922,8 +922,8 @@ x-slider::part(thumb):focus {
   box-shadow: 0 0 0px 3px var(--lighter-accent-color);
 }
 
-/* Stops */
-x-slider::part(stop) {
+/* Ticks */
+x-slider::part(tick) {
   background-color: color(srgb 1 1 1 / 0.6);
 }
 
