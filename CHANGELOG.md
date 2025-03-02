@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.33.0 (PENDING)
+## 0.33.0 (2025-03-02)
 
 - Add `ticks` property to `<x-slider>`
 - Support setting `border-radius` on `<table>` elements

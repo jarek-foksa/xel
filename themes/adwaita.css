@@ -1053,6 +1053,9 @@ x-numberinput:focus {
   outline-color: var(--light-accent-color);
   outline-offset: -1px;
 }
+x-numberinput:focus:has(x-stepper) {
+  padding-right: 20px; /* Stepper width */
+}
 x-numberinput[error] {
   background-color: var(--error-background-color);
   outline-width: 2px;
