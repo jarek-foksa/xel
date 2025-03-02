@@ -3,8 +3,9 @@
 
 ## 0.32.3 (PENDING)
 
-- Add rounded table borders
-- [Fixed] Dark Fluent theme has too low text selection contrast
+- Support setting `border-radius` on `<table>` elements
+- [Fixed] Text selection contrast is too low (Fluent Dark theme)
+- [Fixed] `<x-numberinput>` placeholder text has wrong color (Adwaita Dark theme)
 
 ## 0.32.2 (2025-02-27)
 
