@@ -1380,9 +1380,6 @@ x-numberinput[size="small"] {
 x-numberinput[size="large"] {
   height: 38px;
 }
-x-numberinput:not([condensed])[hasstepper] {
-  margin-right: 18px;
-}
 x-numberinput:focus {
   z-index: 10;
 }

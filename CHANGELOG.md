@@ -6,6 +6,7 @@
 - Add `ticks` property to `<x-slider>`
 - Support setting `border-radius` on `<table>` elements
 - [Fixed] Text selection contrast is too low (Fluent Dark theme)
+- [Fixed] `<x-stepper>` inside `<x-numberinput>` is too large (Fluent themes)
 - [Fixed] `<x-drawer>` background is white instead of black (Fluent Dark theme)
 - [Fixed] `<x-numberinput>` placeholder text has wrong color (Adwaita Dark theme)
 
