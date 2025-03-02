@@ -65,7 +65,21 @@ export default class PTAboutPageElement extends PTPage {
     h2 em {
       color: rgba(255,255,255, 0.95);
       font-style: normal;
-      font-weight: 700;
+      font-weight: 900;
+    }
+
+    :host-context([data-theme="/themes/fluent-dark.css"]) {
+      h1 {
+        color: var(--background-color);
+      }
+
+      h2, h2 em {
+        color: var(--foreground-color);
+      }
+
+      ::selection {
+        color: var(--background-color);
+      }
     }
   `;
 
