@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.1 (2025-03-03)
+
+- [Fixed] Nested CSS rules are crashing Safari 18.3
+
 ## 0.33.0 (2025-03-02)
 
 - Add `ticks` property to `<x-slider>`

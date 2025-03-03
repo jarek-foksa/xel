@@ -51,6 +51,7 @@
     "marked": "15.0.7",
     "postcss": "8.5.3",
     "postcss-import": "16.1.0",
+    "postcss-nesting": "13.0.1",
     "prismjs": "1.29.0",
     "rollup": "4.34.8",
     "semver": "7.7.1",

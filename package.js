@@ -10,6 +10,7 @@ import Semver from "semver";
 import HTMLMinifier from "html-minifier-terser";
 import PostCSS from "postcss";
 import PostCSSImport from "postcss-import";
+import PostCSSNesting from "postcss-nesting";
 import PostCSSMinify from "@csstools/postcss-minify";
 import * as JSMinifier from "terser";
 import * as JSBundler from "rollup";
@@ -71,7 +72,7 @@ let createPortalPackage = (minify = true, publish = false) => {
         for (let srcPath of Glob.sync(`${projectPath}/themes/*.css`)) {
           let destPath = `${projectPath}/dist/portal/` + srcPath.substring(projectPath.length);
           let themeCSS = Fse.readFileSync(srcPath, "utf8");
-          let minifiedCSS = await PostCSS([PostCSSMinify()]).process(themeCSS , {from: undefined}).css;
+          let minifiedCSS = await PostCSS([PostCSSNesting(), PostCSSMinify()]).process(themeCSS , {from: undefined}).css;
 
           Fse.ensureDirSync(dirname(destPath));
           Fse.writeFileSync(destPath, minifiedCSS, "utf8");
@@ -255,7 +256,7 @@ let createNpmPackage = (minify = true, publish = false) => {
           let themeCSS = Fse.readFileSync(`${projectPath}/dist/npm/themes/${themeName}.css`, "utf8");
 
           let minifiedThemeCSS = (
-            await PostCSS([PostCSSImport(), PostCSSMinify()]).process(themeCSS , {
+            await PostCSS([PostCSSImport(), PostCSSNesting(), PostCSSMinify()]).process(themeCSS , {
               from: `${projectPath}/dist/npm/themes/`
             })
           ).css;
@@ -406,7 +407,7 @@ let minifyScript = (code, verbose = false) => {
 
           if (endIndex > -1) {
             let template = code.substring(startIndex, endIndex);
-            let minifiedTemplate = await PostCSS([PostCSSMinify()]).process(template, {from: undefined}).css;
+            let minifiedTemplate = await PostCSS([PostCSSNesting(), PostCSSMinify()]).process(template, {from: undefined}).css;
 
             code = code.substring(0, startIndex) + minifiedTemplate + code.substring(endIndex);
             currentIndex = startIndex + minifiedTemplate.length;
