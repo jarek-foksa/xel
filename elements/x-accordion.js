@@ -276,7 +276,7 @@ export default class XAccordionElement extends HTMLElement {
 
   #clearCurrentAnimations() {
     if (this.#currentAnimations.length > 0) {
-      this.#currentAnimations.map(animation => animation.finish())
+      this.#currentAnimations.map(animation => animation.finish());
       this.#currentAnimations = [];
     }
   }

@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.33.2 (PENDING)
+## 0.33.2 (2025-03-06)
 
 - Change font size units from "px" to "rem"
 - [Fixed] `<x-tagsinput>` padding changes when entering values
