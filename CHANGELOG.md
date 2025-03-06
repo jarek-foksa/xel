@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.2 (PENDING)
+
+- [Fixed] `<x-tagsinput>` padding changes when entering values
+
 ## 0.33.1 (2025-03-03)
 
 - [Fixed] Nested CSS rules are crashing Safari 18.3
