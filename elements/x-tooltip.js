@@ -32,7 +32,7 @@ export default class XTooltipElement extends HTMLElement {
       pointer-events: none;
       border-width: 1px;
       border-style: solid;
-      font-size: 12px;
+      font-size: 0.75rem;
       z-index: 99999;
       --align: bottom;
       --whitespace: 8px;

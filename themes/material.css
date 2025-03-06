@@ -453,7 +453,7 @@ x-button[skin="recessed"] {
 
   /* Label */
   & > x-label {
-    font-size: 12px;
+    font-size: 0.75rem;
     text-align: center;
   }
 }
@@ -558,7 +558,7 @@ x-tag::part(scope) {
   border-color: var(--material-outline-variant-color);
 }
 x-tag[toggled]::part(scope) {
-  color: var(--material-on-surface-color);;
+  color: var(--material-on-surface-color);
   border-color: var(--material-primary-color);
 }
 

@@ -429,7 +429,7 @@ x-button[skin="recessed"] {
 
   /* Label */
   & > x-label {
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 700;
     text-align: center;
   }
@@ -752,7 +752,7 @@ x-menuitem::part(arrow) {
 /* Shortcut */
 x-menuitem x-shortcut {
   color: color(srgb 1 1 1 / 0.786);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 /*****************************************************************************************************************/

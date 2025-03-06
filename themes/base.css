@@ -17,7 +17,7 @@
   height: 100%;
   margin: 0;
   interpolate-size: allow-keywords;
-  font-size: 16px;
+  font-size: clamp(12px, 1rem, 20px);
   font-family: sans-serif;
   line-height: 1.6;
 }
@@ -35,7 +35,7 @@ h1 {
   margin: 22px 0 16px;
   box-sizing: border-box;
   line-height: 1;
-  font-size: 52px;
+  font-size: 3.25rem;
   font-weight: 700;
 }
 
@@ -43,7 +43,7 @@ h2 {
   margin: 18px 0 14px 0;
   box-sizing: border-box;
   line-height: 1;
-  font-size: 34px;
+  font-size: 2.125rem;
   font-weight: 700;
 }
 
@@ -51,7 +51,7 @@ h3 {
   margin: 16px 0 12px 0;
   box-sizing: border-box;
   line-height: 1.2;
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 700;
 }
 
@@ -59,7 +59,7 @@ h4 {
   margin: 14px 0 10px 0;
   box-sizing: border-box;
   line-height: 1.1;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 
@@ -67,7 +67,7 @@ h5 {
   margin: 12px 0 8px 0;
   box-sizing: border-box;
   line-height: 1.1;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
 }
 
@@ -75,7 +75,7 @@ h6 {
   margin: 8px 0 5px 0;
   box-sizing: border-box;
   line-height: 1.1;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -344,14 +344,14 @@ x-avatar > x-icon {
 
 /* Placeholder text */
 x-avatar > x-label {
-  font-size: 16px;
+  font-size: 1rem;
   pointer-events: none;
 }
 x-avatar[size="small"] > x-label {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 x-avatar[size="large"] > x-label {
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 
 /*****************************************************************************************************************/
@@ -715,13 +715,13 @@ x-tag[size="large"] > x-swatch {
 
 /* Label */
 x-tag > x-label {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 x-tag :not(x-label) + x-label {
-  margin-left: 4px;
+  margin-left: 0.25rem;
 }
 x-tag[size="small"] > x-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 /* Icon */
@@ -998,7 +998,7 @@ x-nav x-label {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 0.9375rem;
   text-align: start;
 }
 x-nav x-icon + x-label {
@@ -1059,7 +1059,7 @@ dialog {
   margin: auto;
   padding: 20px 24px;
   box-sizing: border-box;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.6;
 }
 dialog:focus {
@@ -1099,7 +1099,7 @@ dialog > footer x-button + x-button {
 
 /* Heading */
 dialog h3 {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 700;
 }
 

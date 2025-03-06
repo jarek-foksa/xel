@@ -39,7 +39,7 @@ export default class PTAboutPageElement extends PTPage {
     }
 
     h1 {
-      font-size: 170px;
+      font-size: 11rem;
       font-weight: 700;
       line-height: 1.5;
       margin: 0 0 50px 0;
@@ -49,12 +49,12 @@ export default class PTAboutPageElement extends PTPage {
     }
 
     h1 span {
-      font-size: 320px;
+      font-size: 20rem;
       line-height: 1;
     }
 
     h2 {
-      font-size: 27px;
+      font-size: 1.7rem;
       font-weight: 400;
       line-height: 1.05;
       color: rgba(255,255,255, 0.8);

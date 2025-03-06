@@ -93,7 +93,7 @@ pre, code, var {
   outline-width: 1px;
   outline-style: solid;
   outline-color: rgba(0, 0, 0, 0.14);
-  font-family: "Adwaita Mono", "Iosevka", ui-monospace, monospace;;
+  font-family: "Adwaita Mono", "Iosevka", ui-monospace, monospace;
 }
 pre {
   border-radius: 12px;
@@ -428,7 +428,7 @@ x-button[skin="recessed"] {
 
   /* Label */
   & > x-label {
-    font-size: 12px;
+    font-size: 0.75rem;
     text-align: center;
   }
 }

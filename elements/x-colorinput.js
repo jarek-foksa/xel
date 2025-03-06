@@ -49,12 +49,12 @@ export default class XColorInputElement extends HTMLElement {
       height: 32px;
       padding: 0 2px 0 8px;
       box-sizing: border-box;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
     :host([size="small"]) {
       height: 24px;
       padding: 0 2px 0 6px;
-      font-size: 12.5px;
+      font-size: 0.8rem;
     }
     :host([size="large"]) {
       height: 38px;

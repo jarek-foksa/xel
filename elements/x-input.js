@@ -39,7 +39,7 @@ export default class XInputElement extends HTMLElement {
       max-width: 160px;
       height: 32px;
       box-sizing: border-box;
-      font-size: 12.5px;
+      font-size: 0.78125rem;
     }
     :host(:focus) {
       z-index: 10;

@@ -21,7 +21,7 @@ export default class XContextMenuElement extends HTMLElement {
       position: fixed;
       width: 0px;
       height: 0px;
-      font-size: 14px;
+      font-size: 0.875rem;
       z-index: 1001;
     }
   `;

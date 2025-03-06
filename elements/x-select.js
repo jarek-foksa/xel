@@ -60,7 +60,7 @@ export default class XSelectElement extends HTMLElement {
       cursor: default;
     }
     :host([size="small"]) {
-      font-size: 12.5px;
+      font-size: 0.78125rem;
     }
 
     #button {

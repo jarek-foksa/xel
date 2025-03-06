@@ -100,7 +100,7 @@ class XColorPickerElement extends HTMLElement {
 
     #space-select {
       min-width: 110px;
-      font-size: 13px;
+      font-size: 0.8125rem;
     }
 
     #space-select x-menuitem[data-warn] x-label::after {
@@ -115,7 +115,7 @@ class XColorPickerElement extends HTMLElement {
 
     #type-buttons x-button {
       margin-left: 4px;
-      min-height: 1px;;
+      min-height: 1px;
     }
 
     #type-buttons x-button x-icon {
@@ -158,7 +158,6 @@ class XColorPickerElement extends HTMLElement {
       max-width: none;
       min-height: 1px;
       flex: 1;
-      font-size: 13px;
     }
     #input:focus {
       z-index: 1;
@@ -874,7 +873,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     .slider-gamut-svg {
@@ -894,7 +893,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
     .slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -2096,7 +2095,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     .slider-gamut-svg {
@@ -2116,7 +2115,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
     .slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -2931,7 +2930,7 @@ class XLABLinearSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     .slider-gamut-svg {
@@ -2951,7 +2950,7 @@ class XLABLinearSlidersElement extends HTMLElement {
     .slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -3825,13 +3824,13 @@ class XXYZLinearSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     .slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     .slider-gamut-svg {
@@ -4626,7 +4625,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     #hue-slider-gamut-svg {
@@ -4646,7 +4645,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     #hue-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -4683,7 +4682,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       position: absolute;
       top: -30px;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 18px;
+      font-size: 1.125rem;
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
     }
@@ -4756,7 +4755,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     #alpha-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
   `;
 
@@ -5551,7 +5550,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     #hue-slider-gamut-svg {
@@ -5571,7 +5570,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     #hue-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -5608,7 +5607,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
       position: absolute;
       top: -30px;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 18px;
+      font-size: 1.125rem;
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
     }
@@ -5692,7 +5691,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     #alpha-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
   `;
 
@@ -6384,7 +6383,7 @@ class XLABPlanarSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     #lightness-slider-gamut-svg {
@@ -6404,7 +6403,7 @@ class XLABPlanarSlidersElement extends HTMLElement {
     #lightness-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -6441,7 +6440,7 @@ class XLABPlanarSlidersElement extends HTMLElement {
       position: absolute;
       top: -30px;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 18px;
+      font-size: 1.125rem;
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
     }
@@ -6525,7 +6524,7 @@ class XLABPlanarSlidersElement extends HTMLElement {
     #alpha-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
   `;
 
@@ -7272,7 +7271,7 @@ class XXYZPlanarSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     #linear-slider-gamut-svg {
@@ -7292,7 +7291,7 @@ class XXYZPlanarSlidersElement extends HTMLElement {
     #linear-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -7329,7 +7328,7 @@ class XXYZPlanarSlidersElement extends HTMLElement {
       position: absolute;
       top: -30px;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 18px;
+      font-size: 1.125rem;
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
     }
@@ -7413,7 +7412,7 @@ class XXYZPlanarSlidersElement extends HTMLElement {
     #alpha-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
   `;
 
@@ -8235,7 +8234,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
       position: absolute;
       top: -30px;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 18px;
+      font-size: 1.125rem;
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
     }
@@ -8307,7 +8306,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       filter: drop-shadow(1px 1px 1px black);
       pointer-events: none;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     #linear-slider-gamut-svg {
@@ -8327,7 +8326,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     #linear-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
 
     /**
@@ -8384,7 +8383,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     #alpha-slider-label {
       font-weight: 700;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 10px;
+      font-size: 0.625rem;
     }
   `;
 

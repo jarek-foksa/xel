@@ -34,7 +34,7 @@ export default class XNotificationElement extends HTMLElement {
       color: rgba(255, 255, 255, 0.9);
       background: #434343;
       z-index: 9999;
-      font-size: 12px;
+      font-size: 0.75rem;
       user-select: text;
       -webkit-user-select: none;
       transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);

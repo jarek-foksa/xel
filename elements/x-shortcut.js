@@ -38,7 +38,7 @@ export default class XShortcutElement extends HTMLElement {
     :host {
       display: inline-block;
       box-sizing: border-box;
-      font-size: 14px;
+      font-size: 0.875rem;
       line-height: 1;
     }
     :host([hidden]) {

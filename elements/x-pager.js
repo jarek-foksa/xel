@@ -61,7 +61,7 @@ export class XPagerElement extends HTMLElement {
       border-width: 1px;
       border-style: solid;
       outline-offset: 0;
-      font-size: 14px;
+      font-size: 0.875rem;
       font-weight: 700;
       line-height: 1;
       user-select: none;

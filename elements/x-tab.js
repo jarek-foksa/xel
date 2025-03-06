@@ -39,7 +39,7 @@ export default class XTabElement extends HTMLElement {
       user-select: none;
       -webkit-user-select: none;
       box-sizing: border-box;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
     :host(:focus) {
       z-index: 10;

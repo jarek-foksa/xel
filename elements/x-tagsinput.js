@@ -41,11 +41,8 @@ export default class XTagsInputElement extends HTMLElement {
       box-sizing: border-box;
       align-items: center;
       padding: 3px;
-      /*
-      min-height: 32px;
-      */
       gap: 3px;
-      font-size: 12px;
+      font-size: 0.78125rem;
     }
     :host(:focus) {
       z-index: 10;

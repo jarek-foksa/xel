@@ -19,7 +19,7 @@ export default class PTChangelogPageElement extends PTPage {
     h4 {
       margin-top: 4px;
       opacity: 0.6;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
 
     ul {
@@ -35,7 +35,7 @@ export default class PTChangelogPageElement extends PTPage {
       margin-bottom: 2px;
       margin-right: 4px;
       background: #ec407a;
-      font-size: 13px;
+      font-size: 0.8125rem;
       color: white;
       border-width: 0px;
     }
