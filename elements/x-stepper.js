@@ -166,7 +166,7 @@ export default class XStepperElement extends HTMLElement {
 
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updatePathData());
 
-    if (this.parentElement.localName === "x-numberinput") {
+    if (this.parentElement?.localName === "x-numberinput") {
       this.#parentInput = this.parentElement;
       this.#parentInput.setAttribute("hasstepper", "");
     }

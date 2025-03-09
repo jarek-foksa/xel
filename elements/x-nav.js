@@ -63,7 +63,7 @@ export default class XNavElement extends HTMLElement {
   connectedCallback() {
     this.setAttribute("role", "navigation");
 
-    if (this.parentElement.localName === "x-navitem") {
+    if (this.parentElement?.localName === "x-navitem") {
       this.parentElement.setAttribute("expandable", "");
     }
 

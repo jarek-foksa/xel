@@ -187,7 +187,7 @@ export default class XButtonElement extends HTMLElement {
   // Direct ancestor <code>x-buttons</code> element.
   get ownerButtons() {
     if (this.parentElement) {
-      if (this.parentElement.localName === "x-buttons") {
+      if (this.parentElement?.localName === "x-buttons") {
         return this.parentElement;
       }
       else if (["a", "x-box"].includes(this.parentElement.localName) && this.parentElement.parentElement) {
