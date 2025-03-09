@@ -88,7 +88,7 @@ export default class XSelectElement extends HTMLElement {
       align-content: center;
       justify-content: center;
       margin: 0 0 0 auto;
-      z-index: 999;
+      z-index: 1;
     }
 
     #button > #arrow-container #arrow {

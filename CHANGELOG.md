@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.3 (PENDING)
+
+- [Fixed] `<x-select>` has wrong z-index in some edge cases
+
 ## 0.33.2 (2025-03-06)
 
 - Change font size units from "px" to "rem"
