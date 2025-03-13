@@ -144,6 +144,7 @@ th, td {
  * Scrollbar
  */
 
+/* Chromium, WebKit */
 ::-webkit-scrollbar {
   background-color: transparent;
 }
@@ -153,6 +154,13 @@ th, td {
 }
 ::-webkit-scrollbar-thumb:hover {
   background-color: color(srgb 1 1 1 / 0.5);
+}
+
+/* Gecko */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-color: color(srgb 1 1 1 / 0.3) transparent;
+  }
 }
 
 /*****************************************************************************************************************/

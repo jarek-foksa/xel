@@ -255,13 +255,20 @@ img:active {
  * Scrollbar
  */
 
+/* Chromium, WebKit */
 ::-webkit-scrollbar {
   max-width: 6px;
   max-height: 6px;
 }
-
 ::-webkit-scrollbar-corner {
   display: none
+}
+
+/* Gecko */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+  }
 }
 
 /*****************************************************************************************************************/

@@ -5,6 +5,7 @@
 
 - [Fixed] `<x-select>` has wrong z-index in some edge cases
 - [Fixed] Error throw when connecting some elements directly to ShadowRoot
+- [Fixed] Scrollbars are not styled on Firefox
 
 ## 0.33.2 (2025-03-06)
 
