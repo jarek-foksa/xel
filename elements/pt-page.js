@@ -34,6 +34,7 @@ export default class PTPageElement extends HTMLElement {
   _shadowRoot = null;
   #readyCallbacks = [];
   #ownerApp = null;
+  #themeChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,15 @@ export default class PTPageElement extends HTMLElement {
 
   connectedCallback() {
     this.#ownerApp = closest(this, "pt-app");
+    this.#updateThemeAttribute();
+
+    Xel.addEventListener("themechange", this.#themeChangeListener = () => {
+      this.#updateThemeAttribute();
+    });
+  }
+
+  disconnectedCallback() {
+    Xel.removeEventListener("themechange", this.#themeChangeListener);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,5 +126,9 @@ export default class PTPageElement extends HTMLElement {
         }
       }
     }
+  }
+
+  #updateThemeAttribute() {
+    this.setAttribute("data-theme", Xel.theme);
   }
 }

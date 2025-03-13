@@ -68,7 +68,7 @@ export default class PTAboutPageElement extends PTPage {
       font-weight: 900;
     }
 
-    :host-context([data-theme="/themes/fluent-dark.css"]) {
+    :host([data-theme="/themes/fluent-dark.css"]) {
       h1 {
         color: var(--background-color);
       }

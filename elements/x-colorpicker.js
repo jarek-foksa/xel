@@ -136,10 +136,10 @@ class XColorPickerElement extends HTMLElement {
     #sliders {
       width: 100%;
     }
-    :host-context(x-popover) #sliders {
+    :host([context~="x-popover"]) #sliders {
       height: 250px;
     }
-    :host-context(x-popover):host([alpha]) #sliders {
+    :host([context~="x-popover"]):host([alpha]) #sliders {
       height: 290px;
     }
 
@@ -273,6 +273,13 @@ class XColorPickerElement extends HTMLElement {
     Xel.addEventListener("configchange", this.#configChangeListener = (event) => {
       this.#onConfigChange(event);
     });
+
+    if (this.parentElement?.localName === "x-popover") {
+      this.setAttribute("context", "x-popover");
+    }
+    else {
+      this.removeAttribute("context");
+    }
 
     this["#type-buttons"].value = Xel.getConfig(`${this.localName}:type`, "planar");
 

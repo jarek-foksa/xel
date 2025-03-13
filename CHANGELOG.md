@@ -6,6 +6,7 @@
 - [Fixed] `<x-select>` has wrong z-index in some edge cases
 - [Fixed] Error throw when connecting some elements directly to ShadowRoot
 - [Fixed] Scrollbars are not styled on Firefox
+- [Fixed] Color picker popover changes position when switching between tabs on WebKit-based web browsers
 
 ## 0.33.2 (2025-03-06)
 
