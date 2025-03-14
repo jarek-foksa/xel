@@ -487,6 +487,8 @@ export default class XTextEditorElement extends HTMLElement {
       this.mixed = false;
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
     }
+
+    (getBrowserEngine() === "chromium" ? this.#shadowRoot : window).getSelection().collapse(this["#main"]);
   }
 
   #onEditorClick(event) {
