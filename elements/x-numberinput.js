@@ -545,7 +545,7 @@ export default class XNumberInputElement extends HTMLElement {
   }
 
   #onFocusOut() {
-    if (getBrowserEngine() !== "webkit") {
+    if (getBrowserEngine() === "chromium") {
       this.#shadowRoot.getSelection().collapse(this["#main"]);
     }
 
