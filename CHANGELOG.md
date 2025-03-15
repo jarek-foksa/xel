@@ -1,7 +1,7 @@
 
 # CHANGELOG
 
-## 0.33.3 (PENDING)
+## 0.33.3 (2025-03-15)
 
 - [Fixed] `<x-select>` has wrong z-index in some edge cases
 - [Fixed] Error throw when connecting some elements directly to ShadowRoot
