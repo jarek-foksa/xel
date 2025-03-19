@@ -666,10 +666,18 @@ export default class XSliderElement extends HTMLElement {
         if (offset >= originOffset) {
           this["#range-track"].style.left = `${originOffset}%`;
           this["#range-track"].style.width = (offset - originOffset) + "%";
+          this["#range-track"].style.removeProperty("border-top-left-radius");
+          this["#range-track"].style.removeProperty("border-bottom-left-radius");
+          this["#range-track"].style.setProperty("border-top-right-radius", "0px", "important");
+          this["#range-track"].style.setProperty("border-bottom-right-radius", "0px", "important");
         }
         else {
           this["#range-track"].style.left = `${offset}%`;
           this["#range-track"].style.width = `${originOffset - offset}%`;
+          this["#range-track"].style.setProperty("border-top-left-radius", "0px", "important");
+          this["#range-track"].style.setProperty("border-bottom-left-radius", "0px", "important");
+          this["#range-track"].style.removeProperty("border-top-right-radius");
+          this["#range-track"].style.removeProperty("border-bottom-right-radius");
         }
       }
     }

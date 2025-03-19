@@ -585,18 +585,29 @@ export default new class Xel extends EventEmitter {
 
   async #updateThemeAccentColor() {
     await this.whenThemeReady;
-    let serializedColor = this.#accentColor || this.presetAccentColors.blue;
+    let color = this.#accentColor || this.presetAccentColors.blue;
+    let resolvedColor = color;
 
-    if (this.presetAccentColors[serializedColor]) {
-      serializedColor = this.presetAccentColors[serializedColor];
+    if (this.presetAccentColors[color]) {
+      resolvedColor = this.presetAccentColors[color];
     }
 
     let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === ":root");
-    rule.style.setProperty("--accent-color", serializedColor);
+
+    if (this.theme.includes("material")) {
+      rule.style.setProperty("--accent-color", "var(--material-primary-color)");
+    }
+    else {
+      rule.style.setProperty("--accent-color", resolvedColor);
+    }
 
     // Set "--material-<colorName>" CSS properties on <body> element
     if (this.theme.includes("material")) {
-      let materialColors = getMaterialCSSColorVariables(serializedColor, this.theme.endsWith("-dark.css"));
+      let materialColors = getMaterialCSSColorVariables(
+        resolvedColor,
+        this.theme.endsWith("-dark.css"),
+        color === "gray"
+      );
 
       for (let [propertyName, value] of Object.entries(materialColors)) {
         rule.style.setProperty(propertyName, value);

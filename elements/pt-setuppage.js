@@ -30,7 +30,8 @@ export default class PTSetupPageElement extends PTPage {
       text-align: center;
     }
 
-    :host([data-theme="/themes/fluent-dark.css"]) {
+    :host([data-theme="/themes/fluent-dark.css"]),
+    :host([data-theme="/themes/material-dark.css"]) {
       h3 > strong {
         color: var(--background-color);
       }

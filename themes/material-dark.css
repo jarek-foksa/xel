@@ -16,10 +16,16 @@
 /*****************************************************************************************************************/
 
 :root {
-  --foreground-color:           lch(from var(--material-primary-color) 25 10 h);
+  --foreground-color:           var(--material-surface-bright-color);
   --selection-color:            var(--material-on-secondary-fixed-color);
   --selection-background-color: var(--material-secondary-fixed-dim-color);
   --autofill-background-color:  color(srgb 0.95 0.93 0.89);
+
+  --checkboard-background:      linear-gradient( 45deg, var(--material-scrim-color) 25%, #0000   25%)  0px  0px / 10px 10px,
+                                linear-gradient(-45deg, var(--material-scrim-color) 25%, #0000   25%)  0px  5px / 10px 10px,
+                                linear-gradient( 45deg, #0000   75%, var(--material-scrim-color) 75%)  5px -5px / 10px 10px,
+                                linear-gradient(-45deg, #0000   75%, var(--material-scrim-color) 75%) -5px  0px / 10px 10px, var(--material-outline-color);
+
 }
 
 /*****************************************************************************************************************/

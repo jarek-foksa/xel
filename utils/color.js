@@ -118,13 +118,17 @@ const MATERIAL_COLORS = [
 //   https://material-foundation.github.io/material-theme-builder/
 // @type
 //   (string, boolean) => Object
-export let getMaterialCSSColorVariables = (serializedAccentColor, dark = false) => {
+export let getMaterialCSSColorVariables = (serializedAccentColor, dark = false, grayscale = false) => {
   let accentColor = convertColor(parseColor(serializedAccentColor), "hct");
   let materialColors = {};
 
   for (let colorDesc of MATERIAL_COLORS) {
     let [palette, tone] = dark ? colorDesc[2] : colorDesc[1];
     let [h, c, t] = accentColor.coords;
+
+    if (grayscale) {
+      palette = "greyscale";
+    }
 
     if (palette === "primary") {
       c = Math.max(48, c);

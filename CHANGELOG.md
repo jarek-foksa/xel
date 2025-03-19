@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 0.33.4 (2025-04-19)
+
+- Simplify slider stylings in Material themes
+- [Fixed] Material themes don't allow gray accent color
+
 ## 0.33.3 (2025-03-15)
 
 - [Fixed] `<x-select>` has wrong z-index in some edge cases
