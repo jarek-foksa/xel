@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.5 (2025-04-19)
+
+- [Fixed] Titlebar color is not properly updated when changing the accent color of Material themes
+
 ## 0.33.4 (2025-04-19)
 
 - Simplify slider stylings in Material themes

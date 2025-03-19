@@ -447,7 +447,6 @@ export default new class Xel extends EventEmitter {
 
       this.#updateAutocapitlizeProperty();
       this.#updateThemeAccentColor();
-      this.#updateTitlebarColor();
 
       if (this.#themeReadyCallbacks !== null) {
         for (let callback of this.#themeReadyCallbacks) {
@@ -560,29 +559,6 @@ export default new class Xel extends EventEmitter {
     }
   }
 
-  async #updateTitlebarColor() {
-    await this.whenThemeReady;
-
-    let meta = document.head.querySelector(`meta[name="theme-color"]`);
-    let computedStyle = getComputedStyle(document.documentElement);
-    let titlebarColor = computedStyle.getPropertyValue("--titlebar-color").trim() || "auto";
-
-    if (titlebarColor === "auto") {
-      if (meta) {
-        meta.remove();
-      }
-    }
-    else {
-      if (meta === null) {
-        meta = document.createElement("meta");
-        meta.setAttribute("name", "theme-color");
-        document.head.append(meta);
-      }
-
-      meta.setAttribute("content", titlebarColor);
-    }
-  }
-
   async #updateThemeAccentColor() {
     await this.whenThemeReady;
     let color = this.#accentColor || this.presetAccentColors.blue;
@@ -611,6 +587,28 @@ export default new class Xel extends EventEmitter {
 
       for (let [propertyName, value] of Object.entries(materialColors)) {
         rule.style.setProperty(propertyName, value);
+      }
+    }
+
+    // Set <meta name="theme-color">
+    {
+      let meta = document.head.querySelector(`meta[name="theme-color"]`);
+      let computedStyle = getComputedStyle(document.documentElement);
+      let titlebarColor = computedStyle.getPropertyValue("--titlebar-color").trim() || "auto";
+
+      if (titlebarColor === "auto") {
+        if (meta) {
+          meta.remove();
+        }
+      }
+      else {
+        if (meta === null) {
+          meta = document.createElement("meta");
+          meta.setAttribute("name", "theme-color");
+          document.head.append(meta);
+        }
+
+        meta.setAttribute("content", titlebarColor);
       }
     }
   }
