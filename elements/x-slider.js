@@ -116,7 +116,7 @@ export default class XSliderElement extends HTMLElement {
       position: absolute;
       top: 0;
       left: 0%;
-      width: auto;
+      width: fit-content;
       height: 100%;
       aspect-ratio: 1;
       margin-left: calc(var(--computed-thumb-width) / -2);
