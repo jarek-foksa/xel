@@ -709,6 +709,10 @@ x-menubar > x-menuitem[size="small"],
 x-menubar > x-menuitem[size="large"] {
   height: calc(100% - 6px);
 }
+x-menubar > x-menuitem[highlighted] {
+  color: color(srgb 1 1 1);
+  background-color: var(--accent-color);
+}
 
 /*****************************************************************************************************************/
 

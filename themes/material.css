@@ -773,6 +773,10 @@ x-menuitem[expanded] {
 x-menuitem[pressed] {
   background-color: oklch(from var(--material-on-surface-color) l c h / 0.1);
 }
+x-menuitem[highlighted] {
+  color: var(--material-on-primary-color);
+  background: var(--material-primary-color);
+}
 
 /* Checkmark */
 x-menuitem::part(checkmark) {

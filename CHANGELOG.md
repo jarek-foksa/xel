@@ -1,15 +1,16 @@
 
 # CHANGELOG
 
-## 0.33.6 (PENDING)
+## 0.33.6 (2025-03-21)
 
+- Highlight top level menu item when its descendant was triggered programmatically
 - [Fixed] `<x-slider>` has incorrect width on WebKit-based browsers
 
-## 0.33.5 (2025-04-19)
+## 0.33.5 (2025-03-19)
 
 - [Fixed] Titlebar color is not properly updated when changing the accent color of Material themes
 
-## 0.33.4 (2025-04-19)
+## 0.33.4 (2025-03-19)
 
 - Simplify slider stylings in Material themes
 - [Fixed] Material themes don't allow gray accent color

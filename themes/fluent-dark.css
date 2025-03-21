@@ -772,6 +772,10 @@ x-menuitem x-shortcut {
 x-menubar > x-menuitem:hover {
   background-color: color(srgb 1 1 1 / 0.0605);
 }
+x-menubar > x-menuitem[highlighted] {
+  color: color(srgb 0 0 0);
+  background: var(--accent-color);
+}
 
 /*****************************************************************************************************************/
 

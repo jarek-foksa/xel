@@ -6,6 +6,7 @@
 
 import Xel from "../classes/xel.js";
 import {html, css} from "../utils/template.js";
+import {sleep} from "../utils/time.js";
 
 const DEBUG = false;
 
@@ -107,6 +108,7 @@ export default class XMenuBarElement extends HTMLElement {
     }
 
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
+    this.addEventListener("click", (event) => this.#onClick(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event));
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("pointerover", (event) => this.#onShadowRootPointerOver(event));
@@ -266,6 +268,32 @@ export default class XMenuBarElement extends HTMLElement {
 
     if (openedMenu && openedMenu.contains(event.target) === false) {
       event.preventDefault();
+    }
+  }
+
+  async #onClick(event) {
+    let item = event.target.closest("x-menuitem");
+
+    // Click triggered by calling element.click()
+    if (item && event.isTrusted === false) {
+      if (event.isTrusted === false) {
+        if (!item.closest("[expanded]")) {
+          let outermostItem = null;
+
+          for (let element = item; element !== this; element = element.parentElement) {
+            if (element.localName === "x-menuitem") {
+              outermostItem = element;
+            }
+          }
+
+          // Blink menubar item
+          {
+            outermostItem.setAttribute("highlighted", "");
+            await sleep(150);
+            outermostItem.removeAttribute("highlighted");
+          }
+        }
+      }
     }
   }
 

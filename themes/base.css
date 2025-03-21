@@ -906,6 +906,10 @@ x-menuitem[size="large"] {
 x-menuitem:not(:defined) {
   display: none;
 }
+x-menuitem[highlighted] {
+  color: white;
+  background: var(--accent-color);
+}
 
 /* Image */
 x-menuitem img {
