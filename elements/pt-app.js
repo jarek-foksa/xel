@@ -328,6 +328,7 @@ export default class PTAppElement extends HTMLElement {
             <x-navitem>
               <x-icon href="#calendar"></x-icon>
               <x-label><x-message href="#changelog" autocapitalize></x-message></x-label>
+              <x-tag id="version-tag"><x-label id="version-label"></x-label></x-tag>
             </x-navitem>
           </a>
 
@@ -538,6 +539,14 @@ export default class PTAppElement extends HTMLElement {
       cursor: pointer;
     }
 
+    #nav #version-tag {
+      pointer-events: none;
+    }
+
+    #nav #version-tag > x-label {
+      font-size: 0.65rem;
+    }
+
     /* Settings */
 
     #settings {
@@ -668,6 +677,12 @@ export default class PTAppElement extends HTMLElement {
     this.#updateForThemeChange();
     await this.#updateForLocationChange();
     this.#maybeDispatchLocationChangeEvent("load");
+
+    // Update the version tag
+    if (this["#version-label"].textContent === "") {
+      let manifest = await (await fetch("/package.json")).json();
+      this["#version-label"].textContent = manifest.version;
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

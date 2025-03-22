@@ -32,6 +32,8 @@ if (OS.platform() === "win32") {
 
 let createPortalPackage = (minify = true, publish = false) => {
   return new Promise(async (resolve) => {
+    let changelog = new ChangelogParser().parse(Fse.readFileSync(`${projectPath}/CHANGELOG.md`, "utf8"));
+
     // Clean up
     {
       Fse.ensureDirSync(`${projectPath}/dist`);
@@ -45,6 +47,15 @@ let createPortalPackage = (minify = true, publish = false) => {
 
     // Create the package
     {
+      // package.json
+      {
+        let manifest = JSON.parse(Fse.readFileSync(`${projectPath}/package.json`, "utf8"));
+        manifest.version = changelog[0].version;
+        delete manifest.devDependencies;
+        Fse.writeFileSync(`${projectPath}/dist/portal/package.json`, JSON.stringify(manifest), "utf8");
+      }
+
+
       // CHANGELOG.md
       {
         Fse.copySync(`${projectPath}/CHANGELOG.md`, `${projectPath}/dist/portal/CHANGELOG.md`);
@@ -141,8 +152,6 @@ let createPortalPackage = (minify = true, publish = false) => {
     // Publish the package on Firebase Hosting
     {
       if (publish === true) {
-        let changelog = new ChangelogParser().parse(Fse.readFileSync(`${projectPath}/CHANGELOG.md`, "utf8"));
-
         if (changelog[0].date === "PENDING") {
           throw new Error(`Can't publish with a pending release date. Please update CHANGELOG.md.`);
         }
