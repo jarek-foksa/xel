@@ -867,7 +867,6 @@ export default class XMenuElement extends HTMLElement {
                 let otherSubmenu = otherItem.querySelector("x-menu");
 
                 if (otherSubmenu) {
-                  // otherItem.removeAttribute("expanded");
                   otherSubmenu.close();
                 }
               }
@@ -878,9 +877,7 @@ export default class XMenuElement extends HTMLElement {
               let otherItems = [...this.querySelectorAll(":scope > x-menuitem")].filter($0 => $0 !== item);
 
               if (submenu) {
-                await sleep(60);
-
-                if (item.matches(":focus") && submenu.opened === false) {
+                if (submenu.opened === false) {
                   submenu.openNextToElement(item, "horizontal");
                 }
               }
@@ -927,7 +924,6 @@ export default class XMenuElement extends HTMLElement {
                 let otherSubmenu = otherItem.querySelector("x-menu");
 
                 if (otherSubmenu) {
-                  // otherItem.removeAttribute("expanded");
                   otherSubmenu.close();
                 }
               }

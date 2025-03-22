@@ -1,10 +1,10 @@
 
 # CHANGELOG
 
-## 0.33.7 (PENDING)
+## 0.33.7 (2025-03-22)
 
 - [Fixed] `<x-drawer>` has wrong position on Firefox and Safari
-
+- [Fixed] Can't expand menus when using touch input method
 
 ## 0.33.6 (2025-03-21)
 
