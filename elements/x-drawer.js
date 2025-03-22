@@ -22,9 +22,9 @@ export default class XDrawerElement extends HTMLElement {
       display: none;
       width: 300px;
       height: 100%;
-      left: auto;
+      left: 0px;
       right: auto;
-      top: auto;
+      top: 0px;
       bottom: auto;
       padding: 0;
       box-sizing: border-box;
@@ -33,15 +33,24 @@ export default class XDrawerElement extends HTMLElement {
       transition-timing-function: linear;
     }
     :host([position="right"]) {
+      top: 0px;
+      bottom: auto;
+      left: auto;
       right: 0px;
     }
     :host([position="top"]) {
       top: 0px;
+      bottom: auto;
+      left: 0px;
+      right: auto;
       width: 100%;
       height: 300px;
     }
     :host([position="bottom"]) {
+      top: auto;
       bottom: 0px;
+      left: 0px;
+      right: auto;
       width: 100%;
       height: 300px;
     }

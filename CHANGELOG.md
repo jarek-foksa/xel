@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 0.33.7 (PENDING)
+
+- [Fixed] `<x-drawer>` has wrong position on Firefox and Safari
+
+
 ## 0.33.6 (2025-03-21)
 
 - Highlight top level menu item when its descendant was triggered programmatically
