@@ -117,10 +117,12 @@ export default class XContextMenuElement extends HTMLElement {
       if (menu && menu.opened === true) {
         await menu.close();
 
-        let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+        if (this.isConnected) {
+          let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
 
-        if (ancestorFocusableElement) {
-          ancestorFocusableElement.focus();
+          if (ancestorFocusableElement) {
+            ancestorFocusableElement.focus();
+          }
         }
       }
 

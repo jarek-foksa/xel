@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.8 (2025-03-31)
+
+- [Fixed] Error thrown when attempting to close a disconnected `<x-contextmenu>`
+
 ## 0.33.7 (2025-03-22)
 
 - [Fixed] `<x-drawer>` has wrong position on Firefox and Safari
