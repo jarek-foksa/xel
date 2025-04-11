@@ -93,6 +93,12 @@ export default class XNumberInputElement extends HTMLElement {
       line-height: inherit;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    :host(:focus) #editor {
+      overflow: visible;
+      text-overflow: clip;
     }
     :host([disabled]) #editor {
       user-select: none;

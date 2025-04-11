@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.9 (2025-04-11)
+
+- Show ellipsis when `<x-numberinput>` value overflow the visible area
+
 ## 0.33.8 (2025-03-31)
 
 - [Fixed] Error thrown when attempting to close a disconnected `<x-contextmenu>`
