@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.10 (2025-04-15)
+
+- [Fixed] `<dialog>` element permanently overrides the `overflow` inline style on `<html>` and `<body>`
+
 ## 0.33.9 (2025-04-11)
 
 - Show ellipsis when `<x-numberinput>` value overflow the visible area

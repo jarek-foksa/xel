@@ -46,8 +46,14 @@ let DialogElementMixin = {
       {
         let closeListener;
 
-        document.body.style.overflow = "hidden";
+        let initialOverflow = {
+          html: document.documentElement.style.overflow,
+          body: document.body.style.overflow
+        };
+
         document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+
         openDialogs.push(this);
 
         this.addEventListener("close", closeListener = (event) => {
@@ -58,8 +64,8 @@ let DialogElementMixin = {
             openDialogs = openDialogs.filter(dialog => dialog !== this);
 
             if (openDialogs.length === 0) {
-              document.body.style.overflow = null;
-              document.documentElement.style.overflow = null;
+              document.documentElement.style.overflow = initialOverflow.html;
+              document.body.style.overflow = initialOverflow.body;
             }
           }
         });
