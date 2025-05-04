@@ -8,10 +8,8 @@
 import ChildProcess from "child_process";
 import Fse from "fs-extra";
 import {glob as Glob} from "glob";
-import OS from "os";
 import Path from "path";
 import Semver from "semver";
-import {dirname} from "path";
 
 import HTMLMinifier from "html-minifier-terser";
 import PostCSS from "postcss";
@@ -341,7 +339,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
         let themeCSS = Fse.readFileSync(srcPath, "utf8");
         let minifiedCSS = await PostCSS([PostCSSNesting(), PostCSSMinify()]).process(themeCSS , {from: undefined}).css;
 
-        Fse.ensureDirSync(dirname(destPath));
+        Fse.ensureDirSync(Path.dirname(destPath));
         Fse.writeFileSync(destPath, minifiedCSS, "utf8");
       }
     }
@@ -351,7 +349,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
       for (let srcPath of Glob.sync(`${PROJECT_PATH}/icons/*.svg`)) {
         let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
 
-        Fse.ensureDirSync(dirname(destPath));
+        Fse.ensureDirSync(Path.dirname(destPath));
         Fse.copySync(srcPath, destPath);
       }
     }
@@ -361,7 +359,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
       for (let srcPath of Glob.sync(`${PROJECT_PATH}/locales/*.ftl`)) {
         let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
 
-        Fse.ensureDirSync(dirname(destPath));
+        Fse.ensureDirSync(Path.dirname(destPath));
         Fse.copySync(srcPath, destPath);
       }
     }
@@ -371,7 +369,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
       for (let srcPath of Glob.sync(`${PROJECT_PATH}/docs/*.html`)) {
         let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
 
-        Fse.ensureDirSync(dirname(destPath));
+        Fse.ensureDirSync(Path.dirname(destPath));
         Fse.copySync(srcPath, destPath);
       }
     }
@@ -383,7 +381,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
 
         if (fileName.startsWith("pt-") === false) {
           let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
-          Fse.ensureDirSync(dirname(destPath));
+          Fse.ensureDirSync(Path.dirname(destPath));
           Fse.copySync(srcPath, destPath);
         }
       }
@@ -399,7 +397,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
       for (let srcPath of srcPaths) {
         let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
 
-        Fse.ensureDirSync(dirname(destPath));
+        Fse.ensureDirSync(Path.dirname(destPath));
         Fse.copySync(srcPath, destPath);
       }
     }
