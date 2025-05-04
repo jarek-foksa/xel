@@ -1,5 +1,5 @@
 # Directories
-dist
+builds
 node_modules
 
 # Regular files

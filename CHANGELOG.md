@@ -1,6 +1,14 @@
 
 # CHANGELOG
 
+## 0.33.12 (2025-05-04)
+
+- Don't include packaging scripts in the NPM package
+
+## 0.33.11 (2025-05-04)
+
+- Refactor packaging scripts
+
 ## 0.33.10 (2025-04-15)
 
 - [Fixed] `<dialog>` element permanently overrides the `overflow` inline style on `<html>` and `<body>`
