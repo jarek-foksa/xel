@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.33.13 (2025-05-13)
+
+- [Fixed] Menu item labels are cut off on Linux
+
 ## 0.33.12 (2025-05-04)
 
 - Don't include packaging scripts in the NPM package

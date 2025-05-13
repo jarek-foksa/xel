@@ -931,6 +931,7 @@ x-menuitem x-label {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: inherit;
+  line-height: 1.4;
 }
 x-menuitem img + x-label,
 x-menuitem x-swatch + x-label,
