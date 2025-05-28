@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.1 (2025-05-28)
+
+- [Fixed] Error thrown when updating `<x-menubar>` with no children
+
 ## 0.34.0 (2025-05-28)
 
 - Show ellipsis when top level menubar items can't be fitted on the screen

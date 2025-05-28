@@ -159,10 +159,10 @@ export default class XMenuBarElement extends HTMLElement {
           </x-menuitem>
         `;
 
-        items.at(-1).after(ellipsisItem);
+        this.append(ellipsisItem);
       }
       else if (items.at(-1) !== ellipsisItem) {
-        items.at(-1).after(ellipsisItem);
+        this.append(ellipsisItem);
         items = [...this.children].filter($0 => $0.localName === "x-menuitem");
       }
     }
