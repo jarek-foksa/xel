@@ -382,7 +382,7 @@ export default class XMenuItemElement extends HTMLElement {
     }
 
     // Trigger effect
-    if (!this.querySelector(":scope > x-menu")) {
+    if (!this.querySelector(":scope > x-menu") && this.parentElement.localName !== "x-menubar") {
       let triggerEffect = getComputedStyle(this).getPropertyValue("--trigger-effect").trim();
 
       if (triggerEffect === "blink") {

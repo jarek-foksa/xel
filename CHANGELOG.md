@@ -4,6 +4,7 @@
 ## 0.34.0 (2025-05-28)
 
 - Show ellipsis when top level menubar items can't be fitted on the screen
+- [Fixed] `<x-menubar>` children without submenus should behave like buttons
 
 ## 0.33.13 (2025-05-13)
 

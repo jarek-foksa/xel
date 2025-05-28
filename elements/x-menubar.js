@@ -230,13 +230,22 @@ export default class XMenuBarElement extends HTMLElement {
           }
 
           if (overflowingItems.includes(item)) {
-            let clonedItem = document.createElement("x-menuitem");
-            clonedItem.append(item.querySelector(":scope > x-label").cloneNode(true));
-            clonedItem.append(item[$menu]);
+            let clonedItem = item.cloneNode(false);
+
+            for (let child of item.children) {
+              if (child.localName !== "x-menu") {
+                clonedItem.append(child.cloneNode(true));
+              }
+            }
+
+            if (item[$menu]) {
+              clonedItem.append(item[$menu]);
+            }
+
             ellipsisMenu.append(clonedItem);
           }
           else {
-            if (item[$menu].parentElement !== item) {
+            if (item[$menu] && item[$menu].parentElement !== item) {
               item.append(item[$menu]);
             }
           }
@@ -455,6 +464,9 @@ export default class XMenuBarElement extends HTMLElement {
 
       if (submenu) {
         submenu.opened ? this.#collapseMenubarItems() : this.#expandMenubarItem(item);
+      }
+      else {
+        event.preventDefault();
       }
     }
   }
