@@ -6,7 +6,7 @@
 
 import Xel from "../classes/xel.js";
 import {html, css} from "../utils/template.js";
-import {debounce, sleep} from "../utils/time.js";
+import {throttle, sleep} from "../utils/time.js";
 
 const DEBUG = false;
 const $menu = Symbol();
@@ -94,6 +94,7 @@ export default class XMenuBarElement extends HTMLElement {
   #shadowRoot = null;
   #expanded = false;
   #orientationChangeListener = null;
+  #childListMutationObserver = null;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,6 +111,9 @@ export default class XMenuBarElement extends HTMLElement {
 
     new ResizeObserver(() => this.#onResize()).observe(this, {box : "border-box"});
 
+    this.#childListMutationObserver = new MutationObserver(() => this.#onChildListchange());
+    this.#childListMutationObserver.observe(this, {childList: true});
+
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
     this.addEventListener("click", (event) => this.#onClick(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event));
@@ -122,6 +126,8 @@ export default class XMenuBarElement extends HTMLElement {
   connectedCallback() {
     this.setAttribute("role", "menubar");
     this.setAttribute("aria-disabled", this.disabled);
+
+    this.#updateMenubarLayoutThrottled();
 
     window.addEventListener("orientationchange", this.#orientationChangeListener = () => {
       this.#onOrientationChange();
@@ -254,7 +260,7 @@ export default class XMenuBarElement extends HTMLElement {
     }
   }
 
-  #updateMenubarLayoutDebounced = debounce(this.#updateMenubarLayout, 1000, this);
+  #updateMenubarLayoutThrottled = throttle(this.#updateMenubarLayout, 100, this);
 
   #expandMenubarItem(item) {
     let menu = item.querySelector(":scope > x-menu");
@@ -380,7 +386,13 @@ export default class XMenuBarElement extends HTMLElement {
   }
 
   #onResize() {
-    this.#updateMenubarLayout();
+    this.#updateMenubarLayoutThrottled();
+  }
+
+  #onChildListchange() {
+    if (this.isConnected) {
+      this.#updateMenubarLayoutThrottled()
+    }
   }
 
   #onShadowRootWheel(event) {

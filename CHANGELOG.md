@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.2 (2025-05-28)
+
+- [Fixed] `<x-menubar>` fails to update in some edge cases
+
 ## 0.34.1 (2025-05-28)
 
 - [Fixed] Error thrown when updating `<x-menubar>` with no children
