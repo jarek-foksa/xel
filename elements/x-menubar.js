@@ -6,9 +6,10 @@
 
 import Xel from "../classes/xel.js";
 import {html, css} from "../utils/template.js";
-import {sleep} from "../utils/time.js";
+import {debounce, sleep} from "../utils/time.js";
 
 const DEBUG = false;
+const $menu = Symbol();
 
 // @element x-menubar
 // @event expand
@@ -107,6 +108,8 @@ export default class XMenuBarElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
+    new ResizeObserver(() => this.#onResize()).observe(this, {box : "border-box"});
+
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
     this.addEventListener("click", (event) => this.#onClick(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event));
@@ -139,6 +142,110 @@ export default class XMenuBarElement extends HTMLElement {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #updateMenubarLayout() {
+    let menubarBBox = this.getBoundingClientRect();
+    let items = [...this.children].filter($0 => $0.localName === "x-menuitem");
+    let ellipsisItem = items.find(item => item.hasAttribute("ellipsis"));
+    let overflowingItems = [];
+
+    // Ensure that the last top level menu item is the ellipsis item
+    {
+      if (!ellipsisItem) {
+        ellipsisItem = html`
+          <x-menuitem ellipsis>
+            <x-label>…</x-label>
+            <x-menu id="ellipsis-menu"></x-menu>
+          </x-menuitem>
+        `;
+
+        items.at(-1).after(ellipsisItem);
+      }
+      else if (items.at(-1) !== ellipsisItem) {
+        items.at(-1).after(ellipsisItem);
+        items = [...this.children].filter($0 => $0.localName === "x-menuitem");
+      }
+    }
+
+    // Unhide all items
+    {
+      for (let item of items) {
+        item.removeAttribute("autohidden");
+      }
+    }
+
+    // Determine overflowing items
+    {
+      for (let i = 0; i < items.length; i += 1) {
+        let item = items[i];
+        let itemBBox = item.getBoundingClientRect();
+
+        if (itemBBox.right > menubarBBox.right) {
+          overflowingItems.push(item);
+        }
+      }
+    }
+
+    // Hide overflowing non-ellipsis items
+    {
+      for (let item of items) {
+        if (item !== ellipsisItem) {
+          if (overflowingItems.includes(item)) {
+            item.setAttribute("autohidden", "");
+          }
+          else {
+            item.removeAttribute("autohidden");
+          }
+        }
+      }
+    }
+
+    // Hide ellipsis item if there are no other overflowing items
+    if (
+      overflowingItems.length === 0 ||
+      (overflowingItems.length === 1 && overflowingItems[0] === ellipsisItem)
+    ) {
+      ellipsisItem.setAttribute("autohidden", "");
+    }
+    // Otherwise hide the last non-overflowing item if the ellipsis item is overflowing
+    else {
+      let ellipsisItemBBox = ellipsisItem.getBoundingClientRect();
+
+      if (ellipsisItemBBox.right > menubarBBox.right) {
+        let lastItem = [...items].reverse().find(item => item !== ellipsisItem && !item.hasAttribute("autohidden"));
+        lastItem.setAttribute("autohidden", "");
+        overflowingItems.push(lastItem);
+      }
+    }
+
+    // Update ellipsis menu
+    {
+      let ellipsisMenu = ellipsisItem.querySelector("x-menu");
+      ellipsisMenu.innerHTML = "";
+
+      for (let item of items) {
+        if (item !== ellipsisItem) {
+          if (!item[$menu]) {
+            item[$menu] = item.querySelector(":scope > x-menu");
+          }
+
+          if (overflowingItems.includes(item)) {
+            let clonedItem = document.createElement("x-menuitem");
+            clonedItem.append(item.querySelector(":scope > x-label").cloneNode(true));
+            clonedItem.append(item[$menu]);
+            ellipsisMenu.append(clonedItem);
+          }
+          else {
+            if (item[$menu].parentElement !== item) {
+              item.append(item[$menu]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  #updateMenubarLayoutDebounced = debounce(this.#updateMenubarLayout, 1000, this);
 
   #expandMenubarItem(item) {
     let menu = item.querySelector(":scope > x-menu");
@@ -261,6 +368,10 @@ export default class XMenuBarElement extends HTMLElement {
 
   #onOrientationChange() {
     this.#collapseMenubarItems();
+  }
+
+  #onResize() {
+    this.#updateMenubarLayout();
   }
 
   #onShadowRootWheel(event) {

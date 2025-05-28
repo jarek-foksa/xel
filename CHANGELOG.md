@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.0 (2025-05-28)
+
+- Show ellipsis when top level menubar items can't be fitted on the screen
+
 ## 0.33.13 (2025-05-13)
 
 - [Fixed] Menu item labels are cut off on Linux

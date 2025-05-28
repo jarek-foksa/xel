@@ -969,6 +969,9 @@ x-menubar > x-menuitem {
   padding: 0 11px;
   min-height: 0;
 }
+x-menubar > x-menuitem[autohidden] {
+  display: none;
+}
 
 /*****************************************************************************************************************/
 
