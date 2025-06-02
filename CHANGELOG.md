@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.4 (2025-06-02)
+
+- [Fixed] `<x-menubar>` ellipsis might overflow the window bounds
+
 ## 0.34.3 (2025-06-02)
 
 - [Fixed] `<x-colorpicker>` fails to update on initial document load

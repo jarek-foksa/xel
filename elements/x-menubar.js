@@ -111,7 +111,7 @@ export default class XMenuBarElement extends HTMLElement {
 
     new ResizeObserver(() => this.#onResize()).observe(this, {box : "border-box"});
 
-    this.#childListMutationObserver = new MutationObserver(() => this.#onChildListchange());
+    this.#childListMutationObserver = new MutationObserver((event) => this.#onChildListchange());
     this.#childListMutationObserver.observe(this, {childList: true});
 
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
@@ -127,7 +127,7 @@ export default class XMenuBarElement extends HTMLElement {
     this.setAttribute("role", "menubar");
     this.setAttribute("aria-disabled", this.disabled);
 
-    this.#updateMenubarLayoutThrottled();
+    this.#updateMenubarLayout();
 
     window.addEventListener("orientationchange", this.#orientationChangeListener = () => {
       this.#onOrientationChange();
@@ -192,35 +192,38 @@ export default class XMenuBarElement extends HTMLElement {
       }
     }
 
-    // Hide overflowing non-ellipsis items
-    {
+    // If there are no overflowing items or the only overflowing item is ellipsis, autohide only the ellipsis item
+    if (overflowingItems.length <= 1) {
       for (let item of items) {
-        if (item !== ellipsisItem) {
-          if (overflowingItems.includes(item)) {
-            item.setAttribute("autohidden", "");
-          }
-          else {
-            item.removeAttribute("autohidden");
-          }
+        if (item === ellipsisItem) {
+          item.setAttribute("autohidden", "");
+        }
+        else {
+          item.removeAttribute("autohidden");
         }
       }
     }
-
-    // Hide ellipsis item if there are no other overflowing items
-    if (
-      overflowingItems.length === 0 ||
-      (overflowingItems.length === 1 && overflowingItems[0] === ellipsisItem)
-    ) {
-      ellipsisItem.setAttribute("autohidden", "");
-    }
-    // Otherwise hide the last non-overflowing item if the ellipsis item is overflowing
+    // Otherwise show the ellipsis item and keep hiding other items until the ellipsis is not overflowing
     else {
-      let ellipsisItemBBox = ellipsisItem.getBoundingClientRect();
+      ellipsisItem.removeAttribute("autohidden");
 
-      if (ellipsisItemBBox.right > menubarBBox.right) {
-        let lastItem = [...items].reverse().find(item => item !== ellipsisItem && !item.hasAttribute("autohidden"));
-        lastItem.setAttribute("autohidden", "");
-        overflowingItems.push(lastItem);
+      while (ellipsisItem.getBoundingClientRect().right > menubarBBox.right) {
+        let lastVisibleNonEllipsisItem = null;
+
+        for (let item = ellipsisItem.previousElementSibling; item; item = item.previousElementSibling) {
+          if (item.hasAttribute("autohidden") === false) {
+            lastVisibleNonEllipsisItem = item;
+            break;
+          }
+        }
+
+        if (lastVisibleNonEllipsisItem) {
+          lastVisibleNonEllipsisItem.setAttribute("autohidden", "");
+          overflowingItems.push(lastVisibleNonEllipsisItem);
+        }
+        else {
+          break;
+        }
       }
     }
 
@@ -260,7 +263,7 @@ export default class XMenuBarElement extends HTMLElement {
     }
   }
 
-  #updateMenubarLayoutThrottled = throttle(this.#updateMenubarLayout, 100, this);
+  #updateMenubarLayoutThrottled = throttle(this.#updateMenubarLayout, 10, this);
 
   #expandMenubarItem(item) {
     let menu = item.querySelector(":scope > x-menu");
@@ -391,7 +394,7 @@ export default class XMenuBarElement extends HTMLElement {
 
   #onChildListchange() {
     if (this.isConnected) {
-      this.#updateMenubarLayoutThrottled()
+      this.#updateMenubarLayout()
     }
   }
 
