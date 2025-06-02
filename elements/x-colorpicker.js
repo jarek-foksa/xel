@@ -564,23 +564,26 @@ class XColorPickerElement extends HTMLElement {
   }
 
   #updateSpaceSelect(color = this.#getColor()) {
-    let allowedSpaces = this.spaces;
+    return new Promise(async (resolve) => {
+      let allowedSpaces = this.spaces;
 
-    this["#space-select"].value = color.spaceId;
+      await customElements.whenDefined("x-select");
+      this["#space-select"].value = color.spaceId;
 
-    if (allowedSpaces.length === 1) {
-      this["#space-select"].hidden = true;
-    }
-    else {
-      this["#space-select"].hidden = false;
-      this["#space-select"].disabled = this.disabled;
+      if (allowedSpaces.length === 1) {
+        this["#space-select"].hidden = true;
+      }
+      else {
+        this["#space-select"].hidden = false;
+        this["#space-select"].disabled = this.disabled;
 
-      for (let item of this["#space-select-menu"].children) {
-        if (item.localName === "x-menuitem") {
-          item.disabled = !allowedSpaces.includes(item.value);
+        for (let item of this["#space-select-menu"].children) {
+          if (item.localName === "x-menuitem") {
+            item.disabled = !allowedSpaces.includes(item.value);
+          }
         }
       }
-    }
+    });
   }
 
   #updateSpaceSelectWarningIcons() {
@@ -621,59 +624,65 @@ class XColorPickerElement extends HTMLElement {
   }
 
   #updateSliders(color = this.#getColor()) {
-    let type = this["#type-buttons"].value;
-    let space = color.spaceId;
-    let value = [...color.coords, color.alpha];
-    let localName;
+    return new Promise(async (resolve) => {
+      let type = this["#type-buttons"].value;
+      let space = color.spaceId;
+      let value = [...color.coords, color.alpha];
+      let localName;
 
-    if (["srgb", "srgb-linear", "a98rgb", "p3", "rec2020", "prophoto"].includes(space)) {
-      if (type === "linear") {
-        localName = "x-rgblinearsliders";
+      if (["srgb", "srgb-linear", "a98rgb", "p3", "rec2020", "prophoto"].includes(space)) {
+        if (type === "linear") {
+          localName = "x-rgblinearsliders";
+        }
+        else if (type === "planar") {
+          localName = "x-rgbplanarsliders";
+        }
+        else if (type === "polar") {
+          localName = "x-rgbpolarsliders";
+        }
       }
-      else if (type === "planar") {
-        localName = "x-rgbplanarsliders";
+      else if (space === "lch" || space === "oklch") {
+        if (type === "linear") {
+          localName = "x-lchlinearsliders";
+        }
+        else if (type === "planar") {
+          localName = "x-lchplanarsliders";
+        }
       }
-      else if (type === "polar") {
-        localName = "x-rgbpolarsliders";
+      else if (space === "lab" || space === "oklab") {
+        if (type === "linear") {
+          localName = "x-lablinearsliders";
+        }
+        else if (type === "planar") {
+          localName = "x-labplanarsliders";
+        }
       }
-    }
-    else if (space === "lch" || space === "oklch") {
-      if (type === "linear") {
-        localName = "x-lchlinearsliders";
+      else if (space === "xyz-d65" || space === "xyz-d50") {
+        if (type === "linear") {
+          localName = "x-xyzlinearsliders";
+        }
+        else if (type === "planar") {
+          localName = "x-xyzplanarsliders";
+        }
       }
-      else if (type === "planar") {
-        localName = "x-lchplanarsliders";
-      }
-    }
-    else if (space === "lab" || space === "oklab") {
-      if (type === "linear") {
-        localName = "x-lablinearsliders";
-      }
-      else if (type === "planar") {
-        localName = "x-labplanarsliders";
-      }
-    }
-    else if (space === "xyz-d65" || space === "xyz-d50") {
-      if (type === "linear") {
-        localName = "x-xyzlinearsliders";
-      }
-      else if (type === "planar") {
-        localName = "x-xyzplanarsliders";
-      }
-    }
 
-    if (this["#main"].firstElementChild?.localName !== localName) {
-      this["#main"].innerHTML = "";
-      this["#sliders"] = createElement(localName);
-      this["#sliders"].setAttribute("id", "sliders");
-      this["#sliders"].setAttribute("exportparts", "slider");
-      this["#main"].append(this["#sliders"]);
-    }
+      if (this["#main"].firstElementChild?.localName !== localName) {
+        this["#main"].innerHTML = "";
+        this["#sliders"] = createElement(localName);
+        this["#sliders"].setAttribute("id", "sliders");
+        this["#sliders"].setAttribute("exportparts", "slider");
+        this["#main"].append(this["#sliders"]);
+      }
 
-    this["#sliders"].space = space;
-    this["#sliders"].value = value;
-    this["#sliders"].alpha = this.alpha;
-    this["#sliders"].disabled = this.disabled;
+      await customElements.whenDefined(localName);
+
+      this["#sliders"].space = space;
+      this["#sliders"].value = value;
+      this["#sliders"].alpha = this.alpha;
+      this["#sliders"].disabled = this.disabled;
+
+      resolve();
+    });
   }
 
   #updateInput(color = this.#getColor()) {

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.3 (2025-06-02)
+
+- [Fixed] `<x-colorpicker>` fails to update on initial document load
+
 ## 0.34.2 (2025-05-28)
 
 - [Fixed] `<x-menubar>` fails to update in some edge cases
