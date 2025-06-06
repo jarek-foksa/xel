@@ -37,8 +37,8 @@
     "terser":                      "5.39.0"
   },
   "scripts": {
-    "server":                      "firebase emulators:start --only hosting | grep -v 'hosting:'",
-    "server:hosting":              "firebase emulators:start --only hosting | grep -v 'hosting:'",
+    "start":                       "firebase emulators:start --project xel-toolkit --only hosting --log-verbosity=QUIET",
+    "start:hosting":               "firebase emulators:start --project xel-toolkit --only hosting --log-verbosity=QUIET",
     "build":                       "./npm.js build",
     "build:npm":                   "./npm.js build:npm",
     "build:hosting":               "./npm.js build:hosting",
