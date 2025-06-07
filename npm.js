@@ -25,11 +25,13 @@ const RUN_COMMAND = process.argv.at(-1);
 const MINIFY = true;
 
 const HELP = `Commands:
-  npm run start           - Start Firebase Hosting emulator
-  npm run build:npm       - Create NPM package for distribibution in /builds/npm/
-  npm run build:hosting   - Create hosting package for distribution in /builds/hosting/
-  npm run publish:npm     - Publish NPM package from /builds/npm/
-  npm run publish:hosting - Publish hosting package from /builds/hosting/
+  npm run start           - Start Firebase emulators
+  npm run build           - Create NPM and hosting packages
+  npm run build:npm       - Create NPM package
+  npm run build:hosting   - Create hosting package
+  npm run publish         - Publish NPM and hosting packages
+  npm run publish:npm     - Publish NPM package
+  npm run publish:hosting - Publish hosting package
 `;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
