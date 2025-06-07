@@ -24,6 +24,14 @@ const PROJECT_PATH = import.meta.dirname;
 const RUN_COMMAND = process.argv.at(-1);
 const MINIFY = true;
 
+const HELP = `Commands:
+  npm run start           - Start Firebase Hosting emulator
+  npm run build:npm       - Create NPM package for distribibution in /builds/npm/
+  npm run build:hosting   - Create hosting package for distribution in /builds/hosting/
+  npm run publish:npm     - Publish NPM package from /builds/npm/
+  npm run publish:hosting - Publish hosting package from /builds/hosting/
+`;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utils
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -474,4 +482,12 @@ if (RUN_COMMAND === "publish" || RUN_COMMAND === "publish:hosting") {
   // Restore firebase.json
   firebaseManifest.hosting.public = ".";
   Fse.writeFileSync(`${PROJECT_PATH}/firebase.json`, JSON.stringify(firebaseManifest, null, 2), "utf8");
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// npm run build:npm
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+if (RUN_COMMAND === "help") {
+  console.log(HELP);
 }
