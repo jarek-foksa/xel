@@ -5,10 +5,10 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import ChildProcess from "child_process";
+import ChildProcess from "node:child_process";
 import Fse from "fs-extra";
 import {glob as Glob} from "glob";
-import Path from "path";
+import Path from "node:path";
 import Semver from "semver";
 
 import HTMLMinifier from "html-minifier-terser";
@@ -21,7 +21,7 @@ import * as JSBundler from "rollup";
 import ChangelogParser from "./classes/changelog-parser.js";
 
 const PROJECT_PATH = import.meta.dirname;
-const RUN_COMMAND = process.argv.at(-1);
+const COMMAND = process.argv.at(-1);
 const MINIFY = true;
 
 const HELP = `Commands:
@@ -190,7 +190,7 @@ let getLastPublishedNpmPackageVersion = () => {
 // npm run build:npm
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (RUN_COMMAND === "build" || RUN_COMMAND === "build:npm") {
+if (COMMAND === "build" || COMMAND === "build:npm") {
   let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
 
   // Clean up
@@ -294,7 +294,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:npm") {
 // npm run build:hosting
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
+if (COMMAND === "build" || COMMAND === "build:hosting") {
   let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
 
   // Clean up
@@ -418,7 +418,7 @@ if (RUN_COMMAND === "build" || RUN_COMMAND === "build:hosting") {
 // npm run publish:npm
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (RUN_COMMAND === "publish" || RUN_COMMAND === "publish:npm") {
+if (COMMAND === "publish" || COMMAND === "publish:npm") {
   let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
   let lastPublishedVersion = await getLastPublishedNpmPackageVersion();
 
@@ -452,7 +452,7 @@ if (RUN_COMMAND === "publish" || RUN_COMMAND === "publish:npm") {
 // npm run publish:hosting
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (RUN_COMMAND === "publish" || RUN_COMMAND === "publish:hosting") {
+if (COMMAND === "publish" || COMMAND === "publish:hosting") {
   let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
 
   if (changelog[0].date === "PENDING") {
@@ -487,9 +487,9 @@ if (RUN_COMMAND === "publish" || RUN_COMMAND === "publish:hosting") {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// npm run build:npm
+// npm run help
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (RUN_COMMAND === "help") {
+if (COMMAND === "help") {
   console.log(HELP);
 }
