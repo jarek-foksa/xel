@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.5 (2025-06-09)
+
+- [Fixed] `<x-menubar>` fails to update in some edge cases
+
 ## 0.34.4 (2025-06-02)
 
 - [Fixed] `<x-menubar>` ellipsis might overflow the window bounds

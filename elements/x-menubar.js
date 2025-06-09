@@ -153,7 +153,7 @@ export default class XMenuBarElement extends HTMLElement {
     let menubarBBox = this.getBoundingClientRect();
     let items = [...this.children].filter($0 => $0.localName === "x-menuitem");
     let ellipsisItem = items.find(item => item.hasAttribute("ellipsis"));
-    let overflowingItems = [];
+    let overflowingItems = new Set();
 
     // Ensure that the last top level menu item is the ellipsis item
     {
@@ -187,13 +187,13 @@ export default class XMenuBarElement extends HTMLElement {
         let itemBBox = item.getBoundingClientRect();
 
         if (itemBBox.right > menubarBBox.right) {
-          overflowingItems.push(item);
+          overflowingItems.add(item);
         }
       }
     }
 
     // If there are no overflowing items or the only overflowing item is ellipsis, autohide only the ellipsis item
-    if (overflowingItems.length <= 1) {
+    if (overflowingItems.size <= 1) {
       for (let item of items) {
         if (item === ellipsisItem) {
           item.setAttribute("autohidden", "");
@@ -219,7 +219,7 @@ export default class XMenuBarElement extends HTMLElement {
 
         if (lastVisibleNonEllipsisItem) {
           lastVisibleNonEllipsisItem.setAttribute("autohidden", "");
-          overflowingItems.push(lastVisibleNonEllipsisItem);
+          overflowingItems.add(lastVisibleNonEllipsisItem);
         }
         else {
           break;
@@ -238,7 +238,7 @@ export default class XMenuBarElement extends HTMLElement {
             item[$menu] = item.querySelector(":scope > x-menu");
           }
 
-          if (overflowingItems.includes(item)) {
+          if (overflowingItems.has(item)) {
             let clonedItem = item.cloneNode(false);
 
             for (let child of item.children) {
@@ -394,7 +394,7 @@ export default class XMenuBarElement extends HTMLElement {
 
   #onChildListchange() {
     if (this.isConnected) {
-      this.#updateMenubarLayout()
+      this.#updateMenubarLayoutThrottled()
     }
   }
 
