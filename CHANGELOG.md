@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.6 (2025-06-12)
+
+- [Fixed] Material theme subthemes have incorrect colors unless the subtheme file name starts with "material"
+
 ## 0.34.5 (2025-06-09)
 
 - [Fixed] `<x-menubar>` fails to update in some edge cases

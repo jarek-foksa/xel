@@ -20,6 +20,7 @@
   background-color: var(--background-color);
   font-family: "Roboto Flex", "Roboto", "Helvetica Neue", "Noto Sans", "Arial", sans-serif;
   font-weight: 400;
+  --theme-id:                  "material";
   --preset-accent-colors:       blue     lch(39.4 36.3 272),
                                 purple   lch(39.7 39.4 303),
                                 pink     lch(39.9 35.8 329),

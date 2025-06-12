@@ -391,7 +391,7 @@ export default new class Xel extends EventEmitter {
     }
 
     if (this.#accentColor !== oldAccentColor) {
-      this.#updateThemeAccentColor();
+      this.#updateThemeColors();
       this.dispatchEvent(new CustomEvent("accentcolorchange"));
     }
 
@@ -446,7 +446,7 @@ export default new class Xel extends EventEmitter {
       this.#themeStyleSheet.replaceSync(cssText);
 
       this.#updateAutocapitlizeProperty();
-      this.#updateThemeAccentColor();
+      this.#updateThemeColors();
 
       if (this.#themeReadyCallbacks !== null) {
         for (let callback of this.#themeReadyCallbacks) {
@@ -559,34 +559,42 @@ export default new class Xel extends EventEmitter {
     }
   }
 
-  async #updateThemeAccentColor() {
+  async #updateThemeColors() {
     await this.whenThemeReady;
+
     let color = this.#accentColor || this.presetAccentColors.blue;
-    let resolvedColor = color;
+    let resolvedColor = this.presetAccentColors[color] ? this.presetAccentColors[color] : color;
+    let themeID = "";
 
-    if (this.presetAccentColors[color]) {
-      resolvedColor = this.presetAccentColors[color];
+    let rootRules =  [...this.#themeStyleSheet.cssRules].filter((rule) => {
+      return rule.type === 1 && rule.selectorText === ":root";
+    });
+
+    // Determine theme ID
+    for (let rule of rootRules) {
+      let value = rule.style.getPropertyValue("--theme-id");
+
+      if (value !== "") {
+        themeID = value;
+      }
     }
 
-    let rule = [...this.#themeStyleSheet.cssRules].reverse().find($0 => $0.type === 1 && $0.selectorText === ":root");
+    // Set "--accent-color" CSS property on :root
+    rootRules.at(-1).style.setProperty(
+      "--accent-color",
+      themeID.includes("material") ? "var(--material-primary-color)" : resolvedColor
+    );
 
-    if (this.theme.includes("material")) {
-      rule.style.setProperty("--accent-color", "var(--material-primary-color)");
-    }
-    else {
-      rule.style.setProperty("--accent-color", resolvedColor);
-    }
-
-    // Set "--material-<colorName>" CSS properties on <body> element
-    if (this.theme.includes("material")) {
+    // Set "--material-<colorName>" CSS properties on :root
+    if (themeID.includes("material")) {
       let materialColors = getMaterialCSSColorVariables(
         resolvedColor,
-        this.theme.endsWith("-dark.css"),
+        themeID.includes("-dark"),
         color === "gray"
       );
 
       for (let [propertyName, value] of Object.entries(materialColors)) {
-        rule.style.setProperty(propertyName, value);
+        rootRules.at(-1).style.setProperty(propertyName, value);
       }
     }
 

@@ -16,6 +16,7 @@
 /*****************************************************************************************************************/
 
 :root {
+  --theme-id:                   "material-dark";
   --foreground-color:           var(--material-surface-bright-color);
   --selection-color:            var(--material-on-secondary-fixed-color);
   --selection-background-color: var(--material-secondary-fixed-dim-color);

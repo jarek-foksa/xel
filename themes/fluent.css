@@ -20,6 +20,7 @@
   color: var(--text-color);
   background-color: var(--background-color);
   font-family: "Segoe UI", "SegoeUI", system-ui, sans-serif;
+  --theme-id:                   "fluent";
   --preset-accent-colors:       blue     color(srgb 0.00 0.47 0.83),
                                 purple   color(srgb 0.53 0.09 0.60),
                                 pink     color(srgb 0.89 0.00 0.56),

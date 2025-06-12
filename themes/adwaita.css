@@ -21,6 +21,7 @@
   color: var(--text-color);
   background-color: var(--background-color);
   font-family: "Adwaita Sans", "Inter", "Roboto Flex", "Roboto", "Noto Sans", "Helvetica Neue", "Arial", sans-serif;
+  --theme-id:                   "adwaita";
   --preset-accent-colors:       blue     color(srgb 0.21 0.52 0.89),
                                 purple   color(srgb 0.57 0.25 0.67),
                                 pink     color(srgb 0.97 0.31 0.62),
