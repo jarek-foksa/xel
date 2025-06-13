@@ -263,7 +263,7 @@ export default class XMenuBarElement extends HTMLElement {
     }
   }
 
-  #updateMenubarLayoutThrottled = throttle(this.#updateMenubarLayout, 10, this);
+  #updateMenubarLayoutThrottled = throttle(this.#updateMenubarLayout, 100, this);
 
   #expandMenubarItem(item) {
     let menu = item.querySelector(":scope > x-menu");
@@ -394,7 +394,7 @@ export default class XMenuBarElement extends HTMLElement {
 
   #onChildListchange() {
     if (this.isConnected) {
-      this.#updateMenubarLayoutThrottled()
+      this.#updateMenubarLayoutThrottled();
     }
   }
 

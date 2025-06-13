@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.34.7 (2025-06-13)
+
+- Increase the interval time between subsequent menubar updates
+
 ## 0.34.6 (2025-06-12)
 
 - [Fixed] Material theme subthemes have incorrect colors unless the subtheme file name starts with "material"
