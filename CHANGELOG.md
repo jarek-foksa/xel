@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.35.0 (2025-06-17)
+
+- Add `Xel.configStorage` property
+
 ## 0.34.7 (2025-06-13)
 
 - Increase the interval time between subsequent menubar updates

@@ -111,6 +111,17 @@ export default new class Xel extends EventEmitter {
     meta.setAttribute("content", value);
   }
 
+  // @type Storage
+  // @default localStorage
+  //
+  // Specifies the storage area to be used for reading and writing the config
+  get configStorage() {
+    return this.#configStorage;
+  }
+  set configStorage(storage) {
+    this.#configStorage = storage;
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   get whenThemeReady() {
@@ -269,21 +280,21 @@ export default new class Xel extends EventEmitter {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getConfig(key, defaultValue = null) {
-    let rawValue = localStorage.getItem(key);
+    let rawValue = this.#configStorage.getItem(key);
     return (rawValue === null) ? defaultValue : JSON.parse(rawValue);
   }
 
   setConfig(key, value) {
-    let beforeRawValue = localStorage.getItem(key);
+    let beforeRawValue = this.#configStorage.getItem(key);
 
     if (value === null) {
-      delete localStorage[key];
+      delete this.#configStorage[key];
     }
     else {
-      localStorage.setItem(key, JSON.stringify(value));
+      this.#configStorage.setItem(key, JSON.stringify(value));
     }
 
-    let afterRawValue = localStorage.getItem(key);
+    let afterRawValue = this.#configStorage.getItem(key);
 
     if (beforeRawValue !== afterRawValue) {
       this.dispatchEvent(new CustomEvent("configchange", {detail: {key, value, origin: "self"}}));
@@ -291,9 +302,9 @@ export default new class Xel extends EventEmitter {
   }
 
   clearConfig() {
-    if (localStorage.length > 0) {
-      let keys = Object.keys(localStorage);
-      localStorage.clear();
+    if (this.#configStorage.length > 0) {
+      let keys = Object.keys(this.#configStorage);
+      this.#configStorage.clear();
 
       for (let key of keys) {
         this.dispatchEvent(new CustomEvent("configchange", {detail: {key, value: null, origin: "self"}}));
@@ -313,6 +324,7 @@ export default new class Xel extends EventEmitter {
   #themeStyleSheet = new CSSStyleSheet();
   #iconsElements = [];
   #localesBundle = null;
+  #configStorage = localStorage;
 
   #themeReadyCallbacks = [];
   #iconsReadyCalbacks = [];
@@ -358,7 +370,7 @@ export default new class Xel extends EventEmitter {
       observer.observe(document.head, {attributes: true, subtree: true});
     }
 
-    // Observe localStorage for changes
+    // Observe config storage for changes
     {
       window.addEventListener("storage", (event) => this.#onStorageChange(event));
     }
@@ -411,9 +423,9 @@ export default new class Xel extends EventEmitter {
     }
   }
 
-  // Fired only when storage is changed by OTHER app instance running in a separate tab or window.
+  // Fired only when storage is changed in another tab, window or iframe with the same origin
   #onStorageChange(event) {
-    if (event.storageArea === window.localStorage) {
+    if (event.storageArea === this.#configStorage) {
       let key = event.key;
       let value = (event.newValue === null) ? null : JSON.parse(event.newValue);
       this.dispatchEvent(new CustomEvent("configchange", {detail: {key, value, origin: "other"}}));
