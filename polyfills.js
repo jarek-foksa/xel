@@ -67,7 +67,7 @@ if (Element.prototype.setPointerCapture) {
           removeListeners();
 
           if (poinerUpEventFired === false && poinerCancelEventFired === false) {
-            let pointerCancelEvent = new PointerEvent("pointercancel", {pointerId});
+            let pointerCancelEvent = new PointerEvent("pointercancel", {pointerId, isPrimary: event.isPrimary});
             this.dispatchEvent(pointerCancelEvent);
           }
         }

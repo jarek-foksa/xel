@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.35.1 (2025-06-21)
+
+- [Fixed] `event.isPrimary` is not preserved when firing synthesized `lostpointercapture` event
+
 ## 0.35.0 (2025-06-17)
 
 - Add `Xel.configStorage` property
