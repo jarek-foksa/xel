@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.35.2 (2025-06-22)
+
+- [Fixed] `<x-contextmenu>` stops some pointer events from firing when using touch input method
+
 ## 0.35.1 (2025-06-21)
 
 - [Fixed] `event.isPrimary` is not preserved when firing synthesized `lostpointercapture` event
