@@ -5,6 +5,8 @@
 //   MIT License (check LICENSE.md for details)
 
 import Xel from "../classes/xel.js";
+
+import {compareArrays} from "../utils/array.js";
 import {html, css} from "../utils/template.js";
 import {throttle, sleep} from "../utils/time.js";
 
@@ -23,7 +25,15 @@ export default class XMenuBarElement extends HTMLElement {
         <path id="backdrop-path"></path>
       </svg>
 
-      <slot></slot>
+      <x-box id="container">
+        <div id="main">
+          <slot></slot>
+        </div>
+
+        <div id="aside">
+          <slot name="aside"></slot>
+        </div>
+      </x-box>
     </template>
   `;
 
@@ -63,6 +73,30 @@ export default class XMenuBarElement extends HTMLElement {
       fill-rule: evenodd;
       opacity: 0;
       pointer-events: all;
+    }
+
+    #container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+    }
+
+    #main {
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      height: 100%;
+    }
+
+    #aside {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    ::slotted(x-menuitem[ellipsis]) {
+      order: 9999;
     }
   `;
 
@@ -109,7 +143,8 @@ export default class XMenuBarElement extends HTMLElement {
       this["#" + element.id] = element;
     }
 
-    new ResizeObserver(() => this.#onResize()).observe(this, {box : "border-box"});
+    new ResizeObserver(() => this.#onContainerResize()).observe(this["#container"], {box : "border-box"});
+    new ResizeObserver(() => this.#onMainResize()).observe(this["#main"], {box : "border-box"});
 
     this.#childListMutationObserver = new MutationObserver((event) => this.#onChildListchange());
     this.#childListMutationObserver.observe(this, {childList: true});
@@ -150,112 +185,107 @@ export default class XMenuBarElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateMenubarLayout() {
-    let menubarBBox = this.getBoundingClientRect();
-    let items = [...this.children].filter($0 => $0.localName === "x-menuitem");
-    let ellipsisItem = items.find(item => item.hasAttribute("ellipsis"));
-    let overflowingItems = new Set();
-
-    // Ensure that the last top level menu item is the ellipsis item
+    // Ensure that ellipsis item exists and it is assigned to the default slot
     {
+      let ellipsisItem = this.querySelector(":scope > x-menuitem[ellipsis]");
+
       if (!ellipsisItem) {
         ellipsisItem = html`
           <x-menuitem ellipsis>
-            <x-label>…</x-label>
+            <x-label><strong>⋯</strong></x-label>
             <x-menu id="ellipsis-menu"></x-menu>
           </x-menuitem>
         `;
 
         this.append(ellipsisItem);
       }
-      else if (items.at(-1) !== ellipsisItem) {
-        this.append(ellipsisItem);
-        items = [...this.children].filter($0 => $0.localName === "x-menuitem");
+      else if (ellipsisItem.hasAttribute("slot")) {
+        ellipsisItem.removeAttribute("slot");
       }
     }
+
+    let mainItems = [...this.children].filter($0 => $0.localName === "x-menuitem" && $0.slot === "");
+    let ellipsisItem = mainItems.find(item => item.hasAttribute("ellipsis"));
+    let oldAutohiddenItems = [];
 
     // Unhide all items
     {
-      for (let item of items) {
-        item.removeAttribute("autohidden");
-      }
-    }
-
-    // Determine overflowing items
-    {
-      for (let i = 0; i < items.length; i += 1) {
-        let item = items[i];
-        let itemBBox = item.getBoundingClientRect();
-
-        if (itemBBox.right > menubarBBox.right) {
-          overflowingItems.add(item);
-        }
-      }
-    }
-
-    // If there are no overflowing items or the only overflowing item is ellipsis, autohide only the ellipsis item
-    if (overflowingItems.size <= 1) {
-      for (let item of items) {
-        if (item === ellipsisItem) {
-          item.setAttribute("autohidden", "");
-        }
-        else {
+      for (let item of mainItems) {
+        if (item.hasAttribute("autohidden")) {
+          oldAutohiddenItems.push(item);
           item.removeAttribute("autohidden");
         }
       }
     }
-    // Otherwise show the ellipsis item and keep hiding other items until the ellipsis is not overflowing
+
+    let menubarBBox = this.getBoundingClientRect();
+    let asideBBox = this["#aside"].getBoundingClientRect();
+    let overflowingItems = [];
+
+    // Determine overflowing items
+    {
+      for (let i = 0; i < mainItems.length; i += 1) {
+        let item = mainItems[i];
+        let itemBBox = item.getBoundingClientRect();
+
+        if (itemBBox.right > menubarBBox.right - asideBBox.width) {
+          overflowingItems.push(item);
+        }
+      }
+    }
+
+    // If there are no overflowing items, hide only the ellipsis item
+    if (overflowingItems.length <= 1) {
+      ellipsisItem.setAttribute("autohidden", "");
+    }
+    // Otherwise keep hiding non-ellipsis items until the ellipsis item no longer overflows
     else {
-      ellipsisItem.removeAttribute("autohidden");
+      for (let item of [...mainItems].reverse()) {
+        if (item !== ellipsisItem) {
+          item.setAttribute("autohidden", "");
 
-      while (ellipsisItem.getBoundingClientRect().right > menubarBBox.right) {
-        let lastVisibleNonEllipsisItem = null;
+          let ellipsisItemBBox = ellipsisItem.getBoundingClientRect();
 
-        for (let item = ellipsisItem.previousElementSibling; item; item = item.previousElementSibling) {
-          if (item.hasAttribute("autohidden") === false) {
-            lastVisibleNonEllipsisItem = item;
+          if (ellipsisItemBBox.right <= menubarBBox.right - asideBBox.width) {
             break;
           }
-        }
-
-        if (lastVisibleNonEllipsisItem) {
-          lastVisibleNonEllipsisItem.setAttribute("autohidden", "");
-          overflowingItems.add(lastVisibleNonEllipsisItem);
-        }
-        else {
-          break;
         }
       }
     }
 
     // Update ellipsis menu
     {
-      let ellipsisMenu = ellipsisItem.querySelector("x-menu");
-      ellipsisMenu.innerHTML = "";
+      let autohiddenItems = [...this.querySelectorAll(":scope > x-menuitem[autohidden]")];
 
-      for (let item of items) {
-        if (item !== ellipsisItem) {
-          if (!item[$menu]) {
-            item[$menu] = item.querySelector(":scope > x-menu");
-          }
+      if (compareArrays(autohiddenItems, oldAutohiddenItems, true) === false) {
+        let ellipsisMenu = ellipsisItem.querySelector("x-menu");
+        ellipsisMenu.innerHTML = "";
 
-          if (overflowingItems.has(item)) {
-            let clonedItem = item.cloneNode(false);
+        for (let item of mainItems) {
+          if (item !== ellipsisItem) {
+            if (!item[$menu]) {
+              item[$menu] = item.querySelector(":scope > x-menu");
+            }
 
-            for (let child of item.children) {
-              if (child.localName !== "x-menu") {
-                clonedItem.append(child.cloneNode(true));
+            if (autohiddenItems.includes(item)) {
+              let clonedItem = item.cloneNode(false);
+
+              for (let child of item.children) {
+                if (child.localName !== "x-menu") {
+                  clonedItem.append(child.cloneNode(true));
+                }
               }
-            }
 
-            if (item[$menu]) {
-              clonedItem.append(item[$menu]);
-            }
+              if (item[$menu]) {
+                clonedItem.append(item[$menu]);
+              }
 
-            ellipsisMenu.append(clonedItem);
-          }
-          else {
-            if (item[$menu] && item[$menu].parentElement !== item) {
-              item.append(item[$menu]);
+              ellipsisMenu.append(clonedItem);
+            }
+            else {
+              if (item[$menu] && item[$menu].parentElement !== item) {
+                item.append(item[$menu]);
+              }
             }
           }
         }
@@ -388,8 +418,16 @@ export default class XMenuBarElement extends HTMLElement {
     this.#collapseMenubarItems();
   }
 
-  #onResize() {
-    this.#updateMenubarLayoutThrottled();
+  #onContainerResize() {
+    if (this.isConnected) {
+      this.#updateMenubarLayoutThrottled();
+    }
+  }
+
+  #onMainResize() {
+    if (this.isConnected) {
+      this.#updateMenubarLayoutThrottled();
+    }
   }
 
   #onChildListchange() {

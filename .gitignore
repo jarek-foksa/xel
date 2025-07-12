@@ -4,6 +4,7 @@ node_modules
 
 # Regular files
 firebase-debug.log
+pglite-debug.log
 npm-debug.log
 package-lock.json
 xel.sublime-workspace

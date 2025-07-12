@@ -1,6 +1,12 @@
 
 # CHANGELOG
 
+## 0.36.0 (2025-07-12)
+
+- Add `aside` named slot to `<x-menubar>`
+- Switch to "Midline Horizontal Ellipsis" char for `<x-menubar>` ellipsis
+- [Fixed] `<x-menubar>` layout fails to update when changing locales
+
 ## 0.35.2 (2025-06-22)
 
 - [Fixed] `<x-contextmenu>` stops some pointer events from firing when using touch input method
