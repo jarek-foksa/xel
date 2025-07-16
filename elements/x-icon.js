@@ -6,6 +6,7 @@
 
 import Xel from "../classes/xel.js";
 
+import {getAncestorGradients} from "../utils/element.js";
 import {getIcons} from "../utils/icon.js";
 import {html, css} from "../utils/template.js";
 
@@ -180,8 +181,51 @@ export default class XIconElement extends HTMLElement {
     }
 
     if (symbol) {
+      let gradients = new Set();
+
+      // Determine global gradients
+      {
+        for (let element of symbol.querySelectorAll("*")) {
+          for (let property of ["fill", "stroke"]) {
+            let value = "";
+
+            if (element.style[property] !== "") {
+              value = element.style[property].trim();
+            }
+            else if (element.hasAttribute(property)) {
+              value = element.getAttribute(property).trim();
+            }
+
+            if (value.startsWith(`url(`) && value.endsWith(")")) {
+              value = value.substring(value.indexOf("(") + 1, value.indexOf(")"));
+              value = value.replace(/['"]+/g, ""); // Remove quotes
+
+              if (value.startsWith("#")) {
+                let gradient = symbol.ownerSVGElement.querySelector(value);
+
+                if (gradient) {
+                  gradients.add(gradient);
+
+                  for (let ancestorGradient of getAncestorGradients(gradient)) {
+                    gradients.add(ancestorGradient);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        gradients = [...gradients].filter(gradient => symbol.contains(gradient) === false);
+      }
+
+      let defsHTML = "";
+
+      if (gradients.length > 0) {
+        defsHTML = "<defs>" + gradients.map($0 => $0.outerHTML).join("") + "</defs>";
+      }
+
       this["#svg"].setAttribute("viewBox", symbol.getAttribute("viewBox"));
-      this["#svg"].innerHTML = symbol.innerHTML;
+      this["#svg"].innerHTML = defsHTML + symbol.innerHTML;
     }
     else {
       this["#svg"].innerHTML = "";

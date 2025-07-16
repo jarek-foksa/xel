@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.36.1 (2025-07-16)
+
+- [Fixed] `<x-icon>` does not render shapes with gradient fill
+
 ## 0.36.0 (2025-07-12)
 
 - Add `aside` named slot to `<x-menubar>`

@@ -120,3 +120,35 @@ export let getClosestScrollableAncestor = (element) => {
 
   return walk(element.parentElement || element.parentNode.host);
 };
+
+// @type (SVGGradientElement) => Array<SVGGradientElement>
+//
+// Get the SVG gradients that are referenced with "href" attribute.
+export let getAncestorGradients = (gradient) => {
+  let svgElement = null;
+  let ancestorGradients = [];
+  let currentGradient = gradient;
+
+  while (currentGradient && currentGradient.href.baseVal !== "") {
+    if (svgElement === null) {
+      svgElement = gradient.ownerSVGElement;
+    }
+
+    let target = svgElement.querySelector(currentGradient.href.baseVal);
+
+    if (
+      (target) &&
+      (target.localName === "linearGradient" || target.localName === "radialGradient") &&
+      (target !== gradient) &&
+      (ancestorGradients.includes(target) === false)
+    ) {
+      ancestorGradients.push(target);
+      currentGradient = target;
+    }
+    else {
+      break;
+    }
+  }
+
+  return ancestorGradients;
+};
