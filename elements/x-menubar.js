@@ -303,7 +303,12 @@ export default class XMenuBarElement extends HTMLElement {
 
       item.focus();
       this.#expanded = true;
+
       this.style.touchAction = "none";
+
+      if (item.slot !== "aside") {
+        this["#aside"].style.pointerEvents = "none";
+      }
 
       // Open item's menu and close other menus
       {
@@ -349,7 +354,9 @@ export default class XMenuBarElement extends HTMLElement {
       let wasExpanded = this.#expanded;
 
       this.#expanded = false;
+
       this.style.touchAction = null;
+      this["#aside"].style.pointerEvents = null;
 
       // Hide the backdrop
       {

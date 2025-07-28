@@ -972,9 +972,6 @@ x-menubar > x-menuitem {
 x-menubar > x-menuitem[autohidden] {
   display: none;
 }
-x-menubar > x-menuitem[expanded] ~ x-menuitem:not(:has(x-menu)) {
-  pointer-events: none;
-}
 
 /*****************************************************************************************************************/
 

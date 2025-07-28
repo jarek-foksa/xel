@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.36.2 (2025-07-28)
+
+- [Fixed] `<x-menubar>` fails to update correctly on Firefox when using `slot="aside"`
+
 ## 0.36.1 (2025-07-16)
 
 - [Fixed] `<x-icon>` does not render shapes with gradient fill
