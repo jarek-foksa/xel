@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.37.0 (2025-09-25)
+
+- Support `<x-navitem>` tooltips
+
 ## 0.36.2 (2025-07-28)
 
 - [Fixed] `<x-menubar>` fails to update correctly on Firefox when using `slot="aside"`

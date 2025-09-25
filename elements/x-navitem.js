@@ -107,6 +107,14 @@ export default class XNavItemElement extends HTMLElement {
     #arrow-path {
       fill: currentColor;
     }
+
+    /**
+     * Tootlip
+     */
+
+    ::slotted(x-tooltip) {
+      --align: right;
+    }
   `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +181,7 @@ export default class XNavItemElement extends HTMLElement {
   #shadowRoot;
   #xelThemeChangeListener;
   #currentAnimations = [];
+  #dismissTooltip = false;
   #lastTabIndex = 0;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,6 +198,8 @@ export default class XNavItemElement extends HTMLElement {
     }
 
     this.addEventListener("click", (event) => this.#onClick(event));
+    this.addEventListener("pointerenter", () => this.#onPointerEnter());
+    this.addEventListener("pointerleave", () => this.#onPointerLeave());
   }
 
   connectedCallback() {
@@ -207,6 +218,7 @@ export default class XNavItemElement extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.#dismissTooltip = false;
     Xel.removeEventListener("themechange", this.#xelThemeChangeListener);
   }
 
@@ -315,6 +327,8 @@ export default class XNavItemElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onClick(event) {
+    this.#dismissTooltip = true;
+
     if (this === event.target.closest("x-navitem") && this.hasAttribute("expandable")) {
       if (event.target.localName !== "x-nav") {
         if (this.expanded) {
@@ -335,6 +349,36 @@ export default class XNavItemElement extends HTMLElement {
         }
       }
     }
+  }
+
+  #onPointerEnter() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip && tooltip.disabled === false && this.expanded === false && this.#dismissTooltip === false) {
+      if (this.parentElement && this.parentElement.localName === "x-nav") {
+        for (let sibling of this.parentElement.children) {
+          if (sibling !== this && sibling.localName === "x-navitem") {
+            let siblingTooltip = sibling.querySelector(":scope > x-tooltip");
+
+            if (siblingTooltip) {
+              siblingTooltip.close(false);
+            }
+          }
+        }
+      }
+
+      tooltip.open(this);
+    }
+  }
+
+  #onPointerLeave() {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip) {
+      tooltip.close();
+    }
+
+    this.#dismissTooltip = false;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
