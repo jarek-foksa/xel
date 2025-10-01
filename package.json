@@ -39,11 +39,7 @@
   "scripts": {
     "start":                       "firebase emulators:start --project xel-toolkit --only hosting --log-verbosity=QUIET",
     "build":                       "./npm.js build",
-    "build:npm":                   "./npm.js build:npm",
-    "build:hosting":               "./npm.js build:hosting",
     "publish":                     "./npm.js publish",
-    "publish:npm":                 "./npm.js publish:npm",
-    "publish:hosting":             "./npm.js publish:hosting",
     "help":                        "./npm.js help"
   }
 }

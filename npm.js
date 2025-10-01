@@ -21,17 +21,14 @@ import * as JSBundler from "rollup";
 import ChangelogParser from "./classes/changelog-parser.js";
 
 const PROJECT_PATH = import.meta.dirname;
-const COMMAND = process.argv.at(-1);
+const [, , COMMAND, ...ARGS] = process.argv;
 const MINIFY = true;
 
 const HELP = `Commands:
-  npm run start           - Start Firebase emulators
-  npm run build           - Create NPM and hosting packages
-  npm run build:npm       - Create NPM package
-  npm run build:hosting   - Create hosting package
-  npm run publish         - Publish NPM and hosting packages
-  npm run publish:npm     - Publish NPM package
-  npm run publish:hosting - Publish hosting package
+  npm run start                 - Start Firebase emulators
+  npm run build [npm,hosting]   - Build packages
+  npm run publish [npm,hosting] - Publish packages
+  npm run help                  - Show this help message
 `;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,228 +184,226 @@ let getLastPublishedNpmPackageVersion = () => {
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// npm run build:npm
+// npm run build
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (COMMAND === "build" || COMMAND === "build:npm") {
+if (COMMAND === "build") {
   let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
 
-  // Clean up
-  {
-    Fse.ensureDirSync(`${PROJECT_PATH}/builds`);
-
-    if (Fse.existsSync(`${PROJECT_PATH}/builds/npm`)) {
-      Fse.removeSync(`${PROJECT_PATH}/builds/npm`);
-    }
-
-    Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/`);
-  }
-
-  // Create the package
-  {
-    // README.md, LICENSE.md, CHANGELOG.md
+  // Build NPM package
+  if (ARGS.length === 0 || ARGS.includes("npm")) {
+    // Clean up
     {
-      Fse.copySync(`${PROJECT_PATH}/README.md`,    `${PROJECT_PATH}/builds/npm/README.md`);
-      Fse.copySync(`${PROJECT_PATH}/LICENSE.md`,   `${PROJECT_PATH}/builds/npm/LICENSE.md`);
-      Fse.copySync(`${PROJECT_PATH}/CHANGELOG.md`, `${PROJECT_PATH}/builds/npm/CHANGELOG.md`);
-    }
+      Fse.ensureDirSync(`${PROJECT_PATH}/builds`);
 
-    // xel.js
-    {
-      let xelJS = await bundleScripts(`${PROJECT_PATH}/xel.js`);
-
-      if (MINIFY === true) {
-        xelJS = await minifyScript(xelJS);
+      if (Fse.existsSync(`${PROJECT_PATH}/builds/npm`)) {
+        Fse.removeSync(`${PROJECT_PATH}/builds/npm`);
       }
 
       Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/`);
-      Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/xel.js`, xelJS, "utf8");
     }
 
-    // package.json
+    // Create the package
     {
-      let path = `${PROJECT_PATH}/package.json`;
-      let manifest = JSON.parse(Fse.readFileSync(path, "utf8"));
-      manifest.version = changelog[0].version;
-
-      delete manifest.devDependencies;
-      delete manifest.scripts;
-
-      Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/`);
-      Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/package.json`, JSON.stringify(manifest), "utf8");
-    }
-
-    // Themes
-    {
-      let themeNames = [
-        "fluent",
-        "fluent-dark",
-        "material",
-        "material-dark",
-        "cupertino",
-        "cupertino-dark",
-        "adwaita",
-        "adwaita-dark"
-      ];
-
-      for (let themeName of ["base", ...themeNames]) {
-        let themeCSS = Fse.readFileSync(`${PROJECT_PATH}/themes/${themeName}.css`, "utf8");
-        themeCSS = themeCSS.replace("/node_modules/xel/themes/", "themes/");
-        themeCSS = themeCSS.substring(themeCSS.indexOf("*/") + 2);
-
-        Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/themes/`);
-        Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/themes/${themeName}.css`, themeCSS, "utf8");
+      // README.md, LICENSE.md, CHANGELOG.md
+      {
+        Fse.copySync(`${PROJECT_PATH}/README.md`,    `${PROJECT_PATH}/builds/npm/README.md`);
+        Fse.copySync(`${PROJECT_PATH}/LICENSE.md`,   `${PROJECT_PATH}/builds/npm/LICENSE.md`);
+        Fse.copySync(`${PROJECT_PATH}/CHANGELOG.md`, `${PROJECT_PATH}/builds/npm/CHANGELOG.md`);
       }
 
-      for (let themeName of themeNames) {
-        let themeCSS = Fse.readFileSync(`${PROJECT_PATH}/builds/npm/themes/${themeName}.css`, "utf8");
+      // xel.js
+      {
+        let xelJS = await bundleScripts(`${PROJECT_PATH}/xel.js`);
 
-        let minifiedThemeCSS = (
-          await PostCSS([PostCSSImport(), PostCSSNesting(), PostCSSMinify()]).process(themeCSS , {
-            from: `${PROJECT_PATH}/builds/npm/themes/`
-          })
-        ).css;
+        if (MINIFY === true) {
+          xelJS = await minifyScript(xelJS);
+        }
 
-        Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/themes/${themeName}.css`, minifiedThemeCSS, "utf8");
+        Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/`);
+        Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/xel.js`, xelJS, "utf8");
       }
-    }
 
-    // Icons
-    {
-      let paths = Glob.sync(`${PROJECT_PATH}/icons/*.svg`);
+      // package.json
+      {
+        let path = `${PROJECT_PATH}/package.json`;
+        let manifest = JSON.parse(Fse.readFileSync(path, "utf8"));
+        manifest.version = changelog[0].version;
 
-      for (let path of paths) {
-        if (path.endsWith("portal.svg") === false) {
-          let relPath = path.substring(PROJECT_PATH.length);
-          let iconsSVG = Fse.readFileSync(path, "utf8");
+        delete manifest.devDependencies;
+        delete manifest.scripts;
 
-          Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/icons/`);
-          Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/${relPath}`, iconsSVG, "utf8");
+        Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/`);
+        Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/package.json`, JSON.stringify(manifest), "utf8");
+      }
+
+      // Themes
+      {
+        let themeNames = [
+          "fluent",
+          "fluent-dark",
+          "material",
+          "material-dark",
+          "cupertino",
+          "cupertino-dark",
+          "adwaita",
+          "adwaita-dark"
+        ];
+
+        for (let themeName of ["base", ...themeNames]) {
+          let themeCSS = Fse.readFileSync(`${PROJECT_PATH}/themes/${themeName}.css`, "utf8");
+          themeCSS = themeCSS.replace("/node_modules/xel/themes/", "themes/");
+          themeCSS = themeCSS.substring(themeCSS.indexOf("*/") + 2);
+
+          Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/themes/`);
+          Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/themes/${themeName}.css`, themeCSS, "utf8");
+        }
+
+        for (let themeName of themeNames) {
+          let themeCSS = Fse.readFileSync(`${PROJECT_PATH}/builds/npm/themes/${themeName}.css`, "utf8");
+
+          let minifiedThemeCSS = (
+            await PostCSS([PostCSSImport(), PostCSSNesting(), PostCSSMinify()]).process(themeCSS , {
+              from: `${PROJECT_PATH}/builds/npm/themes/`
+            })
+          ).css;
+
+          Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/themes/${themeName}.css`, minifiedThemeCSS, "utf8");
+        }
+      }
+
+      // Icons
+      {
+        let paths = Glob.sync(`${PROJECT_PATH}/icons/*.svg`);
+
+        for (let path of paths) {
+          if (path.endsWith("portal.svg") === false) {
+            let relPath = path.substring(PROJECT_PATH.length);
+            let iconsSVG = Fse.readFileSync(path, "utf8");
+
+            Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/icons/`);
+            Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/${relPath}`, iconsSVG, "utf8");
+          }
         }
       }
     }
   }
-}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// npm run build:hosting
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if (COMMAND === "build" || COMMAND === "build:hosting") {
-  let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
-
-  // Clean up
-  {
-    Fse.ensureDirSync(`${PROJECT_PATH}/builds`);
-
-    if (Fse.existsSync(`${PROJECT_PATH}/builds/hosting`)) {
-      Fse.removeSync(`${PROJECT_PATH}/builds/hosting`);
-    }
-
-    Fse.ensureDirSync(`${PROJECT_PATH}/builds/hosting`);
-  }
-
-  // Create the package
-  {
-    // package.json
+  // Build hosting package
+  if (ARGS.length === 0 || ARGS.includes("hosting")) {
+    // Clean up
     {
-      let manifest = JSON.parse(Fse.readFileSync(`${PROJECT_PATH}/package.json`, "utf8"));
-      manifest.version = changelog[0].version;
-      delete manifest.devDependencies;
-      delete manifest.scripts;
-      Fse.writeFileSync(`${PROJECT_PATH}/builds/hosting/package.json`, JSON.stringify(manifest), "utf8");
-    }
+      Fse.ensureDirSync(`${PROJECT_PATH}/builds`);
 
-
-    // CHANGELOG.md
-    {
-      Fse.copySync(`${PROJECT_PATH}/CHANGELOG.md`, `${PROJECT_PATH}/builds/hosting/CHANGELOG.md`);
-    }
-
-    // portal.html, favicon.svg
-    {
-      Fse.copySync(`${PROJECT_PATH}/portal.html`, `${PROJECT_PATH}/builds/hosting/portal.html`);
-      Fse.copySync(`${PROJECT_PATH}/favicon.svg`, `${PROJECT_PATH}/builds/hosting/favicon.svg`);
-    }
-
-    // portal.js
-    {
-      let portalJS = await bundleScripts(`${PROJECT_PATH}/portal.js`);
-
-      if (MINIFY === true) {
-        portalJS = await minifyScript(portalJS);
+      if (Fse.existsSync(`${PROJECT_PATH}/builds/hosting`)) {
+        Fse.removeSync(`${PROJECT_PATH}/builds/hosting`);
       }
 
-      Fse.writeFileSync(`${PROJECT_PATH}/builds/hosting/portal.js`, portalJS, "utf8");
+      Fse.ensureDirSync(`${PROJECT_PATH}/builds/hosting`);
     }
 
-    // Themes
+    // Create the package
     {
-      for (let srcPath of Glob.sync(`${PROJECT_PATH}/themes/*.css`)) {
-        let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
-        let themeCSS = Fse.readFileSync(srcPath, "utf8");
-        let minifiedCSS = await PostCSS([PostCSSNesting(), PostCSSMinify()]).process(themeCSS , {from: undefined}).css;
-
-        Fse.ensureDirSync(Path.dirname(destPath));
-        Fse.writeFileSync(destPath, minifiedCSS, "utf8");
+      // package.json
+      {
+        let manifest = JSON.parse(Fse.readFileSync(`${PROJECT_PATH}/package.json`, "utf8"));
+        manifest.version = changelog[0].version;
+        delete manifest.devDependencies;
+        delete manifest.scripts;
+        Fse.writeFileSync(`${PROJECT_PATH}/builds/hosting/package.json`, JSON.stringify(manifest), "utf8");
       }
-    }
 
-    // Icons
-    {
-      for (let srcPath of Glob.sync(`${PROJECT_PATH}/icons/*.svg`)) {
-        let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
 
-        Fse.ensureDirSync(Path.dirname(destPath));
-        Fse.copySync(srcPath, destPath);
+      // CHANGELOG.md
+      {
+        Fse.copySync(`${PROJECT_PATH}/CHANGELOG.md`, `${PROJECT_PATH}/builds/hosting/CHANGELOG.md`);
       }
-    }
 
-    // Locales
-    {
-      for (let srcPath of Glob.sync(`${PROJECT_PATH}/locales/*.ftl`)) {
-        let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
-
-        Fse.ensureDirSync(Path.dirname(destPath));
-        Fse.copySync(srcPath, destPath);
+      // portal.html, favicon.svg
+      {
+        Fse.copySync(`${PROJECT_PATH}/portal.html`, `${PROJECT_PATH}/builds/hosting/portal.html`);
+        Fse.copySync(`${PROJECT_PATH}/favicon.svg`, `${PROJECT_PATH}/builds/hosting/favicon.svg`);
       }
-    }
 
-    // Docs
-    {
-      for (let srcPath of Glob.sync(`${PROJECT_PATH}/docs/*.html`)) {
-        let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
+      // portal.js
+      {
+        let portalJS = await bundleScripts(`${PROJECT_PATH}/portal.js`);
 
-        Fse.ensureDirSync(Path.dirname(destPath));
-        Fse.copySync(srcPath, destPath);
+        if (MINIFY === true) {
+          portalJS = await minifyScript(portalJS);
+        }
+
+        Fse.writeFileSync(`${PROJECT_PATH}/builds/hosting/portal.js`, portalJS, "utf8");
       }
-    }
 
-    // Elements
-    {
-      for (let srcPath of Glob.sync(`${PROJECT_PATH}/elements/*.js`)) {
-        let fileName = Path.basename(srcPath);
-
-        if (fileName.startsWith("pt-") === false) {
+      // Themes
+      {
+        for (let srcPath of Glob.sync(`${PROJECT_PATH}/themes/*.css`)) {
           let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
+          let themeCSS = Fse.readFileSync(srcPath, "utf8");
+          let minifiedCSS = await PostCSS([PostCSSNesting(), PostCSSMinify()]).process(themeCSS , {from: undefined}).css;
+
+          Fse.ensureDirSync(Path.dirname(destPath));
+          Fse.writeFileSync(destPath, minifiedCSS, "utf8");
+        }
+      }
+
+      // Icons
+      {
+        for (let srcPath of Glob.sync(`${PROJECT_PATH}/icons/*.svg`)) {
+          let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
+
           Fse.ensureDirSync(Path.dirname(destPath));
           Fse.copySync(srcPath, destPath);
         }
       }
-    }
 
-    // Dependencies
-    {
-      let srcPaths = [
-        `${PROJECT_PATH}/node_modules/marked/marked.min.js`,
-        `${PROJECT_PATH}/node_modules/prismjs/prism.js`
-      ];
+      // Locales
+      {
+        for (let srcPath of Glob.sync(`${PROJECT_PATH}/locales/*.ftl`)) {
+          let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
 
-      for (let srcPath of srcPaths) {
-        let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
+          Fse.ensureDirSync(Path.dirname(destPath));
+          Fse.copySync(srcPath, destPath);
+        }
+      }
 
-        Fse.ensureDirSync(Path.dirname(destPath));
-        Fse.copySync(srcPath, destPath);
+      // Docs
+      {
+        for (let srcPath of Glob.sync(`${PROJECT_PATH}/docs/*.html`)) {
+          let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
+
+          Fse.ensureDirSync(Path.dirname(destPath));
+          Fse.copySync(srcPath, destPath);
+        }
+      }
+
+      // Elements
+      {
+        for (let srcPath of Glob.sync(`${PROJECT_PATH}/elements/*.js`)) {
+          let fileName = Path.basename(srcPath);
+
+          if (fileName.startsWith("pt-") === false) {
+            let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
+            Fse.ensureDirSync(Path.dirname(destPath));
+            Fse.copySync(srcPath, destPath);
+          }
+        }
+      }
+
+      // Dependencies
+      {
+        let srcPaths = [
+          `${PROJECT_PATH}/node_modules/marked/marked.min.js`,
+          `${PROJECT_PATH}/node_modules/prismjs/prism.js`
+        ];
+
+        for (let srcPath of srcPaths) {
+          let destPath = `${PROJECT_PATH}/builds/hosting/` + srcPath.substring(PROJECT_PATH.length);
+
+          Fse.ensureDirSync(Path.dirname(destPath));
+          Fse.copySync(srcPath, destPath);
+        }
       }
     }
   }
@@ -418,72 +413,71 @@ if (COMMAND === "build" || COMMAND === "build:hosting") {
 // npm run publish:npm
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (COMMAND === "publish" || COMMAND === "publish:npm") {
-  let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
-  let lastPublishedVersion = await getLastPublishedNpmPackageVersion();
-
-  if (Semver.lte(changelog[0].version, lastPublishedVersion)) {
-    throw new Error(`Can't publish an NPM package with version equal or lower than ${lastPublishedVersion}.`);
-  }
-  if (changelog[0].date === "PENDING") {
-    throw new Error(`Can't publish with a pending release date. Please update CHANGELOG.md.`);
-  }
-
-  await new Promise((resolve) => {
-    let npmProcess = ChildProcess.spawn(
-      "npm", ["publish"],
-      {
-        cwd: `${PROJECT_PATH}/builds/npm/`,
-        stdio: "inherit"
-      }
-    );
-
-    npmProcess.on("exit", (error) => {
-      if (error) {
-        console.log(error.toString());
-      }
-
-      resolve();
-    });
-  });
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// npm run publish:hosting
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if (COMMAND === "publish" || COMMAND === "publish:hosting") {
+if (COMMAND === "publish") {
   let changelog = new ChangelogParser().parse(Fse.readFileSync(`${PROJECT_PATH}/CHANGELOG.md`, "utf8"));
 
-  if (changelog[0].date === "PENDING") {
-    throw new Error(`Can't publish with a pending release date. Please update CHANGELOG.md.`);
+  // Publish NPM package
+  if (ARGS.length === 0 || ARGS.includes("npm")) {
+    let lastPublishedVersion = await getLastPublishedNpmPackageVersion();
+
+    if (Semver.lte(changelog[0].version, lastPublishedVersion)) {
+      throw new Error(`Can't publish an NPM package with version equal or lower than ${lastPublishedVersion}.`);
+    }
+    if (changelog[0].date === "PENDING") {
+      throw new Error(`Can't publish with a pending release date. Please update CHANGELOG.md.`);
+    }
+
+    await new Promise((resolve) => {
+      let npmProcess = ChildProcess.spawn(
+        "npm", ["publish"],
+        {
+          cwd: `${PROJECT_PATH}/builds/npm/`,
+          stdio: "inherit"
+        }
+      );
+
+      npmProcess.on("exit", (error) => {
+        if (error) {
+          console.log(error.toString());
+        }
+
+        resolve();
+      });
+    });
   }
 
-  // Temporarily change firebase.json
-  let firebaseManifest = JSON.parse(Fse.readFileSync(`${PROJECT_PATH}/firebase.json`, "utf8"));
-  firebaseManifest.hosting.public = "builds/hosting";
-  Fse.writeFileSync(`${PROJECT_PATH}/firebase.json`, JSON.stringify(firebaseManifest, null, 2), "utf8");
+  // Publish hosting package
+  if (ARGS.length === 0 || ARGS.includes("hosting")) {
+    if (changelog[0].date === "PENDING") {
+      throw new Error(`Can't publish with a pending release date. Please update CHANGELOG.md.`);
+    }
 
-  await new Promise((resolve) => {
-    let command = "firebase";
-    let args =  ["deploy", "--only", "hosting"];
-    let firebaseProcess = ChildProcess.spawn(command, args, {cwd: PROJECT_PATH, stdio: "inherit"});
+    // Temporarily change firebase.json
+    let firebaseManifest = JSON.parse(Fse.readFileSync(`${PROJECT_PATH}/firebase.json`, "utf8"));
+    firebaseManifest.hosting.public = "builds/hosting";
+    Fse.writeFileSync(`${PROJECT_PATH}/firebase.json`, JSON.stringify(firebaseManifest, null, 2), "utf8");
 
-    firebaseProcess.on("exit", (error) => {
-      if (error) {
-        console.log("Error", error.toString());
-      }
-      else {
-        console.log("Published Xel Toolkit hosting");
-      }
+    await new Promise((resolve) => {
+      let command = "firebase";
+      let args =  ["deploy", "--only", "hosting"];
+      let firebaseProcess = ChildProcess.spawn(command, args, {cwd: PROJECT_PATH, stdio: "inherit"});
 
-      resolve();
+      firebaseProcess.on("exit", (error) => {
+        if (error) {
+          console.log("Error", error.toString());
+        }
+        else {
+          console.log("Published Xel Toolkit hosting");
+        }
+
+        resolve();
+      });
     });
-  });
 
-  // Restore firebase.json
-  firebaseManifest.hosting.public = ".";
-  Fse.writeFileSync(`${PROJECT_PATH}/firebase.json`, JSON.stringify(firebaseManifest, null, 2), "utf8");
+    // Restore firebase.json
+    firebaseManifest.hosting.public = ".";
+    Fse.writeFileSync(`${PROJECT_PATH}/firebase.json`, JSON.stringify(firebaseManifest, null, 2), "utf8");
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
