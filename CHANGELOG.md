@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.37.1 (2025-10-02)
+
+- Allow top level `<x-menu>` labels
+
 ## 0.37.0 (2025-09-25)
 
 - Support `<x-navitem>` tooltips

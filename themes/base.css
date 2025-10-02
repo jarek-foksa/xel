@@ -871,6 +871,13 @@ x-menu:has(x-menu[opened]) {
   overflow: -webkit-paged-x;
 }
 
+/* Heading */
+
+x-menu > x-label {
+  margin: 6px;
+  font-weight: 700;
+}
+
 /* Image */
 
 x-menu img {
