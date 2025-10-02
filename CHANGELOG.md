@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.37.2 (2025-10-02)
+
+- Add labels to color picker context menus
+
 ## 0.37.1 (2025-10-02)
 
 - Allow top level `<x-menu>` labels

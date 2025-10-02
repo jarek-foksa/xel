@@ -796,6 +796,8 @@ class XRGBLinearSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#color-model" autocapitalize>Color Model</x-message></x-label>
 
@@ -2034,6 +2036,8 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
             <x-menu id="gamut-hints-menu">
@@ -2869,6 +2873,8 @@ class XLABLinearSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
             <x-menu id="gamut-hints-menu">
@@ -3763,6 +3769,8 @@ class XXYZLinearSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
             <x-menu id="gamut-hints-menu">
@@ -4557,6 +4565,8 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#color-model" autocapitalize>Color Model</x-message></x-label>
             <x-menu id="color-model-menu">
@@ -5490,6 +5500,8 @@ class XLCHPlanarSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
             <x-menu id="gamut-hints-menu">
@@ -6322,6 +6334,8 @@ class XLABPlanarSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
             <x-menu id="gamut-hints-menu">
@@ -7200,6 +7214,8 @@ class XXYZPlanarSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#color-model" autocapitalize>Color Model</x-message></x-label>
 
@@ -8163,6 +8179,8 @@ class XRGBPolarSlidersElement extends HTMLElement {
 
       <x-contextmenu id="context-menu">
         <x-menu>
+          <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
+
           <x-menuitem>
             <x-label><x-message href="#color-model" autocapitalize>Color Model</x-message></x-label>
             <x-menu id="color-model-menu">
