@@ -46,7 +46,7 @@ export default class XButtonsElement extends HTMLElement {
   // <code>3</code> - Toggle the clicked button on/off, but toggle off only if there is at least one other button
   // toggled on<br/>
   get tracking() {
-    return this.hasAttribute("tracking") ? parseInt(this.getAttribute("tracking")) : -1;
+    return this.hasAttribute("tracking") ? Number.parseInt(this.getAttribute("tracking")) : -1;
   }
   set tracking(tracking) {
     this.setAttribute("tracking", tracking);
@@ -72,13 +72,14 @@ export default class XButtonsElement extends HTMLElement {
   get value() {
     if (this.tracking === 2 || this.tracking === 3) {
       let buttons = this.#getButtons().filter(button => button.toggled);
-      return buttons.map(button => button.value).filter(value => value != undefined);
+      return buttons.map(button => button.value).filter(value => value !== undefined);
     }
     else if (this.tracking === 1 || this.tracking === 0) {
       let button = this.#getButtons().find(button => button.toggled);
       return button && button.value !== undefined ? button.value : null;
     }
-    else if (this.tracking === -1) {
+    // -1
+    else{
       return null;
     }
   }

@@ -151,7 +151,7 @@ export default class XDrawerElement extends HTMLElement {
       this.setAttribute("position", this.position);
 
       let computedStyle = getComputedStyle(this);
-      let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
+      let transitionDuration = Number.parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
       let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function");
       let drawerRect = this.getBoundingClientRect();
 
@@ -185,8 +185,6 @@ export default class XDrawerElement extends HTMLElement {
           let popoverRect = this.getBoundingClientRect();
 
           if (rectContainsPoint(popoverRect, {x: event.clientX, y: event.clientY}) === false) {
-            let pointerEvents = getComputedStyle(this, "::backdrop").pointerEvents;
-
             if (!this.manual) {
               this.close();
             }
@@ -211,7 +209,7 @@ export default class XDrawerElement extends HTMLElement {
       window.removeEventListener("click", this.#windowClickListener);
 
       let computedStyle = getComputedStyle(this);
-      let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
+      let transitionDuration = Number.parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
       let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function") || "ease";
       let drawerRect = this.getBoundingClientRect();
 

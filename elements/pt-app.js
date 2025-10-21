@@ -19,7 +19,6 @@ import "./pt-code.js";
 import "./pt-settings.js";
 import "./pt-sidebar.js";
 
-import {removeDuplicates} from "../utils/array.js";
 import {html, css} from "../utils/template.js";
 import {sleep, debounce} from "../utils/time.js";
 
@@ -667,7 +666,7 @@ export default class PTAppElement extends HTMLElement {
     window.addEventListener("popstate", (event) => this.#onPopState(event));
     window.addEventListener("beforeunload", (event) => this.#onWindowBeforeUnload(event));
 
-    Xel.addEventListener("themechange", (event) => this.#updateForThemeChange());
+    Xel.addEventListener("themechange", () => this.#updateForThemeChange());
 
     this.#shadowRoot.addEventListener("pointerdown", (event) => this.#onShadowRootPointerDown(event));
     this.#shadowRoot.addEventListener("click", (event) => this.#onShadowRootClick(event), true);
@@ -723,11 +722,11 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  #onWindowBeforeUnload(event) {
+  #onWindowBeforeUnload() {
     this.storeMainScrollOffset();
   }
 
-  #onPopState(event) {
+  #onPopState() {
     this.#maybeDispatchLocationChangeEvent("pop");
   }
 
@@ -756,7 +755,7 @@ export default class PTAppElement extends HTMLElement {
     }
   }
 
-  #onMainWheel(event) {
+  #onMainWheel() {
     if (location.hash) {
       history.pushState(
         {index: history.state.index+1, scrollTop: this["#main"].scrollTop}, null, location.href.split("#")[0]
@@ -794,8 +793,6 @@ export default class PTAppElement extends HTMLElement {
   }
 
   restoreMainScrollOffset() {
-    let offset = 0;
-
     if (location.hash) {
       let page = this["#main"].firstElementChild;
       let elementID = location.hash.substring(1);

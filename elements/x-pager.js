@@ -119,7 +119,7 @@ export class XPagerElement extends HTMLElement {
   // The current page number.
   get value() {
     if (this.hasAttribute("value")) {
-      return parseInt(this.getAttribute("value"));
+      return Number.parseInt(this.getAttribute("value"));
     }
     else {
       return 1;
@@ -137,7 +137,7 @@ export class XPagerElement extends HTMLElement {
   //
   // The total number of pages.
   get max() {
-    return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : 5;
+    return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : 5;
   }
   set max(max) {
     this.setAttribute("max", max);
@@ -183,10 +183,6 @@ export class XPagerElement extends HTMLElement {
   #xelThemeChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  constructor() {
-    super();
-  }
 
   connectedCallback() {
     if (!this.#shadowRoot) {
@@ -287,7 +283,7 @@ export class XPagerElement extends HTMLElement {
       }
 
       if (item.part.contains("toggled-item") === false) {
-        this.value = parseInt(item.dataset.value);
+        this.value = Number.parseInt(item.dataset.value);
         this.dispatchEvent(new CustomEvent("toggle"));
       }
     }

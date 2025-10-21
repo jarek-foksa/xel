@@ -4,14 +4,10 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {createElement, closest, isPointerInsideElement} from "../utils/element.js";
 import {getBrowserEngine} from "../utils/system.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
-
-let {max} = Math;
 
 // @element x-button
 // @event toggle - User toggled the button on or off by clicking it.
@@ -285,8 +281,6 @@ export default class XButtonElement extends HTMLElement {
   // Close the child menu or overlay.
   collapse(delay = null) {
     return new Promise(async (resolve) => {
-      let popup = null;
-
       if (this.#canCloseMenu()) {
         await this.#closeMenu(delay);
       }
@@ -381,7 +375,7 @@ export default class XButtonElement extends HTMLElement {
     if (this.disabled === false) {
       let menu = this.querySelector(":scope > x-menu");
 
-      if (menu && menu.opened) {
+      if (menu?.opened) {
         result = true;
       }
     }
@@ -463,7 +457,7 @@ export default class XButtonElement extends HTMLElement {
     if (this.disabled === false) {
       let popover = this.querySelector(":scope > x-popover");
 
-      if (popover && popover.opened) {
+      if (popover?.opened) {
         result = true;
       }
     }
@@ -585,19 +579,19 @@ export default class XButtonElement extends HTMLElement {
     if (event.target === this["#backdrop"]) {
       this.#onBackdropPointerDown(event);
     }
-    else if (openedMenu && openedMenu.contains(event.target)) {
+    else if (openedMenu?.contains(event.target)) {
       return;
     }
-    else if (openedPopover && openedPopover.contains(event.target)) {
+    else if (openedPopover?.contains(event.target)) {
       return;
     }
-    else if (openedDialog && openedDialog.contains(event.target)) {
+    else if (openedDialog?.contains(event.target)) {
       return;
     }
-    else if (openedDrawer && openedDrawer.contains(event.target)) {
+    else if (openedDrawer?.contains(event.target)) {
       return;
     }
-    else if (openedNotification && openedNotification.contains(event.target)) {
+    else if (openedNotification?.contains(event.target)) {
       return;
     }
     else {
@@ -656,21 +650,21 @@ export default class XButtonElement extends HTMLElement {
     if (event.target === this["#backdrop"]) {
       return;
     }
-    else if (openedMenu && openedMenu.contains(event.target)) {
+    else if (openedMenu?.contains(event.target)) {
       if (openedMenu.hasAttribute("closing") === false && event.target.closest("x-menuitem")) {
         this.#onMenuItemClick(event);
       }
     }
-    else if (openedPopover && openedPopover.contains(event.target)) {
+    else if (openedPopover?.contains(event.target)) {
       return;
     }
-    else if (openedDialog && openedDialog.contains(event.target)) {
+    else if (openedDialog?.contains(event.target)) {
       return;
     }
-    else if (openedDrawer && openedDrawer.contains(event.target)) {
+    else if (openedDrawer?.contains(event.target)) {
       return;
     }
-    else if (openedNotification && openedNotification.contains(event.target)) {
+    else if (openedNotification?.contains(event.target)) {
       return;
     }
     else {
@@ -679,11 +673,11 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
-  #onBackdropPointerDown(pointerDownEvent) {
+  #onBackdropPointerDown() {
     this.collapse();
   }
 
-  async #onButtonPointerDown(pointerDownEvent) {
+  #onButtonPointerDown(pointerDownEvent) {
     if (pointerDownEvent.buttons > 1) {
       pointerDownEvent.preventDefault();
       return;
@@ -732,7 +726,7 @@ export default class XButtonElement extends HTMLElement {
     if (this.#canOpenMenu() === false && this.#canOpenPopover() === false && this.#canClosePopover() === false) {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
-      let minPressedTime = parseInt(getComputedStyle(this).getPropertyValue("--min-pressed-time") || "150ms");
+      let minPressedTime = Number.parseInt(getComputedStyle(this).getPropertyValue("--min-pressed-time") || "150ms");
       let pointerUpOrCancelListener;
 
       this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {
@@ -793,7 +787,7 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
-  async #onButtonClick(event) {
+  #onButtonClick(event) {
     let popup = this.querySelector(":scope > x-menu, :scope > x-popover");
 
     if (popup) {
@@ -884,7 +878,6 @@ export default class XButtonElement extends HTMLElement {
 
       else if (event.code === "ArrowDown") {
         if (this.#canOpenMenu()) {
-          let menu = this.querySelector(":scope > x-menu");
           event.preventDefault();
           this.#openMenu().then(() => this.querySelector(":scope > x-menu").focusFirstMenuItem());
         }

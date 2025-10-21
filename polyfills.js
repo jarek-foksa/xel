@@ -11,7 +11,7 @@
 // Make "click", "dblclick" and "contextmenu" look more like pointer events
 // (https://github.com/w3c/pointerevents/issues/100#issuecomment-23118584)
 {
-  if (MouseEvent.prototype.hasOwnProperty("pointerType") === false) {
+  if (Object.hasOwn(MouseEvent.prototype, "pointerType") === false) {
     Object.defineProperty(MouseEvent.prototype, "pointerType", {
       get() {
         return this.sourceCapabilities.firesTouchEvents ? "touch" : "mouse";

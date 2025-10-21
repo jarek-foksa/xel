@@ -7,7 +7,7 @@
 import PTPage from "./pt-page.js";
 import Xel from "../classes/xel.js";
 
-import {html, css} from "../utils/template.js";
+import {css} from "../utils/template.js";
 
 export default class PTSetupPageElement extends PTPage {
   static _shadowStyleSheet = css`
@@ -65,10 +65,6 @@ export default class PTSetupPageElement extends PTPage {
   #localeSelectChangeListener;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  constructor() {
-    super();
-  }
 
   async connectedCallback() {
     super.connectedCallback();

@@ -4,13 +4,11 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-let {max, pow, sqrt, PI} = Math;
-
 // @type (number, number) => number
 //
 // Round given number to the fixed number of decimal places.
 export let round = (number, precision = 0) => {
-  let coefficient = pow(10, precision);
+  let coefficient = Math.pow(10, precision);
   return Math.round(number * coefficient) / coefficient;
 };
 
@@ -25,7 +23,7 @@ export let roundRect = (rect, precision = 0) => {
 };
 
 // @type (number, number, number, number?) => number
-export let normalize = (number, min, max = Infinity, precision = null) => {
+export let normalize = (number, min, max = Number.POSITIVE_INFINITY, precision = null) => {
   if (precision !== null) {
     number = round(number, precision);
   }
@@ -44,13 +42,10 @@ export let normalize = (number, min, max = Infinity, precision = null) => {
 //
 // Round a number to a specified number of significant digits.
 export let toPrecision = (n, precision) => {
-  n = +n;
-  precision = +precision;
-
-  let integerLength = (Math.floor(n) + "").length;
+  let integerLength = (`${Math.floor(n)}`).length;
 
   if (precision > integerLength) {
-    return +n.toFixed(precision - integerLength);
+    return Number.parseFloat(n.toFixed(precision - integerLength));
   }
   else {
     let p10 = 10 ** (integerLength - precision);
@@ -60,7 +55,7 @@ export let toPrecision = (n, precision) => {
 
 // @type (number) => number
 export let getPrecision = (number) => {
-  if (!isFinite(number)) {
+  if (!Number.isFinite(number)) {
     return 0;
   }
   else {
@@ -86,7 +81,7 @@ export let getDistanceBetweenPoints = (point1, point2) => {
   let y = point2.y - point1.y;
   y = y * y;
 
-  let distance = sqrt(x+y);
+  let distance = Math.sqrt(x+y);
   return distance;
 };
 
@@ -107,7 +102,7 @@ export let rectContainsPoint = (rect, point) => {
 
 // @type (number) => number
 export let degToRad = (degrees) => {
-  let radians = (PI * degrees) / 180;
+  let radians = (Math.PI * degrees) / 180;
   return radians;
 };
 

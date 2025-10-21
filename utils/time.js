@@ -8,7 +8,7 @@
 //
 // Sleep for given period of time (in miliseconds).
 export let sleep = (time) => {
-  return new Promise( (resolve, reject) => {
+  return new Promise( (resolve) => {
     setTimeout(() => resolve(), time);
   });
 };
@@ -52,7 +52,6 @@ export let getRelDisplayDate = (date, refDate = new Date(), locales = ["en"]) =>
   // Future
   else {
     sign = -1;
-    diff = diff;
   }
 
   if (diff < seconds) {
@@ -94,7 +93,7 @@ export let getRelDisplayDate = (date, refDate = new Date(), locales = ["en"]) =>
 // @license MIT License [https://github.com/documentcloud/underscore/blob/master/LICENSE]
 //
 // Returns a function, that, when invoked, will only be triggered at most once during a given window of time.
-export let throttle = (func, wait = 500, context) => {
+export let throttle = (func, wait = 500, context = null) => {
   let args = null;
   let timeout = null;
   let result = null;

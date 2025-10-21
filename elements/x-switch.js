@@ -4,9 +4,7 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
-import {createElement, closest} from "../utils/element.js";
+import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
@@ -242,7 +240,7 @@ export default class XSwitchElement extends HTMLElement {
     }
   }
 
-  async #onClick(event) {
+  #onClick() {
     // Update state
     {
       if (this.mixed) {

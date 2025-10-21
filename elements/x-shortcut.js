@@ -125,7 +125,6 @@ export default class XShortcutElement extends HTMLElement {
 
   #update() {
     let displayValue = "";
-    let keys = this.value;
     let modKeys = this.modKeys;
     let normalKey = this.normalKey;
 

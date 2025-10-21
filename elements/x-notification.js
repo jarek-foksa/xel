@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {rectContainsPoint} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {getTimeStamp} from "../utils/time.js";
@@ -73,7 +71,7 @@ export default class XNotificationElement extends HTMLElement {
   // Set to 0 to disable the timeout.<br/>
   // Set to -1 to disable the timeout and make the notification permanent.
   get timeout() {
-    return this.hasAttribute("timeout") ? parseFloat(this.getAttribute("timeout")) : 0;
+    return this.hasAttribute("timeout") ? Number.parseFloat(this.getAttribute("timeout")) : 0;
   }
   set timeout(timeout) {
     this.setAttribute("timeout", timeout);
@@ -124,10 +122,10 @@ export default class XNotificationElement extends HTMLElement {
   #onOpen() {
     // Animate in
     if (this.isConnected) {
-      let fromBottom = (0 - this.getBoundingClientRect().height - 10) + "px";
+      let fromBottom = (-this.getBoundingClientRect().height - 10) + "px";
       let toBottom = getComputedStyle(this).bottom;
 
-      let inAnimation = this.animate(
+      this.animate(
         { bottom: [fromBottom, toBottom]},
         { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
       );
@@ -174,7 +172,7 @@ export default class XNotificationElement extends HTMLElement {
     if (this.isConnected) {
       this.setAttribute("animating", "");
       let fromBottom = getComputedStyle(this).bottom;
-      let toBottom = (0 - this.getBoundingClientRect().height - 10) + "px";
+      let toBottom = (-this.getBoundingClientRect().height - 10) + "px";
 
       let inAnimation = this.animate(
         { bottom: [fromBottom, toBottom]},

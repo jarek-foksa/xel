@@ -190,7 +190,7 @@ export default class XColorSelectElement extends HTMLElement {
     }
   }
 
-  async #collapse(delay = null) {
+  async #collapse() {
     if (this.hasAttribute("expanded")) {
       this["#popover"].setAttribute("closing", "");
 
@@ -269,7 +269,7 @@ export default class XColorSelectElement extends HTMLElement {
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}))
   }
 
-  #onColorPickerChange(event) {
+  #onColorPickerChange() {
     this.value = this["#color-picker"].value;
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}))
     this.#updatePreview();

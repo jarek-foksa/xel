@@ -1,13 +1,23 @@
 {
-  "folders": [
-    {
-      "path": ".",
-    },
-  ],
+  "folders": [{
+    "path": ".",
+  }],
   "settings": {
     "rulers": [115],
     "tab_size": 2,
     "translate_tabs_to_spaces": true,
     "trim_trailing_white_space_on_save": true,
-  },
+    "LSP": {
+      "LSP-biome": {
+        "settings": {
+          "biome.lspBin": "node_modules/.bin/biome"
+        }
+      },
+      "LSP-typescript": {
+        "initializationOptions": {
+          "tsserver.path": "node_modules/.bin/tsserver"
+        }
+      }
+    }
+  }
 }

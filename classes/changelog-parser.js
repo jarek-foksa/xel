@@ -91,7 +91,7 @@ export default class ChangelogParser {
 
     this.#stringScanner.eatSpaces();
 
-    return {type: "TITLE", text};
+    return {type: "TITLE", title};
   }
 
   #readSubtitleToken() {

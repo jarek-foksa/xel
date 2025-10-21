@@ -40,7 +40,7 @@ let DialogElementMixin = {
         await this._closeAnimation.finished;
       }
 
-      showModal.apply(this, arguments);
+      showModal.apply(this);
 
       // Prevent the document from being scrolled when the dialog is open
       {
@@ -88,7 +88,7 @@ let DialogElementMixin = {
       {
         if (this.hasAttribute("hidden") === false) {
           let computedStyle = getComputedStyle(this);
-          let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
+          let transitionDuration = Number.parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
           let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function");
           let transitionType = computedStyle.getPropertyValue("--transition-type") || "stretch";
 
@@ -186,7 +186,7 @@ let DialogElementMixin = {
   //
   // Close the dialog.<br/>
   // Returns a promise that is resolved when the dialog finishes animating.
-  close() {
+  close(returnValue) {
     return new Promise( async (resolve) => {
       // Animate the dialog
       {
@@ -200,7 +200,7 @@ let DialogElementMixin = {
 
         if (this.hasAttribute("hidden") === false) {
           let computedStyle = getComputedStyle(this);
-          let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
+          let transitionDuration = Number.parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
           let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function") || "ease";
           let transitionType = computedStyle.getPropertyValue("--transition-type") || "stretch";
 
@@ -220,7 +220,7 @@ let DialogElementMixin = {
       }
 
       if (this.hasAttribute("open")) {
-        close.apply(this, arguments);
+        close.apply(this, [returnValue]);
       }
 
       resolve();

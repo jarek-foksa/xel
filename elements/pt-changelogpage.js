@@ -105,11 +105,11 @@ export default class PTChangelogPageElement extends PTPage {
 
   #markdownToHTML(markdown) {
     // @doc https://marked.js.org/using_advanced#options
-    marked.setOptions({
+    globalThis.marked.setOptions({
       gfm: true,
-      highlight: (code, language, callback) => {
-        if (Prism.languages[language]) {
-          return Prism.highlight(code, Prism.languages[language], language);
+      highlight: (code, language) => {
+        if (globalThis.Prism.languages[language]) {
+          return globalThis.Prism.highlight(code, globalThis.Prism.languages[language], language);
         }
         else {
           return code;
@@ -117,7 +117,7 @@ export default class PTChangelogPageElement extends PTPage {
       }
     });
 
-    let output = marked.parse(markdown);
+    let output = globalThis.marked.parse(markdown);
     return output;
   }
 }

@@ -4,15 +4,11 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {isNumeric} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
 import {getBrowserEngine} from "../utils/system.js";
 import {debounce, sleep} from "../utils/time.js";
 import {normalize, getPrecision, getDistanceBetweenPoints} from "../utils/math.js";
-
-let {isFinite} = Number;
 
 const NUMERIC_KEYS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
 
@@ -130,7 +126,7 @@ export default class XNumberInputElement extends HTMLElement {
   // @type number?
   // @default null
   get value() {
-    return this.hasAttribute("value") ? parseFloat(this.getAttribute("value")) : null;
+    return this.hasAttribute("value") ? Number.parseFloat(this.getAttribute("value")) : null;
   }
   set value(value) {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
@@ -141,10 +137,10 @@ export default class XNumberInputElement extends HTMLElement {
   // @type number
   // @default Infinity
   get min() {
-    return this.hasAttribute("min") ? parseFloat(this.getAttribute("min")) : -Infinity;
+    return this.hasAttribute("min") ? Number.parseFloat(this.getAttribute("min")) : Number.NEGATIVE_INFINITY;
   }
   set min(min) {
-    isFinite(min) ? this.setAttribute("min", min) : this.removeAttribute("min");
+    Number.isFinite(min) ? this.setAttribute("min", min) : this.removeAttribute("min");
   }
 
   // @property
@@ -152,10 +148,10 @@ export default class XNumberInputElement extends HTMLElement {
   // @type number
   // @default Infinity
   get max() {
-    return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : Infinity;
+    return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : Number.POSITIVE_INFINITY;
   }
   set max(max) {
-    isFinite(max) ? this.setAttribute("max", max) : this.removeAttribute("max");
+    Number.isFinite(max) ? this.setAttribute("max", max) : this.removeAttribute("max");
   }
 
   // @property
@@ -176,7 +172,7 @@ export default class XNumberInputElement extends HTMLElement {
   //
   // Maximal number of digits to be shown after the dot. This setting affects only the display value.
   get precision() {
-    return this.hasAttribute("precision") ? parseFloat(this.getAttribute("precision")) : 20;
+    return this.hasAttribute("precision") ? Number.parseFloat(this.getAttribute("precision")) : 20;
   }
   set precision(value) {
     this.setAttribute("precision", value);
@@ -189,7 +185,7 @@ export default class XNumberInputElement extends HTMLElement {
   //
   // Number by which value should be incremented or decremented when up or down arrow key is pressed.
   get step() {
-    return this.hasAttribute("step") ? parseFloat(this.getAttribute("step")) : 1;
+    return this.hasAttribute("step") ? Number.parseFloat(this.getAttribute("step")) : 1;
   }
   set step(step) {
     this.setAttribute("step", step);
@@ -215,19 +211,6 @@ export default class XNumberInputElement extends HTMLElement {
   }
   set suffix(suffix) {
     this.setAttribute("suffix", suffix);
-  }
-
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this input has "mixed" state.
-  get mixed() {
-    return this.hasAttribute("mixed");
-  }
-  set mixed(mixed) {
-    mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
   // @property
@@ -406,7 +389,7 @@ export default class XNumberInputElement extends HTMLElement {
 
   #commitEditorChanges() {
     let editorTextContent = this["#editor"].textContent;
-    let editorValue = parseFloat(editorTextContent);
+    let editorValue = Number.parseFloat(editorTextContent);
 
     if (Number.isNaN(editorValue)) {
       editorValue = null;
@@ -440,7 +423,7 @@ export default class XNumberInputElement extends HTMLElement {
   #updateEditorTextContent() {
     if (this.hasAttribute("value")) {
       if (this.step < 1) {
-        let value = parseFloat(this.getAttribute("value"));
+        let value = Number.parseFloat(this.getAttribute("value"));
         let stepPrecision = getPrecision(this.step);
         let valuePrecision = getPrecision(value);
 
@@ -465,7 +448,7 @@ export default class XNumberInputElement extends HTMLElement {
 
     if (this.matches(":focus")) {
       let textContent = this["#editor"].textContent;
-      value = textContent.trim() === "" ? null : parseFloat(textContent);
+      value = textContent.trim() === "" ? null : Number.parseFloat(textContent);
     }
     else {
       value = this.value;
@@ -676,7 +659,7 @@ export default class XNumberInputElement extends HTMLElement {
     }
   }
 
-  #onStepperIncrementStart(event) {
+  #onStepperIncrementStart() {
     let incrementListener, incrementEndListener;
 
     if (this.matches(":focus")) {
@@ -692,14 +675,14 @@ export default class XNumberInputElement extends HTMLElement {
       this.#maybeDispatchChangeEndEvent();
     });
 
-    this.addEventListener("incrementend", incrementEndListener = (event) => {
+    this.addEventListener("incrementend", incrementEndListener = () => {
       this.#isStepperButtonDown = false;
       this.removeEventListener("increment", incrementListener);
       this.removeEventListener("incrementend", incrementEndListener);
     });
   }
 
-  #onStepperDecrementStart(event) {
+  #onStepperDecrementStart() {
     let decrementListener, decrementEndListener;
 
     if (this.matches(":focus")) {
@@ -715,7 +698,7 @@ export default class XNumberInputElement extends HTMLElement {
       this.#maybeDispatchChangeEndEvent();
     });
 
-    this.addEventListener("decrementend", decrementEndListener = (event) => {
+    this.addEventListener("decrementend", decrementEndListener = () => {
       this.#isStepperButtonDown = false;
       this.removeEventListener("decrement", decrementListener);
       this.removeEventListener("decrementend", decrementEndListener);

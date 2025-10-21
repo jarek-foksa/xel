@@ -33,9 +33,9 @@ export default class EventEmitter {
       return;
     }
 
-    var temp = [];
+    let temp = [];
 
-    for (var i = 0; i < this.#events[eventName].length; i += 1) {
+    for (let i = 0; i < this.#events[eventName].length; i += 1) {
       if (this.#events[eventName][i] !== listener) {
         temp.push(this.#events[eventName][i]);
       }

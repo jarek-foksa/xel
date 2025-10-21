@@ -138,7 +138,7 @@ export default class PTDemoBlockElement extends HTMLElement {
         // Remove dynamically added attributes
         for (let element of container.querySelectorAll("*")) {
           if (element.localName.startsWith("x-")) {
-            for (let {name, value} of [...element.attributes]) {
+            for (let {name} of [...element.attributes]) {
               if (name === "tabindex" || name === "role" || name.startsWith("aria")) {
                 element.removeAttribute(name);
               }
@@ -160,14 +160,14 @@ export default class PTDemoBlockElement extends HTMLElement {
             lines.shift();
           }
 
-          if (isDOMWhitespace(lines[lines.length - 1])) {
+          if (isDOMWhitespace(lines.at(-1))) {
             lines.pop();
           }
         }
 
         // Remove excesive indentation
         {
-          let minIndent = Infinity;
+          let minIndent = Number.POSITIVE_INFINITY;
 
           for (let line of lines) {
             if (isDOMWhitespace(line) === false) {

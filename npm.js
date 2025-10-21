@@ -6,11 +6,11 @@
 //   MIT License (check LICENSE.md for details)
 
 import ChildProcess from "node:child_process";
+import Process from "node:process";
+import Path from "node:path";
+
 import Fse from "fs-extra";
 import {glob as Glob} from "glob";
-import Path from "node:path";
-import Semver from "semver";
-
 import HTMLMinifier from "html-minifier-terser";
 import PostCSS from "postcss";
 import PostCSSImport from "postcss-import";
@@ -18,16 +18,20 @@ import PostCSSNesting from "postcss-nesting";
 import PostCSSMinify from "@csstools/postcss-minify";
 import * as JSMinifier from "terser";
 import * as JSBundler from "rollup";
+import Semver from "semver";
 import ChangelogParser from "./classes/changelog-parser.js";
+import {round} from "./utils/math.js";
 
 const PROJECT_PATH = import.meta.dirname;
-const [, , COMMAND, ...ARGS] = process.argv;
+const [, , COMMAND, ...ARGS] = Process.argv;
 const MINIFY = true;
 
 const HELP = `Commands:
   npm run start                 - Start Firebase emulators
   npm run build [npm,hosting]   - Build packages
   npm run publish [npm,hosting] - Publish packages
+  npm run lint [path]           - Run JavaScript linter
+  npm run stats                 - Show source code statistics
   npm run help                  - Show this help message
 `;
 
@@ -176,10 +180,46 @@ let minifyScript = (code, verbose = false) => {
 // @type (string) => string?
 let getLastPublishedNpmPackageVersion = () => {
   return new Promise((resolve) => {
-    ChildProcess.exec(`npm show xel version`, (error, stdout) => {
+    ChildProcess.exec(`npm show xel version`, (_error, stdout) => {
       let version = stdout.replace("\n", "");
       resolve(Semver.valid(version));
     });
+  });
+};
+
+/**
+ * @type {(command: string, cwd?: string | null, interactive?: boolean) => Promise<void>}
+ */
+let execCommand = (command, cwd = Process.cwd(), interactive = false) => {
+  return new Promise((resolve, reject) => {
+    if (interactive === false) {
+      ChildProcess.exec(command, {encoding: "utf-8", cwd: cwd}, (error, standardOutput, standardError) => {
+        if (error) {
+          reject();
+          return;
+        }
+        else if (standardError) {
+          reject(standardError);
+          return;
+        }
+        else {
+          resolve(standardOutput.trim());
+        }
+      });
+    }
+    else if (interactive === true) {
+      let childProcess = ChildProcess.spawn(command, [], {shell: true, cwd: cwd, stdio: "inherit"});
+
+      childProcess.on("exit", (error) => {
+        if (error) {
+          console.log("ERROR", error.toString());
+          reject();
+        }
+        else {
+          resolve();
+        }
+      });
+    }
   });
 };
 
@@ -478,6 +518,50 @@ if (COMMAND === "publish") {
     firebaseManifest.hosting.public = ".";
     Fse.writeFileSync(`${PROJECT_PATH}/firebase.json`, JSON.stringify(firebaseManifest, null, 2), "utf8");
   }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// npm run lint
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+else if (COMMAND === "lint") {
+  let command = `./node_modules/.bin/biome lint ${ARGS[0] || ""}`;
+  await execCommand(command, Process.cwd(), true);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// npm run stats
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+else if (COMMAND === "stats") {
+  let table = {};
+
+  let locTotal = 0;
+  let bytesTotal = 0;
+  let pathsTotal = [];
+
+  for (let ext of ["js", "html", "css", "ftl", "svg", "json", "md"]) {
+    let paths = Glob.sync(`${PROJECT_PATH}/**/*.${ext}`, {ignore: ["builds/**", "libs/**", "node_modules/**"]});
+    let loc = 0;
+    let bytes = 0;
+
+    for (let path of paths) {
+      loc += Fse.readFileSync(path, "utf8").split("\n").length;
+      bytes += Fse.statSync(path).size;
+    }
+
+    locTotal += loc;
+    bytesTotal += bytes;
+    pathsTotal.push(...paths);
+
+    let kilobytes = round(bytes / 1024, 2);
+
+    table["*." + ext] = {"Files": paths.length, "Lines": loc, "Kilobytes": kilobytes};
+  }
+
+  table["Total"] = {"Files": pathsTotal.length, "Lines": locTotal, "Kilobytes": round(bytesTotal / 1024, 2)};
+
+  console.table(table);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

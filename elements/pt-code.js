@@ -218,7 +218,7 @@ export default class PTCodeElement extends HTMLElement {
     }
 
     if (this["#code"].textContent !== "") {
-      Prism.highlightElement(this["#code"], true);
+      globalThis.Prism.highlightElement(this["#code"], true);
 
       // @bugfix: https://github.com/PrismJS/prism/issues/3658
       this["#pre"].removeAttribute("tabindex");

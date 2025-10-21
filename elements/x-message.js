@@ -6,8 +6,7 @@
 
 import Xel from "../classes/xel.js";
 
-import {isNumeric, isString, toTitleCase} from "../utils/string.js";
-import {html, css} from "../utils/template.js";
+import {toTitleCase} from "../utils/string.js";
 
 // @element x-message
 export default class XMessageElement extends HTMLElement {
@@ -42,7 +41,7 @@ export default class XMessageElement extends HTMLElement {
         key = key.trim();
         value = value.trim();
 
-        let number = parseFloat(value);
+        let number = Number.parseFloat(value);
         let isNumber = (value - number + 1) >= 0;
 
         args[key] = isNumber ? number : value;

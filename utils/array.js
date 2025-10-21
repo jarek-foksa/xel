@@ -20,10 +20,10 @@ export let compareArrays = (array, otherArray, compareIndexes = false) => {
   }
 
   if (compareIndexes) {
-    for (let index in array) {
-      let item = array[index];
+    for (let i = 0; i < array.length; i += 1) {
+      let item = array[i];
 
-      if (item !== otherArray[index]) {
+      if (item !== otherArray[i]) {
         return false ;
       }
     }

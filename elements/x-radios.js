@@ -99,7 +99,7 @@ export default class XRadiosElement extends HTMLElement {
 
       if (focusedRadio) {
         let focusedRadioIndex = contextRadios.indexOf(focusedRadio);
-        let lastRadio = contextRadios[contextRadios.length-1];
+        let lastRadio = contextRadios.at(-1);
         let prevRadio = contextRadios.length > 1 ? contextRadios[focusedRadioIndex-1] || lastRadio : null;
 
         if (prevRadio) {

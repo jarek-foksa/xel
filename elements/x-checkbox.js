@@ -6,7 +6,7 @@
 
 import Xel from "../classes/xel.js";
 
-import {createElement, closest} from "../utils/element.js";
+import {closest} from "../utils/element.js";
 import {getBrowserEngine} from "../utils/system.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
@@ -302,7 +302,7 @@ export default class XCheckboxElement extends HTMLElement {
     }
   }
 
-  async #onClick(event) {
+  #onClick() {
     // Update state
     {
       if (this.mixed) {

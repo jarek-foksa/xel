@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {html, css} from "../utils/template.js";
 
 // @element x-swatch

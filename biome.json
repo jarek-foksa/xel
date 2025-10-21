@@ -1,0 +1,76 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.6/schema.json",
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**/*.js", "!node_modules", "!builds"]
+  },
+  "linter": {
+    "enabled": true,
+    "domains": {
+      "project": "none",
+      "test": "none"
+    },
+    "rules": {
+      "complexity": {
+        "noImplicitCoercions": "on",
+        "noUselessStringConcat": "on",
+        "noVoid": "on",
+        "useWhile": "on",
+        "noCommaOperator": "off",
+        "noStaticOnlyClass": "off",
+        "noUselessContinue": "off",
+        "noUselessLoneBlockStatements": "off",
+        "noUselessTernary": "off",
+        "useLiteralKeys": "off"
+      },
+      "correctness": {
+        "noGlobalDirnameFilename": "on",
+        "noProcessGlobal": "on",
+        "noUndeclaredVariables": "on",
+        "useSingleJsDocAsterisk": "on",
+        "useParseIntRadix": "off"
+      },
+      "performance": {
+        "noDynamicNamespaceImportAccess": "off"
+      },
+      "security": {
+        "noGlobalEval": "off"
+      },
+      "style": {
+        "noShoutyConstants": "on",
+        "noYodaExpression": "on",
+        "useAtIndex": "on",
+        "useConsistentBuiltinInstantiation": "on",
+        "useDefaultParameterLast": "on",
+        "useDefaultSwitchClause": "on",
+        "useGroupedAccessorPairs": "on",
+        "useNumberNamespace": "on",
+        "useObjectSpread": "on",
+        "useThrowNewError": "on",
+        "useThrowOnlyError": "on",
+        "useTrimStartEnd": "on",
+        "useConst": "off",
+        "useExponentiationOperator": "off",
+        "useTemplate": "off"
+      },
+      "suspicious": {
+        "noConstantBinaryExpressions": "on",
+        "noUnassignedVariables": "on",
+        "noVar": "on",
+        "useAwait": "on",
+        "useErrorMessage": "on",
+        "useGuardForIn": "on",
+        "useNumberToFixedDigitsArgument": "on",
+        "noAssignInExpressions": "off",
+        "noAsyncPromiseExecutor": "off",
+        "useIterableCallbackReturn": "off"
+      }
+    }
+  },
+  "assist": {
+    "enabled": false
+  },
+  "formatter": {
+    "enabled": false
+  }
+}

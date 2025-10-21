@@ -556,7 +556,7 @@ export default class XMenuElement extends HTMLElement {
       // Animate the menu
       {
         let transition = getComputedStyle(this).getPropertyValue("--open-transition");
-        let [property, duration, easing] = parseTransistion(transition);
+        let [property] = parseTransistion(transition);
 
         if (property === "transform") {
           await this.animate(
@@ -715,7 +715,7 @@ export default class XMenuElement extends HTMLElement {
   // @type () => void
   focusLastMenuItem() {
     let items = this.querySelectorAll("x-menuitem:not([disabled]):not([hidden])");
-    let lastItem = (items.length > 0) ? items[items.length-1] : null;
+    let lastItem = (items.length > 0) ? items.at(-1) : null;
 
     if (lastItem) {
       lastItem.focus();
@@ -733,7 +733,7 @@ export default class XMenuElement extends HTMLElement {
     let direction = "right";
 
     {
-      let point = this.#delayPoints[this.#delayPoints.length - 1];
+      let point = this.#delayPoints.at(-1);
       let prevPoint = this.#delayPoints[0];
       let openedSubmenu = this.querySelector("x-menu[opened]");
 
@@ -860,7 +860,7 @@ export default class XMenuElement extends HTMLElement {
 
         if (item && item.disabled === false && item.closest("x-menu") === this) {
           if (item.matches(":focus") === false) {
-            this.#delay( async () => {
+            this.#delay(() => {
               let otherItem = this.querySelector(":scope > x-menuitem:focus");
 
               if (otherItem) {
@@ -872,7 +872,6 @@ export default class XMenuElement extends HTMLElement {
               }
 
 
-              let menu = item.closest("x-menu");
               let submenu = item.querySelector("x-menu");
               let otherItems = [...this.querySelectorAll(":scope > x-menuitem")].filter($0 => $0 !== item);
 
@@ -930,7 +929,6 @@ export default class XMenuElement extends HTMLElement {
 
               item.focus();
 
-              let menu = item.closest("x-menu");
               let submenu = item.querySelector("x-menu");
               let otherItems = [...this.querySelectorAll(":scope > x-menuitem")].filter($0 => $0 !== item);
 
@@ -1102,7 +1100,7 @@ export default class XMenuElement extends HTMLElement {
         let parentMenu = focusedItem.closest("x-menu");
         let parentItem = parentMenu.closest("x-menuitem");
 
-        if (parentItem && parentItem.closest("x-menu")) {
+        if (parentItem?.closest("x-menu")) {
           event.preventDefault();
           event.stopPropagation();
 

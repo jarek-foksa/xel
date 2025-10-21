@@ -73,7 +73,7 @@ export default class XLabelElement extends HTMLElement {
   // @type number?
   // @default null
   get level() {
-    return this.hasAttribute("level") ? parseInt(this.getAttribute("level")) : null;
+    return this.hasAttribute("level") ? Number.parseInt(this.getAttribute("level")) : null;
   }
   set level(level) {
     level === null ? this.removeAttribute("level") : this.setAttribute("level", level);

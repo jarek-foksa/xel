@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {compareArrays} from "../utils/array.js";
 import {closest} from "../utils/element.js";
 import {normalize, round, getDistanceBetweenPoints, getPrecision} from "../utils/math.js";
@@ -161,7 +159,7 @@ export default class XSliderElement extends HTMLElement {
   // @type number
   // @default 0
   get min() {
-    return this.hasAttribute("min") ? parseFloat(this.getAttribute("min")) : 0;
+    return this.hasAttribute("min") ? Number.parseFloat(this.getAttribute("min")) : 0;
   }
   set min(min) {
     this.setAttribute("min", min);
@@ -172,7 +170,7 @@ export default class XSliderElement extends HTMLElement {
   // @type number
   // @default 100
   get max() {
-    return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : 100;
+    return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : 100;
   }
   set max(max) {
     this.setAttribute("max", max);
@@ -187,10 +185,10 @@ export default class XSliderElement extends HTMLElement {
       let parts = this.getAttribute("value").split(/[ ,]+/)
 
       if (parts.length >= 2) {
-        return parts.map(part => parseFloat(part)).slice(0, 2);
+        return parts.map(part => Number.parseFloat(part)).slice(0, 2);
       }
       else {
-        return parseFloat(parts[0]);
+        return Number.parseFloat(parts[0]);
       }
     }
     else {
@@ -214,7 +212,7 @@ export default class XSliderElement extends HTMLElement {
   // @type number
   // @default 1
   get step() {
-    return this.hasAttribute("step") ? parseFloat(this.getAttribute("step")) : 1;
+    return this.hasAttribute("step") ? Number.parseFloat(this.getAttribute("step")) : 1;
   }
   set step(step) {
     this.setAttribute("step", step);
@@ -386,7 +384,7 @@ export default class XSliderElement extends HTMLElement {
     }
 
     let draggedThumb = null;
-    let {width: thumbWidth, height: thumbHeight} = this["#start-thumb"].getBoundingClientRect();
+    let {width: thumbWidth} = this["#start-thumb"].getBoundingClientRect();
     let containerBounds = this["#main"].getBoundingClientRect();
     let pointerMoveListener, pointerUpOrCancelListener;
     let changeStarted = false;
@@ -421,7 +419,7 @@ export default class XSliderElement extends HTMLElement {
       }
     }
 
-    let updateValue = (clientX, clientY) => {
+    let updateValue = (clientX) => {
       let x = clientX - (containerBounds.x + thumbWidth/2);
       x = normalize(x, 0, containerBounds.width - thumbWidth);
 

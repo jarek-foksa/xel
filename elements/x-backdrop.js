@@ -88,7 +88,7 @@ export default class XBackdropElement extends HTMLElement {
 
     // Ensure the backdrop is stacked directly below the ref element
     {
-      let zIndex = parseFloat(getComputedStyle(this.ownerElement).zIndex);
+      let zIndex = Number.parseFloat(getComputedStyle(this.ownerElement).zIndex);
       this.style.zIndex = zIndex - 1;
     }
 

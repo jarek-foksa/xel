@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {html, css} from "../utils/template.js";
 
 // @element x-progressbar
@@ -89,7 +87,7 @@ export default class XProgressbarElement extends HTMLElement {
   //
   // Current progress, in procentages.
   get value() {
-    return this.hasAttribute("value") ? parseFloat(this.getAttribute("value")) : null;
+    return this.hasAttribute("value") ? Number.parseFloat(this.getAttribute("value")) : null;
   }
   set value(value) {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
@@ -100,7 +98,7 @@ export default class XProgressbarElement extends HTMLElement {
   // @type number
   // @default 1
   get max() {
-    return this.hasAttribute("max") ? parseFloat(this.getAttribute("max")) : 1;
+    return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : 1;
   }
   set max(max) {
     this.setAttribute("max", max);
@@ -204,7 +202,7 @@ export default class XProgressbarElement extends HTMLElement {
               {
                 duration: 2000,
                 easing: "ease-in-out",
-                iterations: Infinity
+                iterations: Number.POSITIVE_INFINITY
               }
             ),
             this["#secondary-indeterminate-bar"].animate(
@@ -217,7 +215,7 @@ export default class XProgressbarElement extends HTMLElement {
                 duration: 2000,
                 delay: 1000,
                 easing: "ease-in-out",
-                iterations: Infinity
+                iterations: Number.POSITIVE_INFINITY
               }
             )
           ];

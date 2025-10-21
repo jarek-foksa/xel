@@ -163,7 +163,7 @@ export default class XNavElement extends HTMLElement {
     if (event.target.localName !== "x-nav") {
       let pointerDownTimeStamp = Date.now();
       let isDown = true;
-      let minPressedTime = parseInt(getComputedStyle(item).getPropertyValue("--min-pressed-time") || "150ms");
+      let minPressedTime = Number.parseInt(getComputedStyle(item).getPropertyValue("--min-pressed-time") || "150ms");
       let pointerUpOrCancelListener;
 
       this.addEventListener("pointerup", pointerUpOrCancelListener = async () => {

@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-let {isFinite, isNaN, parseFloat} = Number;
-
 // @type (any) => boolean
 //
 // Check whether given argument is a string
@@ -78,8 +76,8 @@ export let isDOMWhitespace = (string) => {
 //
 // Returns true if the passed argument is either a number or a string that represents a number.
 export let isNumeric = (value) => {
-  let number = parseFloat(value);
-  return isNaN(number) === false && isFinite(number);
+  let number = Number.parseFloat(value);
+  return Number.isNaN(number) === false && Number.isFinite(number);
 };
 
 // @type (string) => string

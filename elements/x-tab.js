@@ -4,13 +4,9 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
-import {closest, createElement} from "../utils/element.js";
+import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
-
-let {max} = Math;
 
 // @element x-tab
 // @part selection-indicator - Horizontal line indicating that the tab is toggled.
@@ -167,13 +163,13 @@ export default class XTabElement extends HTMLElement {
         let fromBBox = this.getBoundingClientRect();
         let toBBox = toTab.getBoundingClientRect();
         let computedStyle = getComputedStyle(this["#selection-indicator"]);
-        let transitionDuration = parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
+        let transitionDuration = Number.parseFloat(computedStyle.getPropertyValue("transition-duration") || "0s") * 1000;
         let transitionTimingFunction = computedStyle.getPropertyValue("transition-timing-function") || "linear";
 
         let animation = this["#selection-indicator"].animate(
           [
             {
-              left: 0 + "px",
+              left: "0px",
               width: fromBBox.width + "px",
             },
             {
@@ -207,7 +203,7 @@ export default class XTabElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async #onPointerDown(pointerDownEvent) {
+  #onPointerDown(pointerDownEvent) {
     // Don't focus the tab with pointer
     if (this.matches(":focus") === false) {
       pointerDownEvent.preventDefault();

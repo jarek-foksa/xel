@@ -4,7 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import {closest, createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 
 // @element x-tabs
@@ -107,13 +106,12 @@ export default class XTabsElement extends HTMLElement {
     else if (event.code === "ArrowLeft") {
       let tabs = [...this.querySelectorAll("x-tab:not([disabled])")];
       let currentTab = this.querySelector(`x-tab[tabindex="0"]`);
-      let clickedTab = event.target;
 
       event.preventDefault();
 
       if (currentTab && tabs.length > 0) {
         let currentTabIndex = tabs.indexOf(currentTab);
-        let previousTab = tabs[currentTabIndex - 1] || tabs[tabs.length - 1];
+        let previousTab = tabs[currentTabIndex - 1] || tabs.at(-1);
 
         currentTab.tabIndex = -1;
         previousTab.tabIndex = 0;
@@ -124,7 +122,6 @@ export default class XTabsElement extends HTMLElement {
     else if (event.code === "ArrowRight") {
       let tabs = [...this.querySelectorAll("x-tab:not([disabled])")];
       let currentTab = this.querySelector(`x-tab[tabindex="0"]`);
-      let clickedTab = event.target;
 
       event.preventDefault();
 

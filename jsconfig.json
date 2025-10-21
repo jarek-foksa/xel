@@ -1,0 +1,12 @@
+{
+  "exclude": ["node_modules", "builds"],
+  "compilerOptions": {
+    "checkJs": false,
+    "baseUrl": "./",
+    "paths": {"/*": ["./*"]},
+    "target": "ESNext",
+    "module": "ESNext",
+    "resolveJsonModule": true,
+    "noEmit": true
+  }
+}

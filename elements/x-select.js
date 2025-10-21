@@ -288,7 +288,7 @@ export default class XSelectElement extends HTMLElement {
     {
       let menuBounds = menu.getBoundingClientRect();
       let buttonBounds = this["#button"].getBoundingClientRect();
-      let hostPaddingRight = parseFloat(getComputedStyle(this).paddingRight);
+      let hostPaddingRight = Number.parseFloat(getComputedStyle(this).paddingRight);
 
       if (menuBounds.right - hostPaddingRight < buttonBounds.right) {
         menu.style.minWidth = (buttonBounds.right - menuBounds.left + hostPaddingRight) + "px";
@@ -350,7 +350,6 @@ export default class XSelectElement extends HTMLElement {
     }
     else {
       let menu = this.querySelector(":scope > x-menu");
-      let item = menu.querySelector("x-menuitem");
       return menu !== null && menu.opened === true && menu.hasAttribute("closing") === false;
     }
   }
@@ -496,14 +495,12 @@ export default class XSelectElement extends HTMLElement {
     event.preventDefault();
   }
 
-  #onBackdropClick(event) {
+  #onBackdropClick() {
     this.#collapse();
   }
 
   #onKeyDown(event) {
     if (event.defaultPrevented === false) {
-      let menu = this.querySelector(":scope > x-menu");
-
       if (
         event.code === "Enter" ||
         event.code === "NumpadEnter" ||

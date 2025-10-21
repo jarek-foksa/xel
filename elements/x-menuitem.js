@@ -6,12 +6,9 @@
 
 import Xel from "../classes/xel.js";
 
-import {createElement} from "../utils/element.js";
 import {rectContainsPoint} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
-
-let {max} = Math;
 
 // @element x-menuitem
 // @event ^toggle - User toggled on or off the menu item.
@@ -298,7 +295,7 @@ export default class XMenuItemElement extends HTMLElement {
     this.#updateArrowPathData();
   }
 
-  async #onPointerDown(pointerDownEvent) {
+  #onPointerDown(pointerDownEvent) {
     this.#wasFocused = this.matches(":focus");
 
     if (pointerDownEvent.buttons > 1) {

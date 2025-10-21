@@ -89,8 +89,8 @@ class PTSidebarElement extends HTMLElement {
     pointerDownEvent.preventDefault();
 
     let {minWidth, maxWidth} = getComputedStyle(this);
-    minWidth = parseInt(minWidth);
-    maxWidth = parseInt(maxWidth);
+    minWidth = Number.parseInt(minWidth);
+    maxWidth = Number.parseInt(maxWidth);
 
     this["#resize-grippie"].addEventListener("pointermove", pointerMoveListener = (pointerMoveEvent) => {
       width = initialWidth - (pointerDownEvent.clientX - pointerMoveEvent.clientX);

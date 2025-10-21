@@ -11,7 +11,7 @@ import isColorInGamut from "../node_modules/colorjs.io/src/inGamut.js";
 import convertColorToGamut from "../node_modules/colorjs.io/src/toGamut.js";
 import parseColor from "../node_modules/colorjs.io/src/parse.js";
 import serializeColor from "../node_modules/colorjs.io/src/serialize.js";
-import {normalize, toPrecision} from "../utils/math.js";
+import {toPrecision} from "../utils/math.js";
 
 import a98rgb from "../node_modules/colorjs.io/src/spaces/a98rgb.js";
 import hct from "../node_modules/colorjs.io/src/spaces/hct.js";
@@ -33,8 +33,6 @@ import srgbLinear from "../node_modules/colorjs.io/src/spaces/srgb-linear.js";
 import xyzd50 from "../node_modules/colorjs.io/src/spaces/xyz-d50.js";
 import xyzd65 from "../node_modules/colorjs.io/src/spaces/xyz-d65.js";
 import xyzabsd65 from "../node_modules/colorjs.io/src/spaces/xyz-abs-d65.js";
-
-let {isNaN} = Number;
 
 ColorSpace.register(a98rgb);
 ColorSpace.register(hct);
@@ -191,7 +189,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, s, l] = convertColor(color, "hsl").coords;
     let a = color.alpha;
 
-    if (h === null || isNaN(h)) {
+    if (h === null || Number.isNaN(h)) {
       h = 0;
     }
 
@@ -214,7 +212,7 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, w, b] = convertColor(color, "hwb").coords;
     let a = color.alpha;
 
-    if (h === null || isNaN(h)) {
+    if (h === null || Number.isNaN(h)) {
       h = 0;
     }
 
@@ -458,7 +456,7 @@ let isValidColorString = (string) => {
   try {
     parseColor(string);
   }
-  catch (error) {
+  catch (_error) {
     return false;
   }
 

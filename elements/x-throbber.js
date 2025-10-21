@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {html, css} from "../utils/template.js";
 
 // @element x-throbber
@@ -74,7 +72,7 @@ export default class XThrobberElement extends HTMLElement {
 
     this.#shadowRoot = this.attachShadow({mode: "closed"});
     this.#shadowRoot.adoptedStyleSheets = [XThrobberElement.#shadowStyleSheet];
-    this.#intersectionObserver = new IntersectionObserver(entries => this.#update());
+    this.#intersectionObserver = new IntersectionObserver(() => this.#update());
   }
 
   connectedCallback() {

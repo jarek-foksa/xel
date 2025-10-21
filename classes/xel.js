@@ -10,7 +10,7 @@ import EventEmitter from "./event-emitter.js";
 import {compareArrays} from "../utils/array.js";
 import {getMaterialCSSColorVariables, isValidColorString} from "../utils/color.js"
 import {getIcons} from "../utils/icon.js";
-import {FluentBundle, FluentResource, FluentNumber, FluentNone} from "../node_modules/@fluent/bundle/esm/index.js";
+import {FluentBundle, FluentResource, FluentNumber} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
 import {getRelDisplayDate} from "../utils/time.js";
 
@@ -378,7 +378,7 @@ export default new class Xel extends EventEmitter {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  #onHeadChange(mutations) {
+  #onHeadChange() {
     let oldTheme = this.#theme;
     let oldAccentColor = this.#accentColor;
     let oldIcons = this.#icons;
@@ -519,14 +519,14 @@ export default new class Xel extends EventEmitter {
       let bundle = new FluentBundle([ids[0]], {
         useIsolating: false,
         functions: {
-          RELDATETIME: (args = [], opts = {}) => {
+          RELDATETIME: (args = []) => {
             let date;
 
             if (args[0] instanceof FluentNumber) {
               date = new Date(args[0].value);
             }
             else if (typeof args[0] === "string") {
-              date = new Date(parseInt(args[0]));
+              date = new Date(Number.parseInt(args[0]));
             }
             else {
               throw new TypeError("Invalid argument to RELDATETIME");

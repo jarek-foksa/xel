@@ -27,7 +27,7 @@ export let getIcons = (iconsURL) => {
       try {
         iconsSVG = await (await fetch(iconsURL)).text();
       }
-      catch (error) {
+      catch (_error) {
         iconsSVG = null;
       }
 

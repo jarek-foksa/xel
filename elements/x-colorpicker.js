@@ -8,12 +8,9 @@ import Xel from "../classes/xel.js";
 
 import {convertColor, parseColor, serializeColor, normalizeColorSpaceName, isColorInGamut} from "../utils/color.js";
 import {createElement} from "../utils/element.js";
-import {degToRad, normalize, round, rotatePoint} from "../utils/math.js";
+import {degToRad, normalize, rotatePoint} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {throttle} from "../utils/time.js";
-
-let {PI, sin, cos, pow, atan2, sqrt, min, max} = Math;
-let {isNaN} = Number;
 
 const COLOR_PRECISION = 3;
 const MAX_LCH_CHROMA = 150;
@@ -250,7 +247,7 @@ class XColorPickerElement extends HTMLElement {
 
     this["#space-select"].addEventListener("change", () => this.#onSpaceSelectChange());
     this["#space-select"].addEventListener("open", () => this.#updateSpaceSelectWarningIcons());
-    this["#type-buttons"].addEventListener("toggle", (event) => this.#onTypeButtonsToggle());
+    this["#type-buttons"].addEventListener("toggle", () => this.#onTypeButtonsToggle());
 
     this["#main"].addEventListener("pointerdown", (event) => this.#onSlidersPointerDown(event), true);
     this["#main"].addEventListener("changestart", (event) => this.#onSlidersChangeStart(event));
@@ -327,7 +324,7 @@ class XColorPickerElement extends HTMLElement {
         try {
           result = await eyeDropper.open({signal: eyeDropperAbortController.signal});
         }
-        catch (error) {
+        catch (_error) {
           result = null;
         }
 
@@ -416,7 +413,7 @@ class XColorPickerElement extends HTMLElement {
       // Convert missing components to 0
       // @doc https://www.w3.org/TR/css-color-4/#missing
       for (let i = 0; i < convertedColor.coords.length; i += 1) {
-        if (convertedColor.coords[i] === null || isNaN(convertedColor.coords[i])) {
+        if (convertedColor.coords[i] === null || Number.isNaN(convertedColor.coords[i])) {
           convertedColor.coords[i] = 0;
         }
       }
@@ -428,7 +425,7 @@ class XColorPickerElement extends HTMLElement {
     this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}))
   }
 
-  #onTypeButtonsToggle(event) {
+  #onTypeButtonsToggle() {
     Xel.setConfig(`${this.localName}:type`, this["#type-buttons"].value);
     this.#update();
   }
@@ -439,7 +436,7 @@ class XColorPickerElement extends HTMLElement {
     }
   }
 
-  #onSlidersChangeStart(event) {
+  #onSlidersChangeStart() {
     this.#isDraggingSlider = true;
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}))
   }
@@ -491,12 +488,12 @@ class XColorPickerElement extends HTMLElement {
     this.dispatchEvent(new CustomEvent("change", {bubbles: true}))
   }
 
-  #onSlidersChangeEnd(event) {
+  #onSlidersChangeEnd() {
     this.#isDraggingSlider = false;
     this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}))
   }
 
-  #onInputChange(event) {
+  #onInputChange() {
     this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
     let color = parseColor(this["#input"].value);
@@ -527,28 +524,26 @@ class XColorPickerElement extends HTMLElement {
     }
   }
 
-  #onGrabButtonToggle() {
-    return new Promise(async (resolve) => {
-      let hexColor = await this.grab();
-      this["#grab-button"].toggled = false;
+  async #onGrabButtonToggle() {
+    let hexColor = await this.grab();
+    this["#grab-button"].toggled = false;
 
-      if (hexColor !== null) {
-        this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
+    if (hexColor !== null) {
+      this.dispatchEvent(new CustomEvent("changestart", {bubbles: true}));
 
-        if (this["#space-select"].value === "srgb") {
-          this.value = hexColor;
-        }
-        else {
-          this.value = serializeColor(
-            convertColor(parseColor(hexColor), this["#space-select"].value, {inGamut: true}),
-            {precision: COLOR_PRECISION}
-          );
-        }
-
-        this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
-        this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+      if (this["#space-select"].value === "srgb") {
+        this.value = hexColor;
       }
-    });
+      else {
+        this.value = serializeColor(
+          convertColor(parseColor(hexColor), this["#space-select"].value, {inGamut: true}),
+          {precision: COLOR_PRECISION}
+        );
+      }
+
+      this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
+      this.dispatchEvent(new CustomEvent("changeend", {bubbles: true}));
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -583,6 +578,8 @@ class XColorPickerElement extends HTMLElement {
           }
         }
       }
+
+      resolve();
     });
   }
 
@@ -715,7 +712,7 @@ class XColorPickerElement extends HTMLElement {
     // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < color.coords.length; i += 1) {
-      if (color.coords[i] === null || isNaN(color.coords[i])) {
+      if (color.coords[i] === null || Number.isNaN(color.coords[i])) {
         color.coords[i] = 0;
       }
     }
@@ -726,7 +723,7 @@ class XColorPickerElement extends HTMLElement {
         color.spaceId = color.space.id;
       }
 
-      color.coords = color.coords.map(coord => coord * 1);
+      color.coords = color.coords.map(coord => Number.parseFloat(coord));
     }
 
     return color;
@@ -972,7 +969,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
       return [r, g, b, this.#a];
     }
     // HWB
-    else if (model === "hwb") {
+    else {
       let [h, w, b] = this.#coords;
       let [rr, gg, bb] = convertColor({space: "hwb", coords: [h*360, w*100, b*100]}, "srgb").coords;
       return [rr, gg, bb, this.#a];
@@ -1020,7 +1017,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
     // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
-      if (this.#coords[i] === null || isNaN(this.#coords[i])) {
+      if (this.#coords[i] === null || Number.isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
       }
     }
@@ -1105,8 +1102,6 @@ class XRGBLinearSlidersElement extends HTMLElement {
   }
 
   #getResolvedModel() {
-    let model = this.#model;
-
     if (this.#model === "okhsv") {
       return this.#space === "srgb" ? "okhsv" : "hsv";
     }
@@ -1897,8 +1892,6 @@ class XRGBLinearSlidersElement extends HTMLElement {
         };
       }
       else if (model === "rgb") {
-        let [r, g, b] = this.#coords;
-
         color = {
           space: this.#space,
           coords: [...this.#coords]
@@ -2526,7 +2519,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
   }
 
   #updateHueSliderMarker() {
-    let [l, c, h] = this.#coords;
+    let [, , h] = this.#coords;
     this["#hue-slider-marker"].style.left = ((h/360) * 100) + "%";
   }
 
@@ -2593,7 +2586,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
   }
 
   #updateChromaSliderMarker() {
-    let [l, c, h] = this.#coords;
+    let [, c] = this.#coords;
 
     if (this.#space === "oklch") {
       // Maximum chroma value is theoretically unbounded, but the slider can show values only up to MAX_OKLCH_CHROMA
@@ -2680,7 +2673,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
   }
 
   #updateLightnessSliderMarker() {
-    let [l, c, h] = this.#coords;
+    let [l] = this.#coords;
 
     if (this.#space === "oklch") {
       this["#lightness-slider-marker"].style.left = (l * 100) + "%";
@@ -3374,7 +3367,7 @@ class XLABLinearSlidersElement extends HTMLElement {
   }
 
   #updateLightnessSliderMarker() {
-    let [l, a, b] = this.#coords;
+    let [l] = this.#coords;
 
     if (this.#space === "oklab") {
       this["#lightness-slider-marker"].style.left = (l * 100) + "%";
@@ -3386,7 +3379,7 @@ class XLABLinearSlidersElement extends HTMLElement {
 
   #updateLightnessSliderBackground() {
     let colors = [];
-    let [l, a, b] = this.#coords;
+    let [, a, b] = this.#coords;
 
     if (this.#space === "oklab") {
       for (let l = 0; l <= 1; l += 0.02) {
@@ -3455,7 +3448,7 @@ class XLABLinearSlidersElement extends HTMLElement {
   }
 
   #updateASliderMarker() {
-    let [l, a, b] = this.#coords;
+    let [, a] = this.#coords;
 
     if (this.#space === "oklab") {
       // Maximum "a" value is theoretically unbounded, but the slider can show values only in [-0.4, 0.4] range
@@ -3554,7 +3547,7 @@ class XLABLinearSlidersElement extends HTMLElement {
   }
 
   #updateBSliderMarker() {
-    let [l, a, b] = this.#coords;
+    let [, , b] = this.#coords;
 
     if (this.#space === "oklab") {
       // Maximum "b" value is theoretically unbounded, but the slider can show values only in [-0.4, 0.4] range
@@ -4792,6 +4785,9 @@ class XRGBPlanarSlidersElement extends HTMLElement {
       let [r, g, b] = convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords;
       return [r, g, b, this.#a];
     }
+    else {
+      return [0, 0, 0, 0];
+    }
   }
   set value([r, g, b, a]) {
     if (this.#model === "hsv" || this.#model === "hsl") {
@@ -4803,7 +4799,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
-      if (this.#coords[i] === null || isNaN(this.#coords[i])) {
+      if (this.#coords[i] === null || Number.isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
       }
     }
@@ -5185,7 +5181,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     }
     else {
       if (this.#model === "hsv" || this.#model === "hsl") {
-        let [h, c1, c2] = this.#coords;
+        let [, c1, c2] = this.#coords;
         let width = this["#hue-slider"].clientWidth;
         let step = 1 / window.devicePixelRatio;
         let ranges = [];
@@ -5231,7 +5227,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
 
   #updatePlanarSliderMarker() {
     if (this.#model === "hsv" || this.#model === "hsl") {
-      let [c0, c1, c2] = this.#coords;
+      let [, c1, c2] = this.#coords;
       let left = c1 * 100;
       let top = 100 - (c2 * 100);
 
@@ -5351,7 +5347,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
             }
           }
 
-          let maxCol = min(col + 10, width);
+          let maxCol = Math.min(col + 10, width);
 
           while (col <= maxCol) {
             col += step;
@@ -6039,7 +6035,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
   }
 
   #updateHueSliderMarker() {
-    let [l, c, h] = this.#coords;
+    let [, , h] = this.#coords;
     this["#hue-slider-marker"].style.left = ((h/360) * 100) + "%";
   }
 
@@ -6209,7 +6205,7 @@ class XLCHPlanarSlidersElement extends HTMLElement {
           }
         }
 
-        let maxRow = max(row + 10, height);
+        let maxRow = Math.max(row + 10, height);
 
         while (row <= maxRow) {
           row += step;
@@ -6877,7 +6873,7 @@ class XLABPlanarSlidersElement extends HTMLElement {
   }
 
   #updatePlanarSliderMarker() {
-      let [l, a, b] = this.#coords;
+      let [, a, b] = this.#coords;
       let left;
       let top;
 
@@ -6975,9 +6971,9 @@ class XLABPlanarSlidersElement extends HTMLElement {
     else {
       let width = this["#planar-slider-gamut-svg"].clientWidth;
       let height = this["#planar-slider-gamut-svg"].clientHeight;
-      let maxR = sqrt(pow(width/2, 2) + pow(height/2, 2));
+      let maxR = Math.sqrt(Math.pow(width/2, 2) + Math.pow(height/2, 2));
       let centerPoint = {x: width/2, y: height/2};
-      let [l, a, b] = this.#coords;
+      let [l] = this.#coords;
       let points = [];
 
       for (let angle = 0; angle < 360; angle += 3) {
@@ -7036,7 +7032,7 @@ class XLABPlanarSlidersElement extends HTMLElement {
   #updatePlanarSliderGamutPathThrottled = throttle(this.#updatePlanarSliderGamutPath, 40, this);
 
   #updateLightnessSliderMarker() {
-    let [l, a, b] = this.#coords;
+    let [l] = this.#coords;
 
     if (this.#space === "oklab") {
       this["#lightness-slider-marker"].style.left = (l * 100) + "%";
@@ -8006,7 +8002,7 @@ class XXYZPlanarSlidersElement extends HTMLElement {
     else {
       let width = this["#planar-slider-gamut-svg"].clientWidth;
       let height = this["#planar-slider-gamut-svg"].clientHeight;
-      let maxR = sqrt(pow(width/2, 2) + pow(height/2, 2));
+      let maxR = Math.sqrt(Math.pow(width/2, 2) + Math.pow(height/2, 2));
       let centerPoint = {x: width/2, y: height/2};
       // let [x, y, z] = this.#coords;
       let points = [];
@@ -8428,6 +8424,9 @@ class XRGBPolarSlidersElement extends HTMLElement {
       let [r, g, b] = convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords;
       return [r, g, b, this.#a];
     }
+    else {
+      return [0, 0, 0, 0];
+    }
   }
   set value([r, g, b, a]) {
     if (this.#model === "hsv" || this.#model === "hsl") {
@@ -8439,7 +8438,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     // Convert missing components to 0
     // @doc https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
-      if (this.#coords[i] === null || isNaN(this.#coords[i])) {
+      if (this.#coords[i] === null || Number.isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
       }
     }
@@ -8630,20 +8629,20 @@ class XRGBPolarSlidersElement extends HTMLElement {
       let radius = wheelBounds.width / 2;
       let x = clientX - wheelBounds.left - radius;
       let y = clientY - wheelBounds.top - radius;
-      let d = pow(x, 2) + pow(y, 2);
-      let theta = atan2(y, x);
+      let d = Math.pow(x, 2) + Math.pow(y, 2);
+      let theta = Math.atan2(y, x);
 
-      if (d > pow(radius, 2)) {
-        x = radius * cos(theta);
-        y = radius * sin(theta);
-        d = pow(x, 2) + pow(y, 2);
-        theta = atan2(y, x);
+      if (d > Math.pow(radius, 2)) {
+        x = radius * Math.cos(theta);
+        y = radius * Math.sin(theta);
+        d = Math.pow(x, 2) + Math.pow(y, 2);
+        theta = Math.atan2(y, x);
       }
 
-      this.#coords[0] = (theta + PI) / (PI * 2);
+      this.#coords[0] = (theta + Math.PI) / (Math.PI * 2);
 
       if (this.#model === "hsv" || this.#model === "hsl") {
-        this.#coords[1] = sqrt(d) / radius;
+        this.#coords[1] = Math.sqrt(d) / radius;
       }
 
       this.dispatchEvent(new CustomEvent("change", {bubbles: true}));
@@ -8786,7 +8785,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #updatePolarSliderMarker() {
-    let [h, c1, c2] = this.#coords;
+    let [h, c1] = this.#coords;
 
     if (this.#model === "hsv" || this.#model === "hsl") {
       let wheelSize = 100;
@@ -8794,8 +8793,8 @@ class XRGBPolarSlidersElement extends HTMLElement {
       let radius = c1 * wheelSize/2;
       let centerPoint = {x: wheelSize/2, y: wheelSize/2};
 
-      let x = ((wheelSize - (centerPoint.x + (radius * cos(angle)))) / wheelSize) * 100;
-      let y = ((centerPoint.y - (radius * sin(angle))) / wheelSize) * 100;
+      let x = ((wheelSize - (centerPoint.x + (radius * Math.cos(angle)))) / wheelSize) * 100;
+      let y = ((centerPoint.y - (radius * Math.sin(angle))) / wheelSize) * 100;
 
       this["#polar-slider-marker"].style.left = x + "%";
       this["#polar-slider-marker"].style.top = y + "%";
@@ -8870,7 +8869,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
       let width = this["#polar-slider-gamut-svg"].clientWidth;
       let height = this["#polar-slider-gamut-svg"].clientHeight;
       let step = 1 / window.devicePixelRatio;
-      let [c0, c1, c2] = this.#coords;
+      let [, , c2] = this.#coords;
 
       let isInGamut = (h, c1, c2) => {
         let color = {
@@ -8911,7 +8910,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
   #updatePolarSliderGamutPathThrottled = throttle(this.#updatePolarSliderGamutPath, 40, this);
 
   #updateLinearSliderMarker() {
-    let [, coord1, coord2] = this.#coords;
+    let [, , coord2] = this.#coords;
 
     if (this.#model === "hsv" || this.#model === "hsl") {
       this["#linear-slider-marker"].style.left = (coord2 * 100) + "%";
@@ -8955,7 +8954,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
       this["#linear-slider-gamut-path"].removeAttribute("d");
     }
     else {
-      let [h, c1, c2] = this.#coords;
+      let [h, c1] = this.#coords;
       let width = this["#linear-slider"].clientWidth;
       let step = 1 / window.devicePixelRatio;
 

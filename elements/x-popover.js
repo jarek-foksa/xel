@@ -279,7 +279,7 @@ export default class XPopoverElement extends HTMLElement {
 
   #updatePosition(context) {
     let align = getComputedStyle(this).getPropertyValue("--align").trim();
-    let borderWidth = parseInt(getComputedStyle(this).borderWidth);
+    let borderWidth = Number.parseInt(getComputedStyle(this).borderWidth);
 
     let windowWhitespace = 8; // Minimal whitespace between popover and window bounds
     let arrowWhitespace = 2;  // Minimal whitespace between popover and arrow

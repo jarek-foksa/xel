@@ -122,7 +122,7 @@ class XTitlebarElement extends HTMLElement {
     this["#buttons"].addEventListener("click", (event) => this.#onButtonsClick(event));
   }
 
-  async connectedCallback() {
+  connectedCallback() {
     Xel.addEventListener("themechange", this.#xelThemeChangeListener = () => this.#updateButtonsPathData());
 
     Xel.whenThemeReady.then(() => {

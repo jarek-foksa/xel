@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {isValidColorString} from "../utils/color.js";
 import {createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
@@ -164,7 +162,7 @@ export default class XInputElement extends HTMLElement {
   // @type number
   // @default 0
   get minLength() {
-    return this.hasAttribute("minlength") ? parseInt(this.getAttribute("minlength")) : 0;
+    return this.hasAttribute("minlength") ? Number.parseInt(this.getAttribute("minlength")) : 0;
   }
   set minLength(minLength) {
     this.setAttribute("minlength", minLength);
@@ -175,7 +173,7 @@ export default class XInputElement extends HTMLElement {
   // @type number || Infinity
   // @default 0
   get maxLength() {
-    return this.hasAttribute("maxlength") ? parseInt(this.getAttribute("maxlength")) : Infinity;
+    return this.hasAttribute("maxlength") ? Number.parseInt(this.getAttribute("maxlength")) : Number.POSITIVE_INFINITY;
   }
   set maxLength(maxLength) {
     this.setAttribute("maxlength", maxLength);

@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {compareArrays} from "../utils/array.js";
 import {html, css} from "../utils/template.js";
 import {throttle, sleep} from "../utils/time.js";
@@ -146,7 +144,7 @@ export default class XMenuBarElement extends HTMLElement {
     new ResizeObserver(() => this.#onContainerResize()).observe(this["#container"], {box : "border-box"});
     new ResizeObserver(() => this.#onMainResize()).observe(this["#main"], {box : "border-box"});
 
-    this.#childListMutationObserver = new MutationObserver((event) => this.#onChildListchange());
+    this.#childListMutationObserver = new MutationObserver(() => this.#onChildListchange());
     this.#childListMutationObserver.observe(this, {childList: true});
 
     this.addEventListener("focusout", (event) => this.#onFocusOut(event));
@@ -393,7 +391,7 @@ export default class XMenuBarElement extends HTMLElement {
 
     if (items.length > 1 && focusedItem) {
       let i = items.indexOf(focusedItem);
-      let previousItem = items[i - 1] || items[items.length-1];
+      let previousItem = items[i - 1] || items.at(-1);
       this.#expandMenubarItem(previousItem);
     }
   }

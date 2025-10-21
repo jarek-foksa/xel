@@ -19,6 +19,8 @@
     "menu", "menubar", "checkbox", "radio", "switch", "select", "dialog", "drawer", "popover", "slider", "throbber"
   ],
   "devDependencies": {
+    "@biomejs/biome":              "2.2.6",
+    "@biomejs/cli-darwin-arm64":   "2.2.6",
     "@csstools/postcss-minify":    "2.0.3",
     "@fluent/bundle":              "0.18.0",
     "@rollup/rollup-darwin-arm64": "4.34.8",
@@ -34,12 +36,15 @@
     "prismjs":                     "1.29.0",
     "rollup":                      "4.34.8",
     "semver":                      "7.7.1",
-    "terser":                      "5.39.0"
+    "terser":                      "5.39.0",
+    "typescript":                  "5.9.3"
   },
   "scripts": {
     "start":                       "firebase emulators:start --project xel-toolkit --only hosting --log-verbosity=QUIET",
     "build":                       "./npm.js build",
     "publish":                     "./npm.js publish",
+    "lint":                        "./npm.js lint",
+    "stats":                       "./npm.js stats",
     "help":                        "./npm.js help"
   }
 }

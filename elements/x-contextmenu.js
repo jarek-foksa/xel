@@ -6,7 +6,6 @@
 
 import {createElement, closest, elementFromPoint} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
-import {sleep} from "../utils/time.js";
 
 // @element x-contextmenu
 export default class XContextMenuElement extends HTMLElement {
@@ -63,7 +62,7 @@ export default class XContextMenuElement extends HTMLElement {
     this["#backdrop"].addEventListener("pointerdown", (event) => this.#onBackdropPointerDown(event));
     this["#backdrop"].addEventListener("click", (event) => this.#onBackdropClick(event));
 
-    this.addEventListener("blur", (event) => this.#onBlur());
+    this.addEventListener("blur", () => this.#onBlur());
     this.addEventListener("keydown", (event) => this.#onKeyDown(event), true);
     this.addEventListener("click", (event) => this.#onClick(event));
   }

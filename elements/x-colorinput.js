@@ -386,7 +386,7 @@ export default class XColorInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async #expand() {
+  #expand() {
     if (this.#canExpand() === false) {
       return;
     }
@@ -551,7 +551,7 @@ export default class XColorInputElement extends HTMLElement {
     {
       let menuBounds = menu.getBoundingClientRect();
       let buttonBounds = this.getBoundingClientRect();
-      let hostPaddingRight = parseFloat(getComputedStyle(this).paddingRight);
+      let hostPaddingRight = Number.parseFloat(getComputedStyle(this).paddingRight);
 
       if (menuBounds.right - hostPaddingRight < buttonBounds.right) {
         menu.style.minWidth = (buttonBounds.right - menuBounds.left + hostPaddingRight) + "px";
@@ -604,8 +604,7 @@ export default class XColorInputElement extends HTMLElement {
     }
     else {
       let menu = this["#format-menu"];
-      let item = menu.querySelector("x-menuitem");
-      return menu !== null && menu.opened === false && menu.hasAttribute("closing") === false/* && item !== null*/;
+      return menu !== null && menu.opened === false && menu.hasAttribute("closing") === false;
     }
   }
 
@@ -615,7 +614,6 @@ export default class XColorInputElement extends HTMLElement {
     }
     else {
       let menu = this["#format-menu"];
-      let item = menu.querySelector("x-menuitem");
       return menu !== null && menu.opened === true && menu.hasAttribute("closing") === false;
     }
   }
@@ -668,7 +666,7 @@ export default class XColorInputElement extends HTMLElement {
         }
       }
 
-      let changedNumericArgValue = round(parseFloat(numericArgValue) + step, 5) + unit;
+      let changedNumericArgValue = round(Number.parseFloat(numericArgValue) + step, 5) + unit;
 
       this["#input"].value = value.substring(0, numericArgStart) + changedNumericArgValue +
                              value.substring(numericArgEnd);
@@ -784,7 +782,7 @@ export default class XColorInputElement extends HTMLElement {
     try {
       color = parseColor(value);
     }
-    catch (error) {
+    catch (_error) {
       color = parseColor("#" + value);
     }
 
@@ -821,7 +819,7 @@ export default class XColorInputElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #onConfigChange(event) {
-    let {key, value, origin} = event.detail;
+    let {key, value} = event.detail;
 
     if (key === `x-colorinput:${this.space}Format`) {
       this.#format = (value || this.#getDefaultFormat(this.space));
@@ -870,7 +868,7 @@ export default class XColorInputElement extends HTMLElement {
     this.#updateValidityIndicators();
   }
 
-  #onBackdropClick(event) {
+  #onBackdropClick() {
     this.#collapse();
   }
 
@@ -977,11 +975,11 @@ export default class XColorInputElement extends HTMLElement {
     }
   }
 
-  #onArrowPointerDown(event) {
+  #onArrowPointerDown() {
     this.#wasFocusedBeforeExpanding = this.matches(":focus");
   }
 
-  #onArrowClick(event) {
+  #onArrowClick() {
     this.#expand();
   }
 

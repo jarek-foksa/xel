@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {getBrowserEngine} from "../utils/system.js";
@@ -144,7 +142,7 @@ export default class XTextEditorElement extends HTMLElement {
   // @type number
   // @default 0
   get minLength() {
-    return this.hasAttribute("minlength") ? parseInt(this.getAttribute("minlength")) : 0;
+    return this.hasAttribute("minlength") ? Number.parseInt(this.getAttribute("minlength")) : 0;
   }
   set minLength(minLength) {
     this.setAttribute("minlength", minLength);
@@ -155,7 +153,7 @@ export default class XTextEditorElement extends HTMLElement {
   // @type number || Infinity
   // @default 0
   get maxLength() {
-    return this.hasAttribute("maxlength") ? parseInt(this.getAttribute("maxlength")) : Infinity;
+    return this.hasAttribute("maxlength") ? Number.parseInt(this.getAttribute("maxlength")) : Number.POSITIVE_INFINITY;
   }
   set maxLength(maxLength) {
     this.setAttribute("maxlength", maxLength);
@@ -497,7 +495,7 @@ export default class XTextEditorElement extends HTMLElement {
     }
   }
 
-  #onEditorInput(event) {
+  #onEditorInput() {
     this.dispatchEvent(new CustomEvent("input", {bubbles: true}));
     this.#updateEmptyAttribute();
 

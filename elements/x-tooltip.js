@@ -194,11 +194,10 @@ export default class XTooltipElement extends HTMLElement {
 
   #updatePosition(context) {
     let align = getComputedStyle(this).getPropertyValue("--align").trim();
-    let borderWidth = parseInt(getComputedStyle(this).borderWidth);
     // Minimal whitespace between tooltip and window bounds
     let windowWhitespace = 8;
     // Minimal whitespace between tooltip and button
-    let buttonWhitespace = parseInt(getComputedStyle(this).getPropertyValue("--whitespace"));
+    let buttonWhitespace = Number.parseInt(getComputedStyle(this).getPropertyValue("--whitespace"));
     // Extra offset needed when tooltip has fixed-positioned ancestor(s)
     let extraLeft = 0;
     // Extra offset needed when tooltip has fixed-positioned ancestor(s)

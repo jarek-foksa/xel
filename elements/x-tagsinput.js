@@ -262,7 +262,7 @@ export default class XTagsInputElement extends HTMLElement {
   // @type (string) => Array<XTagElement>
   //
   // Override this method to provide customized suggestions.
-  getSuggestions(text) {
+  getSuggestions() {
     return [];
   }
 
@@ -392,7 +392,7 @@ export default class XTagsInputElement extends HTMLElement {
     this.#updateAccessabilityAttributes();
   }
 
-  async #onInputFocusIn() {
+  #onInputFocusIn() {
     this.dispatchEvent(new CustomEvent("textinputmodestart", {bubbles: true, composed: true}));
   }
 
@@ -437,7 +437,7 @@ export default class XTagsInputElement extends HTMLElement {
 
         if (value.length === 0) {
           let tags = [...this.children].filter(child => child.localName === "x-tag");
-          let lastTag = tags[tags.length-1] || null;
+          let lastTag = tags.at(-1) || null;
 
           if (lastTag) {
             lastTag.remove();
@@ -534,10 +534,10 @@ export default class XTagsInputElement extends HTMLElement {
               currentTag.toggled = false;
 
               let currentTagIndex = suggestedTags.indexOf(currentTag);
-              prevTag = suggestedTags[currentTagIndex-1] || suggestedTags[suggestedTags.length-1];
+              prevTag = suggestedTags[currentTagIndex-1] || suggestedTags.at(-1);
             }
             else {
-              prevTag = suggestedTags[suggestedTags.length-1];
+              prevTag = suggestedTags.at(-1);
             }
           }
 

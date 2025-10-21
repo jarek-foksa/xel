@@ -6,8 +6,6 @@
 
 import "./polyfills.js";
 
-import Xel from "./classes/xel.js";
-
 import "./elements/dialog.js";
 import "./elements/x-accordion.js";
 import "./elements/x-avatar.js";
@@ -54,4 +52,4 @@ import "./elements/x-throbber.js";
 import "./elements/x-titlebar.js";
 import "./elements/x-tooltip.js";
 
-export default Xel;
+export {default} from "./classes/xel.js";

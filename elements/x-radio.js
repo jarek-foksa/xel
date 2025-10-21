@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 
@@ -222,7 +220,7 @@ export default class XRadioElement extends HTMLElement {
     this.#updateAccessabilityAttributes();
   }
 
-  #onClick(event) {
+  #onClick() {
     if (!this.closest("x-radios")) {
       if (this.toggled && this.mixed) {
         this.mixed = false;
