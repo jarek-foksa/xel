@@ -1,11 +1,12 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
-import ApiParser from "../classes/api-parser.js";
+
+import {parse as parseJsDocComments} from  "../node_modules/comment-parser/es6/index.js";
 
 import {getIcons} from "../utils/icon.js";
 import {escapeHTML} from "../utils/string.js";
@@ -116,10 +117,12 @@ export default class PTApiBlockElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default false
+   */
   get value() {
     return this.getAttribute("value") || "";
   }
@@ -131,8 +134,10 @@ export default class PTApiBlockElement extends HTMLElement {
     return this.#shadowRoot;
   }
 
-  // @property
-  // @type Promise
+  /**
+   * @property
+   * @type {Promise<void>}
+   */
   get whenReady() {
     return new Promise((resolve) => {
       if (this.#readyCallbacks === null) {
@@ -174,9 +179,136 @@ export default class PTApiBlockElement extends HTMLElement {
 
   #update() {
     return new Promise(async (resolve) => {
-      let response = await fetch(this.value);
-      let jsText = await response.text();
-      let api = new ApiParser().parse(jsText);
+      let api = {
+        elementName: "",
+        className: "",
+        properties: [],
+        events: [],
+        methods: [],
+        parts: []
+      };
+
+      // Determine the API from JSDoc comments
+      {
+        let response = await fetch(this.value);
+        let jsText = await response.text();
+
+        // Assume everything below `customElements.define()` call to be private API
+        {
+          let endIndex = jsText.indexOf("customElements.define(");
+
+          if (endIndex !== -1) {
+            jsText = jsText.substring(0, endIndex);
+          }
+        }
+
+        let jsLines = jsText.split(/\r\n|\n/);
+        let comments = parseJsDocComments(jsText);
+
+        for (let comment of comments) {
+          let nextLineIndex = comment.source.at(-1).number + 1;
+          let nextLineText = jsLines[nextLineIndex];
+          let elementTag = comment.tags.find(tag => tag.tag === "element");
+
+          // Element
+          if (elementTag) {
+            if (elementTag.name === "dialog") {
+              api.className = "HTMLDialogElement";
+            }
+            else {
+              api.className = nextLineText.substring(
+                nextLineText.indexOf("class ") + 6,
+                nextLineText.indexOf(" extends")
+              );
+            }
+
+            for (let tag of comment.tags) {
+              if (tag.tag === "element") {
+                api.elementName = tag.name;
+              }
+              else if (tag.tag === "fires") {
+                let name = tag.name;
+                let bubbles = false;
+
+                if (tag.name.startsWith("^")) {
+                  name = name.substring(1);
+                  bubbles = true;
+                }
+
+                api.events.push({
+                  name: name,
+                  description: tag.description.substring(2),
+                  bubbles: bubbles
+                });
+              }
+              else if (tag.tag === "part") {
+                api.parts.push({
+                  name: tag.name,
+                  description: tag.description.substring(2)
+                });
+              }
+            }
+          }
+
+          // Attribute/property
+          else if (comment.tags.find(tag => tag.tag === "attribute" || tag.tag === "property")) {
+            let propertyName = nextLineText.substring(
+              nextLineText.indexOf("get ") + 4,
+              nextLineText.indexOf("()")
+            );
+
+            let property = {
+              propertyName: propertyName,
+              attributeName: null,
+              type: "",
+              description: comment.description,
+              default: undefined,
+              readOnly: jsText.indexOf(`set ${propertyName}(`) === -1
+            };
+
+            for (let tag of comment.tags) {
+              if (tag.tag === "attribute") {
+                property.attributeName = tag.name || property.propertyName;
+              }
+              else if (tag.tag === "type") {
+                property.type = tag.type;
+              }
+              else if (tag.tag === "default") {
+                if (tag.source[0].source.includes(`"`)) {
+                  property.default = `"${tag.name}"`;
+                }
+                else {
+                  property.default = tag.name;
+                }
+              }
+            }
+
+            api.properties.push(property);
+          }
+
+          // Method
+          else if (comment.tags.find(tag => tag.tag === "method")) {
+            let method = {
+              name: "",
+              type: "",
+              description: comment.description
+            };
+
+            method.name = nextLineText.substring(
+              2,
+              nextLineText.lastIndexOf(")") + 1
+            );
+
+            for (let tag of comment.tags) {
+              if (tag.tag === "type") {
+                method.type = tag.type;
+              }
+            }
+
+            api.methods.push(method);
+          }
+        }
+      }
 
       // Element
       {

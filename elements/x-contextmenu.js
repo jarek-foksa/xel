@@ -1,13 +1,15 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {createElement, closest, elementFromPoint} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 
-// @element x-contextmenu
+/**
+ * @element x-contextmenu
+ */
 export default class XContextMenuElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -28,12 +30,14 @@ export default class XContextMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the context menu should open when user right-clicks its parent container.
+  /**
+   * Whether the context menu should open when user right-clicks its parent container.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -57,7 +61,7 @@ export default class XContextMenuElement extends HTMLElement {
     this.#shadowRoot.append(document.importNode(XContextMenuElement.#shadowTemplate.content, true));
 
     this["#backdrop"] = createElement("x-backdrop");
-    this["#backdrop"].style.background =  "rgba(0, 0, 0, 0)";
+    this["#backdrop"].style.background = "rgba(0, 0, 0, 0)";
     this["#backdrop"].addEventListener("contextmenu", (event) => this.#onBackdropContextMenu(event));
     this["#backdrop"].addEventListener("pointerdown", (event) => this.#onBackdropPointerDown(event));
     this["#backdrop"].addEventListener("click", (event) => this.#onBackdropClick(event));
@@ -88,10 +92,12 @@ export default class XContextMenuElement extends HTMLElement {
 
   ///////////////////////////////////'/////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type (number, number) => void
-  //
-  // Open the context menu at given point.
+  /**
+   * Open the context menu at given point.
+   *
+   * @method
+   * @type {(number, number) => void}
+   */
   open(clientX, clientY) {
     let menu = this.querySelector("x-menu");
 
@@ -105,10 +111,12 @@ export default class XContextMenuElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type () => void
-  //
-  // Close the context menu.
+  /**
+   * Close the context menu.
+   *
+   * @method
+   * @type {() => Promise<void>}
+   */
   close() {
     return new Promise(async (resolve) => {
       this["#backdrop"].hide(false);

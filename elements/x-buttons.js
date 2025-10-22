@@ -1,15 +1,15 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 
-let {isArray} = Array;
-
-// @element x-buttons
-// @event ^toggle - User toggled a button on or off.
+/**
+ * @element x-buttons
+ * @fires ^toggle - User toggled a button on or off.
+ */
 export default class XButtonsElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -33,18 +33,20 @@ export default class XButtonsElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type number
-  // @default -1
-  //
-  // Specifies what should happen when user clicks a button:<br/>
-  // <code>-1</code> - Do not toggle any buttons<br/>
-  // <code>0</code> - Toggle the clicked button on/off and other buttons off<br/>
-  // <code>1</code> - Toggle the clicked button on and other buttons off<br/>
-  // <code>2</code> - Toggle the clicked button on/off<br/>
-  // <code>3</code> - Toggle the clicked button on/off, but toggle off only if there is at least one other button
-  // toggled on<br/>
+  /**
+   * Specifies what should happen when user clicks a button:<br/>
+   * <code>-1</code> - Do not toggle any buttons<br/>
+   * <code>0</code> - Toggle the clicked button on/off and other buttons off<br/>
+   * <code>1</code> - Toggle the clicked button on and other buttons off<br/>
+   * <code>2</code> - Toggle the clicked button on/off<br/>
+   * <code>3</code> - Toggle the clicked button on/off, but toggle off only if there is at least one other button
+   * toggled on<br/>
+   *
+   * @property
+   * @attribute
+   * @type {number}
+   * @default -1
+   */
   get tracking() {
     return this.hasAttribute("tracking") ? Number.parseInt(this.getAttribute("tracking")) : -1;
   }
@@ -52,12 +54,14 @@ export default class XButtonsElement extends HTMLElement {
     this.setAttribute("tracking", tracking);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to use vertical (rahter than horizontal) layout.
+  /**
+   * Whether to use vertical (rahter than horizontal) layout.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get vertical() {
     return this.hasAttribute("vertical");
   }
@@ -65,10 +69,12 @@ export default class XButtonsElement extends HTMLElement {
     vertical === true ? this.setAttribute("vertical", "") : this.removeAttribute("vertical");
   }
 
-  // @property
-  // @type string || Array || null
-  //
-  // Get/set the buttons that should have toggled state.
+  /**
+   * Get/set the buttons that should have toggled state.
+   *
+   * @property
+   * @type {string | Array | null}
+   */
   get value() {
     if (this.tracking === 2 || this.tracking === 3) {
       let buttons = this.#getButtons().filter(button => button.toggled);
@@ -87,7 +93,7 @@ export default class XButtonsElement extends HTMLElement {
     if (this.tracking === 2 || this.tracking === 3) {
       let buttons = this.#getButtons();
 
-      if (isArray(value)) {
+      if (Array.isArray(value)) {
         for (let button of buttons) {
           button.toggled = (value.includes(button.value));
         }

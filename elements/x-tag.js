@@ -1,18 +1,20 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
 
-// @element x-tag
-// @part main
-// @part scope
-// @part remove-button
-// @event ^remove - User clicked the remove button of a removable tag.
+/**
+ * @element x-tag
+ * @part main
+ * @part scope
+ * @part remove-button
+ * @fires ^remove - User clicked the remove button of a removable tag.
+ */
 export default class XTagElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -115,10 +117,12 @@ export default class XTagElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -126,10 +130,12 @@ export default class XTagElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type boolean
+   * @default false
+   */
   get removable() {
     return this.hasAttribute("removable");
   }
@@ -137,10 +143,14 @@ export default class XTagElement extends HTMLElement {
     removable ? this.setAttribute("removable", "") : this.removeAttribute("removable");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is toggled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -148,10 +158,14 @@ export default class XTagElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -159,10 +173,12 @@ export default class XTagElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

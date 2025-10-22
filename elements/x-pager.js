@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -10,11 +10,13 @@ import {closest} from "../utils/element.js";
 import {normalize} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 
-// @element x-pager
-// @event toggle
-// @part item
-// @part toggled-item
-export class XPagerElement extends HTMLElement {
+/**
+ * @element x-pager
+ * @fires toggle
+ * @part item
+ * @part toggled-item
+ */
+export default class XPagerElement extends HTMLElement {
   static observedAttributes = ["value", "max", "controls", "href"];
 
   static #shadowTemplate = html`
@@ -111,12 +113,14 @@ export class XPagerElement extends HTMLElement {
     }
   `;
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 1
-  //
-  // The current page number.
+  /**
+   * The current page number.
+   *
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 1
+   */
   get value() {
     if (this.hasAttribute("value")) {
       return Number.parseInt(this.getAttribute("value"));
@@ -130,12 +134,14 @@ export class XPagerElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 5
-  //
-  // The total number of pages.
+  /**
+   * The total number of pages.
+   *
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 5
+   */
   get max() {
     return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : 5;
   }
@@ -143,12 +149,14 @@ export class XPagerElement extends HTMLElement {
     this.setAttribute("max", max);
   }
 
-  // @property
-  // @attribute
-  // @type Array<string>
-  // @default ["prev", "nth", "next"]
-  //
-  // Available controls.
+  /**
+   * Available controls.
+   *
+   * @property
+   * @attribute
+   * @type {Array<"prev" | "next" | "first" | "last" | "nth">}
+   * @default ["prev", "nth", "next"]
+   */
   get controls() {
     if (this.hasAttribute("controls")) {
       return this.getAttribute("controls").replace(/\s+/g, " ").split(" ");
@@ -161,12 +169,14 @@ export class XPagerElement extends HTMLElement {
     this.setAttribute("controls", controls.join(" "));
   }
 
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
-  //
-  // If specified, each pager item will be rendered as a link.
+  /**
+   * If specified, each pager item will be rendered as a link.
+   *
+   * @property
+   * @attribute
+   * @type {string | null}
+   * @default null
+   */
   get href() {
     return this.getAttribute("href");
   }

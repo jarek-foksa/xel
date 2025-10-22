@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import PTPage from "./pt-page.js";
 
@@ -24,10 +24,12 @@ export default class PTElementPageElement extends PTPage {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "";
   }

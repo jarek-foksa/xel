@@ -1,12 +1,14 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 
-// @element x-label
+/**
+ * @element x-label
+ */
 export default class XLabelElement extends HTMLElement {
   static #shadowTemplate = html`<template><slot></slot></template>`;
 
@@ -55,12 +57,14 @@ export default class XLabelElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
-  //
-  // Value associated with this label.
+  /**
+   * Value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -68,10 +72,12 @@ export default class XLabelElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type number?
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {number | null}
+   * @default null
+   */
   get level() {
     return this.hasAttribute("level") ? Number.parseInt(this.getAttribute("level")) : null;
   }
@@ -79,10 +85,14 @@ export default class XLabelElement extends HTMLElement {
     level === null ? this.removeAttribute("level") : this.setAttribute("level", level);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }

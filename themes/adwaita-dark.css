@@ -1,16 +1,13 @@
 
-/*
- * @copyright
- *   © 2016-2025 Jarosław Foksa
- * @license
- *   MIT License (check LICENSE.md for details)
- * @doc
- *   https://developer.gnome.org/hig/
- *   https://gnome.pages.gitlab.gnome.org/libadwaita/doc/main/
- *   https://www.figma.com/community/file/1467967362512102193
- *   https://blogs.gnome.org/alexm/2021/12/31/libadwaita-1-0/
- *
+/**
  * Theme implementing GNOME Human Interface Guidelines.
+ *
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ * @see https://developer.gnome.org/hig/
+ * @see https://gnome.pages.gitlab.gnome.org/libadwaita/doc/main/
+ * @see https://www.figma.com/community/file/1467967362512102193
+ * @see https://blogs.gnome.org/alexm/2021/12/31/libadwaita-1-0/
  */
 
 @import "/node_modules/xel/themes/base.css";

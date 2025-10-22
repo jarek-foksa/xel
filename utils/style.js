@@ -1,12 +1,14 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
-// @type (string) => [string, number, string]
-//
-// Parse the value of CSS transition property.
+/**
+ * Parse the value of CSS transition property.
+ *
+ * @type {(string: string) => [string, number, string]}
+ */
 export let parseTransistion = (string) => {
   let [rawDuration, property, ...rest] = string.trim().split(" ");
   let duration = Number.parseFloat(rawDuration);

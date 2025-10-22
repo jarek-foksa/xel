@@ -1,12 +1,14 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 
-// @element x-box
+/**
+ * @element x-box
+ */
 export default class XBoxElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -33,12 +35,14 @@ export default class XBoxElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to use vertical (rather than horizontal) layout.
+  /**
+   * Whether to use vertical (rather than horizontal) layout.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get vertical() {
     return this.hasAttribute("vertical");
   }

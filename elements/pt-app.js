@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -22,7 +22,9 @@ import "./pt-sidebar.js";
 import {html, css} from "../utils/template.js";
 import {sleep, debounce} from "../utils/time.js";
 
-// @event locationchange
+/**
+ * @fires locationchange
+ */
 export default class PTAppElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -568,9 +570,11 @@ export default class PTAppElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type URL
-  //
-  // Last visited location.
+  /**
+   * Last visited location.
+   *
+   * @type {URL}
+   */
   get oldLocation() {
     return this.#oldLocation;
   }
@@ -775,7 +779,9 @@ export default class PTAppElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type (string, boolean) => void
+  /**
+   * @type {(href: string, replace?: boolean) => void}
+   */
   navigate(href, replace = false) {
     if (replace === false) {
       this.storeMainScrollOffset();

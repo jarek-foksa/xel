@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {compareArrays} from "../utils/array.js";
 import {html, css} from "../utils/template.js";
@@ -11,9 +11,11 @@ import {throttle, sleep} from "../utils/time.js";
 const DEBUG = false;
 const $menu = Symbol();
 
-// @element x-menubar
-// @event expand
-// @event collapse
+/**
+ * @element x-menubar
+ * @fires expand
+ * @fires collapse
+ */
 export default class XMenuBarElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
@@ -100,10 +102,14 @@ export default class XMenuBarElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -111,10 +117,12 @@ export default class XMenuBarElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

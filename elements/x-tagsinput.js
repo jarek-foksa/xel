@@ -1,23 +1,25 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
 import {getTimeStamp} from "../utils/time.js";
 
-// @element x-tagsinput
-// @event input
-// @event change
-// @event add
-// @event remove
-// @event ^textinputmodestart
-// @event ^textinputmodeend
-// @part input
-// @part suggestions
+/**
+ * @element x-tagsinput
+ * @fires input
+ * @fires change
+ * @fires add
+ * @fires remove
+ * @fires ^textinputmodestart
+ * @fires ^textinputmodeend
+ * @part input
+ * @part suggestions
+ */
 export default class XTagsInputElement extends HTMLElement {
   static observedAttributes = ["spellcheck", "disabled"];
 
@@ -119,19 +121,23 @@ export default class XTagsInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @type Array<string>
-  // @default []
-  // @readOnly
+  /**
+   * @property
+   * @type {Array<string>}
+   * @default [[]]
+   * @readonly
+   */
   get value() {
     let tags = [...this.children].filter(child => child.localName === "x-tag");
     return tags.map(tag => tag.value).filter(value => value !== null);
   }
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ","
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ","
+   */
   get delimiter() {
     return this.hasAttribute("delimiter") ? this.getAttribute("delimiter") : ",";
   }
@@ -139,10 +145,12 @@ export default class XTagsInputElement extends HTMLElement {
     this.setAttribute("delimiter", delimiter);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get spellcheck() {
     return this.hasAttribute("spellcheck");
   }
@@ -150,10 +158,14 @@ export default class XTagsInputElement extends HTMLElement {
     spellcheck ? this.setAttribute("spellcheck", "") : this.removeAttribute("spellcheck");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -161,10 +173,14 @@ export default class XTagsInputElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -172,12 +188,14 @@ export default class XTagsInputElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to show a popover with suggestions.
+  /**
+   * Whether to show a popover with suggestions.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get suggestions() {
     return this.hasAttribute("suggestions");
   }
@@ -185,10 +203,12 @@ export default class XTagsInputElement extends HTMLElement {
     suggestions ? this.setAttribute("suggestions", "") : this.removeAttribute("suggestions");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;
@@ -240,8 +260,10 @@ export default class XTagsInputElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   clear() {
     let tags = [...this.children].filter(child => child.localName === "x-tag");
 
@@ -258,10 +280,12 @@ export default class XTagsInputElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type (string) => Array<XTagElement>
-  //
-  // Override this method to provide customized suggestions.
+  /**
+   * Override this method to provide customized suggestions.
+   *
+   * @method
+   * @type {(string) => Array<XTagElement>}
+   */
   getSuggestions() {
     return [];
   }

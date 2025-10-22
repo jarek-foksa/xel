@@ -1,13 +1,15 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 
-// @element x-progressbar
-// @part bar
+/**
+ * @element x-progressbar
+ * @part bar
+ */
 export default class XProgressbarElement extends HTMLElement {
   static observedAttributes = ["value", "max", "disabled"];
 
@@ -80,12 +82,14 @@ export default class XProgressbarElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type number?
-  // @default null
-  //
-  // Current progress, in procentages.
+  /**
+   * Current progress, in percentages.
+   *
+   * @property
+   * @attribute
+   * @type {number | null}
+   * @default null
+   */
   get value() {
     return this.hasAttribute("value") ? Number.parseFloat(this.getAttribute("value")) : null;
   }
@@ -93,10 +97,12 @@ export default class XProgressbarElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 1
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 1
+   */
   get max() {
     return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : 1;
   }
@@ -104,12 +110,14 @@ export default class XProgressbarElement extends HTMLElement {
     this.setAttribute("max", max);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this button is disabled.
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -117,10 +125,12 @@ export default class XProgressbarElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

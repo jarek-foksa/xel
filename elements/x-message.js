@@ -1,23 +1,27 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {toTitleCase} from "../utils/string.js";
 
-// @element x-message
+/**
+ * @element x-message
+ */
 export default class XMessageElement extends HTMLElement {
   static observedAttributes = ["href", "args", "autocapitalize", "ellipsis"];
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get href() {
     return this.hasAttribute("href") ? this.getAttribute("href") : "";
   }
@@ -25,10 +29,12 @@ export default class XMessageElement extends HTMLElement {
     this.setAttribute("href", href);
   }
 
-  // @property
-  // @attribute
-  // @type Object
-  // @default {}
+  /**
+   * @property
+   * @attribute
+   * @type {Object.<string, string | number>}
+   * @default {}
+   */
   get args() {
     let args = Object.create(null);
     let serializedArgs = this.hasAttribute("args") ? this.getAttribute("args").trim() : "";
@@ -61,10 +67,12 @@ export default class XMessageElement extends HTMLElement {
     }
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get autocapitalize() {
     return this.hasAttribute("autocapitalize") ? true : false;
   }
@@ -77,12 +85,14 @@ export default class XMessageElement extends HTMLElement {
     }
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to show an ellipsis at the end of the message text.
+  /**
+   * Whether to show an ellipsis at the end of the message text.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get ellipsis() {
     return this.hasAttribute("ellipsis");
   }
@@ -90,8 +100,10 @@ export default class XMessageElement extends HTMLElement {
     ellipsis ? this.setAttribute("ellipsis", "") : this.removeAttribute("ellipsis");
   }
 
-  // @property
-  // @type Promise
+  /**
+   * @property
+   * @type {Promise<void>}
+   */
   get whenReady() {
     return new Promise((resolve) => {
       if (this.#whenReadyCallbacks === null) {

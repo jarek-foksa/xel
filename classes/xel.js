@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import DOMPurify from "../node_modules/dompurify/dist/purify.es.mjs";
 import EventEmitter from "./event-emitter.js";
@@ -14,16 +14,20 @@ import {FluentBundle, FluentResource, FluentNumber} from "../node_modules/@fluen
 import {getOperatingSystemName} from "../utils/system.js";
 import {getRelDisplayDate} from "../utils/time.js";
 
-// @singleton
-// @event themechange
-// @event iconschange
-// @event localeschange
-// @event configchange
-// @event accentcolorchange
+/**
+ * @singleton
+ * @fires themechange
+ * @fires iconschange
+ * @fires localeschange
+ * @fires configchange
+ * @fires accentcolorchange
+ */
 export default new class Xel extends EventEmitter {
-  // @type string?
-  //
-  // URL to a CSS file with Xel theme definition.
+  /**
+   * URL to a CSS file with Xel theme definition.
+   *
+   * @type {string | null}
+   */
   get theme() {
     return this.#theme;
   }
@@ -39,9 +43,11 @@ export default new class Xel extends EventEmitter {
     metaElement.setAttribute("content", value);
   }
 
-  // @type Array<string>
-  //
-  // URLs to an SVG files with icons.
+  /**
+   * URLs to SVG files with icons.
+   *
+   * @type {Array<string>}
+   */
   get icons() {
     return [...this.#icons];
   }
@@ -68,11 +74,13 @@ export default new class Xel extends EventEmitter {
     metaElement.setAttribute("content", urls.join(", "));
   }
 
-  // @type Array<string>
-  //
-  // URLs to files with localizations.
-  // Each file name should consist from ISO 639 language code (e.g. "en"), optionally followed by "-" and ISO 3166
-  // territory, e.g. "en", "en-US" or "en-GB".
+  /**
+   * URLs to files with localizations.
+   * Each file name should consist from ISO 639 language code (e.g. "en"), optionally followed by "-" and ISO 3166
+   * territory, e.g. "en", "en-US" or "en-GB".
+   *
+   * @type {Array<string>}
+   */
   get locales() {
     return [...this.#locales];
   }
@@ -88,14 +96,18 @@ export default new class Xel extends EventEmitter {
     metaElement.setAttribute("content", urls.join(", "));
   }
 
-  // @type string
+  /**
+   * @type {string}
+   */
   get locale() {
     return this.#localesIds[0] || "en";
   }
 
-  // @type string
-  //
-  // Accent color.
+  /**
+   * Accent color.
+   *
+   * @type {string}
+   */
   get accentColor() {
     return this.#accentColor;
   }
@@ -111,10 +123,12 @@ export default new class Xel extends EventEmitter {
     meta.setAttribute("content", value);
   }
 
-  // @type Storage
-  // @default localStorage
-  //
-  // Specifies the storage area to be used for reading and writing the config
+  /**
+   * Specifies the storage area to be used for reading and writing the config
+   *
+   * @type {Storage}
+   * @default localStorage
+   */
   get configStorage() {
     return this.#configStorage;
   }
@@ -159,12 +173,16 @@ export default new class Xel extends EventEmitter {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type CSSStyleSheet
+  /**
+   * @type {CSSStyleSheet}
+   */
   get themeStyleSheet() {
     return this.#themeStyleSheet;
   }
 
-  // @type Object
+  /**
+   * @type {Object.<string, string>}
+   */
   get presetAccentColors() {
     let colors = {};
 
@@ -189,18 +207,22 @@ export default new class Xel extends EventEmitter {
     return colors;
   }
 
-  // @type "none" || "titlecase"
+  /**
+   * @type {"none" | "titlecase"}
+   */
   get autocapitalize() {
     return this.#autocapitalize;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type (string) => SVGSymbolElement
-  //
-  // Get an icon matching the given selector.
-  // Selector consists from "#", followed by the icon ID.
-  // Should be called after Xel.whenIconsReady.
+  /**
+   * Get an icon matching the given selector.
+   * Selector consists from "#", followed by the icon ID.
+   * Should be called after Xel.whenIconsReady.
+   *
+   * @type {(selector: string) => SVGSymbolElement}
+   */
   queryIcon(selector) {
     selector = (selector.startsWith("#") === false) ? "#" + selector : selector;
 
@@ -218,11 +240,13 @@ export default new class Xel extends EventEmitter {
     return icon;
   }
 
-  // @type (string, Object) => {id:string, attribute:string?, format:string, content:string}
-  //
-  // Get a localized message matching the given selector and args.
-  // Selector consists from "#", followed by the message ID, optionally followed by a dot (.) and the message attribute.
-  // Should be called after Xel.whenLocalesReady.
+  /**
+   * Get a localized message matching the given selector and args.
+   * Selector consists from "#", followed by the message ID, optionally followed by a dot (.) and the message attribute.
+   * Should be called after Xel.whenLocalesReady.
+   *
+   * @type {(selector: string, args?: Object.<string, any>) => {id: string, attribute?: string, format: string, content: string, fallback: boolean}}
+   */
   queryMessage(selector, args = {}) {
     selector = selector.startsWith("#") ? selector.substring(1) : selector;
 
@@ -279,11 +303,17 @@ export default new class Xel extends EventEmitter {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * @type {(key: string, defaultValue?: any) => any}
+   */
   getConfig(key, defaultValue = null) {
     let rawValue = this.#configStorage.getItem(key);
     return (rawValue === null) ? defaultValue : JSON.parse(rawValue);
   }
 
+  /**
+   * @type {(key: string, value: any) => void}
+   */
   setConfig(key, value) {
     let beforeRawValue = this.#configStorage.getItem(key);
 
@@ -301,6 +331,9 @@ export default new class Xel extends EventEmitter {
     }
   }
 
+  /**
+   * @type {() => void}
+   */
   clearConfig() {
     if (this.#configStorage.length > 0) {
       let keys = Object.keys(this.#configStorage);
@@ -366,7 +399,7 @@ export default new class Xel extends EventEmitter {
 
     // Observe <head> for changes
     {
-      let observer = new MutationObserver((mutations) => this.#onHeadChange(mutations));
+      let observer = new MutationObserver(() => this.#onHeadChange());
       observer.observe(document.head, {attributes: true, subtree: true});
     }
 
@@ -719,7 +752,7 @@ export default new class Xel extends EventEmitter {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @legacy
+  /** @deprecated */
   get iconsets() {
     console.warn(`"Xel.iconsets" has been deprecated in Xel 0.27.0. Please use "Xel.icons" instead.`);
     return this.icons;
@@ -728,6 +761,8 @@ export default new class Xel extends EventEmitter {
     console.warn(`"Xel.iconsets" has been deprecated in Xel 0.27.0. Please use "Xel.icons" instead.`);
     this.icons = iconsets;
   }
+
+  /** @deprecated */
   get whenIconsetsReady() {
     console.warn(`"Xel.whenIconsetsReady" has been deprecated in Xel 0.27.0. Please use "Xel.whenIconsReady" instead.`);
     return this.whenIconsReady;

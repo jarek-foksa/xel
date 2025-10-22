@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {isNumeric} from "../utils/string.js";
 import {html, css} from "../utils/template.js";
@@ -12,12 +12,14 @@ import {normalize, getPrecision, getDistanceBetweenPoints} from "../utils/math.j
 
 const NUMERIC_KEYS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+", ",", "."];
 
-// @element x-numberinput
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @event ^textinputmodestart
-// @event ^textinputmodeend
+/**
+ * @element x-numberinput
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @fires ^textinputmodestart
+ * @fires ^textinputmodeend
+ */
 export default class XNumberInputElement extends HTMLElement {
   static observedAttributes = ["value", "min", "max", "prefix", "suffix", "disabled"];
 
@@ -121,10 +123,12 @@ export default class XNumberInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type number?
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {number | null}
+   * @default null
+   */
   get value() {
     return this.hasAttribute("value") ? Number.parseFloat(this.getAttribute("value")) : null;
   }
@@ -132,10 +136,12 @@ export default class XNumberInputElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default Infinity
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default -Infinity
+   */
   get min() {
     return this.hasAttribute("min") ? Number.parseFloat(this.getAttribute("min")) : Number.NEGATIVE_INFINITY;
   }
@@ -143,10 +149,12 @@ export default class XNumberInputElement extends HTMLElement {
     Number.isFinite(min) ? this.setAttribute("min", min) : this.removeAttribute("min");
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default Infinity
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default Infinity
+   */
   get max() {
     return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : Number.POSITIVE_INFINITY;
   }
@@ -154,10 +162,14 @@ export default class XNumberInputElement extends HTMLElement {
     Number.isFinite(max) ? this.setAttribute("max", max) : this.removeAttribute("max");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -165,12 +177,14 @@ export default class XNumberInputElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 20
-  //
-  // Maximal number of digits to be shown after the dot. This setting affects only the display value.
+  /**
+   * Maximal number of digits to be shown after the dot. This setting affects only the display value.
+   *
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 20
+   */
   get precision() {
     return this.hasAttribute("precision") ? Number.parseFloat(this.getAttribute("precision")) : 20;
   }
@@ -178,12 +192,14 @@ export default class XNumberInputElement extends HTMLElement {
     this.setAttribute("precision", value);
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 1
-  //
-  // Number by which value should be incremented or decremented when up or down arrow key is pressed.
+  /**
+   * Number by which value should be incremented or decremented when up or down arrow key is pressed.
+   *
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 1
+   */
   get step() {
     return this.hasAttribute("step") ? Number.parseFloat(this.getAttribute("step")) : 1;
   }
@@ -191,10 +207,12 @@ export default class XNumberInputElement extends HTMLElement {
     this.setAttribute("step", step);
   }
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get prefix() {
     return this.hasAttribute("prefix") ? this.getAttribute("prefix") : "";
   }
@@ -202,10 +220,12 @@ export default class XNumberInputElement extends HTMLElement {
     this.setAttribute("prefix", prefix);
   }
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get suffix() {
     return this.hasAttribute("suffix") ? this.getAttribute("suffix") : "";
   }
@@ -213,10 +233,14 @@ export default class XNumberInputElement extends HTMLElement {
     this.setAttribute("suffix", suffix);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -224,10 +248,12 @@ export default class XNumberInputElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {isPointerInsideElement} from "../utils/element.js";
 
@@ -10,25 +10,32 @@ let showModal = HTMLDialogElement.prototype.showModal;
 let close = HTMLDialogElement.prototype.close;
 let openDialogs = [];
 
-// @element dialog
+/**
+ * @element dialog
+ */
 let DialogElementMixin = {
-  // @property readOnly
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the dialog is currently open.
+  /**
+   * Whether the dialog is currently open.
+   *
+   * @property
+   * @attribute
+   * @readonly
+   * @type {boolean}
+   * @default false
+   */
   get open() {
     return this.hasAttribute("open");
   },
 
-  // @method
-  // @type () => Promise
-  //
-  // Open the dialog.<br/>
-  // Returns a promise that is resolved when the dialog finishes animating.
+  /**
+   * Open the dialog.<br/>
+   * Returns a promise that is resolved when the dialog finishes animating.
+   *
+   * @method
+   * @type {() => Promise<void>}
+   */
   showModal() {
-    return new Promise( async (resolve) => {
+    return new Promise(async (resolve) => {
       if (this.open === true || this.isConnected === false) {
         resolve();
         return;
@@ -181,13 +188,15 @@ let DialogElementMixin = {
     });
   },
 
-  // @method
-  // @type () => Promise
-  //
-  // Close the dialog.<br/>
-  // Returns a promise that is resolved when the dialog finishes animating.
+  /**
+   * Close the dialog.<br/>
+   * Returns a promise that is resolved when the dialog finishes animating.
+   *
+   * @method
+   * @type {() => Promise<void>}
+   */
   close(returnValue) {
-    return new Promise( async (resolve) => {
+    return new Promise(async (resolve) => {
       // Animate the dialog
       {
         if (this._showAnimation) {

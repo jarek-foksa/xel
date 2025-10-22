@@ -1,22 +1,24 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
 
-// @element x-titlebar
-// @part buttons
-// @part button
-// @part close-button
-// @part minimize-button
-// @part maximize-button
-// @part icon
-// @event buttonclick - User clicked a titlebar button.
-class XTitlebarElement extends HTMLElement {
+/**
+ * @element x-titlebar
+ * @part buttons
+ * @part button
+ * @part close-button
+ * @part minimize-button
+ * @part maximize-button
+ * @part icon
+ * @fires buttonclick - User clicked a titlebar button.
+ */
+export default class XTitlebarElement extends HTMLElement {
   static observedAttributes = ["title"];
 
   static #shadowTemplate = html`
@@ -90,12 +92,14 @@ class XTitlebarElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the window is maximized.
+  /**
+   * Whether the window is maximized.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get maximized() {
     return this.hasAttribute("maximized");
   }

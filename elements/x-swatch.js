@@ -1,12 +1,14 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 
-// @element x-swatch
+/**
+ * @element x-swatch
+ */
 export default class XSwatchElement extends HTMLElement {
   static observedAttributes = ["value"];
 
@@ -40,12 +42,14 @@ export default class XSwatchElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default "white"
-  //
-  // Color value following the <a href="https://www.w3.org/TR/css-color-3/#colorunits">CSS syntax</a>.
+  /**
+   * Color value following the <a href="https://www.w3.org/TR/css-color-3/#colorunits">CSS syntax</a>.
+   *
+   * @property
+   * @attribute
+   * @type {string}
+   * @default "white"
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "white";
   }
@@ -53,10 +57,12 @@ export default class XSwatchElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

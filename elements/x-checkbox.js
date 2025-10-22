@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -11,9 +11,11 @@ import {getBrowserEngine} from "../utils/system.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-checkbox
-// @part indicator
-// @event ^toggle - User toggled on or off the checkbox.
+/**
+ * @element x-checkbox
+ * @part indicator
+ * @fires ^toggle - User toggled on or off the checkbox.
+ */
 export default class XCheckboxElement extends HTMLElement {
   static observedAttributes = ["toggled", "mixed", "disabled"];
 
@@ -107,12 +109,14 @@ export default class XCheckboxElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default null
-  //
-  // Value associated with this checkbox.
+  /**
+   * Value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -120,10 +124,14 @@ export default class XCheckboxElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is toggled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -131,10 +139,14 @@ export default class XCheckboxElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -142,10 +154,14 @@ export default class XCheckboxElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -153,10 +169,12 @@ export default class XCheckboxElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

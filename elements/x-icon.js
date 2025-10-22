@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -10,7 +10,9 @@ import {getAncestorGradients} from "../utils/element.js";
 import {getIcons} from "../utils/icon.js";
 import {html, css} from "../utils/template.js";
 
-// @element x-icon
+/**
+ * @element x-icon
+ */
 export default class XIconElement extends HTMLElement {
   static observedAttributes = ["href"];
 
@@ -51,10 +53,12 @@ export default class XIconElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get href() {
     return this.hasAttribute("href") ? this.getAttribute("href") : "";
   }
@@ -62,10 +66,14 @@ export default class XIconElement extends HTMLElement {
     this.setAttribute("href", href);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -73,10 +81,12 @@ export default class XIconElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

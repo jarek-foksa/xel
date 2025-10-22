@@ -1,16 +1,18 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {createElement, closest, isPointerInsideElement} from "../utils/element.js";
 import {getBrowserEngine} from "../utils/system.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-button
-// @event toggle - User toggled the button on or off by clicking it.
+/**
+ * @element x-button
+ * @fires toggle - User toggled the button on or off by clicking it.
+ */
 export default class XButtonElement extends HTMLElement {
   static observedAttributes = ["disabled", "skin"];
 
@@ -53,12 +55,14 @@ export default class XButtonElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
-  //
-  // A unique value associated with this button.
+  /**
+   * A unique value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -66,12 +70,14 @@ export default class XButtonElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this button is toggled.
+  /**
+   * Whether the widget is toggled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -79,12 +85,14 @@ export default class XButtonElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this button can be toggled on/off by the user (e.g. by clicking the button).
+  /**
+   * Whether the widget can be toggled on/off by the user.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get togglable() {
     return this.hasAttribute("togglable");
   }
@@ -92,12 +100,14 @@ export default class XButtonElement extends HTMLElement {
     togglable ? this.setAttribute("togglable", "") : this.removeAttribute("togglable");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the this button has "mixed" state.
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -105,12 +115,14 @@ export default class XButtonElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this button is disabled.
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -118,12 +130,14 @@ export default class XButtonElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the button should take less horizontal space.
+  /**
+   * Whether the widget should take less horizontal space.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get condensed() {
     return this.hasAttribute("condensed");
   }
@@ -131,10 +145,12 @@ export default class XButtonElement extends HTMLElement {
     condensed ? this.setAttribute("condensed", "") : this.removeAttribute("condensed");
   }
 
-  // @property
-  // @attribute
-  // @type "normal" || "flat" || "recessed" || "dock"
-  // @default "normal"
+  /**
+   * @property
+   * @attribute
+   * @type {"normal" | "flat" | "recessed" | "dock"}
+   * @default "normal"
+   */
   get skin() {
     return this.hasAttribute("skin") ? this.getAttribute("skin") : "normal";
   }
@@ -142,45 +158,52 @@ export default class XButtonElement extends HTMLElement {
     this.setAttribute("skin", skin);
   }
 
-  // @property
-  // @attribute
-  // @type "normal" || "small" || "large"
-  // @default "normal"
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
-    return (size === "small" || size === "large") ? size : "normal";
+    return (size === "small" || size === "large") ? size : null;
   }
   set size(size) {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property readOnly
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
-  //
-  // Whether the menu or popover associated with this button is opened.
+  /**
+   * Whether the menu or popover associated with this button is opened.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get expanded() {
     return this.hasAttribute("expanded");
   }
 
-  // @property readOnly
-  // @type boolean
-  // @default false
-  // @readOnly
-  //
-  // Whether clicking this button will cause a menu or popover to show up.
+  /**
+   * Whether clicking this button will cause a menu or popover to show up.
+   *
+   * @property
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get expandable() {
     return this.#canOpenMenu() || this.#canOpenPopover();
   }
 
-  // @property readOnly
-  // @type XButtonsElement?
-  // @default null
-  // @readOnly
-  //
-  // Direct ancestor <code>x-buttons</code> element.
+  /**
+   * Direct ancestor <code>x-buttons</code> element.
+   *
+   * @property
+   * @type {XButtonsElement | null}
+   * @default null
+   * @readonly
+   */
   get ownerButtons() {
     if (this.parentElement) {
       if (this.parentElement?.localName === "x-buttons") {
@@ -257,10 +280,12 @@ export default class XButtonElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type () => Promise
-  //
-  // Open the child menu or overlay.
+  /**
+   * Open the child menu or overlay.
+   *
+   * @method
+   * @type {() => Promise<void>}
+   */
   expand() {
     return new Promise( async (resolve) => {
       if (this.#canOpenMenu()) {
@@ -275,10 +300,12 @@ export default class XButtonElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type (Promise?) => Promise
-  //
-  // Close the child menu or overlay.
+  /**
+   * Close the child menu or overlay.
+   *
+   * @method
+   * @type {(delay?: number | null) => Promise<void>}
+   */
   collapse(delay = null) {
     return new Promise(async (resolve) => {
       if (this.#canCloseMenu()) {

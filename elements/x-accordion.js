@@ -1,17 +1,19 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
 
-// @element x-accordion
-// @part arrow - Arrow icon indicating whether the accordion is expanded or collapsed.
-// @event expand - User expanded the accordion by clicking the arrow icon.
-// @event collapse - User collapsed the accordion by clicking the arrow icon.
+/**
+ * @element x-accordion
+ * @part arrow - Arrow icon indicating whether the accordion is expanded or collapsed.
+ * @fires expand - User expanded the accordion by clicking the arrow icon.
+ * @fires collapse - User collapsed the accordion by clicking the arrow icon.
+ */
 export default class XAccordionElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -88,12 +90,14 @@ export default class XAccordionElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the accordion is expanded.
+  /**
+   * Whether the accordion is expanded.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get expanded() {
     return this.hasAttribute("expanded");
   }
@@ -101,12 +105,14 @@ export default class XAccordionElement extends HTMLElement {
     expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the accordion is disabled.
+  /**
+   * Whether the accordion is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -114,10 +120,12 @@ export default class XAccordionElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;
@@ -180,10 +188,12 @@ export default class XAccordionElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type () => Promise
-  //
-  // Expand the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+  /**
+   * Expand the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+   *
+   * @method
+   * @type {(animate?: boolean) => Promise<void>}
+   */
   expand(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === false) {
@@ -227,10 +237,12 @@ export default class XAccordionElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type () => Promise
-  //
-  // Collapse the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+  /**
+   * Collapse the accordion. Returns a promise which will be resolved when the accordion finishes animating.
+   *
+   * @method
+   * @type {(animate?: boolean) => Promise<void>}
+   */
   collapse(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === true) {

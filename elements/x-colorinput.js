@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -14,12 +14,14 @@ import {sleep} from "../utils/time.js";
 
 const WINDOW_PADDING = 7;
 
-// @element x-colorinput
-// @event ^input
-// @event ^change
-// @event ^textinputmodestart
-// @event ^textinputmodeend
-// @part input
+/**
+ * @element x-colorinput
+ * @fires ^input
+ * @fires ^change
+ * @fires ^textinputmodestart
+ * @fires ^textinputmodeend
+ * @part input
+ */
 export default class XColorInputElement extends HTMLElement {
   static observedAttributes = ["value", "space", "disabled"];
 
@@ -147,11 +149,14 @@ export default class XColorInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string?
-  // @partial
-  // @default "#000000"
+  /**
+   * Value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @type {string | null}
+   * @default "#000000"
+   */
   get value() {
     return this.#value;
   }
@@ -172,10 +177,12 @@ export default class XColorInputElement extends HTMLElement {
     }
   }
 
-  // @property
-  // @attribute
-  // @type "srgb" || "srgb-linear" || "p3" || "rec2020" || "a98rgb" || "prophoto" || "oklch" || "oklab" || "lch" || "lab" || "xyz-d65" || "xyz-d50"
-  // @default "srgb"
+  /**
+   * @property
+   * @attribute
+   * @type {"srgb" | "srgb-linear" | "p3" | "rec2020" | "a98rgb" | "prophoto" | "oklch" | "oklab" | "lch" | "lab" | "xyz-d65" | "xyz-d50"}
+   * @default "srgb"
+   */
   get space() {
     return this.hasAttribute("space") ? this.getAttribute("space") : "srgb";
   }
@@ -183,12 +190,14 @@ export default class XColorInputElement extends HTMLElement {
     this.setAttribute("space", space);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to allow manipulation of the alpha channel.
+  /**
+   * Whether to allow manipulation of the alpha channel.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -196,10 +205,12 @@ export default class XColorInputElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get required() {
     return this.hasAttribute("required");
   }
@@ -207,12 +218,14 @@ export default class XColorInputElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this input has "mixed" state.
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -220,10 +233,14 @@ export default class XColorInputElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -231,10 +248,12 @@ export default class XColorInputElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;
@@ -243,20 +262,24 @@ export default class XColorInputElement extends HTMLElement {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get empty() {
     return this.hasAttribute("empty");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get error() {
     return this.hasAttribute("error");
   }
@@ -346,22 +369,28 @@ export default class XColorInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   selectAll() {
     this["#input"].select();
   }
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   clear() {
     this.value = "";
     this.#error = null;
     this.#updateValidityIndicators();
   }
 
-  // @method
-  // @type () => boolean
+  /**
+   * @method
+   * @type {() => boolean}
+   */
   reportValidity() {
     let value =  this["#input"].value;
 

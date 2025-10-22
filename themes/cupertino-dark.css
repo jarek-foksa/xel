@@ -1,13 +1,10 @@
 
-/*
- * @copyright
- *   © 2016-2025 Jarosław Foksa
- * @license
- *   Xel Cupertino License v1 (check LICENSE.md for details)
- * @doc
- *   https://developer.apple.com/design/human-interface-guidelines/
- *
+/**
  * Theme implementing macOS Human Interface Guidelines.
+ *
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license Xel Cupertino License v1 (check LICENSE.md for details)
+ * @see https://developer.apple.com/design/human-interface-guidelines/
  */
 
 @import "/node_modules/xel/themes/base.css";

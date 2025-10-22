@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -35,12 +35,12 @@ export default class PTDemoBlockElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Compact demo has a scrollable code view with limited max height.
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get compact() {
     return this.hasAttribute("compact");
   }
@@ -48,8 +48,10 @@ export default class PTDemoBlockElement extends HTMLElement {
     compact ? this.setAttribute("compact", "") : this.removeAttribute("compact");
   }
 
-  // @property
-  // @type Promise
+  /**
+   * @property
+   * @type {Promise<void>}
+   */
   get whenReady() {
     return new Promise((resolve) => {
       if (this.#readyCallbacks === null) {

@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {compareArrays} from "../utils/array.js";
 import {closest} from "../utils/element.js";
@@ -11,21 +11,23 @@ import {html, css} from "../utils/template.js";
 
 let getClosestMultiple = (number, step) => round(round(number / step) * step, getPrecision(step));
 
-// @element x-slider
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part thumbs
-// @part thumb
-// @part start-thumb
-// @part end-thumb
-// @part track
-// @part groove-track
-// @part range-track
-// @part tick
-// @part first-tick
-// @part last-tick
-// @part range-tick
+/**
+ * @element x-slider
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part thumbs
+ * @part thumb
+ * @part start-thumb
+ * @part end-thumb
+ * @part track
+ * @part groove-track
+ * @part range-track
+ * @part tick
+ * @part first-tick
+ * @part last-tick
+ * @part range-tick
+ */
 export default class XSliderElement extends HTMLElement {
   static observedAttributes = ["value", "min", "max", "ticks", "disabled"];
 
@@ -154,10 +156,12 @@ export default class XSliderElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 0
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 0
+   */
   get min() {
     return this.hasAttribute("min") ? Number.parseFloat(this.getAttribute("min")) : 0;
   }
@@ -165,10 +169,12 @@ export default class XSliderElement extends HTMLElement {
     this.setAttribute("min", min);
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 100
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 100
+   */
   get max() {
     return this.hasAttribute("max") ? Number.parseFloat(this.getAttribute("max")) : 100;
   }
@@ -176,10 +182,12 @@ export default class XSliderElement extends HTMLElement {
     this.setAttribute("max", max);
   }
 
-  // @property
-  // @attribute
-  // @type number || Array<number, number>
-  // @default 0
+  /**
+   * @property
+   * @attribute
+   * @type {number | Array<number, number>}
+   * @default 0
+   */
   get value() {
     if (this.hasAttribute("value")) {
       let parts = this.getAttribute("value").split(/[ ,]+/)
@@ -207,10 +215,12 @@ export default class XSliderElement extends HTMLElement {
     }
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 1
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 1
+   */
   get step() {
     return this.hasAttribute("step") ? Number.parseFloat(this.getAttribute("step")) : 1;
   }
@@ -218,12 +228,14 @@ export default class XSliderElement extends HTMLElement {
     this.setAttribute("step", step);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to draw a tick mark for each step.
+  /**
+   * Whether to draw a tick mark for each step.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get ticks() {
     return this.hasAttribute("ticks");
   }
@@ -231,10 +243,14 @@ export default class XSliderElement extends HTMLElement {
     ticks ? this.setAttribute("ticks", "") : this.removeAttribute("ticks");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -242,10 +258,12 @@ export default class XSliderElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;
@@ -254,24 +272,28 @@ export default class XSliderElement extends HTMLElement {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property readOnly
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
-  //
-  // Whether the slider is showing a range value.
+  /**
+   * Whether the slider is showing a range value.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get range() {
     return this.hasAttribute("range");
   }
 
-  // @property readOnly
-  // @attribute
-  // @type "start" || "end" || null
-  // @default null
-  // @readOnly
-  //
-  // Whether the start or end grippie is being dragged by the user.
+  /**
+   * @property
+   * @attribute
+   * @type {"start" | "end" | null}
+   * @default null
+   * @readonly
+   *
+   * Whether the start or end grippie is being dragged by the user.
+   */
   get dragging() {
     return this.getAttribute("dragging");
   }

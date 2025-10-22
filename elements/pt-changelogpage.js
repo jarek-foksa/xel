@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import ChangelogParser from "../classes/changelog-parser.js";
 import PTPage from "./pt-page.js";
@@ -104,7 +104,7 @@ export default class PTChangelogPageElement extends PTPage {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #markdownToHTML(markdown) {
-    // @doc https://marked.js.org/using_advanced#options
+    // @see https://marked.js.org/using_advanced#options
     globalThis.marked.setOptions({
       gfm: true,
       highlight: (code, language) => {

@@ -1,19 +1,23 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
-// @type (Array) => Array
-//
-// Remove duplicate values from the array.
+/**
+ * Remove duplicate values from array.
+ *
+ * @type {(array: Array<any>) => Array<any>}
+ */
 export let removeDuplicates = (array) => {
   return [...new Set(array)];
 };
 
-// @type (Array, Array, boolean) => boolean
-//
-// Check whether two arrays consist from the same items.
+/**
+ * Check whether two arrays consist from the same items.
+ *
+ * @type {(array: Array<any>, otherArray: Array<any>, compareIndexes?: boolean) => boolean}
+ */
 export let compareArrays = (array, otherArray, compareIndexes = false) => {
   if (array.length !== otherArray.length) {
     return false;

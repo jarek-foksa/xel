@@ -1,15 +1,17 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-tab
-// @part selection-indicator - Horizontal line indicating that the tab is toggled.
+/**
+ * @element x-tab
+ * @part selection-indicator - Horizontal line indicating that the tab is toggled.
+ */
 export default class XTabElement extends HTMLElement {
   static observedAttributes = ["toggled", "disabled"];
 
@@ -76,10 +78,12 @@ export default class XTabElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "";
   }
@@ -87,10 +91,14 @@ export default class XTabElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is toggled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -98,10 +106,14 @@ export default class XTabElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -109,10 +121,12 @@ export default class XTabElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

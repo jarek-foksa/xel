@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import ChildProcess from "node:child_process";
 import Process from "node:process";
@@ -19,6 +19,7 @@ import PostCSSMinify from "@csstools/postcss-minify";
 import * as JSMinifier from "terser";
 import * as JSBundler from "rollup";
 import Semver from "semver";
+import TypeScript from "typescript";
 import ChangelogParser from "./classes/changelog-parser.js";
 import {round} from "./utils/math.js";
 
@@ -39,7 +40,9 @@ const HELP = `Commands:
 // Utils
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @type (string) => string
+/**
+ * @type {(entryScriptPath: string) => Promise<string>}
+ */
 let bundleScripts = (entryScriptPath) => {
   return new Promise(async (resolve) => {
     let bundle = await JSBundler.rollup({
@@ -69,10 +72,12 @@ let bundleScripts = (entryScriptPath) => {
   });
 };
 
-// @type (string, boolean) => string
-// @doc https://www.npmjs.com/package/terser#api-reference
-//
-// Takes ES6 code snippet and minifies and mangles it using Terser.js
+/**
+ * Takes ES6 code snippet and minifies it using Terser.js
+ *
+ * @type {(code: string, verbose?: boolean) => Promise<string>}
+ * @see https://www.npmjs.com/package/terser#api-reference
+ */
 let minifyScript = (code, verbose = false) => {
   return new Promise(async (resolve) => {
     // Minify multiline html`` template strings
@@ -177,7 +182,9 @@ let minifyScript = (code, verbose = false) => {
   });
 };
 
-// @type (string) => string?
+/**
+ * @type {() => Promise<string | null>}
+ */
 let getLastPublishedNpmPackageVersion = () => {
   return new Promise((resolve) => {
     ChildProcess.exec(`npm show xel version`, (_error, stdout) => {
@@ -253,14 +260,33 @@ if (COMMAND === "build") {
       }
 
       // xel.js
+      // xel.d.ts
       {
         let xelJS = await bundleScripts(`${PROJECT_PATH}/xel.js`);
+
+        Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/`);
+        Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/xel.js`, xelJS, "utf8");
+
+        let compilerOptions = {
+          allowJs: true,
+          declaration: true
+        };
+
+        let host = TypeScript.createCompilerHost(compilerOptions);
+
+        host.writeFile = (fileName, contents) => {
+          if (fileName.endsWith(".d.ts")) {
+            Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/xel.d.ts`, contents, "utf8");
+          }
+        };
+
+        let program = TypeScript.createProgram([`${PROJECT_PATH}/builds/npm/xel.js`], compilerOptions, host);
+        program.emit();
 
         if (MINIFY === true) {
           xelJS = await minifyScript(xelJS);
         }
 
-        Fse.ensureDirSync(`${PROJECT_PATH}/builds/npm/`);
         Fse.writeFileSync(`${PROJECT_PATH}/builds/npm/xel.js`, xelJS, "utf8");
       }
 

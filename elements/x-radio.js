@@ -1,16 +1,18 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 
-// @element x-radio
-// @part indicator
-// @part indicator-dot
-// @event ^toggle - User toggled the radio on or off
+/**
+ * @element x-radio
+ * @part indicator
+ * @part indicator-dot
+ * @fires ^toggle - User toggled the radio on or off
+ */
 export default class XRadioElement extends HTMLElement {
   static observedAttributes = ["toggled", "disabled"];
 
@@ -93,12 +95,14 @@ export default class XRadioElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
-  //
-  // Value associated with this widget.
+  /**
+   * Value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -106,10 +110,14 @@ export default class XRadioElement extends HTMLElement {
     value === null ? this.removeAttribute("value") : this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is toggled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -117,10 +125,14 @@ export default class XRadioElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -128,10 +140,14 @@ export default class XRadioElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -139,10 +155,12 @@ export default class XRadioElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

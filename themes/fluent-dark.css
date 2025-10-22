@@ -1,15 +1,12 @@
 
-/*
- * @copyright
- *   © 2016-2025 Jarosław Foksa
- * @license
- *   MIT License (check LICENSE.md for details)
- * @doc
- *   https://fluent2.microsoft.design/
- *   https://www.figma.com/community/file/1440832812269040007
- *   http://apps.microsoft.com/detail/9ndlx60wx4kq
- *
+/**
  * Theme implementing Fluent 2 Design System by Microsoft.
+ *
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ * @see https://fluent2.microsoft.design/
+ * @see https://www.figma.com/community/file/1440832812269040007
+ * @see http://apps.microsoft.com/detail/9ndlx60wx4kq
  */
 
 @import "/node_modules/xel/themes/base.css";

@@ -1,16 +1,19 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
-// @element x-radios
-// @event ^toggle - User toggled a radio.
+/**
+ * @element x-radios
+ * @fires ^toggle - User toggled a radio.
+ */
 export default class XRadiosElement extends HTMLElement {
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
+  /**
+   * @property
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     let radio = this.querySelector(`x-radio[toggled]`);
     return radio ? radio.value : null;

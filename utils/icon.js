@@ -1,14 +1,16 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {svg} from "./template.js";
 
 let cache = {};
 
-// @type (string) => SVGSVGElement?
+/**
+ * @type {(iconsURL: string) => SVGSVGElement | null}
+ */
 export let getIcons = (iconsURL) => {
   return new Promise(async (resolve) => {
     if (cache[iconsURL]) {

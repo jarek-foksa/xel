@@ -1,13 +1,15 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 let os;
 let engine;
 
-// @type () => "chromium" || "webkit" || "gecko" || "other"
+/**
+ * @type {() => "chromium" | "webkit" | "gecko" | "other"}
+ */
 export let getBrowserEngine = () => {
   if (engine === undefined) {
     if (navigator.userAgent.indexOf("Firefox/") > -1) {
@@ -27,7 +29,9 @@ export let getBrowserEngine = () => {
   return engine;
 };
 
-// @type () => "macos" || "windows" || "linux" || "chromeos" || "android" || "ios" || null
+/**
+ * @type {() => "macos" | "windows" | "linux" | "chromeos" | "android" | "ios" | null}
+ */
 export let getOperatingSystemName = () => {
   if (os === undefined) {
     if (navigator.platform.startsWith("Mac") === true) {

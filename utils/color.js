@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import ColorSpace from "../node_modules/colorjs.io/src/ColorSpace.js";
 
@@ -55,8 +55,10 @@ ColorSpace.register(xyzd50);
 ColorSpace.register(xyzd65);
 ColorSpace.register(xyzabsd65);
 
-// @src: https://github.com/material-components/material-components-android/blob/master/docs/theming/Color.md
-// @src: https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-main/compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3/DynamicTonalPalette.android.kt
+/**
+ * @see https://github.com/material-components/material-components-android/blob/master/docs/theming/Color.md
+ * @see https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-main/compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3/DynamicTonalPalette.android.kt
+ */
 const MATERIAL_COLORS = [
   // Color name                  Light [palette, tone]   Dark [palette, tone]
   ["primary",                    ["primary",        40], ["primary",        80]],
@@ -110,12 +112,12 @@ const MATERIAL_COLORS = [
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @doc
-//   https://medium.com/@iam_riyas/f490ef2fdee5
-//   https://m3.material.io/styles/color/system/how-the-system-works
-//   https://material-foundation.github.io/material-theme-builder/
-// @type
-//   (string, boolean) => Object
+/**
+ * @see https://medium.com/@iam_riyas/f490ef2fdee5
+ * @see https://m3.material.io/styles/color/system/how-the-system-works
+ * @see https://material-foundation.github.io/material-theme-builder/
+ * @type {(serializedAccentColor: string, dark?: boolean, grayscale?: boolean) => Object}
+ */
 export let getMaterialCSSColorVariables = (serializedAccentColor, dark = false, grayscale = false) => {
   let accentColor = convertColor(parseColor(serializedAccentColor), "hct");
   let materialColors = {};
@@ -169,10 +171,13 @@ export let getMaterialCSSColorVariables = (serializedAccentColor, dark = false, 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @type
-//   format = "hex" || "hsl" || "hwb" || "rgb" || "color" || "oklch" || "oklab" || "lch" || "lab" || "hex-alt" ||
-//            "hsl-alt" || "hwb-alt" || "rgb-alt" || "color-alt" || "oklch-alt" || "oklab-alt" || "lch-alt" || "lab-alt"
-//   (format) => string
+/**
+ * @typedef { "hex" | "hsl" | "hwb" | "rgb" | "color" | "oklch" | "oklab" | "lch" | "lab" |
+ *            "hex-alt" | "hsl-alt" | "hwb-alt" | "rgb-alt" | "color-alt" | "oklch-alt" |
+ *            "oklab-alt" | "lch-alt" | "lab-alt"} ColorSerializationFormat
+ *
+ * @type {(color: Color, format?: ColorSerializationFormat, precision?: number) => string}
+ */
 let prettySerializeColor = (color, format = "hex", precision = 3) => {
   if (color.spaceId === undefined) {
     color.spaceId = color.space.id;
@@ -417,7 +422,11 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
   }
 };
 
-// @type (string, "css" || "color.js") => string
+/**
+ * Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
+ *
+ * @type {(space: string, format: "css" | "color.js") => boolean}
+ */
 let normalizeColorSpaceName = (space, format = "css") => {
   if (format === "css") {
     if (space === "p3") {
@@ -449,9 +458,11 @@ let normalizeColorSpaceName = (space, format = "css") => {
   return space;
 };
 
-// @type (string) => boolean
-//
-// Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
+/**
+ * Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
+ *
+ * @type {(string: string) => boolean}
+ */
 let isValidColorString = (string) => {
   try {
     parseColor(string);

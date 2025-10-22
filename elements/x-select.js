@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -15,9 +15,11 @@ const WINDOW_PADDING = 7;
 
 let $itemChild = Symbol();
 
-// @element x-select
-// @part arrow
-// @event ^change {oldValue:string?, newValue:string?}
+/**
+ * @element x-select
+ * @part arrow
+ * @fires ^change {oldValue:string?, newValue:string?}
+ */
 export default class XSelectElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
@@ -109,9 +111,11 @@ export default class XSelectElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @type string?
-  // @default null
+  /**
+   * @property
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     let item = this.querySelector(`x-menuitem[toggled]`);
     return item ? item.value : null;
@@ -122,12 +126,14 @@ export default class XSelectElement extends HTMLElement {
     }
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this select has "mixed" state.
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -135,10 +141,14 @@ export default class XSelectElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -146,10 +156,12 @@ export default class XSelectElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

@@ -1,15 +1,15 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 //
 // Pointer events polyfills
 //
 
 // Make "click", "dblclick" and "contextmenu" look more like pointer events
-// (https://github.com/w3c/pointerevents/issues/100#issuecomment-23118584)
+// https://github.com/w3c/pointerevents/issues/100#issuecomment-23118584
 {
   if (Object.hasOwn(MouseEvent.prototype, "pointerType") === false) {
     Object.defineProperty(MouseEvent.prototype, "pointerType", {

@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -17,11 +17,13 @@ const MAX_LCH_CHROMA = 150;
 const MAX_OKLCH_CHROMA = 0.4;
 const DEBUG = false;
 
-// @element x-colorpicker
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-class XColorPickerElement extends HTMLElement {
+/**
+ * @element x-colorpicker
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ */
+export default class XColorPickerElement extends HTMLElement {
   static observedAttributes = ["value", "alpha", "spaces", "disabled"];
 
   static #shadowTemplate = html`
@@ -173,12 +175,14 @@ class XColorPickerElement extends HTMLElement {
     }
   `;
 
-  // @property
-  // @attribute
-  // @type string
-  // @default "#000000"
-  //
-  // Any valid CSS color value.
+  /**
+   * Any valid CSS color value.
+   *
+   * @property
+   * @attribute
+   * @type {string}
+   * @default "#000000"
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "#000000";
   }
@@ -186,12 +190,14 @@ class XColorPickerElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to allow manipulation of the alpha channel.
+  /**
+   * Whether to allow manipulation of the alpha channel.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -199,12 +205,14 @@ class XColorPickerElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @property
-  // @attribute
-  // @type Array<string>
-  // @default ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020", "prophoto", "lch", "oklch", "lab", "oklab", "xyz-d65", "xyz-d50"]
-  //
-  // Available color spaces.
+  /**
+   * Available color spaces.
+   *
+   * @property
+   * @attribute
+   * @type {Array<string>}
+   * @default ["srgb", "srgb-linear", "a98rgb", "p3", "rec2020", "prophoto", "lch", "oklch", "lab", "oklab", "xyz-d65", "xyz-d50"]
+   */
   get spaces() {
     if (this.hasAttribute("spaces")) {
       return this.getAttribute("spaces").replace(/\s+/g, " ").split(" ");
@@ -217,10 +225,12 @@ class XColorPickerElement extends HTMLElement {
     this.setAttribute("spaces", spaces.join(" "));
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -307,9 +317,11 @@ class XColorPickerElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type () => string?
-  //
-  // Grab a color using Eye Dropper API. Override this method to use alternative APIs.
+  /**
+   * Grab a color using Eye Dropper API. Override this method to use alternative APIs.
+   *
+   * @type {() => string | null}
+   */
   grab() {
     return new Promise(async (resolve) => {
       if (window.EyeDropper === undefined) {
@@ -411,7 +423,7 @@ class XColorPickerElement extends HTMLElement {
       let convertedColor = convertColor(color, this["#space-select"].value, {inGamut: true});
 
       // Convert missing components to 0
-      // @doc https://www.w3.org/TR/css-color-4/#missing
+      // @see https://www.w3.org/TR/css-color-4/#missing
       for (let i = 0; i < convertedColor.coords.length; i += 1) {
         if (convertedColor.coords[i] === null || Number.isNaN(convertedColor.coords[i])) {
           convertedColor.coords[i] = 0;
@@ -710,7 +722,7 @@ class XColorPickerElement extends HTMLElement {
     }
 
     // Convert missing components to 0
-    // @doc https://www.w3.org/TR/css-color-4/#missing
+    // @see https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < color.coords.length; i += 1) {
       if (color.coords[i] === null || Number.isNaN(color.coords[i])) {
         color.coords[i] = 0;
@@ -738,10 +750,12 @@ if (customElements.get("x-colorpicker") === undefined) {
 // Linear sliders for RGB-based color spaces (sRBG, Linear sRGB, Adobe RGB, Display P3, Rec. 2020, ProPhoto RGB)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XRGBLinearSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -935,7 +949,9 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     let model = this.#getResolvedModel();
 
@@ -1015,7 +1031,7 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
 
     // Convert missing components to 0
-    // @doc https://www.w3.org/TR/css-color-4/#missing
+    // @see https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
       if (this.#coords[i] === null || Number.isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
@@ -1025,8 +1041,10 @@ class XRGBLinearSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "srgb" || "srgb-linear" || "a98rgb" || "p3" || "rec2020" || "prophoto"
-  // @default "srgb"
+  /**
+   * @type {"srgb" | "srgb-linear" | "a98rgb" | "p3" | "rec2020" | "prophoto"}
+   * @default "srgb"
+   */
   get space() {
     return this.#space;
   }
@@ -1037,9 +1055,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -1047,9 +1067,11 @@ class XRGBLinearSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -1974,10 +1996,12 @@ if (customElements.get("x-rgblinearsliders") === undefined) {
 // Linear sliders for LCH-based color spaces (okLCH, CIE LCH)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XLCHLinearSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -2155,7 +2179,9 @@ class XLCHLinearSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     let [l, c, h] = this.#coords;
     return [l, c, h, this.#a];
@@ -2167,8 +2193,10 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "lch" || "oklch"
-  // @default "lch"
+  /**
+   * @type {"lch" | "oklch"}
+   * @default "lch"
+   */
   get space() {
     return this.#space;
   }
@@ -2179,9 +2207,11 @@ class XLCHLinearSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -2189,9 +2219,11 @@ class XLCHLinearSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -2812,10 +2844,12 @@ if (customElements.get("x-lchlinearsliders") === undefined) {
 // Linear sliders for LAB-based color spaces (CIE LAB, OK LAB)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XLABLinearSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -2992,7 +3026,9 @@ class XLABLinearSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     let [l, c, h] = this.#coords;
     return [l, c, h, this.#a];
@@ -3004,8 +3040,10 @@ class XLABLinearSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "lab" || "oklab"
-  // @default "lab"
+  /**
+   * @type {"lab" | "oklab"}
+   * @default "lab"
+   */
   get space() {
     return this.#space;
   }
@@ -3016,8 +3054,11 @@ class XLABLinearSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -3025,9 +3066,11 @@ class XLABLinearSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -3707,10 +3750,12 @@ if (customElements.get("x-lablinearsliders") === undefined) {
 // Linear sliders for XYZ-based color spaces (CIE XYZ D65, CIE XYZ D50)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XXYZLinearSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -3888,7 +3933,9 @@ class XXYZLinearSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     let [x, y, z] = this.#coords;
     return [x, y, z, this.#a];
@@ -3900,8 +3947,10 @@ class XXYZLinearSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "xyz-d65" || "xyz-d50"
-  // @default "xyz-d65"
+  /**
+   * @type {"xyz-d65" | "xyz-d50"}
+   * @default "xyz-d65"
+   */
   get space() {
     return this.#space;
   }
@@ -3912,9 +3961,11 @@ class XXYZLinearSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -3922,9 +3973,11 @@ class XXYZLinearSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -4519,10 +4572,12 @@ if (customElements.get("x-xyzlinearsliders") === undefined) {
 // Planar sliders for RGB-based color spaces (sRBG, Linear sRGB, Adobe RGB, Display P3, Rec. 2020, ProPhoto RGB)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XRGBPlanarSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -4778,7 +4833,9 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     if (this.#model === "hsv" || this.#model === "hsl") {
       let [h, c1, c2] = this.#coords;
@@ -4797,7 +4854,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     }
 
     // Convert missing components to 0
-    // @doc https://www.w3.org/TR/css-color-4/#missing
+    // @see https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
       if (this.#coords[i] === null || Number.isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
@@ -4807,8 +4864,10 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "srgb" || "srgb-linear" || "a98rgb" || "p3" || "rec2020" || "prophoto"
-  // @default "srgb"
+  /**
+   * @type {"srgb" | "srgb-linear" | "a98rgb" | "p3" | "rec2020" | "prophoto"}
+   * @default "srgb"
+   */
   get space() {
     return this.#space;
   }
@@ -4819,9 +4878,11 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -4829,9 +4890,11 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -5455,10 +5518,12 @@ if (customElements.get("x-rgbplanarsliders") === undefined) {
 // Planar sliders for LCH-based color spaces (CIE LCH, OK LCH)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XLCHPlanarSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -5719,7 +5784,9 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     let [l, c, h] = this.#coords;
     return [l, c, h, this.#a];
@@ -5731,8 +5798,10 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "lch" || "oklch"
-  // @default "lch"
+  /**
+   * @type {"lch" | "oklch"}
+   * @default "lch"
+   */
   get space() {
     return this.#space;
   }
@@ -5743,9 +5812,11 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -5753,9 +5824,11 @@ class XLCHPlanarSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -6288,10 +6361,12 @@ if (customElements.get("x-lchplanarsliders") === undefined) {
 // Planar sliders for LAB-based color spaces (CIE LAB, OK LAB)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XLABPlanarSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -6554,7 +6629,9 @@ class XLABPlanarSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     let [l, c, h] = this.#coords;
     return [l, c, h, this.#a];
@@ -6566,8 +6643,10 @@ class XLABPlanarSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "lab" || "oklab"
-  // @default "lab"
+  /**
+   * @type {"lab" | "oklab"}
+   * @default "lab"
+   */
   get space() {
     return this.#space;
   }
@@ -6578,9 +6657,11 @@ class XLABPlanarSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -6588,9 +6669,11 @@ class XLABPlanarSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -7169,10 +7252,12 @@ if (customElements.get("x-labplanarsliders") === undefined) {
 // Planar sliders for XYZ-based color spaces (CIE XYZ D65, CIE XYZ D50)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XXYZPlanarSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -7444,7 +7529,9 @@ class XXYZPlanarSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     let [l, c, h] = this.#coords;
     return [l, c, h, this.#a];
@@ -7456,8 +7543,10 @@ class XXYZPlanarSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "xyz-d65" || "xyz-d50"
-  // @default "xyz-d65"
+  /**
+   * @type {"xyz-d65" | "xyz-d50"}
+   * @default "xyz-d65"
+   */
   get space() {
     return this.#space;
   }
@@ -7468,9 +7557,11 @@ class XXYZPlanarSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -7478,9 +7569,11 @@ class XXYZPlanarSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -8132,10 +8225,12 @@ if (customElements.get("x-xyzplanarsliders") === undefined) {
 // Polar sliders for RGB-based color spaces (sRBG, Linear sRGB, Adobe RGB, Display P3, Rec. 2020, ProPhoto RGB)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @part slider
+/**
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @part slider
+ */
 class XRGBPolarSlidersElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -8417,7 +8512,9 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
   `;
 
-  // @type [number, number, number, number]
+  /**
+   * @type {[number, number, number, number]}
+   */
   get value() {
     if (this.#model === "hsv" || this.#model === "hsl") {
       let [h, c1, c2] = this.#coords;
@@ -8436,7 +8533,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
 
     // Convert missing components to 0
-    // @doc https://www.w3.org/TR/css-color-4/#missing
+    // @see https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
       if (this.#coords[i] === null || Number.isNaN(this.#coords[i])) {
         this.#coords[i] = 0;
@@ -8446,8 +8543,10 @@ class XRGBPolarSlidersElement extends HTMLElement {
     this.#update();
   }
 
-  // @type "srgb" || "srgb-linear" || "a98rgb" || "p3" || "rec2020" || "prophoto"
-  // @default "srgb"
+  /**
+   * @type {"srgb" | "srgb-linear" | "a98rgb" | "p3" | "rec2020" | "prophoto"}
+   * @default "srgb"
+   */
   get space() {
     return this.#space;
   }
@@ -8458,9 +8557,11 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -8468,9 +8569,11 @@ class XRGBPolarSlidersElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @type boolean
-  // @default false
-  // @attribute
+  /**
+   * @type {boolean}
+   * @default false
+   * @attribute
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }

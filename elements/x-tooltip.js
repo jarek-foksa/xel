@@ -1,15 +1,17 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {getClosestScrollableAncestor} from "../utils/element.js";
 import {roundRect} from "../utils/math.js";
 import {parseTransistion} from "../utils/style.js";
 import {html, css} from "../utils/template.js";
 
-// @element x-tooltip
+/**
+ * @element x-tooltip
+ */
 export default class XTooltipElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
@@ -45,10 +47,12 @@ export default class XTooltipElement extends HTMLElement {
     }
   `;
 
-  // @property
-  // @attribute
-  // @type "hint" || "error"
-  // @default "hint"
+  /**
+   * @property
+   * @attribute
+   * @type {"hint" | "error"}
+   * @default "hint"
+   */
   get type() {
     return this.hasAttribute("type") ? this.getAttribute("type") : "hint";
   }
@@ -56,10 +60,14 @@ export default class XTooltipElement extends HTMLElement {
     this.setAttribute("type", type);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -67,12 +75,15 @@ export default class XTooltipElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property readOnly
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the tooltip is currently open.
+  /**
+   * Whether the tooltip is currently open.
+   *
+   * @property
+   * @attribute
+   * @readonly
+   * @type {boolean}
+   * @default false
+   */
   get opened() {
     return this.hasAttribute("opened");
   }
@@ -113,11 +124,13 @@ export default class XTooltipElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type (DOMPoint || DOMRect || Element) => Promise
-  //
-  // Open the tooltip next to the given point, rect or element.<br/>
-  // Returns a promise that is resolved when the tooltip finishes animating.
+  /**
+   * Open the tooltip next to the given point, rect or element.<br/>
+   * Returns a promise that is resolved when the tooltip finishes animating.
+   *
+   * @method
+   * @type {(DOMPoint || DOMRect || Element) => Promise<void>}
+   */
   open(context, animate = true) {
     return new Promise( async (resolve) => {
       if (this.opened === false && this.isConnected) {
@@ -152,11 +165,13 @@ export default class XTooltipElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type (boolean) => Promise
-  //
-  // Close the tooltip.<br/>
-  // Returns a promise that is resolved when the tooltip finishes animating.
+  /**
+   * Close the tooltip.<br/>
+   * Returns a promise that is resolved when the tooltip finishes animating.
+   *
+   * @method
+   * @type {(boolean) => Promise<void>}
+   */
   close(animate = true) {
     return new Promise(async (resolve) => {
       if (this.opened === true) {

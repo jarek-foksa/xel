@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -17,8 +17,10 @@ export default class PTPageElement extends HTMLElement {
     }
   `;
 
-  // @property
-  // @type Promise
+  /**
+   * @property
+   * @type {Promise<void>}
+   */
   get whenReady() {
     return new Promise((resolve) => {
       if (this.#readyCallbacks === null) {
@@ -80,7 +82,6 @@ export default class PTPageElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @type string
   async scrollElementIntoView(elementID) {
     await this.whenReady;
 

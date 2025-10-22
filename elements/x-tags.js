@@ -1,14 +1,16 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 
-// @element x-tags
-// @event toggle
+/**
+ * @element x-tags
+ * @fires toggle
+ */
 export default class XTagsElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -30,9 +32,11 @@ export default class XTagsElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @type Array<string>
-  // @default []
+  /**
+   * @property
+   * @type {Array<string>}
+   * @default [[]]
+   */
   get value() {
     let tags = [...this.children].filter(child => child.localName === "x-tag");
     return tags.filter(tag => tag.toggled).map(tag => tag.value).filter(value => value !== null);

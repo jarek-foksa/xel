@@ -1,13 +1,15 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 export default class EventEmitter {
   #events = {};
 
-  // @type (string, Function) => void
+  /**
+   * @type {(eventName: string, listener: Function) => void}
+   */
   addEventListener(eventName, listener) {
     if (!this.#events) {
       this.#events = {};
@@ -27,7 +29,9 @@ export default class EventEmitter {
     }
   }
 
-  // @type (string, Function) => void
+  /**
+   * @type {(eventName: string, listener: Function) => void}
+   */
   removeEventListener(eventName, listener) {
     if (!this.#events || !this.#events[eventName]) {
       return;
@@ -44,7 +48,9 @@ export default class EventEmitter {
     this.#events[eventName] = temp;
   }
 
-  // @type (CustomEvent) => void
+  /**
+   * @type {(event: CustomEvent) => void}
+   */
   dispatchEvent(event) {
     if (!this.#events) {
       return;

@@ -1,15 +1,17 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 import {rectContainsPoint} from "../utils/math.js";
 
-// @element x-drawer
-// @event toggle
-// @event beforetoggle
+/**
+ * @element x-drawer
+ * @fires toggle
+ * @fires beforetoggle
+ */
 export default class XDrawerElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -78,12 +80,14 @@ export default class XDrawerElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type "left" || "right" || "top" || "bottom"
-  // @default "left"
-  //
-  // Position of the drawer on the screen.
+  /**
+   * Position of the drawer on the screen.
+   *
+   * @property
+   * @attribute
+   * @type {"left" || "right" || "top" || "bottom"}
+   * @default "left"
+   */
   get position() {
     return this.hasAttribute("position") ? this.getAttribute("position") : "left";
   }
@@ -91,12 +95,14 @@ export default class XDrawerElement extends HTMLElement {
     this.setAttribute("position", position);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Manual drawer does not auto-close when user clicks the backdrop.
+  /**
+   * Manual drawer does not auto-close when user clicks the backdrop.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get manual() {
     return this.hasAttribute("manual");
   }

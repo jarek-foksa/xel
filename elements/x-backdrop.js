@@ -1,12 +1,14 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {css} from "../utils/template.js";
 
-// @element x-backdrop
+/**
+ * @element x-backdrop
+ */
 export default class XBackdropElement extends HTMLElement {
   static #shadowStyleSheet = css`
     :host {
@@ -28,10 +30,12 @@ export default class XBackdropElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @type HTMLElement
-  //
-  // Element below which the backdrop should be placed.
+  /**
+   * Element below which the backdrop should be placed.
+   *
+   * @property
+   * @type {HTMLElement}
+   */
   get ownerElement() {
     return this.#ownerElement ? this.#ownerElement : document.body.firstElementChild;
   }
@@ -64,8 +68,10 @@ export default class XBackdropElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type (boolean) => Promise
+  /**
+   * @method
+   * @type {(animate?: boolean) => Promise<void>}
+   */
   show(animate = true) {
     this.title = "";
     this.style.top = "0px";
@@ -111,8 +117,10 @@ export default class XBackdropElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type (boolean) => Promise
+  /**
+   * @method
+   * @type {(animate?: boolean) => Promise<void>}
+   */
   hide(animate = true) {
     if (animate) {
       let backdropAnimation = this.animate(

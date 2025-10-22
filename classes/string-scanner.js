@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 export default class StringScanner {
   text = "";
@@ -11,14 +11,18 @@ export default class StringScanner {
   column = 1;
   #storedPosition = {cursor: 0, line: 1, column: 1};
 
-  // @type (string) => void
+  /**
+   * @param {string} text
+   */
   constructor(text) {
     this.text = text;
   }
 
-  // @type (number) => string?
-  //
-  // Read given number of chars.
+  /**
+   * Read given number of chars.
+   *
+   * @type {(i?: number) => string | null}
+   */
   read(i = 1) {
     let string = "";
     let initialCursor = this.cursor;
@@ -46,9 +50,11 @@ export default class StringScanner {
     return (string === "" ? null : string);
   }
 
-  // @type (number) => string?
-  //
-  // Read given number of chars without advancing the cursor.
+  /**
+   * Read given number of chars without advancing the cursor.
+   *
+   * @type {(i?: number) => string | null}
+   */
   peek(i = 1) {
     let string = "";
 
@@ -66,9 +72,11 @@ export default class StringScanner {
     return (string === "" ? null : string);
   }
 
-  // @type () => string
-  //
-  // Continue reading the chars as long as they are spaces.
+  /**
+   * Continue reading the chars as long as they are spaces.
+   *
+   * @type {() => string}
+   */
   eatSpaces() {
     let spaces = "";
 
@@ -79,9 +87,11 @@ export default class StringScanner {
     return spaces;
   }
 
-  // @type () => string
-  //
-  // Continue reading the chars as long as they are spaces or new line chars.
+  /**
+   * Continue reading the chars as long as they are spaces or new line chars.
+   *
+   * @type {() => string}
+   */
   eatWhitespace() {
     let whitespace = "";
 
@@ -92,13 +102,17 @@ export default class StringScanner {
     return whitespace;
   }
 
-  // @type () => void
+  /**
+   * @type {() => void}
+   */
   storePosition() {
     let {cursor, line, column} = this;
     this.#storedPosition = {cursor, line, column};
   }
 
-  // @type () => void
+  /**
+   * @type {() => void}
+   */
   restorePosition() {
     let {cursor, line, column} = this.#storedPosition;
 

@@ -1,21 +1,21 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {closest} from "../utils/element.js";
 import {parseTransistion} from "../utils/style.js";
 import {html, css} from "../utils/template.js";
 import {sleep, getTimeStamp} from "../utils/time.js";
 
-let {abs} = Math;
-
 const WINDOW_PADDING = 7;
 
-// @element x-menu
-// @event ^open - The menu was opened by the suer
-// @event ^close - The menu was closed by the user
+/**
+ * @element x-menu
+ * @fires ^open - The menu was opened by the suer
+ * @fires ^close - The menu was closed by the user
+ */
 export default class XMenuElement extends HTMLElement {
   static observedAttributes = ["opened"];
 
@@ -70,12 +70,14 @@ export default class XMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @readOnly
-  //
-  // Whether the menu is shown on screen.
+  /**
+   * Whether the menu is shown on screen.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @readonly
+   */
   get opened() {
     return this.hasAttribute("opened");
   }
@@ -129,12 +131,14 @@ export default class XMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type (HTMLElement, HTMLElement) => Promise
-  //
-  // Open the menu so that <em>overElement</em> (belonging to the menu) is positioned directly over
-  // <em>underElement</em>.<br/>
-  // Returns a promise that is resolved when the menu finishes animating.
+  /**
+   * Open the menu so that <em>overElement</em> (belonging to the menu) is positioned directly over
+   * <em>underElement</em>.<br/>
+   * Returns a promise that is resolved when the menu finishes animating.
+   *
+   * @method
+   * @type {(underElement: HTMLElement, overElement: HTMLElement) => Promise<void>}
+   */
   openOverElement(underElement, overElement) {
     return new Promise( async (resolve) => {
       let items = this.querySelectorAll(":scope > x-menuitem");
@@ -234,11 +238,13 @@ export default class XMenuElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type (XLabelElement) => Promise
-  //
-  // Open the menu over the given <em>underLabel</em> element.<br/>
-  // Returns a promise that is resolved when the menu finishes animating.
+  /**
+   * Open the menu over the given <em>underLabel</em> element.<br/>
+   * Returns a promise that is resolved when the menu finishes animating.
+   *
+   * @method
+   * @type {(underLabel: XLabelElement) => Promise<void>}
+   */
   openOverLabel(underLabel) {
     return new Promise( async (resolve) => {
       let items = this.querySelectorAll(":scope > x-menuitem");
@@ -266,11 +272,13 @@ export default class XMenuElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type (HTMLElement, "horizontal" || "vertical", number) => Promise
-  //
-  // Open the menu next the given element.<br/>
-  // Returns a promise that is resolved when the menu finishes animating.
+  /**
+   * Open the menu next the given element.<br/>
+   * Returns a promise that is resolved when the menu finishes animating.
+   *
+   * @method
+   * @type {(element: HTMLElement, direction?: "horizontal" | "vertical", elementWhitespace?: number) => Promise<void>}
+   */
   openNextToElement(element, direction = "horizontal", elementWhitespace = 0) {
     return new Promise(async (resolve) => {
       this.#expandWhenScrolled = false;
@@ -491,11 +499,13 @@ export default class XMenuElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type (number, number) => Promise
-  //
-  // Open the menu at given client point.<br/>
-  // Returns a promise that is resolved when the menu finishes animating.
+  /**
+   * Open the menu at given client point.<br/>
+   * Returns a promise that is resolved when the menu finishes animating.
+   *
+   * @method
+   * @type {(left: number, top: number) => Promise<void>}
+   */
   openAtPoint(left, top) {
     return new Promise( async (resolve) => {
       this.#expandWhenScrolled = false;
@@ -577,11 +587,13 @@ export default class XMenuElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type (boolean) => Promise
-  //
-  // Close the menu.<br/>
-  // Returns a promise that is resolved when the menu finishes animating.
+  /**
+   * Close the menu.<br/>
+   * Returns a promise that is resolved when the menu finishes animating.
+   *
+   * @method
+   * @type {(animate?: boolean) => Promise<void>}
+   */
   close(animate = true) {
     return new Promise(async (resolve) => {
       if (this.opened) {
@@ -622,8 +634,10 @@ export default class XMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   focusNextMenuItem() {
     let refItem = this.querySelector(":scope > x-menuitem:focus, :scope > x-menuitem[expanded]");
 
@@ -661,8 +675,10 @@ export default class XMenuElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   focusPreviousMenuItem() {
     let refItem = this.querySelector(":scope > x-menuitem:focus, :scope > x-menuitem[expanded]");
 
@@ -700,8 +716,10 @@ export default class XMenuElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   focusFirstMenuItem() {
     let items = this.querySelectorAll("x-menuitem:not([disabled]):not([hidden])");
     let firstItem = items[0] || null;
@@ -711,8 +729,10 @@ export default class XMenuElement extends HTMLElement {
     }
   }
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   focusLastMenuItem() {
     let items = this.querySelectorAll("x-menuitem:not([disabled]):not([hidden])");
     let lastItem = (items.length > 0) ? items.at(-1) : null;
@@ -724,8 +744,7 @@ export default class XMenuElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @doc
-  //   http://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown
+  // @see http://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown
   #delay(callback) {
     let tolerance = 75;
     let fullDelay = 300;
@@ -831,8 +850,6 @@ export default class XMenuElement extends HTMLElement {
     this.style.maxWidth = null;
   }
 
-  // @type () => boolean
-  //
   // Whether this or any ancestor menu is closing
   #isClosing() {
     return this.matches("*[closing], *[closing] x-menu");
@@ -1023,8 +1040,8 @@ export default class XMenuElement extends HTMLElement {
         let menuRect = this.getBoundingClientRect();
 
         if (delta < 0) {
-          if (menuRect.bottom + abs(delta) <= window.innerHeight - WINDOW_PADDING) {
-            this.style.height = (menuRect.height + abs(delta)) + "px";
+          if (menuRect.bottom + Math.abs(delta) <= window.innerHeight - WINDOW_PADDING) {
+            this.style.height = (menuRect.height + Math.abs(delta)) + "px";
           }
           else {
             this.style.height = (window.innerHeight - (WINDOW_PADDING*2)) + "px";

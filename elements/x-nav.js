@@ -1,15 +1,17 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-nav
-// @event ^toggle - User toggled a nav item
+/**
+ * @element x-nav
+ * @fires ^toggle - User toggled a nav item
+ */
 export default class XNavElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -26,11 +28,13 @@ export default class XNavElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @type string?
-  // @default null
-  //
-  // The value of the currently toggled nav item. Null if there is no nav item toggled.
+  /**
+   * The value of the currently toggled nav item. Null if there is no nav item toggled.
+   *
+   * @property
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     let toggledItem = this.querySelector("x-navitem[toggled]");
     return toggledItem ? toggledItem.value : null;

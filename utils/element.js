@@ -1,12 +1,14 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
-// @type (string) => Element?
-//
-// Same as document.createElement(), but you can also create SVG elements.
+/**
+ * Same as document.createElement(), but you can also create SVG elements.
+ *
+ * @type {(name: string) => Element}
+ */
 export let createElement = (name, is = null) => {
   let parts = name.split(":");
   let element = null;
@@ -32,9 +34,11 @@ export let createElement = (name, is = null) => {
   return element;
 };
 
-// @type (number, number, boolea) => Element?
-//
-// Same as the standard document.elementFromPoint() moethod, but can also walk the shadow DOM.
+/**
+ * Same as standard document.elementFromPoint(), but can also walk shadow DOM.
+ *
+ * @type {(clientX: number, clientY: number, walkShadowDOM?: boolean) => Element | null}
+ */
 export let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
   let element = document.elementFromPoint(clientX, clientY);
 
@@ -66,7 +70,9 @@ export let elementFromPoint = (clientX, clientY, walkShadowDOM = true) => {
   return element;
 };
 
-// @type (PointerEvent, Element) => boolean
+/**
+ * @type {(pointerEvent: PointerEvent, element: Element) => boolean}
+ */
 export let isPointerInsideElement = (pointerEvent, element) => {
   let bounds = element.getBoundingClientRect();
 
@@ -78,9 +84,11 @@ export let isPointerInsideElement = (pointerEvent, element) => {
   );
 };
 
-// @type (Element, string, boolean) => Element?
-//
-// Same as the standard element.closest() method but can also walk the shadow DOM.
+/**
+ * Same as standard element.closest() method but can also walk shadow DOM.
+ *
+ * @type {(element: Element, selector: string, walkShadowDOM?: boolean) => Element | null}
+ */
 export let closest = (element, selector, walkShadowDOM = true) => {
   let matched = element.closest(selector);
 
@@ -92,9 +100,11 @@ export let closest = (element, selector, walkShadowDOM = true) => {
   }
 };
 
-// @type (Element) => Element?
-//
-// Get closest ancestor elements that can be scrolled horizontally or vertically.
+/**
+ * Get closest ancestor elements that can be scrolled horizontally or vertically.
+ *
+ * @type {(element: Element) => Element | null}
+ */
 export let getClosestScrollableAncestor = (element) => {
   let isScrollable = (currentElement) => {
     let computedStyle = getComputedStyle(currentElement, null);
@@ -121,9 +131,11 @@ export let getClosestScrollableAncestor = (element) => {
   return walk(element.parentElement || element.parentNode.host);
 };
 
-// @type (SVGGradientElement) => Array<SVGGradientElement>
-//
-// Get the SVG gradients that are referenced with "href" attribute.
+/**
+ * Get the gradients that are referenced with "href" attribute.
+ *
+ * @type {(gradient: SVGGradientElement) => Array<SVGGradientElement>}
+ */
 export let getAncestorGradients = (gradient) => {
   let svgElement = null;
   let ancestorGradients = [];

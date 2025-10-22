@@ -1,14 +1,11 @@
 
-/*
- * @copyright
- *   © 2016-2025 Jarosław Foksa
- * @license
- *   MIT License (check LICENSE.md for details)
- * @doc
- *   https://m3.material.io/
- *   https://www.figma.com/community/file/1035203688168086460
- *
+/**
  * Theme implementing Material Design version 3.
+ *
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ * @see https://m3.material.io/
+ * @see https://www.figma.com/community/file/1035203688168086460
  */
 
 @import "/node_modules/xel/themes/material.css";

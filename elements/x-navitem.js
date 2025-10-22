@@ -1,16 +1,18 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
 
-// @element x-navitem
-// @event ^expand - User expanded a collapsed navigation item.
-// @event ^collapse - User collapsed an expanded navigation item.
+/**
+ * @element x-navitem
+ * @fires ^expand - User expanded a collapsed navigation item.
+ * @fires ^collapse - User collapsed an expanded navigation item.
+ */
 export default class XNavItemElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
@@ -119,10 +121,14 @@ export default class XNavItemElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * Value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "";
   }
@@ -130,12 +136,14 @@ export default class XNavItemElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this navigation item is toggled.
+  /**
+   * Whether the widget is toggled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -143,10 +151,14 @@ export default class XNavItemElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -154,12 +166,14 @@ export default class XNavItemElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property readOnly
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the navigation item is expanded.
+  /**
+   * Whether the navigation item is expanded.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get expanded() {
     return this.hasAttribute("expanded");
   }
@@ -167,13 +181,14 @@ export default class XNavItemElement extends HTMLElement {
     expanded ? this.setAttribute("expanded", "") : this.removeAttribute("expanded");
   }
 
-  // @property readOnly
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
-  //
-  // Whether the navigation item could be expanded.
+  /**
+   * Whether the navigation item could be expanded.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get expandable() {
     return this.hasAttribute("expandable");
   }
@@ -233,10 +248,12 @@ export default class XNavItemElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type () => Promise
-  //
-  // Expand the navigation item. Returns a promise which will be resolved when the animation ends.
+  /**
+   * Expand the navigation item. Returns a promise which will be resolved when the animation ends.
+   *
+   * @method
+   * @type {(animate?: boolean) => Promise<void>}
+   */
   expand(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === false) {
@@ -278,10 +295,13 @@ export default class XNavItemElement extends HTMLElement {
       resolve();
     });
   }
-  // @method
-  // @type () => Promise
-  //
-  // Collapse the navigation item. Returns a promise will be resolved when the animation ends.
+
+  /**
+   * Collapse the navigation item. Returns a promise will be resolved when the animation ends.
+   *
+   * @method
+   * @type {(animate?: boolean) => Promise<void>}
+   */
   collapse(animate = true) {
     return new Promise(async (resolve) => {
       if (this.expanded === true) {

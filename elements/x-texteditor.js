@@ -1,20 +1,22 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {getBrowserEngine} from "../utils/system.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-texteditor
-// @event ^input
-// @event ^change
-// @event ^textinputmodestart
-// @event ^textinputmodeend
-// @event beforevalidate
+/**
+ * @element x-texteditor
+ * @fires ^input
+ * @fires ^change
+ * @fires ^textinputmodestart
+ * @fires ^textinputmodeend
+ * @fires beforevalidate
+ */
 export default class XTextEditorElement extends HTMLElement {
   static observedAttributes = ["value", "spellcheck", "disabled", "validation"];
 
@@ -98,10 +100,12 @@ export default class XTextEditorElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default ""
+  /**
+   * @property
+   * @attribute
+   * @type {string}
+   * @default ""
+   */
   get value() {
     return this["#editor"].textContent;
   }
@@ -126,10 +130,12 @@ export default class XTextEditorElement extends HTMLElement {
     this.#updateEmptyAttribute();
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get spellcheck() {
     return this.hasAttribute("spellcheck");
   }
@@ -137,10 +143,12 @@ export default class XTextEditorElement extends HTMLElement {
     spellcheck ? this.setAttribute("spellcheck", "") : this.removeAttribute("spellcheck");
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 0
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 0
+   */
   get minLength() {
     return this.hasAttribute("minlength") ? Number.parseInt(this.getAttribute("minlength")) : 0;
   }
@@ -148,10 +156,12 @@ export default class XTextEditorElement extends HTMLElement {
     this.setAttribute("minlength", minLength);
   }
 
-  // @property
-  // @attribute
-  // @type number || Infinity
-  // @default 0
+  /**
+   * @property
+   * @attribute
+   * @type {number | Infinity}
+   * @default Infinity
+   */
   get maxLength() {
     return this.hasAttribute("maxlength") ? Number.parseInt(this.getAttribute("maxlength")) : Number.POSITIVE_INFINITY;
   }
@@ -159,10 +169,12 @@ export default class XTextEditorElement extends HTMLElement {
     this.setAttribute("maxlength", maxLength);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get required() {
     return this.hasAttribute("required");
   }
@@ -170,12 +182,14 @@ export default class XTextEditorElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this text editor has "mixed" state.
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -183,10 +197,14 @@ export default class XTextEditorElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -194,14 +212,16 @@ export default class XTextEditorElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "auto" || "instant" || "manual"
-  // @default "auto"
-  //
-  // - <em>"auto"</em> - validation is performed when input loses focus and when user presses "Enter"<br/>
-  // - <em>"instant"</em> - validation is performed on each key press<br/>
-  // - <em>"manual"</em>  - you will call reportValidity() manually when user submits the form<br/>
+  /**
+   * - <em>"auto"</em> - validation is performed when input loses focus and when user presses "Enter"<br/>
+   * - <em>"instant"</em> - validation is performed on each key press<br/>
+   * - <em>"manual"</em>  - you will call reportValidity() manually when user submits the form<br/>
+   *
+   * @property
+   * @attribute
+   * @type {"auto" | "instant" | "manual"}
+   * @default "auto"
+   */
   get validation() {
     return this.hasAttribute("validation") ? this.getAttribute("validation") : "auto";
   }
@@ -209,10 +229,12 @@ export default class XTextEditorElement extends HTMLElement {
     this.setAttribute("validation", validation);
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;
@@ -221,20 +243,24 @@ export default class XTextEditorElement extends HTMLElement {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get empty() {
     return this.hasAttribute("empty");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get error() {
     return this.hasAttribute("error");
   }
@@ -318,8 +344,10 @@ export default class XTextEditorElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type () => boolean
+  /**
+   * @method
+   * @type {() => boolean}
+   */
   reportValidity() {
     let beforeValidateEvent = new CustomEvent("beforevalidate", {bubbles: false, cancelable: true});
     this.dispatchEvent(beforeValidateEvent);
@@ -344,8 +372,10 @@ export default class XTextEditorElement extends HTMLElement {
     return (this.#error === null && this.#customError === null);
   }
 
-  // @method
-  // @type (string || {href:string, args:Object}) => void
+  /**
+   * @method
+   * @type {(string || {href:string, args:Object}) => void}
+   */
   setCustomValidity(arg) {
     if (arg === "") {
       this.#customError = null;

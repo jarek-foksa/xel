@@ -1,14 +1,16 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 let templateElement = document.createElement("template");
 
-// @type () => HTMLElement || DocumentFragment
-//
-// Template string tag used to parse HTML strings.
+/**
+ * Template string tag used to parse HTML strings.
+ *
+ * @type {(strings: TemplateStringsArray, ...expressions: Array<string>) => HTMLElement | DocumentFragment}
+ */
 export let html = (strings, ...expressions) => {
   let parts = [];
 
@@ -29,9 +31,11 @@ export let html = (strings, ...expressions) => {
   }
 };
 
-// @type () => CSSStyleSheet
-//
-// Template string tag used to parse CSS strings.
+/**
+ * Template string tag used to parse CSS strings.
+ *
+ * @type {(strings: TemplateStringsArray, ...expressions: Array<string>) => CSSStyleSheet}
+ */
 export let css = (strings, ...expressions) => {
   let parts = [];
 
@@ -46,9 +50,11 @@ export let css = (strings, ...expressions) => {
   return stylesheet;
 };
 
-// @type () => SVGElement || DocumentFragment
-//
-// Template string tag used to parse SVG strings.
+/**
+ * Template string tag used to parse SVG strings.
+ *
+ * @type {(strings: TemplateStringsArray, ...expressions: Array<string>) => SVGElement | DocumentFragment}
+ */
 export let svg = (strings, ...expressions) => {
   let parts = [];
 

@@ -1,14 +1,16 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {rectContainsPoint} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {getTimeStamp} from "../utils/time.js";
 
-// @element x-notification
+/**
+ * @element x-notification
+ */
 export default class XNotificationElement extends HTMLElement {
   static observedAttributes = ["opened"];
 
@@ -48,12 +50,14 @@ export default class XNotificationElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the notification is currently open.
+  /**
+   * Whether the notification is currently open.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get opened() {
     return this.hasAttribute("opened");
   }
@@ -62,14 +66,16 @@ export default class XNotificationElement extends HTMLElement {
     this.#time = 0;
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 0
-  //
-  // Time (in miliseconds) after which this notification should disappear.<br/>
-  // Set to 0 to disable the timeout.<br/>
-  // Set to -1 to disable the timeout and make the notification permanent.
+  /**
+   * Time (in milliseconds) after which this notification should disappear.<br/>
+   * Set to 0 to disable the timeout.<br/>
+   * Set to -1 to disable the timeout and make the notification permanent.
+   *
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 0
+   */
   get timeout() {
     return this.hasAttribute("timeout") ? Number.parseFloat(this.getAttribute("timeout")) : 0;
   }
@@ -77,10 +83,12 @@ export default class XNotificationElement extends HTMLElement {
     this.setAttribute("timeout", timeout);
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

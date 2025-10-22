@@ -1,21 +1,23 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {isValidColorString} from "../utils/color.js";
 import {createElement} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-input
-// @event ^input
-// @event ^change
-// @event ^textinputmodestart
-// @event ^textinputmodeend
-// @event beforevalidate
-// @part input
+/**
+ * @element x-input
+ * @fires ^input
+ * @fires ^change
+ * @fires ^textinputmodestart
+ * @fires ^textinputmodeend
+ * @fires beforevalidate
+ * @part input
+ */
 export default class XInputElement extends HTMLElement {
   static observedAttributes = [
     "type", "value", "spellcheck", "minlength", "maxlength", "readonly", "disabled", "validation"
@@ -102,10 +104,12 @@ export default class XInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type "text" || "email" || "password" || "url" || "color"
-  // @default "text"
+  /**
+   * @property
+   * @attribute
+   * @type {"text" | "email" | "password" | "url" | "color"}
+   * @default "text"
+   */
   get type() {
     return this.hasAttribute("type") ? this.getAttribute("type") : "text";
   }
@@ -113,11 +117,15 @@ export default class XInputElement extends HTMLElement {
     this.setAttribute("type", type);
   }
 
-  // @property
-  // @attribute
-  // @type string
-  // @partial
-  // @default ""
+  /**
+   * Value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @partial
+   * @type {string}
+   * @default ""
+   */
   get value() {
     return this["#input"].value;
   }
@@ -146,10 +154,12 @@ export default class XInputElement extends HTMLElement {
     }
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get spellcheck() {
     return this.hasAttribute("spellcheck");
   }
@@ -157,10 +167,12 @@ export default class XInputElement extends HTMLElement {
     spellcheck ? this.setAttribute("spellcheck", "") : this.removeAttribute("spellcheck");
   }
 
-  // @property
-  // @attribute
-  // @type number
-  // @default 0
+  /**
+   * @property
+   * @attribute
+   * @type {number}
+   * @default 0
+   */
   get minLength() {
     return this.hasAttribute("minlength") ? Number.parseInt(this.getAttribute("minlength")) : 0;
   }
@@ -168,10 +180,12 @@ export default class XInputElement extends HTMLElement {
     this.setAttribute("minlength", minLength);
   }
 
-  // @property
-  // @attribute
-  // @type number || Infinity
-  // @default 0
+  /**
+   * @property
+   * @attribute
+   * @type {number | Infinity}
+   * @default Infinity
+   */
   get maxLength() {
     return this.hasAttribute("maxlength") ? Number.parseInt(this.getAttribute("maxlength")) : Number.POSITIVE_INFINITY;
   }
@@ -179,10 +193,12 @@ export default class XInputElement extends HTMLElement {
     this.setAttribute("maxlength", maxLength);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get required() {
     return this.hasAttribute("required");
   }
@@ -190,10 +206,12 @@ export default class XInputElement extends HTMLElement {
     required ? this.setAttribute("required", "") : this.removeAttribute("required");
   }
 
-  // @property
-  // @atrribute
-  // @type boolean
-  // @default false
+  /**
+   * @property
+   * @attribute readonly
+   * @type {boolean}
+   * @default false
+   */
   get readOnly() {
     return this.hasAttribute("readonly");
   }
@@ -201,12 +219,14 @@ export default class XInputElement extends HTMLElement {
     readOnly === true ? this.setAttribute("readonly", readOnly) : this.removeAttribute("readonly");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether this input has "mixed" state.
+  /**
+   * Whether the widget in in "mixed" state.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get mixed() {
     return this.hasAttribute("mixed");
   }
@@ -214,10 +234,14 @@ export default class XInputElement extends HTMLElement {
     mixed ? this.setAttribute("mixed", "") : this.removeAttribute("mixed");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -225,13 +249,16 @@ export default class XInputElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @type "auto" || "instant" || "manual"
-  // @default "auto"
-  //
-  // - <em>"auto"</em> - validation is performed when input loses focus and when user presses "Enter"<br/>
-  // - <em>"instant"</em> - validation is performed on each key press<br/>
-  // - <em>"manual"</em>  - you will call reportValidity() manually when user submits the form<br/>
+  /**
+   * - <em>"auto"</em> - validation is performed when input loses focus and when user presses "Enter"<br/>
+   * - <em>"instant"</em> - validation is performed on each key press<br/>
+   * - <em>"manual"</em>  - you will call reportValidity() manually when user submits the form<br/>
+   *
+   * @property
+   * @attribute
+   * @type {"auto" | "instant" | "manual"}
+   * @default "auto"
+   */
   get validation() {
     return this.hasAttribute("validation") ? this.getAttribute("validation") : "auto";
   }
@@ -239,10 +266,12 @@ export default class XInputElement extends HTMLElement {
     this.setAttribute("validation", validation);
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;
@@ -251,20 +280,24 @@ export default class XInputElement extends HTMLElement {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get empty() {
     return this.hasAttribute("empty");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  // @readOnly
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   * @readonly
+   */
   get error() {
     return this.hasAttribute("error");
   }
@@ -346,14 +379,18 @@ export default class XInputElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   selectAll() {
     this["#input"].select();
   }
 
-  // @method
-  // @type () => void
+  /**
+   * @method
+   * @type {() => void}
+   */
   clear() {
     this.value = "";
     this.#error = null;
@@ -361,8 +398,10 @@ export default class XInputElement extends HTMLElement {
     this.#updateValidityIndicators();
   }
 
-  // @method
-  // @type () => boolean
+  /**
+   * @method
+   * @type {() => boolean}
+   */
   reportValidity() {
     let beforeValidateEvent = new CustomEvent("beforevalidate", {bubbles: false, cancelable: true});
     this.dispatchEvent(beforeValidateEvent);
@@ -396,8 +435,10 @@ export default class XInputElement extends HTMLElement {
     return (this.#error === null && this.#customError === null);
   }
 
-  // @method
-  // @type (string || {href:string, args:Object}) => void
+  /**
+   * @method
+   * @type {(arg: string | {href:string, args:Object}) => void}
+   */
   setCustomValidity(arg) {
     if (arg === "") {
       this.#customError = null;

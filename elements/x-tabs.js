@@ -1,13 +1,15 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 
-// @element x-tabs
-// @event ^change - Toggled tab has changed.
+/**
+ * @element x-tabs
+ * @fires ^change - Toggled tab has changed.
+ */
 export default class XTabsElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
@@ -32,11 +34,13 @@ export default class XTabsElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @type string?
-  // @default null
-  //
-  // The value of the currently toggled tab. Null if there is no tab toggled.
+  /**
+   * The value of the currently toggled tab. Null if there is no tab toggled.
+   *
+   * @property
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     let toggledTab = this.querySelector("x-tab[toggled]");
     return toggledTab ? toggledTab.value : null;

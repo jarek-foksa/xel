@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -11,9 +11,11 @@ import {parseTransistion} from "../utils/style.js";
 import {html, css} from "../utils/template.js";
 import {nextTick} from "../utils/time.js";
 
-// @element x-popover
-// @event ^open - User opened the popover.
-// @event ^close - User closed the popover.
+/**
+ * @element x-popover
+ * @fires ^open - User opened the popover.
+ * @fires ^close - User closed the popover.
+ */
 export default class XPopoverElement extends HTMLElement {
   static observedAttributes = ["modal"];
 
@@ -93,22 +95,27 @@ export default class XPopoverElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property readOnly
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the popover is currently open.
+  /**
+   * Whether the popover is currently open.
+   *
+   * @property
+   * @attribute
+   * @readonly
+   * @type boolean
+   * @default false
+   */
   get opened() {
     return this.hasAttribute("opened");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether the popover should close when user clicks an object outside it.
+  /**
+   * Whether the popover should close when user clicks an object outside it.
+   *
+   * @property
+   * @attribute
+   * @type boolean
+   * @default false
+   */
   get modal() {
     return this.hasAttribute("modal");
   }
@@ -186,11 +193,13 @@ export default class XPopoverElement extends HTMLElement {
     this.#updatePosition(this.#context);
   }
 
-  // @method
-  // @type (DOMPoint || DOMRect || Element) => Promise
-  //
-  // Open the popover next to the given point, rect or element.<br/>
-  // Returns a promise that is resolved when the popover finishes animating.
+  /**
+   * Open the popover next to the given point, rect or element.<br/>
+   * Returns a promise that is resolved when the popover finishes animating.
+   *
+   * @method
+   * @type {(DOMPoint || DOMRect || Element) => Promise<void>}
+   */
   open(context, animate = true) {
     return new Promise( async (resolve) => {
       this.#context = context;
@@ -241,11 +250,13 @@ export default class XPopoverElement extends HTMLElement {
     });
   }
 
-  // @method
-  // @type (boolean) => Promise
-  //
-  // Close the popover.<br/>
-  // Returns a promise that is resolved when the popover finishes animating.
+  /**
+   * Close the popover.<br/>
+   * Returns a promise that is resolved when the popover finishes animating.
+   *
+   * @method
+   * @type {(boolean) => Promise}
+   */
   close(animate = true) {
     return new Promise(async (resolve) => {
       if (this.opened === true) {

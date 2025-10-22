@@ -1,25 +1,27 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-stepper
-// @part increment-button - Increment button.
-// @part decrement-button - Decrement button.
-// @part increment-arrow - SVG arrow image belonging to the increment button.
-// @part decrement-arrow - SVG arrow image belonging to the decrement button.
-// @event ^increment - Fired every 100ms while user is holding down the increment button.
-// @event ^decrement - Fired every 100ms while user is holding down the decrement button.
-// @event ^incrementstart - User pressed the increment button.
-// @event ^decrementstart - User pressed the decrement button.
-// @event ^incrementend - User released the increment button.
-// @event ^decrementend - User released the decrement button.
+/**
+ * @element x-stepper
+ * @part increment-button - Increment button.
+ * @part decrement-button - Decrement button.
+ * @part increment-arrow - SVG arrow image belonging to the increment button.
+ * @part decrement-arrow - SVG arrow image belonging to the decrement button.
+ * @fires ^increment - Fired every 100ms while user is holding down the increment button.
+ * @fires ^decrement - Fired every 100ms while user is holding down the decrement button.
+ * @fires ^incrementstart - User pressed the increment button.
+ * @fires ^decrementstart - User pressed the decrement button.
+ * @fires ^incrementend - User released the increment button.
+ * @fires ^decrementend - User released the decrement button.
+ */
 export default class XStepperElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
@@ -101,13 +103,17 @@ export default class XStepperElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type true || false || "increment" || "decrement"
-  // @default false
-  //
-  // Set to <code>true</code> or <code>false</code> to disable both buttons. Set to <code>"increment"</code> or
-  // <code>"decrement"</code> to disable only a single button.
+  /**
+   * Whether the widget is disabled.
+   *
+   * Set to <code>true</code> or <code>false</code> to disable both buttons. Set to <code>"increment"</code> or
+   * <code>"decrement"</code> to disable only a single button.
+   *
+   * @property
+   * @attribute
+   * @type {true | false | "increment" | "decrement"}
+   * @default false
+   */
   get disabled() {
     if (this.hasAttribute("disabled")) {
       if (this.getAttribute("disabled") === "increment") {

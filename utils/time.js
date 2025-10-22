@@ -1,35 +1,46 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
-// @type (number) => Promise
-//
-// Sleep for given period of time (in miliseconds).
+/**
+ * Sleep for given period of time (in milliseconds).
+ *
+ * @type {(time: number) => Promise<void>}
+ */
 export let sleep = (time) => {
   return new Promise( (resolve) => {
     setTimeout(() => resolve(), time);
   });
 };
 
-// @type (() => void) => void
+/**
+ * Sleep until the main thread becomes idle.
+ *
+ * @type {() => Promise<void>}
+ */
 export let nextTick = () => {
   return new Promise((resolve) => {
     requestAnimationFrame(resolve);
   });
 };
 
-// @type () => number
-//
-// Get timestamp in Unix format, e.g. 1348271383119 [http://en.wikipedia.org/wiki/Unix_time]
+/**
+ * Get timestamp in Unix format, e.g. 1348271383119.
+ *
+ * @see http://en.wikipedia.org/wiki/Unix_time
+ * @type {() => number}
+ */
 export let getTimeStamp = () => {
   return Date.now();
 };
 
-// @type (Date, Date, Array<string>) => string
-//
-// Takes two dates and returns a human readable duration such as "in 2 minutes" or "4 days ago".
+/**
+ * Takes two dates and returns a human readable duration such as "in 2 minutes" or "4 days ago".
+ *
+ * @type {(date: Date, refDate?: Date, locales?: Array<string>) => string}
+ */
 export let getRelDisplayDate = (date, refDate = new Date(), locales = ["en"]) => {
   let seconds = 60;
   let minutes = seconds * 60;
@@ -88,11 +99,14 @@ export let getRelDisplayDate = (date, refDate = new Date(), locales = ["en"]) =>
   }
 };
 
-// @type (Function, number, Object) => Function
-// @src [https://github.com/documentcloud/underscore/blob/master/underscore.js#L627]
-// @license MIT License [https://github.com/documentcloud/underscore/blob/master/LICENSE]
-//
-// Returns a function, that, when invoked, will only be triggered at most once during a given window of time.
+/**
+ * Returns a function, that, when invoked, will only be triggered at most once during a given window of time.
+ *
+ * @license https://github.com/documentcloud/underscore/blob/master/LICENSE (MIT License)
+ * @see https://github.com/documentcloud/underscore/blob/master/underscore.js#L627
+ * @see http://drupalmotion.com/article/debounce-and-throttle-visual-explanation
+ * @type {(func: Function, wait?: number, context?: any) => Function}
+ */
 export let throttle = (func, wait = 500, context = null) => {
   let args = null;
   let timeout = null;
@@ -127,15 +141,16 @@ export let throttle = (func, wait = 500, context = null) => {
   return wrapper;
 };
 
-// @type (Function, number, Object, boolean) => Function
-// @src [https://github.com/documentcloud/underscore/blob/master/underscore.js#L656]
-// @license MIT License [https://github.com/documentcloud/underscore/blob/master/LICENSE]
-//
-// Returns a function, that, as long as it continues to be invoked, will not be triggered. The function will be
-// called after it stops being called for N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing. Check
-// [http://drupalmotion.com/article/debounce-and-throttle-visual-explanation] for a nice explanation of how this is
-// different from throttle.
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not be triggered. The function will be
+ * called after it stops being called for N milliseconds. If "immediate" is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ *
+ * @license https://github.com/documentcloud/underscore/blob/master/LICENSE (MIT License)
+ * @see https://github.com/documentcloud/underscore/blob/master/underscore.js#L656
+ * @see http://drupalmotion.com/article/debounce-and-throttle-visual-explanation
+ * @type {(func: Function, wait: number, context?: any, immediate?: boolean) => Function}
+ */
 export let debounce = (func, wait, context, immediate = false) => {
   let timeout = null;
   let result = null;

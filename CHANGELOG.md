@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 0.38.0 (2025-10-22)
+
+- Migrate comments to JSDoc/TypeScript format
+- Include `xel.d.ts` file with Typescript types in the NPM package
+
 ## 0.37.2 (2025-10-02)
 
 - Add labels to color picker context menus

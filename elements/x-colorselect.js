@@ -1,20 +1,22 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
 import {closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 
-// @element x-colorselect
-// @event ^change
-// @event ^changestart
-// @event ^changeend
-// @event collapse
-// @part popover
+/**
+ * @element x-colorselect
+ * @fires ^change
+ * @fires ^changestart
+ * @fires ^changeend
+ * @fires collapse
+ * @part popover
+ */
 export default class XColorSelectElement extends HTMLElement {
   static observedAttributes = ["value", "alpha", "spaces", "disabled", "size"];
 
@@ -59,10 +61,14 @@ export default class XColorSelectElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string
-  // @default "#000000"
+  /**
+   * Value associated with this widget.
+   *
+   * @property
+   * @attribute
+   * @type {string}
+   * @default "#000000"
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : "#000000";
   }
@@ -70,12 +76,14 @@ export default class XColorSelectElement extends HTMLElement {
     this.setAttribute("value", value);
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
-  //
-  // Whether to allow manipulation of the alpha channel.
+  /**
+   * Whether to allow manipulation of the alpha channel.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get alpha() {
     return this.hasAttribute("alpha");
   }
@@ -83,12 +91,14 @@ export default class XColorSelectElement extends HTMLElement {
     alpha ? this.setAttribute("alpha", "") : this.removeAttribute("alpha");
   }
 
-  // @property
-  // @attribute
-  // @type Array<string>
-  // @default ["srgb", "p3"]
-  //
-  // Allowed color spaces. Value that does not match any of the provided spaces will be converted to the last space.
+  /**
+   * Allowed color spaces. Value that does not match any of the provided spaces will be converted to the last space.
+   *
+   * @property
+   * @attribute
+   * @type {Array<string>}
+   * @default ["srgb", "p3"]
+   */
   get spaces() {
     if (this.hasAttribute("spaces")) {
       return this.getAttribute("spaces").replace(/\s+/g, " ").split(" ");
@@ -101,10 +111,14 @@ export default class XColorSelectElement extends HTMLElement {
     this.setAttribute("spaces", spaces.join(" "));
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -112,10 +126,12 @@ export default class XColorSelectElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;

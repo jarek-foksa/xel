@@ -1,14 +1,16 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import {html, css} from "../utils/template.js";
 
 const APPLE_DEVICE = navigator.platform.startsWith("Mac") || ["iPhone", "iPad"].includes(navigator.platform);
 
-// @doc https://www.w3.org/TR/uievents-key/#keys-modifier
+/**
+ * @see https://www.w3.org/TR/uievents-key/#keys-modifier
+ */
 const MOD_KEYS = [
   "Alt",
   "AltGraph",
@@ -24,7 +26,9 @@ const MOD_KEYS = [
   "SymbolLock"
 ];
 
-// @element x-shortcut
+/**
+ * @element x-shortcut
+ */
 export default class XShortcutElement extends HTMLElement {
   static observedAttributes = ["value"];
 
@@ -53,13 +57,15 @@ export default class XShortcutElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type Array<string>
-  // @default []
-  //
-  // The keyboard shortcut in form of an array of <a href="https://www.w3.org/TR/uievents-key/">DOM key names</a>.
-  // The attribute value keys should be separated by a "+" sign.
+  /**
+   * The keyboard shortcut in form of an array of <a href="https://www.w3.org/TR/uievents-key/">DOM key names</a>.
+   * The attribute value keys should be separated by a "+" sign.
+   *
+   * @property
+   * @attribute
+   * @type {Array<string>}
+   * @default [[]]
+   */
   get value() {
     let value = [];
 
@@ -75,22 +81,26 @@ export default class XShortcutElement extends HTMLElement {
     this.setAttribute("value", value.join("+"));
   }
 
-  // @property
-  // @type Array<string>
-  // @default []
-  // @readOnly
-  //
-  // <a href="https://www.w3.org/TR/uievents-key/#keys-modifier">Modifier key names</a> contained by <code>value</code>.
+  /**
+   * <a href="https://www.w3.org/TR/uievents-key/#keys-modifier">Modifier key names</a> contained by <code>value</code>.
+   *
+   * @property
+   * @type {Array<string>}
+   * @default [[]]
+   * @readonly
+   */
   get modKeys() {
     return this.value.filter(key => MOD_KEYS.includes(key));
   }
 
-  // @property
-  // @type String?
-  // @default null
-  // @readOnly
-  //
-  // Non-modifier key name contained by <code>value</code>.
+  /**
+   * Non-modifier key name contained by <code>value</code>.
+   *
+   * @property
+   * @type {string | null}
+   * @default null
+   * @readonly
+   */
   get normalKey() {
     let key = this.value.find(key => MOD_KEYS.includes(key) === false);
     return key === undefined ? null : key;

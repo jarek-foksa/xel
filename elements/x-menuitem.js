@@ -1,8 +1,8 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
 import Xel from "../classes/xel.js";
 
@@ -10,10 +10,12 @@ import {rectContainsPoint} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
 
-// @element x-menuitem
-// @event ^toggle - User toggled on or off the menu item.
-// @part checkmark - Checkmark icon shown when the menu item is toggled.
-// @part arrow - Arrow icon shown when the menu item contains a submenu.
+/**
+ * @element x-menuitem
+ * @fires ^toggle - User toggled on or off the menu item.
+ * @part checkmark - Checkmark icon shown when the menu item is toggled.
+ * @part arrow - Arrow icon shown when the menu item contains a submenu.
+ */
 export default class XMenuItemElement extends HTMLElement {
   static observedAttributes = ["disabled"];
 
@@ -113,12 +115,14 @@ export default class XMenuItemElement extends HTMLElement {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // @property
-  // @attribute
-  // @type string?
-  // @default null
-  //
-  // Value associated with this menu item (usually the command name).
+  /**
+   * Value associated with this menu item (usually the command name).
+   *
+   * @property
+   * @attribute
+   * @type {string | null}
+   * @default null
+   */
   get value() {
     return this.hasAttribute("value") ? this.getAttribute("value") : null;
   }
@@ -128,10 +132,14 @@ export default class XMenuItemElement extends HTMLElement {
     }
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is toggled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get toggled() {
     return this.hasAttribute("toggled");
   }
@@ -139,10 +147,14 @@ export default class XMenuItemElement extends HTMLElement {
     toggled ? this.setAttribute("toggled", "") : this.removeAttribute("toggled");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget can be toggled on/off by the user.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get togglable() {
     return this.hasAttribute("togglable");
   }
@@ -150,10 +162,14 @@ export default class XMenuItemElement extends HTMLElement {
     togglable ? this.setAttribute("togglable", "") : this.removeAttribute("togglable");
   }
 
-  // @property
-  // @attribute
-  // @type boolean
-  // @default false
+  /**
+   * Whether the widget is disabled.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -161,10 +177,12 @@ export default class XMenuItemElement extends HTMLElement {
     disabled ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
   }
 
-  // @property
-  // @attribute
-  // @type "small" || "large" || null
-  // @default null
+  /**
+   * @property
+   * @attribute
+   * @type {"small" | "large" | null}
+   * @default null
+   */
   get size() {
     let size = this.getAttribute("size");
     return (size === "small" || size === "large") ? size : null;
@@ -173,10 +191,12 @@ export default class XMenuItemElement extends HTMLElement {
     (size === "small" || size === "large") ? this.setAttribute("size", size) : this.removeAttribute("size");
   }
 
-  // @property
-  // @type Promise
-  //
-  // Promise that is resolved when any trigger effects (such as blinking) are finished.
+  /**
+   * Promise that is resolved when any trigger effects (such as blinking) are finished.
+   *
+   * @property
+   * @type {Promise<void>}
+   */
   get whenTriggerEnd() {
     return new Promise((resolve) => {
       if (this.#triggering === false) {

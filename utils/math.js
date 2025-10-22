@@ -1,18 +1,22 @@
 
-// @copyright
-//   © 2016-2025 Jarosław Foksa
-// @license
-//   MIT License (check LICENSE.md for details)
+/**
+ * @copyright 2016-2025 Jarosław Foksa
+ * @license MIT (check LICENSE.md for details)
+ */
 
-// @type (number, number) => number
-//
-// Round given number to the fixed number of decimal places.
+/**
+ * Round given number to the fixed number of decimal places.
+ *
+ * @type {(number: number, precision?: number) => number}
+ */
 export let round = (number, precision = 0) => {
   let coefficient = Math.pow(10, precision);
   return Math.round(number * coefficient) / coefficient;
 };
 
-// @type (DOMRect, number) => DOMRect
+/**
+ * @type {(rect: DOMRect, precision?: number) => DOMRect}
+ */
 export let roundRect = (rect, precision = 0) => {
   return new DOMRect(
     round(rect.x, precision),
@@ -22,7 +26,9 @@ export let roundRect = (rect, precision = 0) => {
   );
 };
 
-// @type (number, number, number, number?) => number
+/**
+ * @type {(number: number, min: number, max?: number, precision?: null | number) => number}
+ */
 export let normalize = (number, min, max = Number.POSITIVE_INFINITY, precision = null) => {
   if (precision !== null) {
     number = round(number, precision);
@@ -38,9 +44,11 @@ export let normalize = (number, min, max = Number.POSITIVE_INFINITY, precision =
   return number;
 };
 
-// @type (number, number) => number
-//
-// Round a number to a specified number of significant digits.
+/**
+ * Round a number to a specified number of significant digits.
+ *
+ * @type {(n: number, precision: number) => number}
+ */
 export let toPrecision = (n, precision) => {
   let integerLength = (`${Math.floor(n)}`).length;
 
@@ -53,7 +61,9 @@ export let toPrecision = (n, precision) => {
   }
 };
 
-// @type (number) => number
+/**
+ * @type {(number: number) => number}
+ */
 export let getPrecision = (number) => {
   if (!Number.isFinite(number)) {
     return 0;
@@ -71,9 +81,11 @@ export let getPrecision = (number) => {
   }
 };
 
-// @type (DOMPoint, DOMPoint) => number
-//
-// Get distance between two points.
+/**
+ * Get distance between two points.
+ *
+ * @type {(point1: DOMPoint, point2: DOMPoint) => number}
+ */
 export let getDistanceBetweenPoints = (point1, point2) => {
   let x = point2.x - point1.x;
   x = x * x;
@@ -85,7 +97,9 @@ export let getDistanceBetweenPoints = (point1, point2) => {
   return distance;
 };
 
-// @type (DOMRect, DOMPoint) => boolean
+/**
+ * @type {(rect: DOMRect, point: DOMPoint) => boolean}
+ */
 export let rectContainsPoint = (rect, point) => {
   if (
     point.x >= rect.x &&
@@ -100,15 +114,19 @@ export let rectContainsPoint = (rect, point) => {
   }
 };
 
-// @type (number) => number
+/**
+ * @type {(degrees: number) => number}
+ */
 export let degToRad = (degrees) => {
   let radians = (Math.PI * degrees) / 180;
   return radians;
 };
 
-// @type (DOMPoint, DOMPoint) => boolean
-//
-// Check if two points have same coordinates.
+/**
+ * Check if two points have the same coordinates.
+ *
+ * @type {(point1: DOMPoint, point2: DOMPoint, precision: number | null) => boolean}
+ */
 export let comparePoints = (point1, point2, precision = null) => {
   if (precision !== null) {
     return round(point1.x, precision) === round(point2.x, precision) &&
@@ -119,9 +137,11 @@ export let comparePoints = (point1, point2, precision = null) => {
   }
 };
 
-// @type (DOMPoint, DOMPoint, number) => DOMPoint
-//
-// Rotate the given point clockwise around the center point by given angle in degrees.
+/**
+ * Rotate the given point clockwise around the center point by given angle in degrees.
+ *
+ * @type {(point: DOMPoint, centerPoint: DOMPoint, angle: number) => DOMPoint}
+ */
 export let rotatePoint = (point, centerPoint, angle) => {
   let [x, y] = [point.x, point.y];
   let [cx, cy] = [centerPoint.x, centerPoint.y];
