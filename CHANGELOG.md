@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.38.1 (2025-10-30)
+
+- Add "close" icon to the default iconsets
+
 ## 0.38.0 (2025-10-22)
 
 - Migrate comments to JSDoc/TypeScript format
