@@ -473,6 +473,12 @@ export default new class Xel extends EventEmitter {
       let themeText = await response.text();
 
       for (let [importRuleURL, importRuleText] of this.#getThemeImportRules(themeText)) {
+        // Resolve relative importRuleURL
+        if (importRuleURL.startsWith(".") === true && url.startsWith(".") === false) {
+          let baseURL =  "https://xel-toolkit.org" + url;
+          importRuleURL = new URL(importRuleURL, baseURL).pathname;
+        }
+
         let importText = await this.#fetchTheme(importRuleURL);
         themeText = themeText.replace(importRuleText, importText);
       }
