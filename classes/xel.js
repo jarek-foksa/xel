@@ -474,9 +474,11 @@ export default new class Xel extends EventEmitter {
 
       for (let [importRuleURL, importRuleText] of this.#getThemeImportRules(themeText)) {
         // Resolve relative importRuleURL
-        if (importRuleURL.startsWith(".") === true && url.startsWith(".") === false) {
-          let baseURL =  "https://xel-toolkit.org" + url;
-          importRuleURL = new URL(importRuleURL, baseURL).pathname;
+        if (importRuleURL.startsWith(".")) {
+          if (!url.startsWith(".") && !url.startsWith("blob:") && !url.startsWith("data:")) {
+            let baseURL =  "https://xel-toolkit.org" + url;
+            importRuleURL = new URL(importRuleURL, baseURL).pathname;
+          }
         }
 
         let importText = await this.#fetchTheme(importRuleURL);

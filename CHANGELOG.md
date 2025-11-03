@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.38.3 (2025-11-03)
+
+- [Fixed] Can't load themes via blob: URL
+
 ## 0.38.2 (2025-11-03)
 
 - [Fixed] Can't load themes with relative imports
