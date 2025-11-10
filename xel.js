@@ -16,7 +16,7 @@ export {default as XButtonsElement} from "./elements/x-buttons.js";
 export {default as XCardElement} from "./elements/x-card.js";
 export {default as XCheckboxElement} from "./elements/x-checkbox.js";
 export {default as XColorInputElement} from "./elements/x-colorinput.js";
-export {default as XColorPickerElement} from "./elements/x-colorpicker.js";
+export {default as XColorPickerElement} from "./elements/x-colorpicker/x-colorpicker.js";
 export {default as XColorSelectElement} from "./elements/x-colorselect.js";
 export {default as XContextMenuElement} from "./elements/x-contextmenu.js";
 export {default as XDrawerElement} from "./elements/x-drawer.js";
