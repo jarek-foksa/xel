@@ -6,7 +6,8 @@
 
 import Xel from "../../classes/xel.js";
 
-import {serializeColor, normalizeColorSpaceName, isColorInGamut} from "../../utils/color.js";
+import {convertColor, serializeColor, normalizeColorSpaceName} from "../../utils/color.js";
+import {closest} from "../../utils/element.js";
 import {normalize} from "../../utils/math.js";
 import {html, css} from "../../utils/template.js";
 
@@ -74,17 +75,9 @@ class XLCHLinearSlidersElement extends HTMLElement {
         <x-menu>
           <x-label><x-message href="#color-picker" autocapitalize>Color Picker</x-message></x-label>
 
-          <x-menuitem>
+          <x-menuitem id="gamut-hints-menu-item">
             <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
-            <x-menu id="gamut-hints-menu">
-              <x-menuitem value="none"><x-label><x-message href="#gamut-hints.none">None</x-message></x-label></x-menuitem>
-              <hr/>
-              <x-menuitem value="srgb" toggled><x-label>sRGB</x-label></x-menuitem>
-              <x-menuitem value="a98rgb"><x-label>Adobe RGB</x-label></x-menuitem>
-              <x-menuitem value="p3"><x-label>Display P3</x-label></x-menuitem>
-              <x-menuitem value="rec2020"><x-label>Rec. 2020</x-label></x-menuitem>
-              <x-menuitem value="prophoto"><x-label>ProPhoto RGB</x-label></x-menuitem>
-            </x-menu>
+            <x-menu id="gamut-hints-menu"></x-menu>
           </x-menuitem>
 
           <hr/>
@@ -251,6 +244,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
   }
 
   #shadowRoot = null;
+  #ownerColorPicker;
   #configChangeListener;
   #isDraggingSlider = false;
 
@@ -282,6 +276,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
   }
 
   connectedCallback() {
+    this.#ownerColorPicker = closest(this, "x-colorpicker");
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
     this.#labels = Xel.getConfig("x-colorpicker:labels", true);
 
@@ -592,7 +587,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this["#hue-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
-  #updateHueSliderGamutPath() {
+  async #updateHueSliderGamutPath() {
     if (this.#gamutHints === "none") {
       this["#hue-slider-gamut-path"].removeAttribute("d");
     }
@@ -608,9 +603,10 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
         for (let column = 0; column <= width; column += step) {
           let h = (column / width);
-          let color = {space: this.#space, coords: [l, c, h*360]};
+          let [x, y, z] = convertColor({space: this.#space, coords: [l, c, h*360]}, "xyz-d65").coords;
+          let inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, this.#gamutHints);
 
-          if (isColorInGamut(color, this.#gamutHints)) {
+          if (inGamut) {
             if (range === null) {
               range = [];
               ranges.push(range);
@@ -678,7 +674,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this["#chroma-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
-  #updateChromaSliderGamutPath() {
+  async #updateChromaSliderGamutPath() {
     if (this.#gamutHints === "none") {
       this["#chroma-slider-gamut-path"].removeAttribute("d");
     }
@@ -695,9 +691,10 @@ class XLCHLinearSlidersElement extends HTMLElement {
         for (let column = 0; column <= width; column += step) {
           let c = (column / width);
           let maxChroma = (this.#space === "lch") ? MAX_LCH_CHROMA : MAX_OKLCH_CHROMA;
-          let color = {space: this.#space, coords: [l, c * maxChroma, h]};
+          let [x, y, z] = convertColor({space: this.#space, coords: [l, c * maxChroma, h]}, "xyz-d65").coords;
+          let inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, this.#gamutHints);
 
-          if (isColorInGamut(color, this.#gamutHints)) {
+          if (inGamut) {
             if (range === null) {
               range = [];
               ranges.push(range);
@@ -753,7 +750,7 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this["#lightness-slider"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
-  #updateLightnessSliderGamutPath() {
+  async #updateLightnessSliderGamutPath() {
     if (this.#gamutHints === "none") {
       this["#lightness-slider-gamut-path"].removeAttribute("d");
     }
@@ -769,13 +766,18 @@ class XLCHLinearSlidersElement extends HTMLElement {
 
         for (let column = 0; column <= width; column += step) {
           let l = (column / width);
+          let inGamut = false;
 
-          let color = {
-            space: this.#space,
-            coords: [this.#space === "oklch" ? l : l*100, c, h]
-          };
+          if (this.#space === "lch") {
+            let [x, y, z] = convertColor({space: this.#space, coords: [l*100, c, h]}, "xyz-d65").coords;
+            inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, this.#gamutHints);
+          }
+          else if (this.#space === "oklch") {
+            let [x, y, z] = convertColor({space: this.#space, coords: [l, c, h]}, "xyz-d65").coords;
+            inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, this.#gamutHints);
+          }
 
-          if (isColorInGamut(color, this.#gamutHints)) {
+          if (inGamut) {
             if (range === null) {
               range = [];
               ranges.push(range);
@@ -817,16 +819,17 @@ class XLCHLinearSlidersElement extends HTMLElement {
     this["#alpha-slider-gradient"].style.background = `linear-gradient(in ${this.#space} to right, ${colors.join(",")})`;
   }
 
-  #updateGamutWarnings() {
+  async #updateGamutWarnings() {
     if (this.#gamutHints === "none") {
       this["#hue-slider-marker"].removeAttribute("data-warn");
       this["#chroma-slider-marker"].removeAttribute("data-warn");
       this["#lightness-slider-marker"].removeAttribute("data-warn");
     }
     else {
-      let color = {space: this.#space, coords: this.#coords};
+      let [x, y, z] = convertColor({space: this.#space, coords: this.#coords}, "xyz-d65").coords;
+      let inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, this.#gamutHints);
 
-      if (isColorInGamut(color, this.#gamutHints)) {
+      if (inGamut) {
         this["#hue-slider-marker"].removeAttribute("data-warn");
         this["#chroma-slider-marker"].removeAttribute("data-warn");
         this["#lightness-slider-marker"].removeAttribute("data-warn");
@@ -847,11 +850,37 @@ class XLCHLinearSlidersElement extends HTMLElement {
   }
 
   #updateContextMenu() {
-    for (let item of this["#gamut-hints-menu"].querySelectorAll("x-menuitem")) {
-      item.toggled = (item.value === this.#gamutHints);
+    // Gamut hints
+    {
+      if (this.#ownerColorPicker.gamuts.length === 0) {
+        this["#gamut-hints-menu-item"].hidden = true;
+        this["#gamut-hints-menu"].innerHTML = "";
+      }
+      else {
+        let gamutHintsMenuHTML = `
+          <x-menuitem value="none"><x-label><x-message href="#gamut-hints.none">None</x-message></x-label></x-menuitem>
+          <hr/>
+        `;
+
+        for (let id of this.#ownerColorPicker.gamuts) {
+          gamutHintsMenuHTML += `
+            <x-menuitem value="${id}"><x-label>${this.#ownerColorPicker.getGamutLabel(id)}</x-label></x-menuitem>
+          `;
+        }
+
+        this["#gamut-hints-menu"].innerHTML = gamutHintsMenuHTML;
+        this["#gamut-hints-menu-item"].hidden = false;
+      }
+
+      for (let item of this["#gamut-hints-menu"].querySelectorAll("x-menuitem")) {
+        item.toggled = (item.value === this.#gamutHints);
+      }
     }
 
-    this["#labels-menu-item"].toggled = this.#labels;
+    // Labels
+    {
+      this["#labels-menu-item"].toggled = this.#labels;
+    }
   }
 }
 

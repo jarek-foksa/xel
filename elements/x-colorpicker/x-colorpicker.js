@@ -16,7 +16,7 @@ import "./x-xyzplanarsliders.js";
 
 import Xel from "../../classes/xel.js";
 
-import {convertColor, parseColor, serializeColor, isColorInGamut} from "../../utils/color.js";
+import {convertColor, parseColor, serializeColor, getColorSpaceGamut, isColorInGamut} from "../../utils/color.js";
 import {createElement} from "../../utils/element.js";
 import {html, css} from "../../utils/template.js";
 import {throttle} from "../../utils/time.js";
@@ -234,6 +234,15 @@ export default class XColorPickerElement extends HTMLElement {
 
   /**
    * @property
+   * @readonly
+   * @type {Array<string>}
+   */
+  get gamuts() {
+    return Object.keys(this.#gamuts);
+  }
+
+  /**
+   * @property
    * @attribute
    * @type {boolean}
    * @default false
@@ -248,6 +257,29 @@ export default class XColorPickerElement extends HTMLElement {
   #shadowRoot;
   #configChangeListener;
   #isDraggingSlider = false;
+
+  #gamuts = {
+    "srgb": {
+      label: "sRGB",
+      isColorInGamut: (x, y, z) => isColorInGamut({space: "xyz-d65", coords: [x, y, z]}, "srgb")
+    },
+    "a98rgb": {
+      label: "Adobe RGB",
+      isColorInGamut: (x, y, z) => isColorInGamut({space: "xyz-d65", coords: [x, y, z]}, "a98rgb")
+    },
+    "p3": {
+      label: "Display P3",
+      isColorInGamut: (x, y, z) => isColorInGamut({space: "xyz-d65", coords: [x, y, z]}, "p3")
+    },
+    "rec2020": {
+      label: "Rec. 2020",
+      isColorInGamut: (x, y, z) => isColorInGamut({space: "xyz-d65", coords: [x, y, z]}, "rec2020")
+    },
+    "prophoto": {
+      label: "Prohopto",
+      isColorInGamut: (x, y, z) => isColorInGamut({space: "xyz-d65", coords: [x, y, z]}, "prophoto")
+    }
+  };
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -320,6 +352,50 @@ export default class XColorPickerElement extends HTMLElement {
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
     }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * x, y and z coordinates are in "CIE XYZ D65" color space.
+   *
+   * @method
+   * @type {(id: string, label: string, isColorInGamut: (x:number, y:number, z:number) => Promise<boolean>) => void}
+   */
+  addGamut(id, label, isColorInGamut) {
+    if (this.#gamuts[id]) {
+      console.error(`Gamut with ID "${id} already exists."`);
+    }
+    else {
+      this.#gamuts[id] = {label, isColorInGamut}
+    }
+  }
+
+  /**
+   * @method
+   * @type {(id: string) => void}
+   */
+  removeGamut(id) {
+    if (this.#gamuts[id]) {
+      delete this.#gamuts[id];
+    }
+    else {
+      console.error(`Gamut with ID "${id} was not found."`);
+    }
+  }
+
+  /**
+   * @type {(string) => string}
+   */
+  getGamutLabel(id) {
+    return this.#gamuts[id].label;
+  }
+
+  /**
+   * @type {(x: number, y: number, z: number, id: string) => boolean)}
+   */
+  isColorInGamut(x, y, z, id) {
+    return this.#gamuts[id]?.isColorInGamut(x, y, z) || false;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -602,18 +678,26 @@ export default class XColorPickerElement extends HTMLElement {
     });
   }
 
-  #updateSpaceSelectWarningIcons() {
+  async #updateSpaceSelectWarningIcons() {
     let color = this.#getColor();
 
     for (let item of this["#space-select-menu"].children) {
       if (item.localName === "x-menuitem") {
-        let space = item.value;
+        let gamut = getColorSpaceGamut(item.value);
 
-        if (isColorInGamut(color, space)) {
-          item.removeAttribute("data-warn");
+        if (gamut) {
+          let [x, y, z] = convertColor(color, "xyz-d65").coords;
+          let inGamut = await this.isColorInGamut(x, y, z, gamut);
+
+          if (inGamut) {
+            item.removeAttribute("data-warn");
+          }
+          else {
+            item.setAttribute("data-warn", "");
+          }
         }
         else {
-          item.setAttribute("data-warn", "");
+          item.removeAttribute("data-warn");
         }
       }
     }

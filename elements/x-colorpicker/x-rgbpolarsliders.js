@@ -6,7 +6,8 @@
 
 import Xel from "../../classes/xel.js";
 
-import {convertColor, serializeColor, normalizeColorSpaceName, isColorInGamut} from "../../utils/color.js";
+import {convertColor, serializeColor, normalizeColorSpaceName} from "../../utils/color.js";
+import {closest} from "../../utils/element.js";
 import {degToRad, normalize, rotatePoint} from "../../utils/math.js";
 import {html, css} from "../../utils/template.js";
 import {throttle} from "../../utils/time.js";
@@ -68,17 +69,9 @@ class XRGBPolarSlidersElement extends HTMLElement {
             </x-menu>
           </x-menuitem>
 
-          <x-menuitem>
+          <x-menuitem id="gamut-hints-menu-item">
             <x-label><x-message href="#gamut-hints" autocapitalize>Gamut Hints</x-message></x-label>
-            <x-menu id="gamut-hints-menu">
-              <x-menuitem value="none"><x-label><x-message href="#gamut-hints.none">None</x-message></x-label></x-menuitem>
-              <hr/>
-              <x-menuitem value="srgb" toggled><x-label>sRGB</x-label></x-menuitem>
-              <x-menuitem value="a98rgb"><x-label>Adobe RGB</x-label></x-menuitem>
-              <x-menuitem value="p3"><x-label>Display P3</x-label></x-menuitem>
-              <x-menuitem value="rec2020"><x-label>Rec. 2020</x-label></x-menuitem>
-              <x-menuitem value="prophoto"><x-label>ProPhoto RGB</x-label></x-menuitem>
-            </x-menu>
+            <x-menu id="gamut-hints-menu"></x-menu>
           </x-menuitem>
 
           <hr/>
@@ -370,6 +363,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #shadowRoot = null;
+  #ownerColorPicker;
   #configChangeListener;
   #resizeObserver = new ResizeObserver(() => this.#onResize());
   #isDraggingSlider = false;
@@ -402,6 +396,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   connectedCallback() {
+    this.#ownerColorPicker = closest(this, "x-colorpicker");
     this.#model = Xel.getConfig(`${this.localName}:model`, "hsv");
     this.#gamutHints = normalizeColorSpaceName(Xel.getConfig("x-colorpicker:gamutHints", "srgb"), "color.js");
     this.#labels = Xel.getConfig("x-colorpicker:labels", true);
@@ -750,7 +745,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
   }
 
-  #updatePolarSliderGamutPath() {
+  async #updatePolarSliderGamutPath() {
     let gamutHints = this.#getResolvedGamutHints();
 
     if (gamutHints === "none") {
@@ -762,23 +757,17 @@ class XRGBPolarSlidersElement extends HTMLElement {
       let step = 1 / window.devicePixelRatio;
       let [, , c2] = this.#coords;
 
-      let isInGamut = (h, c1, c2) => {
-        let color = {
-          space: this.#space,
-          coords: convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords
-        };
-
-        return isColorInGamut(color, gamutHints);
-      };
-
       let points = [];
 
       if (this.#model === "hsv" || this.#model === "hsl") {
         for (let h = 0; h <= 1; h += 0.01) {
           for (let row = height/2; row >= 0; row -= step) {
             let c1 = row / (height/2);
+            let [r, g, b] = convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords;
+            let [x, y, z] = convertColor({space: this.#space, coords: [r, g, b]}, "xyz-d65").coords;
+            let inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, gamutHints);
 
-            if (isInGamut(h, c1, c2)) {
+            if (inGamut) {
               let point = rotatePoint({x: width/2, y: (height/2) - row}, {x: width/2, y: height/2}, h*360);
               points.push(point);
               break;
@@ -838,7 +827,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
   }
 
-  #updateLinearSliderGamutPath() {
+  async #updateLinearSliderGamutPath() {
     let gamutHints = this.#getResolvedGamutHints();
 
     if (gamutHints === "none") {
@@ -858,13 +847,11 @@ class XRGBPolarSlidersElement extends HTMLElement {
         for (let column = 0; column <= width; column += step) {
           if (this.#model === "hsv" || this.#model === "hsl") {
             let c2 = (column / width);
+            let [r, g, b] = convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords;
+            let [x, y, z] = convertColor({space: this.#space, coords: [r, g, b]}, "xyz-d65").coords;
+            let inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, gamutHints);
 
-            let color = {
-              space: this.#space,
-              coords: convertColor({space: this.#model, coords: [h*360, c1*100, c2*100]}, "srgb").coords
-            };
-
-            if (isColorInGamut(color, gamutHints)) {
+            if (inGamut) {
               if (range === null) {
                 range = [];
                 ranges.push(range);
@@ -918,7 +905,7 @@ class XRGBPolarSlidersElement extends HTMLElement {
     }
   }
 
-  #updateGamutWarnings() {
+  async #updateGamutWarnings() {
     let gamutHints = this.#getResolvedGamutHints();
 
     if (gamutHints === "none") {
@@ -926,14 +913,12 @@ class XRGBPolarSlidersElement extends HTMLElement {
       this["#linear-slider-marker"].removeAttribute("data-warn");
     }
     else {
-      let [h, s, vl] = this.#coords;
+      let [c0, c1, c2] = this.#coords;
+      let [r, g, b] = convertColor({space: this.#model, coords: [c0*360, c1*100, c2*100]}, "srgb").coords;
+      let [x, y, z] = convertColor({space: this.#space, coords: [r, g, b]}, "xyz-d65").coords;
+      let inGamut = await this.#ownerColorPicker.isColorInGamut(x, y, z, gamutHints);
 
-      let color = {
-        space: this.#space,
-        coords: convertColor({space: this.#model, coords: [h*360, s*100, vl*100]}, "srgb").coords
-      };
-
-      if (isColorInGamut(color, gamutHints)) {
+      if (inGamut) {
         this["#polar-slider-marker"].removeAttribute("data-warn");
         this["#linear-slider-marker"].removeAttribute("data-warn");
       }
@@ -962,15 +947,44 @@ class XRGBPolarSlidersElement extends HTMLElement {
   }
 
   #updateContextMenu() {
-    for (let item of this["#color-model-menu"].querySelectorAll("x-menuitem")) {
-      item.toggled = (item.value === this.#model);
+    // Color model
+    {
+      for (let item of this["#color-model-menu"].querySelectorAll("x-menuitem")) {
+        item.toggled = (item.value === this.#model);
+      }
     }
 
-    for (let item of this["#gamut-hints-menu"].querySelectorAll("x-menuitem")) {
-      item.toggled = (item.value === this.#gamutHints);
+    // Gamut hints
+    {
+      if (this.#ownerColorPicker.gamuts.length === 0) {
+        this["#gamut-hints-menu-item"].hidden = true;
+        this["#gamut-hints-menu"].innerHTML = "";
+      }
+      else {
+        let gamutHintsMenuHTML = `
+          <x-menuitem value="none"><x-label><x-message href="#gamut-hints.none">None</x-message></x-label></x-menuitem>
+          <hr/>
+        `;
+
+        for (let id of this.#ownerColorPicker.gamuts) {
+          gamutHintsMenuHTML += `
+            <x-menuitem value="${id}"><x-label>${this.#ownerColorPicker.getGamutLabel(id)}</x-label></x-menuitem>
+          `;
+        }
+
+        this["#gamut-hints-menu"].innerHTML = gamutHintsMenuHTML;
+        this["#gamut-hints-menu-item"].hidden = false;
+      }
+
+      for (let item of this["#gamut-hints-menu"].querySelectorAll("x-menuitem")) {
+        item.toggled = (item.value === this.#gamutHints);
+      }
     }
 
-    this["#labels-menu-item"].toggled = this.#labels;
+    // Labels
+    {
+      this["#labels-menu-item"].toggled = this.#labels;
+    }
   }
 }
 

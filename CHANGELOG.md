@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.39.0 (2025-11-11)
+
+- Add `addGamut()` and `removeGamut()` color picker methods
+
 ## 0.38.3 (2025-11-03)
 
 - [Fixed] Can't load themes via blob: URL

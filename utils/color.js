@@ -423,6 +423,23 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
 };
 
 /**
+ * @type {(space: string) => "srgb" | "a98rgb" | "p3" | "rec2020" | "prophoto" | null}
+ */
+export let getColorSpaceGamut = (space) => {
+  let gamut = null;
+
+  if (
+    space === "srgb" || space === "srgb-linear") {
+    gamut = "srgb";
+  }
+  else if (space === "a98rgb" || space === "p3" || space === "rec2020" || space === "prophoto") {
+    gamut = space;
+  }
+
+  return gamut;
+};
+
+/**
  * Check if string contains valid CSS3 color, e.g. "blue", "#fff", "rgb(50, 50, 100)".
  *
  * @type {(space: string, format: "css" | "color.js") => boolean}
