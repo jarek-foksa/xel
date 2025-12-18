@@ -259,7 +259,7 @@ x-tooltip {
  */
 
 x-stepper {
-  width: 40px;
+  width: 30px;
   height: 70px;
   background-color: var(--material-surface-container-color);
   border-radius: 4px;
@@ -1322,6 +1322,9 @@ x-numberinput {
   border-color: var(--material-outline-color);
   border-radius: 4px;
 }
+x-numberinput:has(x-stepper) {
+  --inner-padding: 0px 0px 0px 6px;
+}
 x-numberinput:hover {
   border-color: var(--material-on-surface-color);
 }
@@ -1362,8 +1365,10 @@ x-numberinput:focus > x-stepper {
   z-index: 1;
 }
 x-numberinput:not(:focus) > x-stepper {
+  width: 20px;
+  min-width: 20px;
   height: 20px;
-  margin: 0;
+  margin: 0 2px 0 -7px;
   transform: scale(0.7);
   transform-origin: 100% 50%;
   background-color: transparent;

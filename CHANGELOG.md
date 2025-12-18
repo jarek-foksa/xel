@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.39.1 (2025-12-18)
+
+- [Fixed] Material themes have inconsistent `<x-stepper>` stylings
+
 ## 0.39.0 (2025-11-11)
 
 - Add `addGamut()` and `removeGamut()` color picker methods
