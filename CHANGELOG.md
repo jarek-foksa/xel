@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.39.2 (2025-12-27)
+
+- Don't require `Xel.configStorage` to implement a storage proxy map
+
 ## 0.39.1 (2025-12-18)
 
 - [Fixed] Material themes have inconsistent `<x-stepper>` stylings

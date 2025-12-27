@@ -318,7 +318,7 @@ export default new class Xel extends EventEmitter {
     let beforeRawValue = this.#configStorage.getItem(key);
 
     if (value === null) {
-      delete this.#configStorage[key];
+      this.#configStorage.removeItem(key);
     }
     else {
       this.#configStorage.setItem(key, JSON.stringify(value));
@@ -336,7 +336,13 @@ export default new class Xel extends EventEmitter {
    */
   clearConfig() {
     if (this.#configStorage.length > 0) {
-      let keys = Object.keys(this.#configStorage);
+      let keys = [];
+
+      for (let i = 0; i < this.#configStorage.length; i += 1) {
+        let key = this.#configStorage.key(i);
+        keys.push(key);
+      }
+
       this.#configStorage.clear();
 
       for (let key of keys) {
