@@ -37,7 +37,7 @@ export let bundleScripts = (entryScriptPath) => {
         }
       }],
       onwarn: (warning, warn) => {
-        if (warning.code !== "CIRCULAR_DEPENDENCY" && warning.code !== "EVAL") {
+        if (["CIRCULAR_DEPENDENCY", "THIS_IS_UNDEFINED", "EVAL"].includes(warning.code) === false) {
           warn(warning);
         }
       }
