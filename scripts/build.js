@@ -163,7 +163,6 @@ if (ARGS.length === 0 || ARGS.includes("hosting")) {
       await Fs.writeFile(`${PROJECT_PATH}/builds/hosting/package.json`, JSON.stringify(manifest));
     }
 
-
     // CHANGELOG.md
     {
       await Fs.cp(`${PROJECT_PATH}/CHANGELOG.md`, `${PROJECT_PATH}/builds/hosting/CHANGELOG.md`);
