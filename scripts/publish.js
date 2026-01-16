@@ -11,7 +11,7 @@ import ChildProcess from "node:child_process";
 import Process from "node:process";
 import Semver from "semver";
 
-import ChangelogParser from "./classes/changelog-parser.js";
+import ChangelogParser from "../classes/changelog-parser.js";
 
 const PROJECT_PATH = Path.resolve(import.meta.dirname, "..");
 const [, , ...ARGS] = Process.argv;
