@@ -194,21 +194,19 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, s, l] = convertColor(color, "hsl").coords;
     let a = color.alpha;
 
-    if (h === null || Number.isNaN(h)) {
-      h = 0;
-    }
-
-    h = toPrecision(h, precision);
-    s = toPrecision(s, precision);
-    l = toPrecision(l, precision);
-
     if (format === "hsl") {
+      h = (h === null) ? "none" : toPrecision(h, precision) + "deg";
+      s = (s === null) ? "none" : toPrecision(s, precision) + "%";
+      l = (l === null) ? "none" : toPrecision(l, precision) + "%";
       a = toPrecision(a * 100, precision);
-      return (a === 100) ? `hsl(${h}deg ${s}% ${l}%)` : `hsl(${h}deg ${s}% ${l}% / ${a}%)`;
+      return (a === 100) ? `hsl(${h} ${s} ${l})` : `hsl(${h} ${s} ${l} / ${a}%)`;
     }
     else if (format === "hsl-alt") {
+      h = (h === null) ? "none" : toPrecision(h, precision);
+      s = (s === null) ? "none" : toPrecision(s, precision) + "%";
+      l = (l === null) ? "none" : toPrecision(l, precision) + "%";
       a = toPrecision(a, precision);
-      return (a === 1) ? `hsl(${h} ${s}% ${l}%)` : `hsl(${h} ${s}% ${l}% / ${a})`;
+      return (a === 1) ? `hsl(${h} ${s} ${l})` : `hsl(${h} ${s} ${l} / ${a})`;
     }
   }
 
@@ -217,21 +215,19 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let [h, w, b] = convertColor(color, "hwb").coords;
     let a = color.alpha;
 
-    if (h === null || Number.isNaN(h)) {
-      h = 0;
-    }
-
-    h = toPrecision(h, precision);
-    w = toPrecision(w, precision);
-    b = toPrecision(b, precision);
-
     if (format === "hwb") {
+      h = (h === null) ? "none" : toPrecision(h, precision) + "deg";
+      w = (w === null) ? "none" : toPrecision(w, precision) + "%";
+      b = (b === null) ? "none" : toPrecision(b, precision) + "%";
       a = toPrecision(a * 100, precision);
-      return (a === 100) ? `hwb(${h}deg ${w}% ${b}%)` : `hwb(${h}deg ${w}% ${b}% / ${a}%)`;
+      return (a === 100) ? `hwb(${h} ${w} ${b})` : `hwb(${h} ${w} ${b} / ${a}%)`;
     }
     else if (format === "hwb-alt") {
+      h = (h === null) ? "none" : toPrecision(h, precision);
+      w = (w === null) ? "none" : toPrecision(w, precision) + "%";
+      b = (b === null) ? "none" : toPrecision(b, precision) + "%";
       a = toPrecision(a, precision);
-      return (a === 1) ? `hwb(${h} ${w}% ${b}%)` : `hwb(${h} ${w}% ${b}% / ${a})`;
+      return (a === 1) ? `hwb(${h} ${w} ${b})` : `hwb(${h} ${w} ${b} / ${a})`;
     }
   }
 
@@ -241,19 +237,17 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let a = color.alpha;
 
     if (format === "rgb") {
-      r = toPrecision(r * 100, precision);
-      g = toPrecision(g * 100, precision);
-      b = toPrecision(b * 100, precision);
+      r = (r === null) ? "none" : toPrecision(r * 100, precision) + "%";
+      g = (g === null) ? "none" : toPrecision(g * 100, precision) + "%";
+      b = (b === null) ? "none" : toPrecision(b * 100, precision) + "%";
       a = toPrecision(a * 100, precision);
-
-      return (a === 100) ? `rgb(${r}% ${g}% ${b}%)` : `rgb(${r}% ${g}% ${b}% / ${a}%)`
+      return (a === 100) ? `rgb(${r} ${g} ${b})` : `rgb(${r} ${g} ${b} / ${a}%)`
     }
     else if (format === "rgb-alt") {
-      r = toPrecision(r * 255, precision);
-      g = toPrecision(g * 255, precision);
-      b = toPrecision(b * 255, precision);
+      r = (r === null) ? "none" : toPrecision(r * 255, precision);
+      g = (g === null) ? "none" : toPrecision(g * 255, precision);
+      b = (b === null) ? "none" : toPrecision(b * 255, precision);
       a = toPrecision(a, precision);
-
       return (a === 1) ? `rgb(${r} ${g} ${b})` : `rgb(${r} ${g} ${b} / ${a})`;
     }
   }
@@ -274,17 +268,16 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
       let space = normalizeColorSpaceName(color.spaceId, "css");
 
       if (format === "color") {
-        r = toPrecision(r * 100, precision);
-        g = toPrecision(g * 100, precision);
-        b = toPrecision(b * 100, precision);
+        r = (r === null) ? "none" : toPrecision(r * 100, precision) + "%";
+        g = (g === null) ? "none" : toPrecision(g * 100, precision) + "%";
+        b = (b === null) ? "none" : toPrecision(b * 100, precision) + "%";
         a = toPrecision(a * 100, precision);
-
-        return (a === 100) ? `color(${space} ${r}% ${g}% ${b}%)` : `color(${space} ${r}% ${g}% ${b}% / ${a}%)`;
+        return (a === 100) ? `color(${space} ${r} ${g} ${b})` : `color(${space} ${r} ${g} ${b} / ${a}%)`;
       }
       else if (format === "color-alt") {
-        r = toPrecision(r, precision);
-        g = toPrecision(g, precision);
-        b = toPrecision(b, precision);
+        r = (r === null) ? "none" : toPrecision(r, precision);
+        g = (g === null) ? "none" : toPrecision(g, precision);
+        b = (b === null) ? "none" : toPrecision(b, precision);
         a = toPrecision(a, precision);
 
         return (a === 1) ? `color(${space} ${r} ${g} ${b})` : `color(${space} ${r} ${g} ${b} / ${a})`;
@@ -296,21 +289,21 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
       let space = color.spaceId;
 
       if (format === "color") {
-        x = toPrecision(x * 100, precision);
-        y = toPrecision(y * 100, precision);
-        z = toPrecision(z * 100, precision);
+        x = (x === null) ? "none" : toPrecision(x * 100, precision) + "%";
+        y = (y === null) ? "none" : toPrecision(y * 100, precision) + "%";
+        z = (z === null) ? "none" : toPrecision(z * 100, precision) + "%";
         a = toPrecision(a * 100, precision);
 
         if (space === "xyz") {
           space = "xyz-d65";
         }
 
-        return (a === 100) ? `color(${space} ${x}% ${y}% ${z}%)` : `color(${space} ${x}% ${y}% ${z}% / ${a}%)`;
+        return (a === 100) ? `color(${space} ${x} ${y} ${z})` : `color(${space} ${x} ${y} ${z} / ${a}%)`;
       }
       else if (format === "color-alt") {
-        x = toPrecision(x, precision);
-        y = toPrecision(y, precision);
-        z = toPrecision(z, precision);
+        x = (x === null) ? "none" : toPrecision(x, precision);
+        y = (y === null) ? "none" : toPrecision(y, precision);
+        z = (z === null) ? "none" : toPrecision(z, precision);
         a = toPrecision(a, precision);
 
         if (space === "xyz-d65") {
@@ -331,19 +324,17 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let a = color.alpha;
 
     if (format === "oklch") {
-      l = toPrecision(l * 100, precision);
-      c = toPrecision((c / 0.4) * 100, precision);
-      h = toPrecision(h, precision);
+      l = (l === null) ? "none" : toPrecision(l * 100, precision) + "%";
+      c = (c === null) ? "none" : toPrecision((c / 0.4) * 100, precision) + "%";
+      h = (h === null) ? "none" : toPrecision(h, precision) + "deg";
       a = toPrecision(a * 100, precision);
-
-      return (a === 100) ? `oklch(${l}% ${c}% ${h}deg)` : `oklch(${l}% ${c}% ${h}deg / ${a}%)`;
+      return (a === 100) ? `oklch(${l} ${c} ${h})` : `oklch(${l} ${c} ${h} / ${a}%)`;
     }
     else if (format === "oklch-alt") {
-      l = toPrecision(l, precision);
-      c = toPrecision(c, precision);
-      h = toPrecision(h, precision);
+      l = (l === null) ? "none" : toPrecision(l, precision);
+      c = (c === null) ? "none" : toPrecision(c, precision);
+      h = (h === null) ? "none" : toPrecision(h, precision);
       a = toPrecision(a, precision);
-
       return (a === 1) ? `oklch(${l} ${c} ${h})` : `oklch(${l} ${c} ${h} / ${a})`;
     }
   }
@@ -354,19 +345,17 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let alpha = color.alpha;
 
     if (format === "oklab") {
-      l = toPrecision(l * 100, precision);
-      a = toPrecision((a / 0.4) * 100, precision);
-      b = toPrecision((b / 0.4) * 100, precision);
+      l = (l === null) ? "none" : toPrecision(l * 100, precision) + "%";
+      a = (a === null) ? "none" : toPrecision((a / 0.4) * 100, precision) + "%";
+      b = (b === null) ? "none" : toPrecision((b / 0.4) * 100, precision) + "%";
       alpha = toPrecision(alpha * 100, precision);
-
-      return (alpha === 100) ? `oklab(${l}% ${a}% ${b}%)` : `oklab(${l}% ${a}% ${b}% / ${alpha}%)`;
+      return (alpha === 100) ? `oklab(${l} ${a} ${b})` : `oklab(${l} ${a} ${b} / ${alpha}%)`;
     }
     else if (format === "oklab-alt") {
-      l = toPrecision(l, precision);
-      a = toPrecision(a, precision);
-      b = toPrecision(b, precision);
+      l = (l === null) ? "none" : toPrecision(l, precision);
+      a = (a === null) ? "none" : toPrecision(a, precision);
+      b = (b === null) ? "none" : toPrecision(b, precision);
       alpha = toPrecision(alpha, precision);
-
       return (alpha === 1) ? `oklab(${l} ${a} ${b})` : `oklab(${l} ${a} ${b} / ${alpha})`;
     }
   }
@@ -377,19 +366,17 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let a = color.alpha;
 
     if (format === "lch") {
-      l = toPrecision(l, precision);
-      c = toPrecision((c / 150) * 100, precision);
-      h = toPrecision(h, precision);
+      l = (l === null) ? "none" : toPrecision(l, precision) + "%";
+      c = (c === null) ? "none" : toPrecision((c / 150) * 100, precision) + "%";
+      h = (h === null) ? "none" : toPrecision(h, precision) + "deg";
       a = toPrecision(a * 100, precision);
-
-      return (a === 100) ? `lch(${l}% ${c}% ${h}deg)` : `lch(${l}% ${c}% ${h}deg / ${a}%)`;
+      return (a === 100) ? `lch(${l} ${c} ${h})` : `lch(${l} ${c} ${h} / ${a}%)`;
     }
     else if (format === "lch-alt") {
-      l = toPrecision(l, precision);
-      c = toPrecision(c, precision);
-      h = toPrecision(h, precision);
+      l = (l === null) ? "none" : toPrecision(l, precision);
+      c = (c === null) ? "none" : toPrecision(c, precision);
+      h = (h === null) ? "none" : toPrecision(h, precision);
       a = toPrecision(a, precision);
-
       return (a === 1) ? `lch(${l} ${c} ${h})` : `lch(${l} ${c} ${h} / ${a})`;
     }
   }
@@ -400,19 +387,17 @@ let prettySerializeColor = (color, format = "hex", precision = 3) => {
     let alpha = color.alpha;
 
     if (format === "lab") {
-      l = toPrecision(l, precision);
-      a = toPrecision((a / 125) * 100, precision);
-      b = toPrecision((b / 125) * 100, precision);
+      l = (l === null) ? "none" : toPrecision(l, precision) + "%";
+      a = (a === null) ? "none" : toPrecision((a / 125) * 100, precision) + "%";
+      b = (b === null) ? "none" : toPrecision((b / 125) * 100, precision) + "%";
       alpha = toPrecision(alpha * 100, precision);
-
-      return (alpha === 100) ? `lab(${l}% ${a}% ${b}%)` : `lab(${l}% ${a}% ${b}% / ${alpha}%)`;
+      return (alpha === 100) ? `lab(${l} ${a} ${b})` : `lab(${l} ${a} ${b} / ${alpha}%)`;
     }
     else if (format === "lab-alt") {
-      l = toPrecision(l, precision);
-      a = toPrecision(a, precision);
-      b = toPrecision(b, precision);
+      l = (l === null) ? "none" : toPrecision(l, precision);
+      a = (a === null) ? "none" : toPrecision(a, precision);
+      b = (b === null) ? "none" : toPrecision(b, precision);
       alpha = toPrecision(alpha, precision);
-
       return (alpha === 1) ? `lab(${l} ${a} ${b})` : `lab(${l} ${a} ${b} / ${alpha})`;
     }
   }

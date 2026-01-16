@@ -508,7 +508,7 @@ export default class XColorPickerElement extends HTMLElement {
       // Convert missing components to 0
       // @see https://www.w3.org/TR/css-color-4/#missing
       for (let i = 0; i < convertedColor.coords.length; i += 1) {
-        if (convertedColor.coords[i] === null || Number.isNaN(convertedColor.coords[i])) {
+        if (convertedColor.coords[i] === null) {
           convertedColor.coords[i] = 0;
         }
       }
@@ -815,7 +815,7 @@ export default class XColorPickerElement extends HTMLElement {
     // Convert missing components to 0
     // @see https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < color.coords.length; i += 1) {
-      if (color.coords[i] === null || Number.isNaN(color.coords[i])) {
+      if (color.coords[i] === null) {
         color.coords[i] = 0;
       }
     }

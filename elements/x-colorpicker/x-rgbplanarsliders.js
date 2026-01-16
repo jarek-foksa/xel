@@ -290,7 +290,7 @@ class XRGBPlanarSlidersElement extends HTMLElement {
     // Convert missing components to 0
     // @see https://www.w3.org/TR/css-color-4/#missing
     for (let i = 0; i < this.#coords.length; i += 1) {
-      if (this.#coords[i] === null || Number.isNaN(this.#coords[i])) {
+      if (this.#coords[i] === null) {
         this.#coords[i] = 0;
       }
     }

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.39.4 (2026-01-16)
+
+- [Fixed] Color picker fails to serialize `none` component values
+
 ## 0.39.3 (2026-01-16)
 
 - Update Color.js library to stable version
