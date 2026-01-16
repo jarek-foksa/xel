@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.39.3 (2026-01-16)
+
+- Update Color.js library to stable version
+
 ## 0.39.2 (2025-12-27)
 
 - Don't require `Xel.configStorage` to implement a storage proxy map
