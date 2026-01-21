@@ -1,6 +1,15 @@
 
 # CHANGELOG
 
+## 0.39.5 (2026-01-21)
+
+- [Fixed] Incorrect tap highlight color on Android
+- [Fixed] Sticky hover state on Android
+- [Fixed] Pressed button state delay is too long on Android
+- [Fixed] Number input widget should open numeric keyboard on Android
+- [Fixed] Can't expand nested context menus on Android
+- [Fixed] Don't show button tooltips when using touch input method on Android
+
 ## 0.39.4 (2026-01-16)
 
 - [Fixed] Color picker fails to serialize `none` component values

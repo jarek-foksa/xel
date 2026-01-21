@@ -15,6 +15,7 @@
   color: var(--text-color);
   background-color: var(--background-color);
   font-family: BlinkMacSystemFont, -apple-system, "Inter", "Roboto Flex", "Roboto", "Noto Sans", "Helvetica Neue", "Arial", sans-serif;
+  -webkit-tap-highlight-color: oklch(from var(--accent-color) l c h / 0.3);
   --theme-id:                   "cupertino-dark";
   --preset-accent-colors:       blue     color(srgb 0.00 0.48 1.00),
                                 purple   color(srgb 0.58 0.24 0.59),
@@ -73,8 +74,10 @@ a {
   text-decoration: underline;
   font-weight: 500;
 }
-a:hover {
-  text-decoration: none;
+@media (hover: hover) {
+  a:hover {
+    text-decoration: none;
+  }
 }
 a:focus {
   outline-width: 3px;
@@ -150,8 +153,10 @@ th, td {
   background-color: color(srgb 1 1 1 / 0.3);
   border-radius: 25px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background-color: color(srgb 1 1 1 / 0.5);
+@media (hover: hover) {
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: color(srgb 1 1 1 / 0.5);
+  }
 }
 
 /* Gecko */
@@ -385,8 +390,10 @@ x-button[skin="recessed"] {
   &[disabled] {
     opacity: 0.3;
   }
-  &:hover {
-    background-color: color(srgb 0 0 0 / 0.07);
+  @media (hover: hover) {
+    &:hover {
+      background-color: color(srgb 0 0 0 / 0.07);
+    }
   }
   &[toggled] {
     color: color(srgb 1 1 1 / 0.95);
@@ -1184,8 +1191,10 @@ x-titlebar::part(icon) {
   fill: color(srgb 0 0 0);
   opacity: 0;
 }
-x-titlebar:hover::part(icon) {
-  opacity: 0.5;
+@media (hover: hover) {
+  x-titlebar:hover::part(icon) {
+    opacity: 0.5;
+  }
 }
 
 /* Label */

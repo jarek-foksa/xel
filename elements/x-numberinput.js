@@ -27,7 +27,7 @@ export default class XNumberInputElement extends HTMLElement {
     <template>
       <div id="main">
         <div id="editor-container">
-          <div id="editor" contenteditable="plaintext-only" spellcheck="false"></div>
+          <div id="editor" contenteditable="plaintext-only" spellcheck="false" inputmode="numeric"></div>
         </div>
         <slot></slot>
       </div>

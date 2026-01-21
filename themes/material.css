@@ -17,6 +17,7 @@
   background-color: var(--background-color);
   font-family: "Roboto Flex", "Roboto", "Helvetica Neue", "Noto Sans", "Arial", sans-serif;
   font-weight: 400;
+  -webkit-tap-highlight-color: oklch(from var(--accent-color) l c h / 0.15);
   --theme-id:                  "material";
   --preset-accent-colors:       blue     lch(39.4 36.3 272),
                                 purple   lch(39.7 39.4 303),
@@ -102,8 +103,10 @@ a:focus {
   outline-style: solid;
   outline-color: var(--material-primary-color);
 }
-a:hover {
-  color: var(--material-on-primary-container-color);
+@media (hover: hover) {
+  a:hover {
+    color: var(--material-on-primary-container-color);
+  }
 }
 
 pre, code, var {
@@ -167,8 +170,10 @@ th, td {
   background-color: var(--material-outline-variant-color);
   border-radius: 25px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--material-outline-color);
+@media (hover: hover) {
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--material-outline-color);
+  }
 }
 
 /* Gecko */
@@ -271,9 +276,11 @@ x-stepper::part(increment-button),
 x-stepper::part(decrement-button) {
   color: var(--material-on-surface-variant-color);
 }
-x-stepper::part(increment-button):hover,
-x-stepper::part(decrement-button):hover {
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+@media (hover: hover) {
+  x-stepper::part(increment-button):hover,
+  x-stepper::part(decrement-button):hover {
+    background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+  }
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
@@ -358,7 +365,13 @@ x-button[skin="normal"] {
   }
 
   /* State layer */
-  &:hover::before,
+  @media (hover: hover) {
+    &:hover::before {
+      display: block;
+      background-color: var(--material-on-surface-color);
+      opacity: 0.08;
+    }
+  }
   &[expanded]::before {
     display: block;
     background-color: var(--material-on-surface-color);
@@ -374,10 +387,12 @@ x-button[skin="normal"] {
     background-color: var(--material-on-secondary-container-color);
     opacity: 0.1;
   }
-  &[toggled]:hover::before {
-    display: block;
-    background-color: var(--material-on-secondary-container-color);
-    opacity: 0.08;
+  @media (hover: hover) {
+    &[toggled]:hover::before {
+      display: block;
+      background-color: var(--material-on-secondary-container-color);
+      opacity: 0.08;
+    }
   }
   &[toggled][pressed]::before {
     display: block;
@@ -423,8 +438,10 @@ x-button[skin="flat"] {
   & {
     color: var(--material-on-surface-variant-color)
   }
-  &:hover {
-    color: var(--material-on-surface-color);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--material-on-surface-color);
+    }
   }
   &[toggled],
   &[expanded] {
@@ -446,10 +463,12 @@ x-button[skin="recessed"] {
   }
 
   /* State layer */
-  &:hover::before {
-    display: block;
-    background-color: var(--material-on-secondary-container-color);
-    opacity: 0.08;
+  @media (hover: hover) {
+    &:hover::before {
+      display: block;
+      background-color: var(--material-on-secondary-container-color);
+      opacity: 0.08;
+    }
   }
   &[pressed]::before {
     display: block;
@@ -480,13 +499,15 @@ x-button[skin="dock"] {
   }
 
   /* State layer */
-  &:hover::before {
-    display: block;
-    background-color: var(--material-on-surface-color);
-    opacity: 0.08;
-  }
-  &[toggled]:hover::before {
-    display: none;
+  @media (hover: hover) {
+    &:hover::before {
+      display: block;
+      background-color: var(--material-on-surface-color);
+      opacity: 0.08;
+    }
+    &[toggled]:hover::before {
+      display: none;
+    }
   }
   &[pressed]::before,
   &[toggled][pressed]::before  {
@@ -511,8 +532,10 @@ x-tag {
   border-radius: 8px;
   position: relative;
 }
-x-tag:hover {
-  color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-tag:hover {
+    color: var(--material-on-surface-color);
+  }
 }
 x-tag:focus {
   outline-width: 3px;
@@ -528,8 +551,10 @@ x-tag[toggled] {
   background-color: var(--material-primary-color);
   border-color: transparent;
 }
-x-tag[toggled]:hover {
-  filter: brightness(0.95);
+@media (hover: hover) {
+  x-tag[toggled]:hover {
+    filter: brightness(0.95);
+  }
 }
 x-tag[toggled]:focus {
   outline-offset: 1px;
@@ -547,9 +572,11 @@ x-tag::before {
   pointer-events: none;
   z-index: 1;
 }
-x-tag:hover::before {
-  display: block;
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+@media (hover: hover) {
+  x-tag:hover::before {
+    display: block;
+    background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+  }
 }
 x-tag:active::before {
   display: block;
@@ -591,8 +618,10 @@ x-tagsinput {
   border-color: var(--material-outline-color);
   border-radius: 4px;
 }
-x-tagsinput:hover {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-tagsinput:hover {
+    border-color: var(--material-on-surface-color);
+  }
 }
 x-tagsinput:focus {
   outline-width: 3px;
@@ -633,7 +662,12 @@ x-tabs {
 }
 
 /* Tab */
-x-tab:hover,
+@media (hover: hover) {
+  x-tab:hover {
+    color: var(--material-on-surface-color);
+    background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+  }
+}
 x-tab:focus {
   color: var(--material-on-surface-color);
   background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
@@ -690,25 +724,27 @@ x-navitem::part(button)::before {
   content: "";
   pointer-events: none;
 }
-x-navitem::part(button):hover::before {
-  display: block;
-  background-color: var(--material-on-surface-color);
-  opacity: 0.08;
-}
-x-navitem[pressed]::part(button):hover::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.1;
-}
-x-navitem[toggled]::part(button):hover::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.08;
-}
-x-navitem[toggled][pressed]::part(button):hover::before {
-  display: block;
-  background-color: var(--material-on-secondary-container-color);
-  opacity: 0.1;
+@media (hover: hover) {
+  x-navitem::part(button):hover::before {
+    display: block;
+    background-color: var(--material-on-surface-color);
+    opacity: 0.08;
+  }
+  x-navitem[pressed]::part(button):hover::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.1;
+  }
+  x-navitem[toggled]::part(button):hover::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.08;
+  }
+  x-navitem[toggled][pressed]::part(button):hover::before {
+    display: block;
+    background-color: var(--material-on-secondary-container-color);
+    opacity: 0.1;
+  }
 }
 
 /* Label */
@@ -763,7 +799,11 @@ x-menuitem {
   color: var(--material-on-surface-color);
   --trigger-effect: none;
 }
-x-menuitem:hover,
+@media (hover: hover) {
+  x-menuitem:hover {
+    background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+  }
+}
 x-menuitem:focus,
 x-menuitem[expanded] {
   background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
@@ -896,8 +936,10 @@ x-pager::part(item) {
   border-color: transparent;
   border-radius: 99px;
 }
-x-pager::part(item):hover {
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+@media (hover: hover) {
+  x-pager::part(item):hover {
+    background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+  }
 }
 x-pager::part(item):active {
   background-color: oklch(from var(--material-primary-color) l c h / 0.2);
@@ -908,10 +950,15 @@ x-pager::part(item):focus {
   outline-color: var(--material-primary-color);
   outline-offset: -1px;
 }
-x-pager::part(toggled-item),
-x-pager::part(toggled-item):hover {
+x-pager::part(toggled-item) {
   color: var(--material-on-primary-color);
   background-color: var(--material-primary-color);
+}
+@media (hover: hover) {
+  x-pager::part(toggled-item):hover {
+    color: var(--material-on-primary-color);
+    background-color: var(--material-primary-color);
+  }
 }
 
 /*****************************************************************************************************************/
@@ -956,8 +1003,10 @@ x-notification {
 x-notification a {
   color: var(--material-primary-inverse-color);
 }
-x-notification a:hover {
-  color: var(--material-primary-inverse-color);
+@media (hover: hover) {
+  x-notification a:hover {
+    color: var(--material-primary-inverse-color);
+  }
 }
 
 /*****************************************************************************************************************/
@@ -975,10 +1024,12 @@ x-checkbox::part(indicator) {
   border-radius: 2px;
   --path-data: var(--checkmark-path-data);
 }
-x-checkbox:hover::part(indicator) {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-checkbox:hover::part(indicator) {
+    border-color: var(--material-on-surface-color);
+  }
 }
-x-radio:active::part(indicator) {
+x-checkbox:active::part(indicator) {
   border-color: var(--material-on-surface-color);
 }
 x-checkbox[mixed]::part(indicator) {
@@ -1004,11 +1055,13 @@ x-checkbox::part(indicator)::before {
   content: "";
   pointer-events: none;
 }
-x-checkbox:hover::part(indicator)::before {
-  display: block;
-  transform: scale(1);
-  background-color: var(--material-on-surface-color);
-  opacity: 0.08;
+@media (hover: hover) {
+  x-checkbox:hover::part(indicator)::before {
+    display: block;
+    transform: scale(1);
+    background-color: var(--material-on-surface-color);
+    opacity: 0.08;
+  }
 }
 x-checkbox:active::part(indicator)::before {
   display: block;
@@ -1023,8 +1076,10 @@ x-checkbox:focus::part(indicator)::before {
   border-radius: 99px;
   opacity: 0.1;
 }
-x-checkbox[toggled]:hover::part(indicator)::before {
-  background-color: var(--material-primary-color);
+@media (hover: hover) {
+  x-checkbox[toggled]:hover::part(indicator)::before {
+    background-color: var(--material-primary-color);
+  }
 }
 x-checkbox[toggled]:active::part(indicator)::before {
   background-color: var(--material-on-surface-color);
@@ -1045,8 +1100,10 @@ x-radio::part(indicator) {
   border-style: solid;
   border-color: var(--material-on-surface-variant-color);
 }
-x-radio:hover::part(indicator) {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-radio:hover::part(indicator) {
+    border-color: var(--material-on-surface-color);
+  }
 }
 x-radio:active::part(indicator) {
   border-color: var(--material-on-surface-color);
@@ -1082,11 +1139,13 @@ x-radio::part(indicator)::before {
   content: "";
   pointer-events: none;
 }
-x-radio:hover::part(indicator)::before {
-  display: block;
-  transform: scale(1);
-  background-color: var(--material-on-surface-color);
-  opacity: 0.08;
+@media (hover: hover) {
+  x-radio:hover::part(indicator)::before {
+    display: block;
+    transform: scale(1);
+    background-color: var(--material-on-surface-color);
+    opacity: 0.08;
+  }
 }
 x-radio:active::part(indicator)::before {
   display: block;
@@ -1100,8 +1159,10 @@ x-radio:focus::part(indicator)::before {
   background-color: var(--material-on-surface-color);
   opacity: 0.1;
 }
-x-radio[toggled]:hover::part(indicator)::before {
-  background-color: var(--material-primary-color);
+@media (hover: hover) {
+  x-radio[toggled]:hover::part(indicator)::before {
+    background-color: var(--material-primary-color);
+  }
 }
 x-radio[toggled]:active::part(indicator)::before {
   background-color: var(--material-on-surface-color);
@@ -1137,16 +1198,20 @@ x-switch::part(indicator-thumb) {
   transform: scale(0.6);
   background-color: var(--material-outline-color);
 }
-x-switch:hover::part(indicator-thumb) {
-  background-color: var(--material-on-surface-variant-color);
+@media (hover: hover) {
+  x-switch:hover::part(indicator-thumb) {
+    background-color: var(--material-on-surface-variant-color);
+  }
 }
 x-switch[toggled]::part(indicator-thumb) {
   left: calc(100% - 17px);
   transform: scale(0.9);
   background-color: var(--material-on-primary-color);
 }
-x-switch[toggled]:hover::part(indicator-thumb) {
-  background-color: var(--material-primary-container-color);
+@media (hover: hover) {
+  x-switch[toggled]:hover::part(indicator-thumb) {
+    background-color: var(--material-primary-container-color);
+  }
 }
 x-switch[size="small"]::part(indicator-thumb) {
   width: 12px;
@@ -1201,8 +1266,10 @@ x-select {
   border-color: var(--material-outline-color);
   border-radius: 4px;
 }
-x-select:hover {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-select:hover {
+    border-color: var(--material-on-surface-color);
+  }
 }
 x-select:focus {
   outline-width: 3px;
@@ -1278,8 +1345,10 @@ x-input {
   border-color: var(--material-outline-color);
   border-radius: 4px;
 }
-x-input:hover {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-input:hover {
+    border-color: var(--material-on-surface-color);
+  }
 }
 x-input:focus {
   outline-width: 3px;
@@ -1325,8 +1394,10 @@ x-numberinput {
 x-numberinput:has(x-stepper) {
   --inner-padding: 0px 0px 0px 6px;
 }
-x-numberinput:hover {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-numberinput:hover {
+    border-color: var(--material-on-surface-color);
+  }
 }
 x-numberinput:focus {
   outline-width: 3px;
@@ -1401,8 +1472,10 @@ x-texteditor {
   border-color: var(--material-outline-color);
   border-radius: 4px;
 }
-x-texteditor:hover {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-texteditor:hover {
+    border-color: var(--material-on-surface-color);
+  }
 }
 x-texteditor:focus {
   outline-width: 3px;
@@ -1437,8 +1510,10 @@ x-colorinput {
   border-color: var(--material-outline-color);
   border-radius: 4px;
 }
-x-colorinput:hover {
-  border-color: var(--material-on-surface-color);
+@media (hover: hover) {
+  x-colorinput:hover {
+    border-color: var(--material-on-surface-color);
+  }
 }
 x-colorinput:focus {
   outline-width: 3px;
@@ -1537,8 +1612,10 @@ x-titlebar::part(button) {
   color: var(--material-on-surface-variant-color);
   border-radius: 4px;
 }
-x-titlebar::part(button):hover {
-  background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+@media (hover: hover) {
+  x-titlebar::part(button):hover {
+    background-color: oklch(from var(--material-on-surface-color) l c h / 0.08);
+  }
 }
 x-titlebar::part(button):active {
   background-color: oklch(from var(--material-on-secondary-container-color) l c h / 0.1);

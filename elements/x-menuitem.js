@@ -347,7 +347,7 @@ export default class XMenuItemElement extends HTMLElement {
 
         isDown = false;
         let pressedTime = Date.now() - pointerDownTimeStamp;
-        let minPressedTime = (pointerDownEvent.pointerType === "touch") ? 600 : 150;
+        let minPressedTime = (pointerDownEvent.pointerType === "touch") ? 300 : 150;
 
         if (pressedTime < minPressedTime) {
           await sleep(minPressedTime - pressedTime);
@@ -407,15 +407,15 @@ export default class XMenuItemElement extends HTMLElement {
 
         if (this.#wasFocused) {
           this.parentElement.focus();
-          await sleep(150);
+          await sleep(85);
           this.focus();
-          await sleep(150);
+          await sleep(85);
         }
         else {
           this.focus();
-          await sleep(150);
+          await sleep(85);
           this.parentElement.focus();
-          await sleep(150);
+          await sleep(85);
         }
 
         for (let callback of this.#triggerEndCallbacks) {

@@ -190,15 +190,7 @@ export default class XContextMenuElement extends HTMLElement {
     if (item && item.disabled === false) {
       let submenu = item.querySelector("x-menu");
 
-      if (submenu) {
-        if (submenu.opened) {
-          submenu.close();
-        }
-        else {
-          submenu.openNextToElement(item, "horizontal");
-        }
-      }
-      else {
+      if (!submenu) {
         this.setAttribute("closing", "");
 
         await item.whenTriggerEnd;

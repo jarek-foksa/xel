@@ -17,6 +17,7 @@
   color: var(--text-color);
   background-color: var(--background-color);
   font-family: "Segoe UI", "SegoeUI", system-ui, sans-serif;
+  -webkit-tap-highlight-color: oklch(from var(--accent-color) l c h / 0.15);
   --theme-id:                   "fluent";
   --preset-accent-colors:       blue     color(srgb 0.00 0.47 0.83),
                                 purple   color(srgb 0.53 0.09 0.60),
@@ -69,9 +70,11 @@ a {
   color: var(--accent-color);
   text-decoration: underline;
 }
-a:hover {
-  color: oklch(from var(--accent-color) calc(l - 0.1) c h);
-  text-decoration: none;
+@media (hover: hover) {
+  a:hover {
+    color: oklch(from var(--accent-color) calc(l - 0.1) c h);
+    text-decoration: none;
+  }
 }
 a:active {
   color: oklch(from var(--accent-color) calc(l + 0.1) c h);
@@ -170,8 +173,10 @@ img {
     transparent 100%
   );
 }
-::-webkit-scrollbar-thumb:hover {
-  background-color: color(srgb 0.54 0.54 0.54);
+@media (hover: hover) {
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: color(srgb 0.54 0.54 0.54);
+  }
 }
 
 /* Gecko */
@@ -279,9 +284,11 @@ x-stepper::part(increment-button),
 x-stepper::part(decrement-button) {
   border-radius: 3px;
 }
-x-stepper::part(increment-button):hover,
-x-stepper::part(decrement-button):hover {
-  background-color: color(srgb 0 0 0 / 0.0373);
+@media (hover: hover) {
+  x-stepper::part(increment-button):hover,
+  x-stepper::part(decrement-button):hover {
+    background-color: color(srgb 0 0 0 / 0.0373);
+  }
 }
 x-stepper[pressed="increment"]::part(increment-button),
 x-stepper[pressed="decrement"]::part(decrement-button) {
@@ -343,8 +350,10 @@ x-button[skin="normal"] {
     border-color: var(--border-color);
     border-radius: 4px;
   }
-  &:hover {
-    background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+  @media (hover: hover) {
+    &:hover {
+      background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+    }
   }
   &[pressed] {
     color: color(srgb 0 0 0 / 0.5);
@@ -355,15 +364,19 @@ x-button[skin="normal"] {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
   }
-  &[toggled]:hover {
-    background-color: oklch(from var(--accent-color) l c h / 90%);
+  @media (hover: hover) {
+    &[toggled]:hover {
+      background-color: oklch(from var(--accent-color) l c h / 90%);
+    }
   }
   &[toggled][pressed] {
     color: color(srgb 1 1 1 / 0.7);
     background-color: oklch(from var(--accent-color) l c h / 80%);
   }
-  x-buttons > &[toggled]:hover {
-    background-color: var(--accent-color);
+  @media (hover: hover) {
+    x-buttons > &[toggled]:hover {
+      background-color: var(--accent-color);
+    }
   }
   x-buttons > &[toggled][pressed] {
     background-color: oklch(from var(--accent-color) l c h / 80%);
@@ -418,15 +431,19 @@ x-button[skin="recessed"] {
   &[disabled] {
     opacity: 0.3;
   }
-  &:hover {
-    background-color: color(srgb 0 0 0 / 0.1);
+  @media (hover: hover) {
+    &:hover {
+      background-color: color(srgb 0 0 0 / 0.1);
+    }
   }
   &[toggled] {
     color: color(srgb 1 1 1 / 0.95);
     background-color: var(--text-color);
   }
-  &[toggled]:hover {
-    background-color: color(srgb 0 0 0 / 0.5);
+  @media (hover: hover) {
+    &[toggled]:hover {
+      background-color: color(srgb 0 0 0 / 0.5);
+    }
   }
   &[pressed],
   &[toggled][pressed] {
@@ -450,8 +467,10 @@ x-button[skin="dock"] {
     border-style: solid;
     border-color: var(--border-color);
   }
-  &:hover {
-    background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+  @media (hover: hover) {
+    &:hover {
+      background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+    }
   }
   &[pressed] {
     color: color(srgb 0 0 0 / 0.5);
@@ -484,8 +503,10 @@ x-tag {
   border-color: var(--border-color);
   border-radius: 99px;
 }
-x-tag:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-tag:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-tag:active {
   color: color(srgb 0 0 0 / 0.6063);
@@ -501,8 +522,10 @@ x-tag[toggled] {
   background-color: var(--accent-color);
   border-color: transparent;
 }
-x-tag[toggled]:hover {
-  filter: brightness(1.1);
+@media (hover: hover) {
+  x-tag[toggled]:hover {
+    filter: brightness(1.1);
+  }
 }
 x-tag[toggled]:active {
   color: color(srgb 1 1 1 / 0.7);
@@ -513,8 +536,10 @@ x-tag[toggled]:active {
 x-tag::part(remove-button) {
   --path-data: var(--clear-path-data);
 }
-x-tag::part(remove-button):hover {
-  color: color(srgb 0 0 0);
+@media (hover: hover) {
+  x-tag::part(remove-button):hover {
+    color: color(srgb 0 0 0);
+  }
 }
 
 /* Scope prefix */
@@ -540,8 +565,10 @@ x-tagsinput {
   border-style: solid;
   border-radius: 3px;
 }
-x-tagsinput:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-tagsinput:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-tagsinput:focus {
   background-color: color(srgb 1 1 1);
@@ -591,8 +618,10 @@ x-tabs {
 x-tab {
   border-radius: 4px;
 }
-x-tab:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-tab:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-tab:active {
   color: color(srgb 0 0 0 / 0.6063);
@@ -645,8 +674,10 @@ x-navitem::part(button) {
   color: color(srgb 0 0 0 / 0.8956);
   border-radius: 7px;
 }
-x-navitem::part(button):hover {
-  background-color: color(srgb 0 0 0 / 0.04);
+@media (hover: hover) {
+  x-navitem::part(button):hover {
+    background-color: color(srgb 0 0 0 / 0.04);
+  }
 }
 x-navitem[toggled]::part(button) {
   background-color: color(srgb 0 0 0 / 0.04);
@@ -767,8 +798,10 @@ x-menuitem x-shortcut {
  * Menubar
  */
 
-x-menubar > x-menuitem:hover {
-  background-color: color(srgb 0 0 0 / 0.0373);
+@media (hover: hover) {
+  x-menubar > x-menuitem:hover {
+    background-color: color(srgb 0 0 0 / 0.0373);
+  }
 }
 x-menubar > x-menuitem[highlighted] {
   color: color(srgb 1 1 1);
@@ -827,8 +860,10 @@ x-pager::part(item) {
   border-radius: 3px;
   font-weight: 500;
 }
-x-pager::part(item):hover {
-  background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+@media (hover: hover) {
+  x-pager::part(item):hover {
+    background-color: color(srgb 0.976 0.976 0.976 / 0.5);
+  }
 }
 x-pager::part(item):active {
   color: color(srgb 0 0 0 / 0.5);
@@ -845,8 +880,10 @@ x-pager::part(toggled-item) {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
 }
-x-pager::part(toggled-item):hover {
-  background-color: var(--accent-color);
+@media (hover: hover) {
+  x-pager::part(toggled-item):hover {
+    background-color: var(--accent-color);
+  }
 }
 x-pager::part(toggled-item):active {
   color: color(srgb 1 1 1 / 0.7);
@@ -894,8 +931,10 @@ x-notification {
 x-notification a {
   color: oklch(from var(--accent-color) calc(l + 0.15) c h);
 }
-x-notification a:hover {
-  color: oklch(from var(--accent-color) calc(l + 0.15) c h);
+@media (hover: hover) {
+  x-notification a:hover {
+    color: oklch(from var(--accent-color) calc(l + 0.15) c h);
+  }
 }
 x-notification a:active {
   color: oklch(from var(--accent-color) calc(l + 0.25) c h);
@@ -934,8 +973,10 @@ x-checkbox::part(indicator) {
 x-checkbox[mixed]::part(indicator) {
   --path-data: var(--mixed-checkmark-path-data);
 }
-x-checkbox:hover::part(indicator) {
-  background-color: color(srgb 0 0 0 / 0.0578);
+@media (hover: hover) {
+  x-checkbox:hover::part(indicator) {
+    background-color: color(srgb 0 0 0 / 0.0578);
+  }
 }
 x-checkbox:active::part(indicator) {
   color: color(srgb 0 0 0 / 0.2169);
@@ -947,9 +988,11 @@ x-checkbox[toggled]::part(indicator) {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
 }
-x-checkbox[toggled]:hover::part(indicator) {
-  background-color: oklch(from var(--accent-color) l c h / 0.9);
-  border-color: transparent;
+@media (hover: hover) {
+  x-checkbox[toggled]:hover::part(indicator) {
+    background-color: oklch(from var(--accent-color) l c h / 0.9);
+    border-color: transparent;
+  }
 }
 x-checkbox[toggled]:active::part(indicator) {
   color: color(srgb 1 1 1 / 0.7);
@@ -984,8 +1027,10 @@ x-radio::part(indicator) {
   border-width: 1px;
   border-style: solid;
 }
-x-radio:hover::part(indicator) {
-  background-color: color(srgb 0 0 0 / 0.0578);
+@media (hover: hover) {
+  x-radio:hover::part(indicator) {
+    background-color: color(srgb 0 0 0 / 0.0578);
+  }
 }
 x-radio:active::part(indicator) {
   background-color: color(srgb 0 0 0 / 0.0924);
@@ -995,11 +1040,15 @@ x-radio[toggled]::part(indicator) {
   background-color: var(--accent-color);
   border-color: transparent;
 }
-x-radio[toggled]:hover::part(indicator) {
-  background-color: oklch(from var(--accent-color) l c h / 0.9);
+@media (hover: hover) {
+  x-radio[toggled]:hover::part(indicator) {
+    background-color: oklch(from var(--accent-color) l c h / 0.9);
+  }
 }
-x-radio[toggled]:active::part(indicator) {
-  background-color: oklch(from var(--accent-color) l c h / 0.8);
+@media (pointer: fine) {
+  x-radio[toggled]:active::part(indicator) {
+    background-color: oklch(from var(--accent-color) l c h / 0.8);
+  }
 }
 
 /* Indicator dot */
@@ -1107,8 +1156,10 @@ x-switch::part(indicator-track) {
   border-style: solid;
   border-radius: 999px;
 }
-x-switch:hover::part(indicator-track) {
-  background-color: color(srgb 0 0 0 / 0.0578);
+@media (hover: hover) {
+  x-switch:hover::part(indicator-track) {
+    background-color: color(srgb 0 0 0 / 0.0578);
+  }
 }
 x-switch:active::part(indicator-track) {
   background-color: color(srgb 0 0 0 / 0.0924);
@@ -1117,8 +1168,10 @@ x-switch[toggled]::part(indicator-track) {
   background-color: var(--accent-color);
   border-color: transparent;
 }
-x-switch[toggled]:hover::part(indicator-track) {
-  background-color: oklch(from var(--accent-color) l c h / 0.9);
+@media (hover: hover) {
+  x-switch[toggled]:hover::part(indicator-track) {
+    background-color: oklch(from var(--accent-color) l c h / 0.9);
+  }
 }
 x-switch[toggled]:active::part(indicator-track) {
   background-color: oklch(from var(--accent-color) l c h / 0.8);
@@ -1140,8 +1193,10 @@ x-select {
   border-style: solid;
   border-radius: 3px;
 }
-x-select:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-select:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-select:active {
   color: color(srgb 0 0 0 / 0.6063);
@@ -1242,8 +1297,10 @@ x-input {
   border-style: solid;
   border-radius: 3px;
 }
-x-input:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-input:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-input:focus {
   background-color: color(srgb 1 1 1);
@@ -1299,8 +1356,10 @@ x-numberinput {
 x-numberinput:focus:has(x-stepper) {
   padding-right: 16px; /* Stepper width */
 }
-x-numberinput:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-numberinput:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-numberinput:focus {
   background-color: color(srgb 1 1 1);
@@ -1388,8 +1447,10 @@ x-texteditor {
   border-radius: 3px;
   border-bottom-color: color(srgb 0 0 0 / 0.45);
 }
-x-texteditor:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-texteditor:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-texteditor:focus {
   background-color: color(srgb 1 1 1);
@@ -1423,8 +1484,10 @@ x-colorinput {
   border-color: var(--border-color);
   border-radius: 3px;
 }
-x-colorinput:hover {
-  background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+@media (hover: hover) {
+  x-colorinput:hover {
+    background-color: color(srgb 0.98 0.98 0.98 / 0.5);
+  }
 }
 x-colorinput:focus {
   background-color: color(srgb 1 1 1);
@@ -1567,8 +1630,10 @@ x-titlebar::part(button) {
   padding: 0 14px;
   color: var(--text-color);
 }
-x-titlebar::part(button):hover {
-  background-color: color(srgb 0 0 0 / 0.04);
+@media (hover: hover) {
+  x-titlebar::part(button):hover {
+    background-color: color(srgb 0 0 0 / 0.04);
+  }
 }
 x-titlebar::part(button):active {
   color: color(srgb 0 0 0 / 0.6063);
@@ -1586,9 +1651,11 @@ x-titlebar::part(restore-button) {
 x-titlebar::part(close-button) {
   --path-data: var(--clear-path-data);
 }
-x-titlebar::part(close-button):hover {
-  color: color(srgb 1 1 1);
-  background-color: color(srgb 0.77 0.16 0.11);
+@media (hover: hover) {
+  x-titlebar::part(close-button):hover {
+    color: color(srgb 1 1 1);
+    background-color: color(srgb 0.77 0.16 0.11);
+  }
 }
 x-titlebar::part(close-button):active {
   color: color(srgb 1 1 1 / 0.7);

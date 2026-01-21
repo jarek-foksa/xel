@@ -483,7 +483,7 @@ x-button {
 }
 @media (pointer:coarse) {
   x-button {
-    --min-pressed-time: 600ms;
+    --min-pressed-time: 300ms;
   }
 }
 a:has(x-button) {
@@ -1007,6 +1007,10 @@ x-nav x-nav > * {
 x-nav > a {
   display: block;
   text-decoration: none;
+}
+x-nav * {
+  /* @see https://stackoverflow.com/a/30319808 */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Label */

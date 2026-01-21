@@ -239,7 +239,7 @@ export default class XButtonElement extends HTMLElement {
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
-    this.addEventListener("pointerenter", () => this.#onPointerEnter());
+    this.addEventListener("pointerenter", (event) => this.#onPointerEnter(event));
     this.addEventListener("pointerleave", () => this.#onPointerLeave());
     this.addEventListener("click", (event) => this.#onClick(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
@@ -637,10 +637,16 @@ export default class XButtonElement extends HTMLElement {
     }
   }
 
-  #onPointerEnter() {
+  #onPointerEnter(event) {
     let tooltip = this.querySelector(":scope > x-tooltip");
 
-    if (tooltip && tooltip.disabled === false && this.expanded === false && this.#dismissTooltip === false) {
+    if (
+      event.pointerType !== "touch" &&
+      tooltip &&
+      tooltip.disabled === false &&
+      this.expanded === false &&
+      this.#dismissTooltip === false
+    ) {
       if (this.parentElement && this.parentElement.localName === "x-buttons") {
         for (let sibling of this.parentElement.children) {
           if (sibling !== this && sibling.localName === "x-button") {
