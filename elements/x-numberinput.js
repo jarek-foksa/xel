@@ -43,6 +43,7 @@ export default class XNumberInputElement extends HTMLElement {
       box-sizing: border-box;
       font-size: 0.78125rem;
       line-height: 10;
+      touch-action: pan-y;
       --inner-padding: 0 6px;
     }
     :host(:hover) {
