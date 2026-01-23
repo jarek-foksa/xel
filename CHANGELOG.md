@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.39.7 (2026-01-23)
+
+- [Fixed] Hovered buttons have wrong color when using Adwaita theme
+
 ## 0.39.6 (2026-01-22)
 
 - [Fixed] Can't change `<x-numberinput>` value with drag gesture on Android

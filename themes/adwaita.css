@@ -343,7 +343,7 @@ x-button[skin="normal"] {
   }
   @media (hover: hover) {
     &:hover {
-      background-color: red;
+      background-color: color(srgb 0 0 0 / 0.12);
     }
   }
   &[pressed] {
