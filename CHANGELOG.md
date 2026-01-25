@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.39.8 (2026-01-25)
+
+- Capture the cursor image in `setPointerCapture()` polyfill only on WebKit-based browsers
+
 ## 0.39.7 (2026-01-23)
 
 - [Fixed] Hovered buttons have wrong color when using Adwaita theme

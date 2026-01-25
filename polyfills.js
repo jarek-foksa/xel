@@ -20,7 +20,6 @@
   }
 }
 
-// Make setPointerCapture also capture the cursor image
 if (Element.prototype.setPointerCapture) {
   let setPointerCapture = Element.prototype.setPointerCapture;
 
@@ -74,8 +73,11 @@ if (Element.prototype.setPointerCapture) {
       });
     }
 
-    // Change the cursor appearance
-    {
+    // Make setPointerCapture also capture the cursor image on WebKit
+    if (
+      navigator.userAgent.indexOf("Chrome") === -1 &&
+      navigator.userAgent.indexOf("Safari/") > -1
+    ) {
       let cursor = getComputedStyle(this).cursor;
       let cssText = `* {cursor: ${cursor} !important; user-select: none !important; -webkit-user-select: none !important;}`;
       let styleElements = [];
