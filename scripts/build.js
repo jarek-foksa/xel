@@ -168,21 +168,21 @@ if (ARGS.length === 0 || ARGS.includes("hosting")) {
       await Fs.cp(`${PROJECT_PATH}/CHANGELOG.md`, `${PROJECT_PATH}/builds/hosting/CHANGELOG.md`);
     }
 
-    // portal.html, favicon.svg
+    // index.html, favicon.svg
     {
-      await Fs.cp(`${PROJECT_PATH}/portal.html`, `${PROJECT_PATH}/builds/hosting/portal.html`);
+      await Fs.cp(`${PROJECT_PATH}/index.html`, `${PROJECT_PATH}/builds/hosting/index.html`);
       await Fs.cp(`${PROJECT_PATH}/favicon.svg`, `${PROJECT_PATH}/builds/hosting/favicon.svg`);
     }
 
-    // portal.js
+    // index.js
     {
-      let portalJS = await bundleScripts(`${PROJECT_PATH}/portal.js`);
+      let indexJS = await bundleScripts(`${PROJECT_PATH}/index.js`);
 
       if (MINIFY === true) {
-        portalJS = await minifyScript(portalJS);
+        indexJS = await minifyScript(indexJS);
       }
 
-      await Fs.writeFile(`${PROJECT_PATH}/builds/hosting/portal.js`, portalJS);
+      await Fs.writeFile(`${PROJECT_PATH}/builds/hosting/index.js`, indexJS);
     }
 
     // Themes
@@ -244,7 +244,7 @@ if (ARGS.length === 0 || ARGS.includes("hosting")) {
     // Dependencies
     {
       let srcPaths = [
-        `${PROJECT_PATH}/node_modules/marked/marked.min.js`,
+        `${PROJECT_PATH}/node_modules/marked/lib/marked.umd.js`,
         `${PROJECT_PATH}/node_modules/prismjs/prism.js`
       ];
 

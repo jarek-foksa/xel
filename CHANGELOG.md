@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 0.40.0 (2026-01-27)
+
+- Use a minimal Node.js-based dev server instead of Firebase
+- Show a QR code with the server URL after starting the dev server with `npm start public` command
+
 ## 0.39.8 (2026-01-25)
 
 - Capture the cursor image in `setPointerCapture()` polyfill only on WebKit-based browsers

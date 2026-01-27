@@ -5,7 +5,7 @@
  */
 
 const HELP = `Commands:
-  npm run start                 - Start Firebase emulators
+  npm run start [public]        - Start the dev server
   npm run build [npm,hosting]   - Build packages
   npm run publish [npm,hosting] - Publish packages
   npm run lint [path]           - Run JavaScript linter

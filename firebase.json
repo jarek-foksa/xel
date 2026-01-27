@@ -7,7 +7,7 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/portal.html"
+        "destination": "/index.html"
       }
     ],
     "redirects": [
