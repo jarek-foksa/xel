@@ -162,6 +162,29 @@ if (!window.requestIdleCallback) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
+// Element polyfills
+//
+
+// @src https://github.com/nuxodin/lazyfill/blob/main/polyfills/Element/prototype/scrollIntoViewIfNeeded.js
+if (!Element.prototype.scrollIntoViewIfNeeded ) {
+  Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded = true) {
+    let element = this;
+
+    new IntersectionObserver( function([entry]) {
+      let ratio = entry.intersectionRatio;
+
+      if (ratio < 1) {
+        let place = ratio <= 0 && centerIfNeeded ? 'center' : 'nearest';
+        element.scrollIntoView({block: place, inline: place} );
+      }
+      this.disconnect();
+    }).observe(this);
+  };
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
 // Node polyfills (http://dom.spec.whatwg.org, https://github.com/whatwg/dom/issues/161)
 //
 

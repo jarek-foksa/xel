@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.40.3 (2026-02-03)
+
+- [Fixed] `element.scrollIntoViewIfNeeded()` fails on Firefox
+
 ## 0.40.2 (2026-02-03)
 
 - [Fixed] WebKit-based browsers fail to capture the cursor image in some edge cases
