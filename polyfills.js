@@ -22,6 +22,7 @@
 
 if (Element.prototype.setPointerCapture) {
   let setPointerCapture = Element.prototype.setPointerCapture;
+  let Xel;
 
   Element.prototype.setPointerCapture = function(pointerId) {
     setPointerCapture.call(this, pointerId);
@@ -73,52 +74,44 @@ if (Element.prototype.setPointerCapture) {
       });
     }
 
-    // Make setPointerCapture also capture the cursor image on WebKit
+    // @bugfix: WebKit fails to capture the cursor image (https://bugs.webkit.org/show_bug.cgi?id=232339)
     if (
       navigator.userAgent.indexOf("Chrome") === -1 &&
-      navigator.userAgent.indexOf("Safari/") > -1
+      navigator.userAgent.indexOf("Safari/") > -1 &&
+      navigator.maxTouchPoints === 0
     ) {
-      let cursor = getComputedStyle(this).cursor;
-      let cssText = `* {cursor: ${cursor} !important; user-select: none !important; -webkit-user-select: none !important;}`;
-      let styleElements = [];
-      let lostPointerCaptureListener, pointerUpListener;
+      (async () => {
+        Xel = Xel || (await import("./xel.js")).default;
 
-      for (let node = this.parentNode || this.host; node && node !== document; node = node.parentNode || node.host) {
-        if (node.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
-          let styleElement = document.createElementNS(node.host.namespaceURI, "style");
-          styleElement.textContent = cssText;
-          node.append(styleElement);
-          styleElements.push(styleElement);
-        }
-        else if (node.nodeType === document.DOCUMENT_NODE) {
-          let styleElement = document.createElement("style");
-          styleElement.textContent = cssText;
-          node.head.append(styleElement);
-          styleElements.push(styleElement);
-        }
-      }
-
-      this.addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
-        if (event.pointerId === pointerId) {
-          this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
-          window.removeEventListener("pointerup", pointerUpListener, true);
-
-          for (let styleElement of styleElements) {
-            styleElement.remove();
+        if (this.hasPointerCapture(pointerId)) {
+          if (Xel.themeStyleSheet.cssRules[0].selectorText !== "*, *, *") {
+            Xel.themeStyleSheet.insertRule(`*, *, * {}`, 0);
           }
-        }
-      });
 
-      window.addEventListener("pointerup", pointerUpListener = (event) => {
-        if (event.pointerId === pointerId) {
-          this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
-          window.removeEventListener("pointerup", pointerUpListener, true);
+          let cursorRule = Xel.themeStyleSheet.cssRules[0];
+          let lostPointerCaptureListener;
 
-          for (let styleElement of styleElements) {
-            styleElement.remove();
-          }
+          setTimeout(() => {
+            if (this.hasPointerCapture(pointerId)) {
+              let cursor = getComputedStyle(this).cursor;
+
+              if (cursor !== "default") {
+                cursorRule.style.setProperty("cursor", cursor, "important");
+              }
+            }
+          }, 80);
+
+          this.addEventListener("lostpointercapture", lostPointerCaptureListener = (event) => {
+            if (event.pointerId === pointerId) {
+              this.removeEventListener("lostpointercapture", lostPointerCaptureListener);
+
+              if (Xel.themeStyleSheet.cssRules[0].selectorText === "*, *, *") {
+                Xel.themeStyleSheet.deleteRule(0);
+              }
+            }
+          });
         }
-      }, true);
+      })();
     }
   };
 }
