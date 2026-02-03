@@ -274,7 +274,10 @@ export default class PTApiBlockElement extends HTMLElement {
                 property.type = tag.type;
               }
               else if (tag.tag === "default") {
-                if (tag.source[0].source.includes(`"`)) {
+                if (tag.source[0].source.includes(`[`)) {
+                  property.default = "[" + tag.name + "]";
+                }
+                else if (tag.source[0].source.includes(`"`)) {
                   property.default = `"${tag.name}"`;
                 }
                 else {

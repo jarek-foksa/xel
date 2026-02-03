@@ -35,7 +35,7 @@ export default class XTagsElement extends HTMLElement {
   /**
    * @property
    * @type {Array<string>}
-   * @default [[]]
+   * @default []
    */
   get value() {
     let tags = [...this.children].filter(child => child.localName === "x-tag");

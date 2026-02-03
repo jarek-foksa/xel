@@ -1,9 +1,10 @@
 
 # CHANGELOG
 
-## 0.41.0 (2026-02-02)
+## 0.40.1 (2026-02-02)
 
 - [Fixed] Demo site fails to render the API page for `<x-colorpicker>`
+- [Fixed] Demo site fails to render some array types
 
 ## 0.40.0 (2026-01-27)
 

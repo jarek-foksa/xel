@@ -124,7 +124,7 @@ export default class XTagsInputElement extends HTMLElement {
   /**
    * @property
    * @type {Array<string>}
-   * @default [[]]
+   * @default []
    * @readonly
    */
   get value() {

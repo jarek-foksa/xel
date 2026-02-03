@@ -64,7 +64,7 @@ export default class XShortcutElement extends HTMLElement {
    * @property
    * @attribute
    * @type {Array<string>}
-   * @default [[]]
+   * @default []
    */
   get value() {
     let value = [];
@@ -86,7 +86,7 @@ export default class XShortcutElement extends HTMLElement {
    *
    * @property
    * @type {Array<string>}
-   * @default [[]]
+   * @default []
    * @readonly
    */
   get modKeys() {
