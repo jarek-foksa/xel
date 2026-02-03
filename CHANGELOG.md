@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.40.2 (2026-02-03)
+
+- [Fixed] WebKit-based browsers fail to capture the cursor image in some edge cases
+
 ## 0.40.1 (2026-02-02)
 
 - [Fixed] Demo site fails to render the API page for `<x-colorpicker>`
