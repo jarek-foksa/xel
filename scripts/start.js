@@ -60,9 +60,15 @@ let server = HTTP.createServer(async (req, res) => {
     }
 
     let fileExtension = Path.extname(filePath).substring(1).toLowerCase();
-    let exists = await Fs.access(filePath).then(() => true).catch(() => false);
+    let fileStat;
 
-    if (exists) {
+    try {
+      fileStat = await Fs.stat(filePath);
+    }
+    catch (_error) {}
+
+    // File exists and it is not a directory
+    if (fileStat && !fileStat.isDirectory()) {
       res.writeHead(200, {"Content-Type":  MIME_TYPES[fileExtension] || "application/octet-stream"});
       let stream = createReadStream(filePath);
       stream.pipe(res);

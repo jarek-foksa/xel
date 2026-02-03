@@ -23,7 +23,7 @@ import {bundleScripts, minifyScript} from "../utils/build.node.js";
 
 const PROJECT_PATH = Path.resolve(import.meta.dirname, "..");
 const [, , ...ARGS] = Process.argv;
-const MINIFY = true;
+const MINIFY = false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // npm run build
@@ -230,7 +230,7 @@ if (ARGS.length === 0 || ARGS.includes("hosting")) {
 
     // Elements
     {
-      for (let srcPath of Glob.sync(`${PROJECT_PATH}/elements/*.js`)) {
+      for (let srcPath of Glob.sync(`${PROJECT_PATH}/elements/**/*.js`)) {
         let fileName = Path.basename(srcPath);
 
         if (fileName.startsWith("pt-") === false) {

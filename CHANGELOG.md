@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.0 (2026-02-02)
+
+- [Fixed] Demo site fails to render the API page for `<x-colorpicker>`
+
 ## 0.40.0 (2026-01-27)
 
 - Use a minimal Node.js-based dev server instead of Firebase
