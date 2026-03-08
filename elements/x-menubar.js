@@ -17,7 +17,7 @@ const $menu = Symbol();
  * @fires collapse
  */
 export default class XMenuBarElement extends HTMLElement {
-  static observedAttributes = ["disabled"];
+  static observedAttributes = ["noautocollapse", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -183,6 +183,9 @@ export default class XMenuBarElement extends HTMLElement {
     if (oldValue === newValue) {
       return;
     }
+    else if (name === "noautocollapse") {
+      this.#updateMenubarLayoutThrottled();
+    }
     else if (name === "disabled") {
       this.#onDisabledAttributeChange();
     }
@@ -191,106 +194,122 @@ export default class XMenuBarElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   #updateMenubarLayout() {
-    // Ensure that ellipsis item exists and it is assigned to the default slot
-    {
+    if (this.hasAttribute("noautocollapse")) {
       let ellipsisItem = this.querySelector(":scope > x-menuitem[ellipsis]");
 
-      if (!ellipsisItem) {
-        ellipsisItem = html`
-          <x-menuitem ellipsis>
-            <x-label><strong>⋯</strong></x-label>
-            <x-menu id="ellipsis-menu"></x-menu>
-          </x-menuitem>
-        `;
-
-        this.append(ellipsisItem);
-      }
-      else if (ellipsisItem.hasAttribute("slot")) {
-        ellipsisItem.removeAttribute("slot");
-      }
-    }
-
-    let mainItems = [...this.children].filter($0 => $0.localName === "x-menuitem" && $0.slot === "");
-    let ellipsisItem = mainItems.find(item => item.hasAttribute("ellipsis"));
-    let oldAutohiddenItems = [];
-
-    // Unhide all items
-    {
-      for (let item of mainItems) {
-        if (item.hasAttribute("autohidden")) {
-          oldAutohiddenItems.push(item);
-          item.removeAttribute("autohidden");
+      if (ellipsisItem) {
+        for (let item of [...this.children].filter($0 => $0.localName === "x-menuitem" && $0.slot === "")) {
+          if (item.hasAttribute("autohidden")) {
+            item.removeAttribute("autohidden");
+          }
         }
+
+        ellipsisItem.remove();
       }
     }
 
-    let menubarBBox = this.getBoundingClientRect();
-    let asideBBox = this["#aside"].getBoundingClientRect();
-    let overflowingItems = [];
-
-    // Determine overflowing items
-    {
-      for (let i = 0; i < mainItems.length; i += 1) {
-        let item = mainItems[i];
-        let itemBBox = item.getBoundingClientRect();
-
-        if (itemBBox.right > menubarBBox.right - asideBBox.width) {
-          overflowingItems.push(item);
-        }
-      }
-    }
-
-    // If there are no overflowing items, hide only the ellipsis item
-    if (overflowingItems.length <= 1) {
-      ellipsisItem.setAttribute("autohidden", "");
-    }
-    // Otherwise keep hiding non-ellipsis items until the ellipsis item no longer overflows
     else {
-      for (let item of [...mainItems].reverse()) {
-        if (item !== ellipsisItem) {
-          item.setAttribute("autohidden", "");
+      // Ensure that ellipsis item exists and it is assigned to the default slot
+      {
+        let ellipsisItem = this.querySelector(":scope > x-menuitem[ellipsis]");
 
-          let ellipsisItemBBox = ellipsisItem.getBoundingClientRect();
+        if (!ellipsisItem) {
+          ellipsisItem = html`
+            <x-menuitem ellipsis>
+              <x-label><strong>⋯</strong></x-label>
+              <x-menu id="ellipsis-menu"></x-menu>
+            </x-menuitem>
+          `;
 
-          if (ellipsisItemBBox.right <= menubarBBox.right - asideBBox.width) {
-            break;
+          this.append(ellipsisItem);
+        }
+        else if (ellipsisItem.hasAttribute("slot")) {
+          ellipsisItem.removeAttribute("slot");
+        }
+      }
+
+      let mainItems = [...this.children].filter($0 => $0.localName === "x-menuitem" && $0.slot === "");
+      let ellipsisItem = mainItems.find(item => item.hasAttribute("ellipsis"));
+      let oldAutohiddenItems = [];
+
+      // Unhide all items
+      {
+        for (let item of mainItems) {
+          if (item.hasAttribute("autohidden")) {
+            oldAutohiddenItems.push(item);
+            item.removeAttribute("autohidden");
           }
         }
       }
-    }
 
-    // Update ellipsis menu
-    {
-      let autohiddenItems = [...this.querySelectorAll(":scope > x-menuitem[autohidden]")];
+      let menubarBBox = this.getBoundingClientRect();
+      let asideBBox = this["#aside"].getBoundingClientRect();
+      let overflowingItems = [];
 
-      if (compareArrays(autohiddenItems, oldAutohiddenItems, true) === false) {
-        let ellipsisMenu = ellipsisItem.querySelector("x-menu");
-        ellipsisMenu.innerHTML = "";
+      // Determine overflowing items
+      {
+        for (let i = 0; i < mainItems.length; i += 1) {
+          let item = mainItems[i];
+          let itemBBox = item.getBoundingClientRect();
 
-        for (let item of mainItems) {
+          if (itemBBox.right > menubarBBox.right - asideBBox.width) {
+            overflowingItems.push(item);
+          }
+        }
+      }
+
+      // If there are no overflowing items, hide only the ellipsis item
+      if (overflowingItems.length <= 1) {
+        ellipsisItem.setAttribute("autohidden", "");
+      }
+      // Otherwise keep hiding non-ellipsis items until the ellipsis item no longer overflows
+      else {
+        for (let item of [...mainItems].reverse()) {
           if (item !== ellipsisItem) {
-            if (!item[$menu]) {
-              item[$menu] = item.querySelector(":scope > x-menu");
+            item.setAttribute("autohidden", "");
+
+            let ellipsisItemBBox = ellipsisItem.getBoundingClientRect();
+
+            if (ellipsisItemBBox.right <= menubarBBox.right - asideBBox.width) {
+              break;
             }
+          }
+        }
+      }
 
-            if (autohiddenItems.includes(item)) {
-              let clonedItem = item.cloneNode(false);
+      // Update ellipsis menu
+      {
+        let autohiddenItems = [...this.querySelectorAll(":scope > x-menuitem[autohidden]")];
 
-              for (let child of item.children) {
-                if (child.localName !== "x-menu") {
-                  clonedItem.append(child.cloneNode(true));
+        if (compareArrays(autohiddenItems, oldAutohiddenItems, true) === false) {
+          let ellipsisMenu = ellipsisItem.querySelector("x-menu");
+          ellipsisMenu.innerHTML = "";
+
+          for (let item of mainItems) {
+            if (item !== ellipsisItem) {
+              if (!item[$menu]) {
+                item[$menu] = item.querySelector(":scope > x-menu");
+              }
+
+              if (autohiddenItems.includes(item)) {
+                let clonedItem = item.cloneNode(false);
+
+                for (let child of item.children) {
+                  if (child.localName !== "x-menu") {
+                    clonedItem.append(child.cloneNode(true));
+                  }
                 }
-              }
 
-              if (item[$menu]) {
-                clonedItem.append(item[$menu]);
-              }
+                if (item[$menu]) {
+                  clonedItem.append(item[$menu]);
+                }
 
-              ellipsisMenu.append(clonedItem);
-            }
-            else {
-              if (item[$menu] && item[$menu].parentElement !== item) {
-                item.append(item[$menu]);
+                ellipsisMenu.append(clonedItem);
+              }
+              else {
+                if (item[$menu] && item[$menu].parentElement !== item) {
+                  item.append(item[$menu]);
+                }
               }
             }
           }

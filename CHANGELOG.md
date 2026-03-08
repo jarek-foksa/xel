@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.0 (2026-02-19)
+
+- Add `noautocollapse` attribute on `<x-menubar>`
+
 ## 0.40.6 (2026-02-19)
 
 - [Fixed] Button tooltips fail to autohide when using pen/stylus
