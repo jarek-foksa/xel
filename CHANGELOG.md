@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.1 (2026-03-17)
+
+- [Fixed] Can't open nested menu inside `<x-button>` using touch input method
+
 ## 0.41.0 (2026-02-19)
 
 - Add `noautocollapse` attribute on `<x-menubar>`

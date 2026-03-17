@@ -886,7 +886,7 @@ export default class XButtonElement extends HTMLElement {
     let item = event.target.closest("x-menuitem");
     let menu = this.querySelector(":scope > x-menu");
 
-    if (!menu.hasAttribute("closing")) {
+    if (menu.hasAttribute("closing") === false && item.querySelector(":scope > x-menu") === null) {
       this.collapse(item.whenTriggerEnd);
     }
   }

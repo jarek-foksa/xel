@@ -162,6 +162,30 @@
 
             <x-menuitem>
               <x-icon></x-icon>
+              <x-label>Select</x-label>
+
+              <x-menu>
+                <x-menuitem value="selectAll">
+                  <x-label>Select all</x-label>
+                  <x-shortcut value="Control+A"></x-shortcut>
+                </x-menuitem>
+
+                <x-menuitem value="deselectAll">
+                  <x-label>Deselect all</x-label>
+                  <x-shortcut value="Control+Shift+A"></x-shortcut>
+                </x-menuitem>
+
+                <x-menuitem value="invertSelection">
+                  <x-label>Invert selection</x-label>
+                  <x-shortcut value="Control+1"></x-shortcut>
+                </x-menuitem>
+              </x-menu>
+            </x-menuitem>
+
+            <hr/>
+
+            <x-menuitem>
+              <x-icon></x-icon>
               <x-label>Refresh</x-label>
             </x-menuitem>
           </x-menu>
