@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.2 (2026-03-29)
+
+- [Fixed] WebKit-specific workarounds are not applied inside WKWebView
+
 ## 0.41.1 (2026-03-17)
 
 - [Fixed] Can't open nested menu inside `<x-button>` using touch input method

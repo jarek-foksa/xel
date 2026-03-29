@@ -18,7 +18,7 @@ export let getBrowserEngine = () => {
     else if (navigator.userAgent.indexOf("Chrome") > -1) {
       engine = "chromium";
     }
-    else if (navigator.userAgent.indexOf("Safari/") > -1) {
+    else if (navigator.userAgent.indexOf("Safari/") > -1 || /\b(iPad|iPhone)\b/.test(navigator.userAgent)) {
       engine = "webkit";
     }
     else {

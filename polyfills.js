@@ -24,6 +24,12 @@ if (Element.prototype.setPointerCapture) {
   let setPointerCapture = Element.prototype.setPointerCapture;
   let Xel;
 
+  const IS_WEBKIT =
+    // WebKit-based web browsers, e.g. Safari or Gnome Web
+    (navigator.userAgent.indexOf("Safari/") > -1 && navigator.userAgent.indexOf("Chrome") === -1) ||
+    // WKWebView-based web views, e.g. Capacitor
+    /\b(iPad|iPhone)\b/.test(navigator.userAgent);
+
   Element.prototype.setPointerCapture = function(pointerId) {
     setPointerCapture.call(this, pointerId);
 
@@ -75,11 +81,7 @@ if (Element.prototype.setPointerCapture) {
     }
 
     // @bugfix: WebKit fails to capture the cursor image (https://bugs.webkit.org/show_bug.cgi?id=232339)
-    if (
-      navigator.userAgent.indexOf("Chrome") === -1 &&
-      navigator.userAgent.indexOf("Safari/") > -1 &&
-      navigator.maxTouchPoints === 0
-    ) {
+    if (IS_WEBKIT && navigator.maxTouchPoints === 0) {
       (async () => {
         Xel = Xel || (await import("./xel.js")).default;
 
