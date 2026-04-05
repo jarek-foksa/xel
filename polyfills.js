@@ -20,7 +20,15 @@ const IS_WEBKIT =
   if (Object.hasOwn(MouseEvent.prototype, "pointerType") === false) {
     Object.defineProperty(MouseEvent.prototype, "pointerType", {
       get() {
-        return this.sourceCapabilities.firesTouchEvents ? "touch" : "mouse";
+        if (this.sourceCapabilities) {
+          return this.sourceCapabilities.firesTouchEvents ? "touch" : "mouse";
+        }
+        else if (/\b(iPad|iPhone)\b/.test(navigator.userAgent)) {
+          return "touch";
+        }
+        else {
+          return "mouse";
+        }
       }
     });
   }

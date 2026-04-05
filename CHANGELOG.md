@@ -4,6 +4,7 @@
 ## 0.41.4 (2026-04-05)
 
 - [Fixed] Context menu fails to open in some edge cases on mobile WebKit
+- [Fixed] Wrong `pointerType` property value on WebKit
 
 ## 0.41.3 (2026-04-05)
 
