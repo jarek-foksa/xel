@@ -48,6 +48,7 @@ export default class XContextMenuElement extends HTMLElement {
   #shadowRoot = null;
   #parentElement = null;
   #lastPointerDownItem = null;
+  #lastOpenTime = 0;
 
   #windowBlurListener = null;
   #parentContextMenuListener = null;
@@ -105,6 +106,7 @@ export default class XContextMenuElement extends HTMLElement {
 
     if (menu.opened === false) {
       menu.openAtPoint(clientX, clientY);
+      this.#lastOpenTime = Date.now();
 
       this["#backdrop"].ownerElement = menu;
       this["#backdrop"].show(false);
@@ -181,7 +183,10 @@ export default class XContextMenuElement extends HTMLElement {
   }
 
   #onBackdropClick() {
-    this.close();
+    // @bugfix: Mobile WebKit might fire both "click" and "contextmenu" events
+    if (Date.now() - this.#lastOpenTime > 600) {
+      this.close();
+    }
   }
 
   #onPointerDown(event) {

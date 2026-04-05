@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.4 (2026-04-05)
+
+- [Fixed] Context menu fails to open in some edge cases on mobile WebKit
+
 ## 0.41.3 (2026-04-05)
 
 - [Fixed] `contextmenu` event not fired on mobile WebKit
