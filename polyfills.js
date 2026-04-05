@@ -4,6 +4,12 @@
  * @license MIT (check LICENSE.md for details)
  */
 
+const IS_WEBKIT =
+  // WebKit-based web browsers, e.g. Safari or Gnome Web
+  (navigator.userAgent.indexOf("Safari/") > -1 && navigator.userAgent.indexOf("Chrome") === -1) ||
+  // WKWebView-based web views, e.g. Capacitor
+  /\b(iPad|iPhone)\b/.test(navigator.userAgent);
+
 //
 // Pointer events polyfills
 //
@@ -23,12 +29,6 @@
 if (Element.prototype.setPointerCapture) {
   let setPointerCapture = Element.prototype.setPointerCapture;
   let Xel;
-
-  const IS_WEBKIT =
-    // WebKit-based web browsers, e.g. Safari or Gnome Web
-    (navigator.userAgent.indexOf("Safari/") > -1 && navigator.userAgent.indexOf("Chrome") === -1) ||
-    // WKWebView-based web views, e.g. Capacitor
-    /\b(iPad|iPhone)\b/.test(navigator.userAgent);
 
   Element.prototype.setPointerCapture = function(pointerId) {
     setPointerCapture.call(this, pointerId);
@@ -115,6 +115,153 @@ if (Element.prototype.setPointerCapture) {
         }
       })();
     }
+  };
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+// "contextmenu" event polyfill for mobile WebKit
+//
+
+if (IS_WEBKIT && ["iPhone", "iPad"].includes(navigator.platform)) {
+  const LONG_PRESS_DELAY = 500;
+  const LONG_PRESS_MOVE_TOLERANCE = 10;
+  const POLYFILLED = Symbol();
+
+  let {addEventListener, removeEventListener} = Element.prototype;
+  let polyfilledElements = new WeakMap();
+
+  let clearTimer = (data) => {
+    if (data.timer) {
+      clearTimeout(data.timer);
+      data.timer = null;
+    }
+  }
+
+  let watchElement = (element) => {
+    let data = {
+      listeners: new Set(),
+      timer: null,
+      startX: 0,
+      startY: 0,
+      dispatchTime: 0
+    };
+
+    addEventListener.call(element, "touchstart", data.touchStartListener = (touchEvent) => {
+      clearTimer(data);
+
+      if (touchEvent.touches.length === 1) {
+        let target = touchEvent.target;
+        let touch = touchEvent.touches[0];
+
+        data.startX = touch.clientX;
+        data.startY = touch.clientY;
+
+        data.timer = setTimeout(() => {
+          data.timer = null;
+          data.dispatchTime = Date.now();
+
+          let contextMenuEvent = new MouseEvent("contextmenu", {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            screenX: touch.screenX,
+            screenY: touch.screenY,
+            button: 2,
+            buttons: 2,
+            bubbles: true,
+            cancelable: true,
+            view: window
+          });
+
+          contextMenuEvent[POLYFILLED] = true;
+          target.dispatchEvent(contextMenuEvent);
+        }, LONG_PRESS_DELAY);
+      }
+    }, { passive: true });
+
+    addEventListener.call(element, "touchmove", data.touchMoveListener = (touchEvent) => {
+      if (data.timer) {
+        let touch = touchEvent.touches[0];
+        let dx = touch.clientX - data.startX;
+        let dy = touch.clientY - data.startY;
+
+        if (Math.sqrt(dx * dx + dy * dy) > LONG_PRESS_MOVE_TOLERANCE) {
+          clearTimer(data);
+        }
+      }
+    }, { passive: true });
+
+    addEventListener.call(element, "touchend", data.touchEndListener = () => {
+      clearTimer(data);
+    }, { passive: true });
+
+    addEventListener.call(element, "touchcancel", data.touchCancelListener = () => {
+      clearTimer(data);
+    }, { passive: true });
+
+    addEventListener.call(element, "contextmenu", data.contextMenuListener = (event) => {
+      // Do not dispatch native "contextmenu" event if polyfilled "contextmenu" event was dispatched
+      if (!event[POLYFILLED] && (Date.now() - data.dispatchTime < 500)) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+
+    addEventListener.call(element, "click", data.clickListener = (event) => {
+      // Do not dispatch "click" event if "contextmenu" event was dispatched
+      if (Date.now() - data.dispatchTime < 500) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+
+    return data;
+  };
+
+  let unwatchElement = (element, data) => {
+    clearTimer(data);
+
+    removeEventListener.call(element, "touchstart", data.touchStartListener);
+    removeEventListener.call(element, "touchmove", data.touchMoveListener);
+    removeEventListener.call(element, "touchend", data.touchEndListener);
+    removeEventListener.call(element, "touchcancel", data.touchCancelListener);
+    removeEventListener.call(element, "contextmenu", data.contextMenuListener, true);
+    removeEventListener.call(element, "click", data.clickListener, true);
+  };
+
+  Element.prototype.addEventListener = function(type, listener, options) {
+    if (type === "contextmenu") {
+      let data = polyfilledElements.get(this);
+
+      if (!data) {
+        data = watchElement(this);
+        polyfilledElements.set(this, data);
+      }
+
+      if (listener) {
+        data.listeners.add(listener);
+      }
+    }
+
+    return addEventListener.call(this, type, listener, options);
+  };
+
+  Element.prototype.removeEventListener = function(type, listener, options) {
+    if (type === "contextmenu") {
+      let data = polyfilledElements.get(this);
+
+      if (data && listener) {
+        data.listeners.delete(listener);
+
+        if (data.listeners.size === 0) {
+          unwatchElement(this, data);
+          polyfilledElements.delete(this);
+        }
+      }
+    }
+
+    return removeEventListener.call(this, type, listener, options);
   };
 }
 

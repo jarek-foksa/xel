@@ -47,6 +47,7 @@ export default class XContextMenuElement extends HTMLElement {
 
   #shadowRoot = null;
   #parentElement = null;
+  #lastPointerDownItem = null;
 
   #windowBlurListener = null;
   #parentContextMenuListener = null;
@@ -68,6 +69,7 @@ export default class XContextMenuElement extends HTMLElement {
 
     this.addEventListener("blur", () => this.#onBlur());
     this.addEventListener("keydown", (event) => this.#onKeyDown(event), true);
+    this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
     this.addEventListener("click", (event) => this.#onClick(event));
   }
 
@@ -178,16 +180,19 @@ export default class XContextMenuElement extends HTMLElement {
     }
   }
 
-  #onBackdropClick(event) {
-    if (event.pointerType === "touch") {
-      this.close();
-    }
+  #onBackdropClick() {
+    this.close();
+  }
+
+  #onPointerDown(event) {
+    let item = event.target.closest("x-menuitem");
+    this.#lastPointerDownItem = item;
   }
 
   async #onClick(event) {
     let item = event.target.closest("x-menuitem");
 
-    if (item && item.disabled === false) {
+    if (item && item.disabled === false && item === this.#lastPointerDownItem) {
       let submenu = item.querySelector("x-menu");
 
       if (!submenu) {

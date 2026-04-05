@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.3 (2026-04-05)
+
+- [Fixed] `contextmenu` event not fired on mobile WebKit
+
 ## 0.41.2 (2026-03-29)
 
 - [Fixed] WebKit-specific workarounds are not applied inside WKWebView

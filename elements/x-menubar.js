@@ -133,6 +133,7 @@ export default class XMenuBarElement extends HTMLElement {
 
   #shadowRoot = null;
   #expanded = false;
+  #lastPointerDownItem = null;
   #orientationChangeListener = null;
   #childListMutationObserver = null;
 
@@ -510,7 +511,7 @@ export default class XMenuBarElement extends HTMLElement {
     let item = event.target.closest("x-menuitem");
     let ownerMenu = event.target.closest("x-menu");
 
-    if (item && item.disabled === false && ownerMenu) {
+    if (item && item.disabled === false && item === this.#lastPointerDownItem && ownerMenu) {
       let submenu = item.querySelector(":scope > x-menu");
 
       if (item.parentElement !== this) {
@@ -543,6 +544,7 @@ export default class XMenuBarElement extends HTMLElement {
     }
 
     let item = event.target.closest("x-menuitem");
+    this.#lastPointerDownItem = item;
 
     if (item && item.disabled === false && item.parentElement === this) {
       let submenu = item.querySelector(":scope > x-menu");
