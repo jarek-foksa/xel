@@ -3,7 +3,8 @@
 
 ## 0.41.5 (2026-04-06)
 
-- [Fixed] `contextmenu` polyfill is not applied on mobile WebKit running in "desktop" mode
+- [Fixed] Can't open context menus on mobile WebKit-based browsers with "desktop" mode turned on
+- [Fixed] Context menu opens while dragging an element
 
 ## 0.41.4 (2026-04-05)
 

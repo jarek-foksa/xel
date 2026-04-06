@@ -161,25 +161,24 @@ if (IS_MOBILE_WEBKIT) {
       dispatchTime: 0
     };
 
-    addEventListener.call(element, "touchstart", data.touchStartListener = (touchEvent) => {
+    addEventListener.call(element, "pointerdown", data.pointerDownListener = (event) => {
       clearTimer(data);
 
-      if (touchEvent.touches.length === 1) {
-        let target = touchEvent.target;
-        let touch = touchEvent.touches[0];
+      if (event.isPrimary && ["pen", "touch"].includes(event.pointerType)) {
+        let target = event.target;
 
-        data.startX = touch.clientX;
-        data.startY = touch.clientY;
+        data.startX = event.clientX;
+        data.startY = event.clientY;
 
         data.timer = setTimeout(() => {
           data.timer = null;
           data.dispatchTime = Date.now();
 
           let contextMenuEvent = new MouseEvent("contextmenu", {
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-            screenX: touch.screenX,
-            screenY: touch.screenY,
+            clientX: event.clientX,
+            clientY: event.clientY,
+            screenX: event.screenX,
+            screenY: event.screenY,
             button: 2,
             buttons: 2,
             bubbles: true,
@@ -193,11 +192,10 @@ if (IS_MOBILE_WEBKIT) {
       }
     }, { passive: true });
 
-    addEventListener.call(element, "touchmove", data.touchMoveListener = (touchEvent) => {
+    addEventListener.call(element, "pointermove", data.pointerMoveListener = (event) => {
       if (data.timer) {
-        let touch = touchEvent.touches[0];
-        let dx = touch.clientX - data.startX;
-        let dy = touch.clientY - data.startY;
+        let dx = event.clientX - data.startX;
+        let dy = event.clientY - data.startY;
 
         if (Math.sqrt(dx * dx + dy * dy) > LONG_PRESS_MOVE_TOLERANCE) {
           clearTimer(data);
@@ -205,11 +203,11 @@ if (IS_MOBILE_WEBKIT) {
       }
     }, { passive: true });
 
-    addEventListener.call(element, "touchend", data.touchEndListener = () => {
+    addEventListener.call(element, "pointerup", data.pointerUpListener = () => {
       clearTimer(data);
     }, { passive: true });
 
-    addEventListener.call(element, "touchcancel", data.touchCancelListener = () => {
+    addEventListener.call(element, "pointercancel", data.pointerCancelListener = () => {
       clearTimer(data);
     }, { passive: true });
 
@@ -235,10 +233,10 @@ if (IS_MOBILE_WEBKIT) {
   let unwatchElement = (element, data) => {
     clearTimer(data);
 
-    removeEventListener.call(element, "touchstart", data.touchStartListener);
-    removeEventListener.call(element, "touchmove", data.touchMoveListener);
-    removeEventListener.call(element, "touchend", data.touchEndListener);
-    removeEventListener.call(element, "touchcancel", data.touchCancelListener);
+    removeEventListener.call(element, "pointerdown", data.pointerDownListener);
+    removeEventListener.call(element, "pointermove", data.pointerMoveListener);
+    removeEventListener.call(element, "pointerup", data.pointerUpListener);
+    removeEventListener.call(element, "pointercancel", data.pointerCancelListener);
     removeEventListener.call(element, "contextmenu", data.contextMenuListener, true);
     removeEventListener.call(element, "click", data.clickListener, true);
   };
