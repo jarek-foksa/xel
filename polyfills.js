@@ -4,11 +4,16 @@
  * @license MIT (check LICENSE.md for details)
  */
 
-const IS_WEBKIT =
-  // WebKit-based web browsers, e.g. Safari or Gnome Web
-  (navigator.userAgent.indexOf("Safari/") > -1 && navigator.userAgent.indexOf("Chrome") === -1) ||
-  // WKWebView-based web views, e.g. Capacitor
-  /\b(iPad|iPhone)\b/.test(navigator.userAgent);
+const IS_MOBILE_WEBKIT =
+  // Mobile WebKit in "mobile" mode
+  /\b(iPad|iPhone)\b/.test(navigator.userAgent) ||
+  // Mobile WebKit in "desktop" mode
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+
+const IS_DESKTOP_WEBKIT =
+  navigator.userAgent.indexOf("Safari/") > -1 &&
+  navigator.userAgent.indexOf("Chrome") === -1 &&
+  navigator.maxTouchPoints === 0;
 
 //
 // Pointer events polyfills
@@ -89,7 +94,7 @@ if (Element.prototype.setPointerCapture) {
     }
 
     // @bugfix: WebKit fails to capture the cursor image (https://bugs.webkit.org/show_bug.cgi?id=232339)
-    if (IS_WEBKIT && navigator.maxTouchPoints === 0) {
+    if (IS_DESKTOP_WEBKIT) {
       (async () => {
         Xel = Xel || (await import("./xel.js")).default;
 
@@ -132,7 +137,7 @@ if (Element.prototype.setPointerCapture) {
 // "contextmenu" event polyfill for mobile WebKit
 //
 
-if (IS_WEBKIT && ["iPhone", "iPad"].includes(navigator.platform)) {
+if (IS_MOBILE_WEBKIT) {
   const LONG_PRESS_DELAY = 500;
   const LONG_PRESS_MOVE_TOLERANCE = 10;
   const POLYFILLED = Symbol();

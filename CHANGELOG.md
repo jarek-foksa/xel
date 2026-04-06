@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.5 (2026-04-06)
+
+- [Fixed] `contextmenu` polyfill is not applied on mobile WebKit running in "desktop" mode
+
 ## 0.41.4 (2026-04-05)
 
 - [Fixed] Context menu fails to open in some edge cases on mobile WebKit
