@@ -188,6 +188,7 @@ if (IS_MOBILE_WEBKIT) {
 
           contextMenuEvent[POLYFILLED] = true;
           target.dispatchEvent(contextMenuEvent);
+          target.releasePointerCapture(event.pointerId);
         }, LONG_PRESS_DELAY);
       }
     }, { passive: true });

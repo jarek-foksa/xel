@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.6 (2026-04-08)
+
+- [Fixed] Pointer capture is not released when "contextmenu" event fires on mobile WebKit
+
 ## 0.41.5 (2026-04-06)
 
 - [Fixed] Can't open context menus on mobile WebKit-based browsers with "desktop" mode turned on
