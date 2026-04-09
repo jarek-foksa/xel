@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.41.7 (2026-04-09)
+
+- [Fixed] Can't stop propagation of polyfilled "contextmenu" event
+
 ## 0.41.6 (2026-04-08)
 
 - [Fixed] Pointer capture is not released when "contextmenu" event fires on mobile WebKit

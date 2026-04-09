@@ -4,6 +4,8 @@
  * @license MIT (check LICENSE.md for details)
  */
 
+import {elementFromPoint} from "./utils/element.js";
+
 const IS_MOBILE_WEBKIT =
   // Mobile WebKit in "mobile" mode
   /\b(iPad|iPhone)\b/.test(navigator.userAgent) ||
@@ -140,141 +142,101 @@ if (Element.prototype.setPointerCapture) {
 if (IS_MOBILE_WEBKIT) {
   const LONG_PRESS_DELAY = 500;
   const LONG_PRESS_MOVE_TOLERANCE = 10;
-  const POLYFILLED = Symbol();
 
-  let {addEventListener, removeEventListener} = Element.prototype;
-  let polyfilledElements = new WeakMap();
+  let pointerDownEvent = null;
+  let lastDispatchTime = 0;
+  let listenerOptions = {capture: true, passive: true};
+  let timer = null;
 
-  let clearTimer = (data) => {
-    if (data.timer) {
-      clearTimeout(data.timer);
-      data.timer = null;
+  let clearTimer = () => {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  };
+
+  class PolyfilledContextMenuEvent extends Event {
+    static eventName = "contextmenu";
+
+    clientX = 0;
+    clientY = 0;
+    screenX = 0;
+    screenY = 0;
+    button = 2;
+    buttons = 2;
+    view = window;
+
+    constructor(clientX, clientY) {
+      super(PolyfilledContextMenuEvent.eventName, {bubbles: true, composed: true, cancelable: true});
+
+      this.clientX = clientX;
+      this.clientY = clientY;
+      this.screenX = clientX;
+      this.screenY = clientY;
     }
   }
 
-  let watchElement = (element) => {
-    let data = {
-      listeners: new Set(),
-      timer: null,
-      startX: 0,
-      startY: 0,
-      dispatchTime: 0
-    };
+  document.addEventListener("pointerdown", (event) => {
+    clearTimer();
 
-    addEventListener.call(element, "pointerdown", data.pointerDownListener = (event) => {
-      clearTimer(data);
+    if (event.isPrimary && ["pen", "touch"].includes(event.pointerType)) {
+      let target = elementFromPoint(event.clientX, event.clientY);
+      pointerDownEvent = event;
 
-      if (event.isPrimary && ["pen", "touch"].includes(event.pointerType)) {
-        let target = event.target;
+      timer = setTimeout(() => {
+        clearTimer();
 
-        data.startX = event.clientX;
-        data.startY = event.clientY;
+        let contextMenuEvent = new PolyfilledContextMenuEvent(event.clientX, event.clientY);
+        target.dispatchEvent(contextMenuEvent);
+        lastDispatchTime = Date.now();
 
-        data.timer = setTimeout(() => {
-          data.timer = null;
-          data.dispatchTime = Date.now();
+        let pointerCancelEvent = new PointerEvent("pointercancel", {
+          pointerId: event.pointerId,
+          isPrimary: event.isPrimary,
+          bubbles: true,
+          composed: true
+        });
 
-          let contextMenuEvent = new MouseEvent("contextmenu", {
-            clientX: event.clientX,
-            clientY: event.clientY,
-            screenX: event.screenX,
-            screenY: event.screenY,
-            button: 2,
-            buttons: 2,
-            bubbles: true,
-            cancelable: true,
-            view: window
-          });
+        target.dispatchEvent(pointerCancelEvent);
 
-          contextMenuEvent[POLYFILLED] = true;
-          target.dispatchEvent(contextMenuEvent);
-          target.releasePointerCapture(event.pointerId);
-        }, LONG_PRESS_DELAY);
-      }
-    }, { passive: true });
-
-    addEventListener.call(element, "pointermove", data.pointerMoveListener = (event) => {
-      if (data.timer) {
-        let dx = event.clientX - data.startX;
-        let dy = event.clientY - data.startY;
-
-        if (Math.sqrt(dx * dx + dy * dy) > LONG_PRESS_MOVE_TOLERANCE) {
-          clearTimer(data);
+        for (let element = target; element; element = (element.parentElement || element.parentNode?.host)) {
+          if (element?.hasPointerCapture(event.pointerId)) {
+            element.releasePointerCapture(event.pointerId);
+          }
         }
-      }
-    }, { passive: true });
+      }, LONG_PRESS_DELAY);
+    }
+  }, listenerOptions);
 
-    addEventListener.call(element, "pointerup", data.pointerUpListener = () => {
-      clearTimer(data);
-    }, { passive: true });
+  document.addEventListener("pointermove", (event) => {
+    if (timer) {
+      let dx = event.clientX - pointerDownEvent.clientX;
+      let dy = event.clientY - pointerDownEvent.clientY;
 
-    addEventListener.call(element, "pointercancel", data.pointerCancelListener = () => {
-      clearTimer(data);
-    }, { passive: true });
-
-    addEventListener.call(element, "contextmenu", data.contextMenuListener = (event) => {
-      // Do not dispatch native "contextmenu" event if polyfilled "contextmenu" event was dispatched
-      if (!event[POLYFILLED] && (Date.now() - data.dispatchTime < 500)) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-      }
-    }, true);
-
-    addEventListener.call(element, "click", data.clickListener = (event) => {
-      // Do not dispatch "click" event if "contextmenu" event was dispatched
-      if (Date.now() - data.dispatchTime < 500) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-      }
-    }, true);
-
-    return data;
-  };
-
-  let unwatchElement = (element, data) => {
-    clearTimer(data);
-
-    removeEventListener.call(element, "pointerdown", data.pointerDownListener);
-    removeEventListener.call(element, "pointermove", data.pointerMoveListener);
-    removeEventListener.call(element, "pointerup", data.pointerUpListener);
-    removeEventListener.call(element, "pointercancel", data.pointerCancelListener);
-    removeEventListener.call(element, "contextmenu", data.contextMenuListener, true);
-    removeEventListener.call(element, "click", data.clickListener, true);
-  };
-
-  Element.prototype.addEventListener = function(type, listener, options) {
-    if (type === "contextmenu") {
-      let data = polyfilledElements.get(this);
-
-      if (!data) {
-        data = watchElement(this);
-        polyfilledElements.set(this, data);
-      }
-
-      if (listener) {
-        data.listeners.add(listener);
+      if (Math.sqrt(dx * dx + dy * dy) > LONG_PRESS_MOVE_TOLERANCE) {
+        clearTimer();
       }
     }
+  }, listenerOptions);
 
-    return addEventListener.call(this, type, listener, options);
-  };
+  document.addEventListener("pointerup", () => {
+    clearTimer();
+  }, listenerOptions);
 
-  Element.prototype.removeEventListener = function(type, listener, options) {
-    if (type === "contextmenu") {
-      let data = polyfilledElements.get(this);
+  document.addEventListener("pointercancel", () => {
+    clearTimer();
+  }, listenerOptions);
 
-      if (data && listener) {
-        data.listeners.delete(listener);
-
-        if (data.listeners.size === 0) {
-          unwatchElement(this, data);
-          polyfilledElements.delete(this);
-        }
-      }
+  document.addEventListener("contextmenu", (event) => {
+    // Do not dispatch native "contextmenu" event if polyfilled "contextmenu" event was dispatched
+    if (
+      event instanceof PolyfilledContextMenuEvent === false &&
+      Date.now() - lastDispatchTime < 500
+    ) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
     }
-
-    return removeEventListener.call(this, type, listener, options);
-  };
+  }, listenerOptions);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
