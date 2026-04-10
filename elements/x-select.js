@@ -195,6 +195,7 @@ export default class XSelectElement extends HTMLElement {
   #shadowRoot = null;
   #lastTabIndex = 0;
   #wasFocusedBeforeExpanding = false;
+  #autohideTooltipTimeout = null;
 
   #resizeListener = null;
   #blurListener = null;
@@ -222,6 +223,8 @@ export default class XSelectElement extends HTMLElement {
     this["#backdrop"].addEventListener("click", (event) => this.#onBackdropClick(event));
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("pointerenter", (event) => this.#onPointerEnter(event));
+    this.addEventListener("pointerleave", (event) => this.#onPointerLeave(event));
     this.addEventListener("toggle", (event) => this.#onMenuItemToggle(event));
     this.addEventListener("click", (event) => this.#onClick(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
@@ -301,6 +304,15 @@ export default class XSelectElement extends HTMLElement {
             item.toggled = false;
           }
         }
+      }
+    }
+
+    // Close the tooltip
+    {
+      let tooltip = this.querySelector(":scope > x-tooltip");
+
+      if (tooltip) {
+        tooltip.close(false);
       }
     }
 
@@ -499,6 +511,47 @@ export default class XSelectElement extends HTMLElement {
     // Don't focus the widget with pointer
     if (!event.target.closest("x-menu") && this.matches(":focus") === false) {
       event.preventDefault();
+    }
+  }
+
+  #onPointerEnter(event) {
+    let tooltip = this.querySelector(":scope > x-tooltip");
+    let menu = this.querySelector(":scope > x-menu");
+
+    if (
+      event.pointerType !== "touch" &&
+      tooltip && tooltip.disabled === false &&
+      menu && menu.opened === false
+    ) {
+      tooltip.open(this);
+
+      // @bugfix: https://issues.chromium.org/issues/40285392
+      if (event.pointerType === "pen") {
+        if (this.#autohideTooltipTimeout) {
+          clearTimeout(this.#autohideTooltipTimeout);
+        }
+
+        this.#autohideTooltipTimeout = setTimeout(() => {
+          tooltip.close();
+          this.#autohideTooltipTimeout = null;
+        }, 1600);
+      }
+    }
+  }
+
+  #onPointerLeave(event) {
+    // @bugfix: https://issues.chromium.org/issues/40285392
+    if (event.pointerType === "pen") {
+      if (this.#autohideTooltipTimeout !== null) {
+        clearTimeout(this.#autohideTooltipTimeout);
+        this.#autohideTooltipTimeout = null;
+      }
+    }
+
+    let tooltip = this.querySelector(":scope > x-tooltip");
+
+    if (tooltip) {
+      tooltip.close();
     }
   }
 

@@ -4,6 +4,7 @@
 ## 0.42.1 (2026-04-10)
 
 - Hide `<x-select>` arrow icon in compact mode
+- Allow `<x-tooltip>` inside `<x-select>`
 
 ## 0.42.0 (2026-04-10)
 
