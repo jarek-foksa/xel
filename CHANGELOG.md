@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.42.0 (2026-04-10)
+
+- Compact `<x-select>`
+
 ## 0.41.7 (2026-04-09)
 
 - [Fixed] Can't stop propagation of polyfilled "contextmenu" event

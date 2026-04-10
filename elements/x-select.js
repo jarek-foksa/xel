@@ -21,7 +21,7 @@ let $itemChild = Symbol();
  * @fires ^change {oldValue:string?, newValue:string?}
  */
 export default class XSelectElement extends HTMLElement {
-  static observedAttributes = ["disabled"];
+  static observedAttributes = ["compact", "disabled"];
 
   static #shadowTemplate = html`
     <template>
@@ -142,6 +142,21 @@ export default class XSelectElement extends HTMLElement {
   }
 
   /**
+   * Whether to show the label when widget is collapsed.
+   *
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
+  get compact() {
+    return this.hasAttribute("compact");
+  }
+  set compact(compact) {
+    compact ? this.setAttribute("compact", "") : this.removeAttribute("compact");
+  }
+
+  /**
    * Whether the widget is disabled.
    *
    * @property
@@ -234,7 +249,10 @@ export default class XSelectElement extends HTMLElement {
     if (oldValue === newValue) {
       return;
     }
-    if (name === "disabled") {
+    else if (name === "compact") {
+      this.#updateButton();
+    }
+    else if (name === "disabled") {
       this.#updateAccessabilityAttributes();
     }
   }
@@ -374,11 +392,15 @@ export default class XSelectElement extends HTMLElement {
 
     if (toggledItem) {
       for (let itemChild of toggledItem.children) {
-        let buttonChild = itemChild.cloneNode(true);
-        buttonChild[$itemChild] = itemChild;
-        buttonChild.removeAttribute("id");
-        buttonChild.removeAttribute("style");
-        this["#button"].append(buttonChild);
+        if (this.compact && itemChild.localName === "x-label") {
+        }
+        else {
+          let buttonChild = itemChild.cloneNode(true);
+          buttonChild[$itemChild] = itemChild;
+          buttonChild.removeAttribute("id");
+          buttonChild.removeAttribute("style");
+          this["#button"].append(buttonChild);
+        }
       }
 
       this.#updateButtonChildrenSize();
