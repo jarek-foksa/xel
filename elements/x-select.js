@@ -51,6 +51,9 @@ export default class XSelectElement extends HTMLElement {
       user-select: none;
       -webkit-user-select: none;
     }
+    :host([compact]) {
+      padding-right: 8px;
+    }
     :host([disabled]) {
       pointer-events: none;
       opacity: 0.5;
@@ -91,6 +94,10 @@ export default class XSelectElement extends HTMLElement {
       justify-content: center;
       margin: 0 0 0 auto;
       z-index: 1;
+    }
+
+    :host([compact]) #button > #arrow-container {
+      display: none;
     }
 
     #button > #arrow-container #arrow {

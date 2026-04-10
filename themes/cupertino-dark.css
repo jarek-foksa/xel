@@ -902,6 +902,9 @@ x-select::before {
   border-radius: 4px;
   box-sizing: border-box;
 }
+x-select[compact]::before {
+  display: none;
+}
 
 /*****************************************************************************************************************/
 

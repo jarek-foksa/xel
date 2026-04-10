@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.42.1 (2026-04-10)
+
+- Hide `<x-select>` arrow icon in compact mode
+
 ## 0.42.0 (2026-04-10)
 
 - Compact `<x-select>`
