@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "browser": "xel.js",
-  "description": "Widget toolkit for building native-like Web, Electron and Hybrid apps",
+  "description": "Xel - Widget Toolkit",
   "author": "Jarosław Foksa",
   "license": "MIT",
   "homepage": "https://xel-toolkit.org/",
