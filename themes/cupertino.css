@@ -541,6 +541,80 @@ x-tab:active {
 /*****************************************************************************************************************/
 
 /**
+ * Document tabs
+ */
+
+x-doctabs {
+  outline: 1px solid var(--border-color);
+}
+
+/* Tab */
+x-doctab {
+  background: #f2f2f2;
+  outline: 1px solid var(--border-color);
+  transition-property: background;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+x-doctab:hover {
+  background: #e5e5e5;
+}
+x-doctab:focus {
+  box-shadow: 0 0 0px 3px var(--light-accent-color);
+}
+x-doctab[selected] {
+  transition-duration: 0s;
+  background: white;
+}
+
+/* Label */
+x-doctab x-label {
+  color: #727272;
+  font-weight: 500;
+  font-size: 11px;
+}
+x-doctab[selected] x-label {
+  color: #4f4f4f;
+}
+
+/* Open button */
+x-doctabs::part(open-button):hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+x-doctabs::part(open-button):active {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+x-doctab::part(close-button) {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 0px;
+  margin: 0 0 0 3px;
+  opacity: 0;
+  color: #656565;
+  transition-property: opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+x-doctab[edited]::part(close-button) {
+  opacity: 1;
+}
+x-doctab:hover::part(close-button) {
+  color: #818181;
+  opacity: 1;
+}
+x-doctab::part(close-button):hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+x-doctab::part(close-button):active {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/*****************************************************************************************************************/
+
+/**
  * Nav item
  */
 

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.43.0 (2026-05-09)
+
+- `<x-doctab>` and `<x-doctabs>` elements
+
 ## 0.42.1 (2026-04-10)
 
 - Hide `<x-select>` arrow icon in compact mode

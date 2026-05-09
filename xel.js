@@ -19,6 +19,8 @@ export {default as XColorInputElement} from "./elements/x-colorinput.js";
 export {default as XColorPickerElement} from "./elements/x-colorpicker/x-colorpicker.js";
 export {default as XColorSelectElement} from "./elements/x-colorselect.js";
 export {default as XContextMenuElement} from "./elements/x-contextmenu.js";
+export {default as XDocTabElement} from "./elements/x-doctab.js";
+export {default as XDocTabsElement} from "./elements/x-doctabs.js";
 export {default as XDrawerElement} from "./elements/x-drawer.js";
 export {default as XIconElement} from "./elements/x-icon.js";
 export {default as XInputElement} from "./elements/x-input.js";

@@ -1,0 +1,74 @@
+<article>
+  <section id="intro-section">
+    <h2>Document tab</h2>
+
+    <p><strong>&lt;x-doctab&gt;</strong> is not meant to be used as a stand-alone widget, instead it should be
+    always placed inside <strong>&lt;x-doctabs&gt;</strong>.</p>
+
+    <x-doctabs>
+      <x-doctab selected>
+        <x-label>Tab</x-label>
+      </x-doctab>
+    </x-doctabs>
+  </section>
+
+  <hr/>
+
+  <section id="api-section">
+    <h3>API</h3>
+    <pt-apiblock value="elements/x-doctab.js"></pt-apiblock>
+  </section>
+
+  <hr/>
+
+  <section id="examples-section">
+    <h3>Examples</h3>
+
+   <section>
+      <h4>Label</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-doctabs>
+            <x-doctab selected>
+              <x-label>Tab</x-label>
+            </x-doctab>
+          </x-doctabs>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Label and icon</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-doctabs>
+            <x-doctab selected>
+              <x-icon name="settings"></x-icon>
+              <x-label>Icon</x-label>
+            </x-doctab>
+          </x-doctabs>
+        </template>
+      </pt-demoblock>
+    </section>
+
+    <hr/>
+
+    <section>
+      <h4>Edited</h4>
+
+      <pt-demoblock>
+        <template>
+          <x-doctabs>
+            <x-doctab selected edited>
+              <x-label>Edited</x-label>
+            </x-doctab>
+          </x-doctabs>
+        </template>
+      </pt-demoblock>
+    </section>
+  </section>
+</article>
