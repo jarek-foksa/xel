@@ -4,8 +4,6 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {createElement, closest} from "../utils/element.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
@@ -15,6 +13,7 @@ let {max} = Math;
 /**
  * @element x-doctab
  * @fires close
+ * @fires pin
  * @part close-button
  * @part selection-indicator
  */
@@ -38,6 +37,7 @@ export default class XDocTabElement extends HTMLElement {
     :host {
       display: flex;
       align-items: center;
+      align-self: end;
       justify-content: center;
       position: relative;
       width: 100%;
@@ -46,7 +46,7 @@ export default class XDocTabElement extends HTMLElement {
       max-width: 220px;
       padding: 0 18px;
       flex: 1 0 0;
-      transition-property: max-width, padding, order;
+      transition-property: height, max-width, padding, order;
       transition-duration: 0.15s;
       transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
       cursor: default;
@@ -202,6 +202,19 @@ export default class XDocTabElement extends HTMLElement {
    * @type {boolean}
    * @default false
    */
+  get pinned() {
+    return this.hasAttribute("pinned");
+  }
+  set pinned(pinned) {
+    pinned === true ? this.setAttribute("pinned", "") : this.removeAttribute("pinned");
+  }
+
+  /**
+   * @property
+   * @attribute
+   * @type {boolean}
+   * @default false
+   */
   get disabled() {
     return this.hasAttribute("disabled");
   }
@@ -220,6 +233,7 @@ export default class XDocTabElement extends HTMLElement {
 
   #shadowRoot = null;
   #elements = {};
+  #lastPointerDownTime = 0;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -308,6 +322,20 @@ export default class XDocTabElement extends HTMLElement {
     if (pointerDownEvent.buttons > 1) {
       pointerDownEvent.preventDefault();
       return;
+    }
+
+    // Pin the tab if it was double-clicked
+    {
+      if (Date.now() - this.#lastPointerDownTime < 300) {
+        if (this.pinned === false) {
+          this.pinned = true;
+
+          let customEvent = new CustomEvent("pin", {bubbles: true, detail: this});
+          this.dispatchEvent(customEvent);
+        }
+      }
+
+      this.#lastPointerDownTime = Date.now();
     }
 
     // Don't focus the widget with pointer, instead focus the closest ancestor focusable element
@@ -455,7 +483,7 @@ export default class XDocTabElement extends HTMLElement {
     let customEvent = new CustomEvent("close", {bubbles: true, cancelable: true, detail: this});
     this.dispatchEvent(customEvent);
 
-    if (customEvent.defaultPrevented === false) {
+    if (customEvent.defaultPrevented === false && this.isConnected) {
       this.ownerTabs.closeTab(this);
     }
   }

@@ -4,14 +4,9 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
-import Xel from "../classes/xel.js";
-
 import {getDistanceBetweenPoints} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
-
-let {abs} = Math;
-let {parseInt} = Number;
 
 /**
  * @element x-doctabs
@@ -91,7 +86,7 @@ export default class XDocTabsElement extends HTMLElement {
    * @default 20
    */
   get maxTabs() {
-    return this.hasAttribute("maxtabs") ? parseInt(this.getAttribute("maxtabs")) : 20;
+    return this.hasAttribute("maxtabs") ? Number.parseInt(this.getAttribute("maxtabs")) : 20;
   }
   set maxTabs(maxTabs) {
     this.setAttribute("maxtabs", maxTabs);
@@ -152,7 +147,7 @@ export default class XDocTabsElement extends HTMLElement {
         let maxOrder = 0;
 
         for (let tab of this.children) {
-          let order = parseInt(tab.style.order);
+          let order = Number.parseInt(tab.style.order);
 
           if (!Number.isNaN(order) && order > maxOrder) {
             maxOrder = order;
@@ -195,9 +190,10 @@ export default class XDocTabsElement extends HTMLElement {
    */
   closeTab(tab, animate = true) {
     return new Promise( async (resolve) => {
-      let tabs = this.getTabsByScreenIndex().filter(tab => tab.hasAttribute("closing") === false);
+      let tabs = this.getTabsByScreenIndex();
+      let remainingTabs = tabs.filter(tab => tab.hasAttribute("closing") === false);
       let tabWidth = tab.getBoundingClientRect().width;
-      let tabScreenIndex = this.#getTabScreenIndex(tab)
+      let tabScreenIndex = tabs.indexOf(tab);
 
       tab.setAttribute("closing", "");
 
@@ -223,8 +219,8 @@ export default class XDocTabsElement extends HTMLElement {
       this.#waitingForTabToClose = true;
 
       if (tab.selected) {
-        let previousTab = tabs[tabs.indexOf(tab) - 1];
-        let nextTab = tabs[tabs.indexOf(tab) + 1];
+        let previousTab = remainingTabs[remainingTabs.indexOf(tab) - 1];
+        let nextTab = remainingTabs[remainingTabs.indexOf(tab) + 1];
 
         tab.selected = false;
 
@@ -268,7 +264,7 @@ export default class XDocTabsElement extends HTMLElement {
         for (let tab of this.children) {
           tab.style.transition = null;
           tab.style.maxWidth = null;
-          tab.style.order = this.#getTabScreenIndex(tab);
+          tab.style.order = remainingTabs.indexOf(tab);
         }
       }
     });
@@ -280,7 +276,7 @@ export default class XDocTabsElement extends HTMLElement {
    */
   selectPreviousTab() {
     let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab");
-    let previousTab = this.#getPreviousTabOnScreen(currentTab);
+    let previousTab = this.getPreviousTabOnScreen(currentTab);
 
     if (currentTab && previousTab) {
       this.selectTab(previousTab);
@@ -297,7 +293,7 @@ export default class XDocTabsElement extends HTMLElement {
    */
   selectNextTab() {
     let currentTab = this.querySelector(`x-doctab[selected]`) || this.querySelector("x-doctab:last-of-type");
-    let nextTab = this.#getNextTabOnScreen(currentTab);
+    let nextTab = this.getNextTabOnScreen(currentTab);
 
     if (currentTab && nextTab) {
       this.selectTab(nextTab);
@@ -329,27 +325,27 @@ export default class XDocTabsElement extends HTMLElement {
    * @type {() => void}
    */
   moveSelectedTabLeft() {
-    let selectedTab = this.querySelector("x-doctab[selected]");
-    let selectedTabScreenIndex = this.#getTabScreenIndex(selectedTab);
+    let tabs = this.getTabsByScreenIndex();
+    let selectedTab = tabs.find(tab => tab.selected);
 
-    for (let tab of this.children) {
-      tab.style.order = this.#getTabScreenIndex(tab);
+    for (let index = 0; index < tabs.length; index += 1) {
+      tabs[index].style.order = index;
     }
 
-    if (parseInt(selectedTab.style.order) === 0) {
+    if (tabs.indexOf(selectedTab) === 0) {
       for (let tab of this.children) {
         if (tab === selectedTab) {
-          tab.style.order = this.childElementCount - 1;
+          tab.style.order = tabs.length - 1;
         }
         else {
-          tab.style.order = parseInt(tab.style.order) - 1;
+          tab.style.order = tabs.indexOf(tab) - 1;
         }
       }
     }
     else {
-      let otherTab = this.#getTabWithScreenIndex(selectedTabScreenIndex - 1);
-      otherTab.style.order = parseInt(otherTab.style.order) + 1;
-      selectedTab.style.order = parseInt(selectedTab.style.order) - 1;
+      let otherTab = tabs.at(tabs.indexOf(selectedTab) - 1);
+      otherTab.style.order = tabs.indexOf(otherTab) + 1;
+      selectedTab.style.order = tabs.indexOf(selectedTab) - 1;
     }
   }
 
@@ -358,27 +354,27 @@ export default class XDocTabsElement extends HTMLElement {
    * @type {() => void}
    */
   moveSelectedTabRight() {
-    let selectedTab = this.querySelector("x-doctab[selected]");
-    let selectedTabScreenIndex = this.#getTabScreenIndex(selectedTab);
+    let tabs = this.getTabsByScreenIndex();
+    let selectedTab = tabs.find(tab => tab.selected);
 
-    for (let tab of this.children) {
-      tab.style.order = this.#getTabScreenIndex(tab);
+    for (let index = 0; index < tabs.length; index += 1) {
+      tabs[index].style.order = index;
     }
 
-    if (parseInt(selectedTab.style.order) === this.childElementCount - 1) {
+    if (tabs.indexOf(selectedTab) === tabs.length - 1) {
       for (let tab of this.children) {
         if (tab === selectedTab) {
           tab.style.order = 0;
         }
         else {
-          tab.style.order = parseInt(tab.style.order) + 1;
+          tab.style.order = tabs.indexOf(tab) + 1;
         }
       }
     }
     else {
-      let otherTab = this.#getTabWithScreenIndex(selectedTabScreenIndex + 1);
-      otherTab.style.order = parseInt(otherTab.style.order) - 1;
-      selectedTab.style.order = parseInt(selectedTab.style.order) + 1;
+      let otherTab = tabs.at(tabs.indexOf(selectedTab) + 1);
+      otherTab.style.order = tabs.indexOf(otherTab) - 1;
+      selectedTab.style.order = tabs.indexOf(selectedTab) + 1;
     }
   }
 
@@ -430,16 +426,11 @@ export default class XDocTabsElement extends HTMLElement {
   }
 
   getTabsByScreenIndex() {
-    let $screenIndex = Symbol();
-
-    for (let tab of this.children) {
-      tab[$screenIndex] = this.#getTabScreenIndex(tab);
-    }
-
-    return [...this.children].sort((tab1, tab2) => tab1[$screenIndex] > tab2[$screenIndex]);
+    let tabs = [...this.children].filter(child => child.localName === "x-doctab");
+    return tabs.sort((tab1, tab2) => tab1.offsetLeft - tab2.offsetLeft);
   }
 
-  #getTabScreenIndex(tab) {
+  #getDraggedTabScreenIndex(tab) {
     let tabBounds = tab.getBoundingClientRect();
     let tabsBounds = this.getBoundingClientRect();
 
@@ -466,17 +457,7 @@ export default class XDocTabsElement extends HTMLElement {
     }
   }
 
-  #getTabWithScreenIndex(screenIndex) {
-    for (let tab of this.children) {
-      if (this.#getTabScreenIndex(tab) === screenIndex) {
-        return tab;
-      }
-    }
-
-    return null;
-  }
-
-  #getPreviousTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
+  getPreviousTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
     let tabs = this.getTabsByScreenIndex();
     let tabScreenIndex = tabs.indexOf(tab);
     let previousTab = null;
@@ -512,7 +493,7 @@ export default class XDocTabsElement extends HTMLElement {
     return previousTab;
   }
 
-  #getNextTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
+  getNextTabOnScreen(tab, skipDisabled = true, wrapAround = true) {
     let tabs = this.getTabsByScreenIndex();
     let tabScreenIndex = tabs.indexOf(tab);
     let nextTab = null;
@@ -613,7 +594,7 @@ export default class XDocTabsElement extends HTMLElement {
     this.#elements["open-button"].style.setProperty("opacity", "0", "important");
 
     for (let tab of this.children) {
-      let screenIndex = this.#getTabScreenIndex(tab);
+      let screenIndex = this.#getDraggedTabScreenIndex(tab);
       tab[$screenIndex] = screenIndex;
       tab[$initialScreenIndex] = screenIndex;
       tab[$flexOffset] = tab.getBoundingClientRect().left - tabsBounds.left;
@@ -670,7 +651,7 @@ export default class XDocTabsElement extends HTMLElement {
         }
 
         draggedTab.style.transform = "translate(" + dragOffset + "px)";
-        let screenIndex = this.#getTabScreenIndex(draggedTab);
+        let screenIndex = this.#getDraggedTabScreenIndex(draggedTab);
 
         if (screenIndex !== draggedTab[$screenIndex]) {
           let previousTabScreenIndex = draggedTab[$screenIndex];
@@ -759,7 +740,7 @@ export default class XDocTabsElement extends HTMLElement {
 
     else if (event.code === "ArrowLeft") {
       let currentTab = this.querySelector(`x-doctab[tabindex="0"]`);
-      let previousTab = this.#getPreviousTabOnScreen(currentTab);
+      let previousTab = this.getPreviousTabOnScreen(currentTab);
 
       if (previousTab) {
         event.preventDefault();
@@ -772,7 +753,7 @@ export default class XDocTabsElement extends HTMLElement {
 
     else if (event.code === "ArrowRight") {
       let currentTab = this.querySelector(`x-doctab[tabindex="0"]`);
-      let nextTab = this.#getNextTabOnScreen(currentTab);
+      let nextTab = this.getNextTabOnScreen(currentTab);
 
       if (nextTab) {
         event.preventDefault();
