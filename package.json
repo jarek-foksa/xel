@@ -40,7 +40,6 @@
     "throbber"
   ],
   "devDependencies": {
-    "@biomejs/biome": "2.4.9",
     "@csstools/postcss-minify": "3.0.0",
     "@fluent/bundle": "0.19.1",
     "colorjs.io": "0.6.1",
@@ -64,7 +63,6 @@
     "start": "./scripts/start.js",
     "build": "./scripts/build.js",
     "publish": "./scripts/publish.js",
-    "lint": "./scripts/lint.js",
     "stats": "./scripts/stats.js",
     "help": "./scripts/help.js"
   }
