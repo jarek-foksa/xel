@@ -101,6 +101,19 @@ export let closest = (element, selector, walkShadowDOM = true) => {
 };
 
 /**
+ * Get closest ancestor shadow root node.
+ *
+ * @type {(node: Node) => ShadowRoot}
+ */
+export let getClosestShadowRoot = (node) => {
+  for (let currentNode = node; currentNode; currentNode = currentNode.parentNode) {
+    if (currentNode instanceof ShadowRoot || currentNode === window.document) {
+      return currentNode;
+    }
+  }
+};
+
+/**
  * Get closest ancestor elements that can be scrolled horizontally or vertically.
  *
  * @type {(element: Element) => Element | null}

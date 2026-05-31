@@ -6,6 +6,9 @@
 
 let templateElement = document.createElement("template");
 
+import {dedent} from "./string.js";
+import {FluentResource} from "../node_modules/@fluent/bundle/esm/index.js";
+
 /**
  * Template string tag used to parse HTML strings.
  *
@@ -81,4 +84,23 @@ export let svg = (strings, ...expressions) => {
     stub.remove();
     return fragment;
   }
+};
+
+/**
+ * Template string tag used to parse Fluent localization format strings.
+ *
+ * @type {(strings: TemplateStringsArray, ...expressions: Array<string>) => FluentResource}
+ */
+export let ftl = (strings, ...expressions) => {
+  let parts = [];
+
+  for (let i = 0; i < strings.length; i += 1) {
+    parts.push(strings[i]);
+    if (expressions[i] !== undefined) parts.push(expressions[i]);
+  }
+
+  let source = dedent(parts.join(""));
+  let resource = new FluentResource(source);
+
+  return resource;
 };

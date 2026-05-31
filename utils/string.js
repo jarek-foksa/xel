@@ -62,6 +62,27 @@ export let toTitleCase = (string) => {
 };
 
 /**
+ * Remove extra indentation from multi-line string.
+ *
+ * @see https://www.npmjs.com/package/codedent
+ * @type {(string: string) => string}
+ */
+export let dedent = (string) => {
+  for (let line of string.split(/[\r\n]+/)) {
+    // Skip initial empty lines
+    if (line.trim().length > 0) {
+      // Trap indentation at the very first line of code
+      if (/^(\s+)/.test(line))
+        string = string.replace(new RegExp("^" + RegExp.$1, "gm"), "");
+      // No indentation? all good: get out of here!
+      break;
+    }
+  }
+
+  return string.trim();
+};
+
+/**
  * Replace every occurrence of string A with string B.
  *
  * @type {(string: string, a: string, b: string) => string}

@@ -9,6 +9,7 @@ import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
 import {getMaterialCSSColorVariables, isValidColorString} from "../utils/color.js"
+import {getClosestShadowRoot} from "../utils/element.js";
 import {getIcons} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
@@ -247,28 +248,60 @@ export default new class Xel extends EventEmitter {
    *
    * @type {(selector: string, args?: Object.<string, any>) => {id: string, attribute?: string, format: string, content: string, fallback: boolean}}
    */
-  queryMessage(selector, args = {}) {
-    selector = selector.startsWith("#") ? selector.substring(1) : selector;
-
+  queryMessage(selector, args = {}, scopedElement = null) {
     let [id, attribute] = selector.split(".");
-    let message = this.#localesBundle.getMessage(id);
+    let format = "text";
     let content = null;
     let fallback = false;
-    let format = "text";
+    let scoped = false;
+    let fluentBundle = null;
+    let fluentMessage = null;
 
     if (args.os === undefined) {
       args.os = getOperatingSystemName();
+    }
+
+    if (id.startsWith("@")) {
+      id = id.substring(1);
+      scoped = true;
+    }
+    else if (id.startsWith("#")) {
+      id = id.substring(1);
     }
 
     if (attribute === undefined) {
       attribute = null;
     }
 
-    if (message) {
+    // Scoped message
+    if (scoped === true) {
+      let hostElement = scopedElement.constructor.locales ? scopedElement : getClosestShadowRoot(scopedElement)?.host;
+      let scopedLocales = hostElement.constructor.locales;
+      let resource = scopedLocales?.[this.locale];
+
+      if (resource) {
+        fluentBundle = new FluentBundle([this.locale], {useIsolating: false});
+        let errors = fluentBundle.addResource(resource, {allowOverrides: true});
+
+        // Syntax errors are per-message and don't break the whole resource
+        if (errors.length) {
+          console.info("Found localization syntax errors", errors);
+        }
+
+        fluentMessage = fluentBundle.getMessage(id) || null;
+      }
+    }
+    // Global message
+    if (scoped === false || fluentMessage === null) {
+      fluentBundle = this.#localesBundle;
+      fluentMessage = this.#localesBundle.getMessage(id);
+    }
+
+    if (fluentMessage) {
       if (attribute === null) {
-        if (message.value) {
-          if (Array.isArray(message.value)) {
-            for (let part of message.value) {
+        if (fluentMessage.value) {
+          if (Array.isArray(fluentMessage.value)) {
+            for (let part of fluentMessage.value) {
               if (part.type === "select") {
                 if (args[part.selector.name] === undefined) {
                   args[part.selector.name] = "unknown";
@@ -277,12 +310,12 @@ export default new class Xel extends EventEmitter {
             }
           }
 
-          content = this.#localesBundle.formatPattern(message.value, args);
+          content = fluentBundle.formatPattern(fluentMessage.value, args);
         }
       }
       else {
-        if (message.attributes?.[attribute]) {
-          content = this.#localesBundle.formatPattern(message.attributes[attribute], args);
+        if (fluentMessage.attributes?.[attribute]) {
+          content = fluentBundle.formatPattern(fluentMessage.attributes[attribute], args);
         }
       }
     }

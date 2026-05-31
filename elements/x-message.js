@@ -5,7 +5,6 @@
  */
 
 import Xel from "../classes/xel.js";
-
 import {toTitleCase} from "../utils/string.js";
 
 /**
@@ -170,7 +169,7 @@ export default class XMessageElement extends HTMLElement {
   async #update() {
     await Xel.whenLocalesReady;
 
-    let message = Xel.queryMessage(this.href, this.args);
+    let message = Xel.queryMessage(this.href, this.args, this);
 
     if (message.fallback && this.#defaultContent) {
       this.textContent = this.#defaultContent;

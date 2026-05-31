@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.44.0 (2026-05-31)
+
+- Scoped messages
+
 ## 0.43.0 (2026-05-09)
 
 - `<x-doctab>` and `<x-doctabs>` elements

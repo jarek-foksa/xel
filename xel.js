@@ -54,4 +54,6 @@ export {default as XThrobberElement} from "./elements/x-throbber.js";
 export {default as XTitlebarElement} from "./elements/x-titlebar.js";
 export {default as XTooltipElement} from "./elements/x-tooltip.js";
 
+export {ftl} from  "./utils/template.js";
+
 export {default} from "./classes/xel.js";
