@@ -169,7 +169,7 @@ export default class XMessageElement extends HTMLElement {
   async #update() {
     await Xel.whenLocalesReady;
 
-    let message = Xel.queryMessage(this.href, this.args, this);
+    let message = Xel.queryMessage(this.href, this.args);
 
     if (message.fallback && this.#defaultContent) {
       this.textContent = this.#defaultContent;

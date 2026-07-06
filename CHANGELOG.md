@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.44.1 (2026-07-06)
+
+- Simplify scoped messages syntax
+
 ## 0.44.0 (2026-05-31)
 
 - Scoped messages

@@ -9,7 +9,6 @@ import EventEmitter from "./event-emitter.js";
 
 import {compareArrays} from "../utils/array.js";
 import {getMaterialCSSColorVariables, isValidColorString} from "../utils/color.js"
-import {getClosestShadowRoot} from "../utils/element.js";
 import {getIcons} from "../utils/icon.js";
 import {FluentBundle, FluentResource, FluentNumber} from "../node_modules/@fluent/bundle/esm/index.js";
 import {getOperatingSystemName} from "../utils/system.js";
@@ -242,42 +241,44 @@ export default new class Xel extends EventEmitter {
   }
 
   /**
-   * Get a localized message matching the given selector and args.
-   * Selector consists from "#", followed by the message ID, optionally followed by a dot (.) and the message attribute.
+   * Get a localized message matching the given href and args.
+   * Selector consists from optional element name, followed by "#", followed by the message ID, optionally followed by
+   * a dot (.) and the message attribute.
    * Should be called after Xel.whenLocalesReady.
    *
    * @type {(selector: string, args?: Object.<string, any>) => {id: string, attribute?: string, format: string, content: string, fallback: boolean}}
    */
-  queryMessage(selector, args = {}, scopedElement = null) {
-    let [id, attribute] = selector.split(".");
+  queryMessage(selector, args = {}) {
     let format = "text";
     let content = null;
     let fallback = false;
-    let scoped = false;
     let fluentBundle = null;
     let fluentMessage = null;
+    let ContextElement = null;
 
     if (args.os === undefined) {
       args.os = getOperatingSystemName();
     }
 
-    if (id.startsWith("@")) {
-      id = id.substring(1);
-      scoped = true;
+    if (selector.includes("#")) {
+      let [contextElementName, rest] = selector.split("#");
+
+      if (contextElementName.length > 0) {
+        ContextElement = customElements.get(contextElementName) || null;
+      }
+
+      selector = rest;
     }
-    else if (id.startsWith("#")) {
-      id = id.substring(1);
-    }
+
+    let [id, attribute] = selector.split(".");
 
     if (attribute === undefined) {
       attribute = null;
     }
 
-    // Scoped message
-    if (scoped === true) {
-      let hostElement = scopedElement.constructor.locales ? scopedElement : getClosestShadowRoot(scopedElement)?.host;
-      let scopedLocales = hostElement.constructor.locales;
-      let resource = scopedLocales?.[this.locale];
+    // Query context element locales
+    if (ContextElement?.locales) {
+      let resource = ContextElement.locales[this.locale];
 
       if (resource) {
         fluentBundle = new FluentBundle([this.locale], {useIsolating: false});
@@ -291,8 +292,9 @@ export default new class Xel extends EventEmitter {
         fluentMessage = fluentBundle.getMessage(id) || null;
       }
     }
-    // Global message
-    if (scoped === false || fluentMessage === null) {
+
+    // Query global locales
+    if (fluentMessage === null) {
       fluentBundle = this.#localesBundle;
       fluentMessage = this.#localesBundle.getMessage(id);
     }
