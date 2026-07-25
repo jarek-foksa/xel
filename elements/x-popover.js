@@ -205,6 +205,8 @@ export default class XPopoverElement extends HTMLElement {
       this.#context = context;
 
       if (this.opened === false) {
+        let openedTime = Date.now();
+
         if (this.modal) {
           this["#backdrop"].show(false);
         }
@@ -226,7 +228,11 @@ export default class XPopoverElement extends HTMLElement {
 
         if (this.#scrollableAncestor) {
           this.#scrollableAncestor.addEventListener("scroll", this.#ancestorScrollListener = () => {
-            this.close();
+            // In some edge cases opening a popover might scroll the ancestor, so we take into account only the
+            // scroll events that were fired at least 100ms later
+            if (Date.now() - openedTime > 100) {
+              this.close();
+            }
           }, {once: true});
         }
 

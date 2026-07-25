@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.44.2 (2026-07-25)
+
+- [Fixed] `<x-popover>` with scrollable ancestor might fail to open in some edge cases
+
 ## 0.44.1 (2026-07-06)
 
 - Simplify scoped messages syntax
