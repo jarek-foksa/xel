@@ -27,9 +27,6 @@ export default class XTabsElement extends HTMLElement {
       box-sizing: border-box;
       justify-content: center;
     }
-    ::slotted(x-tab) {
-      flex: 0;
-    }
   `;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

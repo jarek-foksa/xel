@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.44.3 (2026-09-22)
+
+- [Fixed] Label ellipsis is missing from `<x-tab>`
+
 ## 0.44.2 (2026-07-25)
 
 - [Fixed] `<x-popover>` with scrollable ancestor might fail to open in some edge cases

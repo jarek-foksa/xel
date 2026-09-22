@@ -31,6 +31,7 @@ export default class XTabElement extends HTMLElement {
       align-items: center;
       justify-content: center;
       min-height: 30px;
+      min-width: 1px;
       padding: 2px 12px;
       box-sizing: border-box;
       cursor: default;
@@ -55,6 +56,9 @@ export default class XTabElement extends HTMLElement {
       display: inherit;
       flex-flow:inherit;
       align-items: inherit;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
       z-index: 100;
     }
 
