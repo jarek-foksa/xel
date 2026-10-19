@@ -9,15 +9,17 @@ import Fs from "node:fs/promises";
 import HTTP from "node:http";
 import Path from "node:path";
 import Process from "node:process";
-import {createReadStream} from "node:fs";
-
 import QrCode from "qrcode-generator";
+
+import {createReadStream} from "node:fs";
 import {stringToBytes} from "../node_modules/qrcode-generator/dist/qrcode_UTF8.mjs";
+
+import MANIFEST from "../package.json" with {type: "json"};
 
 const [, , ...ARGS] = Process.argv;
 const PROJECT_PATH = Path.resolve(import.meta.dirname, "..");
 const HOST = ARGS.includes("public") ? IP.address("public", "ipv4") : IP.address("private", "ipv4");
-const PORT = 2043;
+const PORT = MANIFEST.project.server.port;
 
 // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const MIME_TYPES = {

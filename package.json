@@ -65,5 +65,11 @@
     "publish": "./scripts/publish.js",
     "stats": "./scripts/stats.js",
     "help": "./scripts/help.js"
+  },
+  "project": {
+    "server": {
+      "port": "2000",
+      "start": "./scripts/start.js"
+    }
   }
 }
