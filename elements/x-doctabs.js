@@ -127,6 +127,7 @@ export default class XDocTabsElement extends HTMLElement {
   #shadowRoot = null;
   #elements = {};
 
+  #isPointerOverTabs = false;
   #waitingForTabToClose = false;
   #waitingForPointerMoveAfterClosingTab = false;
 
@@ -144,6 +145,8 @@ export default class XDocTabsElement extends HTMLElement {
     }
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
+    this.addEventListener("pointerenter", (event) => this.#onPointerEnter(event));
+    this.addEventListener("pointerleave", (event) => this.#onPointerLeave(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
     this.addEventListener("contextmenu", (event) => this.#onContextMenuOpen(event));
     this.#elements["context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
@@ -407,24 +410,29 @@ export default class XDocTabsElement extends HTMLElement {
    * @method
    * @type {(distance: number) => Promise<void>}
    */
-  #whenPointerMovedAway(distance = 3) {
+  #whenPointerMovedAway() {
     return new Promise((resolve) => {
-      let pointerOutListener, blurListener;
-
-      let removeListeners = () => {
-        this.removeEventListener("pointerleave", pointerOutListener);
-        window.removeEventListener("blur", blurListener);
-      };
-
-      this.addEventListener("pointerleave", pointerOutListener = (event) => {
-        removeListeners();
+      if (this.#isPointerOverTabs === false) {
         resolve();
-      });
+      }
+      else {
+        let pointerOutListener, blurListener;
 
-      window.addEventListener("blur", blurListener = (event) => {
-        removeListeners();
-        resolve();
-      });
+        let removeListeners = () => {
+          this.removeEventListener("pointerleave", pointerOutListener);
+          window.removeEventListener("blur", blurListener);
+        };
+
+        this.addEventListener("pointerleave", pointerOutListener = (event) => {
+          removeListeners();
+          resolve();
+        });
+
+        window.addEventListener("blur", blurListener = (event) => {
+          removeListeners();
+          resolve();
+        });
+      }
     });
   }
 
@@ -538,6 +546,14 @@ export default class XDocTabsElement extends HTMLElement {
     if (event.buttons <= 1 && !this.#waitingForTabToClose && event.target.closest("x-doctab")) {
       this.#onTabPointerDown(event);
     }
+  }
+
+  #onPointerEnter() {
+    this.#isPointerOverTabs = true;
+  }
+
+  #onPointerLeave() {
+    this.#isPointerOverTabs = false;
   }
 
   #onTabPointerDown(pointerDownEvent) {

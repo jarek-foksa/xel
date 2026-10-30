@@ -4,6 +4,7 @@
 ## 0.45.1 (PENDING)
 
 - [Fixed] Newly opened tab is not animated when using Cupertino theme
+- [Fixed] Size not updated after closing tabs via context menu
 
 ## 0.45.0 (2026-10-30)
 
