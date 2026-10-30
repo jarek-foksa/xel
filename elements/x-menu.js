@@ -520,8 +520,11 @@ export default class XMenuElement extends HTMLElement {
 
       // Menu might contain translatable messages which are fetched asynchronously. In order to get the correct
       // menu bounds we have to wait until the messages are ready.
-      let messageElements = [...this.querySelectorAll(":scope > x-menuitem > x-label > x-message")];
-      await Promise.all(messageElements.map($0 => $0.whenReady));
+      {
+        let messageElements = [...this.querySelectorAll(":scope > x-menuitem > x-label > x-message")];
+        messageElements = messageElements.filter($0 => $0.textContent.length === 0);
+        await Promise.all(messageElements.map($0 => $0.whenReady));
+      }
 
       let menuBounds = this.getBoundingClientRect();
 

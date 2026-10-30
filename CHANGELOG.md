@@ -1,6 +1,12 @@
 
 # CHANGELOG
 
+## 0.45.0 (2026-10-30)
+
+- Add context menu to `<x-doctabs>`
+- Add `reorder` event to `<x-doctabs>`
+- Improve `<x-doctabs>` stylings
+
 ## 0.44.3 (2026-09-22)
 
 - [Fixed] Label ellipsis is missing from `<x-tab>`

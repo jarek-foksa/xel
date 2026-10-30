@@ -4,6 +4,8 @@
 // @license
 //   MIT License (check LICENSE.md for details)
 
+import Xel from "../classes/xel.js";
+
 import {getDistanceBetweenPoints} from "../utils/math.js";
 import {html, css} from "../utils/template.js";
 import {sleep} from "../utils/time.js";
@@ -13,7 +15,7 @@ import {sleep} from "../utils/time.js";
  * @fires open
  * @fires close
  * @fires select
- * @fires rearrange
+ * @fires reorder
  * @part open-button
  */
 export default class XDocTabsElement extends HTMLElement {
@@ -24,6 +26,22 @@ export default class XDocTabsElement extends HTMLElement {
       <svg id="open-button" part="open-button" viewBox="0 0 100 100" preserveAspectRatio="none">
         <path id="open-button-path"></path>
       </svg>
+
+      <x-contextmenu id="context-menu" disabled>
+        <x-menu>
+          <x-menuitem id="close-menu-item" value="close">
+            <x-label><x-message href="#close-tab">Close Tab</x-message></x-label>
+          </x-menuitem>
+
+          <x-menuitem id="close-other-menu-item" value="closeOther">
+            <x-label><x-message href="#close-other-tabs">Close Other Tabs</x-message></x-label>
+          </x-menuitem>
+
+          <x-menuitem id="close-right-menu-item" value="closeRight">
+            <x-label><x-message href="#close-tabs-to-right">Close Tabs to the Right</x-message></x-label>
+          </x-menuitem>
+        </x-menu>
+      </x-contextmenu>
     </template>
   `;
 
@@ -118,7 +136,7 @@ export default class XDocTabsElement extends HTMLElement {
     super();
 
     this.#shadowRoot = this.attachShadow({mode: "closed", delegatesFocus: false});
-    this.#shadowRoot.adoptedStyleSheets = [XDocTabsElement.#shadowStyleSheet];
+    this.#shadowRoot.adoptedStyleSheets = [Xel.themeStyleSheet, XDocTabsElement.#shadowStyleSheet];
     this.#shadowRoot.append(document.importNode(XDocTabsElement.#shadowTemplate.content, true));
 
     for (let element of this.#shadowRoot.querySelectorAll("[id]")) {
@@ -127,6 +145,9 @@ export default class XDocTabsElement extends HTMLElement {
 
     this.addEventListener("pointerdown", (event) => this.#onPointerDown(event));
     this.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    this.addEventListener("contextmenu", (event) => this.#onContextMenuOpen(event));
+    this.#elements["context-menu"].addEventListener("click", (event) => this.#onContextMenuClick(event));
+    this.#elements["context-menu"].addEventListener("close", (event) => this.#onContextMenuClose(event));
     this.#elements["open-button"].addEventListener("click", (event) => this.#onOpenButtonClick(event));
   }
 
@@ -583,6 +604,7 @@ export default class XDocTabsElement extends HTMLElement {
   }
 
   #onTabDragStart(firstPointerMoveEvent, draggedTab) {
+    let tabs = [...this.children].filter(child => child.localName === "x-doctab");
     let tabBounds = draggedTab.getBoundingClientRect();
     let tabsBounds = this.getBoundingClientRect();
 
@@ -593,7 +615,7 @@ export default class XDocTabsElement extends HTMLElement {
     draggedTab.style.zIndex = 999;
     this.#elements["open-button"].style.setProperty("opacity", "0", "important");
 
-    for (let tab of this.children) {
+    for (let tab of tabs) {
       let screenIndex = this.#getDraggedTabScreenIndex(tab);
       tab[$screenIndex] = screenIndex;
       tab[$initialScreenIndex] = screenIndex;
@@ -616,7 +638,7 @@ export default class XDocTabsElement extends HTMLElement {
         }
       }
       else {
-        for (let tab of this.children) {
+        for (let tab of tabs) {
           if (tab !== draggedTab) {
             if (tab[$screenIndex] === toScreenIndex) {
               tab[$screenIndex] = fromScreenIndex;
@@ -674,21 +696,23 @@ export default class XDocTabsElement extends HTMLElement {
       draggedTab.style.transition = "transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)";
       draggedTab.style.transform = "translate(" + translateX + "px)";
 
-      if (draggedTab[$initialScreenIndex] !== draggedTab[$screenIndex]) {
-        this.dispatchEvent(
-          new CustomEvent("rearrange")
-        );
-      }
-
       await sleep(150);
 
       draggedTab.style.zIndex = null;
       this.#elements["open-button"].style.opacity = null;
 
-      for (let tab of this.children) {
+      for (let tab of tabs) {
         tab.style.transition = "none";
         tab.style.transform = "translate(0px, 0px)";
         tab.style.order = tab[$screenIndex];
+      }
+
+      if (draggedTab[$initialScreenIndex] !== draggedTab[$screenIndex]) {
+        let orderedTabs = [...tabs].sort((tab1, tab2) => tab1[$screenIndex] > tab2[$screenIndex] ? 1 : -1);
+
+        this.dispatchEvent(
+          new CustomEvent("reorder", {detail: orderedTabs})
+        );
       }
     };
 
@@ -707,6 +731,79 @@ export default class XDocTabsElement extends HTMLElement {
         this.openTab(openedTab);
 
         this.selectTab(openedTab);
+      }
+    }
+  }
+
+  #onContextMenuOpen(event) {
+    let tabs = this.getTabsByScreenIndex();
+    let hitTab = event.target.closest("x-doctab");
+    let otherTabs = tabs.filter($0 => $0.localName === "x-doctab" && $0 !== hitTab);
+
+    event.preventDefault();
+
+    this.#elements["close-menu-item"].disabled = hitTab ? false : true;
+    this.#elements["close-other-menu-item"].disabled = hitTab && otherTabs.length > 0 ? false : true;
+    this.#elements["close-right-menu-item"].disabled = hitTab && tabs.indexOf(hitTab) < tabs.length-1 ? false : true;
+
+    for (let tab of tabs) {
+      if (tab === hitTab) {
+        tab.setAttribute("data-context", "");
+      }
+      else {
+        tab.removeAttribute("data-context");
+      }
+    }
+
+    this.#elements["context-menu"].open(event.clientX, event.clientY);
+  }
+
+  #onContextMenuClose() {
+    let tabs = [...this.children];
+
+    for (let tab of tabs) {
+      tab.removeAttribute("data-context");
+    }
+  }
+
+  async #onContextMenuClick(event) {
+    let item = event.target.closest("x-menuitem");
+    let tabs = [...this.children];
+    let selectedTab = this.querySelector(`x-doctab[selected]`);
+    let contextTab = tabs.find(tab => tab.hasAttribute("data-context"));
+    let otherTabs = tabs.filter($0 => $0.localName === "x-doctab" && $0 !== contextTab);
+
+    let maybeCloseTab = (tab) => {
+      let customEvent = new CustomEvent("close", {bubbles: true, cancelable: true, detail: tab});
+      tab.dispatchEvent(customEvent);
+
+      if (customEvent.defaultPrevented === false) {
+        this.closeTab(tab, false);
+        return true;
+      }
+      else {
+        return false;
+      }
+    };
+
+    if (item && item.disabled === false && contextTab) {
+      await item.whenTriggerEnd;
+
+      if (item.value === "close") {
+        maybeCloseTab(contextTab);
+      }
+      else if (item.value === "closeOther") {
+        for (let tab of otherTabs) {
+          maybeCloseTab(tab);
+        }
+      }
+      else if (item.value === "closeRight") {
+        let tabs = this.getTabsByScreenIndex();
+        let contextTabScreenIndex = tabs.indexOf(contextTab);
+
+        for (let i = tabs.length-1; i > contextTabScreenIndex; i -= 1) {
+          maybeCloseTab(tabs[i]);
+        }
       }
     }
   }

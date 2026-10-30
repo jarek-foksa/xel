@@ -550,13 +550,12 @@ x-doctabs {
 
 /* Tab */
 x-doctab {
+  padding: 0 8px 0 22px;
   background: #f2f2f2;
   outline: 1px solid var(--border-color);
-  transition-property: background;
-  transition-duration: 0.2s;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
 }
-x-doctab:hover {
+x-doctab:hover,
+x-doctab[data-context] {
   background: #e5e5e5;
 }
 x-doctab:focus {
@@ -588,15 +587,10 @@ x-doctabs::part(open-button):active {
 /* Close button */
 x-doctab::part(close-button) {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  left: 0px;
-  margin: 0 0 0 3px;
+  margin: 0 0 0 4px;
   opacity: 0;
   color: #656565;
-  transition-property: opacity;
-  transition-duration: 0.2s;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+  border-radius: 2px;
 }
 x-doctab[edited]::part(close-button) {
   opacity: 1;

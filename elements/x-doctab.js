@@ -83,12 +83,11 @@ export default class XDocTabElement extends HTMLElement {
       position: static;
       left: 0;
       right: initial;
-      width: 18px;
-      height: 18px;
-      min-width: 18px;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
       margin: 0 0 0 auto;
       opacity: 0.8;
-      padding: 1px;
       d: path("M 74 31 L 69 26 L 50 45 L 31 26 L 26 31 L 45 50 L 26 69 L 31 74 L 50 55 L 69 74 L 74 69 L 55 50 Z");
     }
     :host([edited]) #close-button {
@@ -274,7 +273,7 @@ export default class XDocTabElement extends HTMLElement {
 
   animateSelectionIndicator(toTab) {
     return new Promise(async (resolve) => {
-      if (this.#elements["selection-indicator"].style.height !== "0px") {
+      if (this.#elements["selection-indicator"].clientHeight > 0) {
         let fromBBox = this.getBoundingClientRect();
         let toBBox = toTab.getBoundingClientRect();
 

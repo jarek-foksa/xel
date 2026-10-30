@@ -707,9 +707,6 @@ x-doctabs::part(open-button):active {
 
 /* Close button */
 x-doctab::part(close-button) {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
   margin: 0 -12px 0 auto;
 }
 x-doctab::part(close-button):hover {

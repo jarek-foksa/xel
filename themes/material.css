@@ -730,8 +730,6 @@ x-doctabs::part(open-button):active {
 /* Close button */
 x-doctab::part(close-button) {
   position: absolute;
-  width: 16px;
-  height: 16px;
   left: initial;
   right: 0px;
   margin: 0 5px 0 0;

@@ -549,6 +549,7 @@ x-doctabs {
 
 /* Tab */
 x-doctab {
+  padding: 0 8px 0 22px;
   background: var(--background-color);
   outline: 1px solid var(--border-color);
 }
@@ -573,11 +574,9 @@ x-doctabs::part(open-button):active {
 /* Close button */
 x-doctab::part(close-button) {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  left: 0px;
   margin: 0 0 0 3px;
   opacity: 0;
+  border-radius: 2px;
 }
 x-doctab[edited]::part(close-button) {
   opacity: 1;
