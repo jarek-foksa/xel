@@ -562,7 +562,6 @@ x-doctab:focus {
   box-shadow: 0 0 0px 3px var(--light-accent-color);
 }
 x-doctab[selected] {
-  transition-duration: 0s;
   background: white;
 }
 

@@ -553,7 +553,8 @@ x-doctab {
   background: var(--background-color);
   outline: 1px solid var(--border-color);
 }
-x-doctab:hover {
+x-doctab:hover,
+x-doctab[data-context] {
   background: rgba(255, 255, 255, 0.1);
 }
 x-doctab:focus {

@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## 0.45.1 (PENDING)
+
+- [Fixed] Newly opened tab is not animated when using Cupertino theme
+
 ## 0.45.0 (2026-10-30)
 
 - Add context menu to `<x-doctabs>`
