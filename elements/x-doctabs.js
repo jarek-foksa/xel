@@ -279,7 +279,7 @@ export default class XDocTabsElement extends HTMLElement {
 
       if (!this.#waitingForPointerMoveAfterClosingTab) {
         this.#waitingForPointerMoveAfterClosingTab = true;
-        await this.#whenPointerMoved(3);
+        await this.#whenPointerMovedAway();
         this.#waitingForPointerMoveAfterClosingTab = false;
 
         for (let tab of this.children) {
@@ -402,44 +402,26 @@ export default class XDocTabsElement extends HTMLElement {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Returns a promise that is resolved when the pointer is moved by at least the given distance.
+   * Returns a promise that is resolved when the pointer moves away from the tabs.
    *
    * @method
    * @type {(distance: number) => Promise<void>}
    */
-  #whenPointerMoved(distance = 3) {
+  #whenPointerMovedAway(distance = 3) {
     return new Promise((resolve) => {
-      let pointerMoveListener, pointerOutListener, blurListener;
-      let fromPoint = null;
+      let pointerOutListener, blurListener;
 
       let removeListeners = () => {
-        window.removeEventListener("pointermove", pointerMoveListener);
-        window.removeEventListener("pointerout", pointerOutListener);
+        this.removeEventListener("pointerleave", pointerOutListener);
         window.removeEventListener("blur", blurListener);
       };
 
-      window.addEventListener("pointermove", pointerMoveListener = (event) => {
-        if (fromPoint === null) {
-          fromPoint = {x: event.clientX, y: event.clientY};
-        }
-        else {
-          let toPoint = {x: event.clientX, y: event.clientY};
-
-          if (getDistanceBetweenPoints(fromPoint, toPoint) >= distance) {
-            removeListeners();
-            resolve();
-          }
-        }
+      this.addEventListener("pointerleave", pointerOutListener = (event) => {
+        removeListeners();
+        resolve();
       });
 
-      window.addEventListener("pointerout", pointerOutListener = (event) => {
-        if (event.toElement === null) {
-          removeListeners();
-          resolve();
-        }
-      });
-
-      window.addEventListener("blur", blurListener = () => {
+      window.addEventListener("blur", blurListener = (event) => {
         removeListeners();
         resolve();
       });

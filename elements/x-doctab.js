@@ -46,7 +46,7 @@ export default class XDocTabElement extends HTMLElement {
       max-width: 220px;
       padding: 0 18px;
       flex: 1 0 0;
-      transition-property: height, max-width, padding, order;
+      transition-property: max-width, padding;
       transition-duration: 0.15s;
       transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
       cursor: default;
