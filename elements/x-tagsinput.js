@@ -82,8 +82,8 @@ export default class XTagsInputElement extends HTMLElement {
     #input {
       width: 10px;
       height: 20px;
-      margin: 2px;
-      padding: 0px 3px 0 5px;
+      margin: 2px 5px 2px 6px;
+      padding: 0px;
       box-sizing: border-box;
       line-height: 22px;
       color: inherit;
@@ -335,8 +335,7 @@ export default class XTagsInputElement extends HTMLElement {
       }
     }
 
-    this["#input"].style.minWidth = "0px";
-    this["#input"].style.minWidth = this["#input"].scrollWidth + "px";
+    this.#updateInputSize();
   }
 
   #clearSuggestions() {
@@ -620,7 +619,6 @@ export default class XTagsInputElement extends HTMLElement {
   }
 
   #updateInputSize() {
-    this["#input"].style.minWidth = "0px";
     this["#input"].style.minWidth = this["#input"].scrollWidth + "px";
   }
 

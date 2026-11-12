@@ -1,10 +1,11 @@
 
 # CHANGELOG
 
-## 0.45.1 (PENDING)
+## 0.45.1 (2026-11-12)
 
 - [Fixed] Newly opened tab is not animated when using Cupertino theme
 - [Fixed] Size not updated after closing tabs via context menu
+- [Fixed] `<x-tagsinput>` tag label is cut off on latest Chrome version
 
 ## 0.45.0 (2026-10-30)
 
