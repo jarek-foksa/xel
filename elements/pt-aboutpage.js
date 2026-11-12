@@ -11,7 +11,7 @@ export default class PTAboutPageElement extends PTPage {
   static _shadowTemplate = html`
     <template>
       <div id="container">
-        <h1><span>X</span>el</h1>
+        <h1>Xel</h1>
         <h2><x-message href="#slogan-1"></x-message></h2>
         <h2><x-message href="#slogan-2"></x-message></h2>
         <h2><x-message href="#slogan-3"></x-message></h2>
@@ -23,7 +23,7 @@ export default class PTAboutPageElement extends PTPage {
     :host {
       color: white;
       width: 100%;
-      height: 100vh;
+      height: 100%;
       display: flex;
       align-items: center;
       background: var(--accent-color);
@@ -39,18 +39,12 @@ export default class PTAboutPageElement extends PTPage {
     }
 
     h1 {
-      font-size: 11rem;
+      font-size: 10rem;
       font-weight: 700;
-      line-height: 1.5;
-      margin: 0 0 50px 0;
+      line-height: 0.75;
+      margin: 0 0 40px 0;
       padding: 0;
-      line-height: 1;
       color: rgba(255,255,255);
-    }
-
-    h1 span {
-      font-size: 20rem;
-      line-height: 1;
     }
 
     h2 {

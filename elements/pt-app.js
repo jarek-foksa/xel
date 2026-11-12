@@ -29,353 +29,355 @@ export default class PTAppElement extends HTMLElement {
   static #shadowTemplate = html`
     <template>
       <pt-sidebar id="sidebar">
-        <div id="branding">
-          <x-box>
-            <x-icon href="/icons/portal.svg#xel"></x-icon>
-            <h1>Xel</h1>
-          </x-box>
-        </div>
+        <div>
+          <div id="branding">
+            <x-box>
+              <x-icon href="/icons/portal.svg#xel"></x-icon>
+              <h1>Xel</h1>
+            </x-box>
+          </div>
 
-        <hr/>
+          <hr/>
 
-        <x-nav id="nav">
-          <a href="/">
-            <x-navitem>
-              <x-icon href="#help"></x-icon>
-              <x-label><x-message href="#about" autocapitalize></x-message></x-label>
-            </x-navitem>
-          </a>
-
-          <a href="/setup">
-            <x-navitem>
-              <x-icon href="#wrench"></x-icon>
-              <x-label><x-message href="#setup" autocapitalize></x-message></x-label>
-            </x-navitem>
-          </a>
-
-          <x-navitem>
-            <x-icon href="#tune"></x-icon>
-            <x-label><x-message href="#elements" autocapitalize></x-message></x-label>
-
-            <x-nav>
-              <a href="/elements/x-accordion">
-                <x-navitem>
-                  <x-label>x-accordion</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-avatar">
-                <x-navitem>
-                  <x-label>x-avatar</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-box">
-                <x-navitem>
-                  <x-label>x-box</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-button">
-                <x-navitem>
-                  <x-label>x-button</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-buttons">
-                <x-navitem>
-                  <x-label>x-buttons</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-card">
-                <x-navitem>
-                  <x-label>x-card</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-checkbox">
-                <x-navitem>
-                  <x-label>x-checkbox</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-colorpicker">
-                <x-navitem>
-                  <x-label>x-colorpicker</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-colorselect">
-                <x-navitem>
-                  <x-label>x-colorselect</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-contextmenu">
-                <x-navitem>
-                  <x-label>x-contextmenu</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/dialog">
-                <x-navitem>
-                  <x-label>&nbsp;&nbsp;&nbsp;dialog</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-doctab">
-                <x-navitem>
-                  <x-label>x-doctab</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-doctabs">
-                <x-navitem>
-                  <x-label>x-doctabs</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-drawer">
-                <x-navitem>
-                  <x-label>x-drawer</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-icon">
-                <x-navitem>
-                  <x-label>x-icon</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-input">
-                <x-navitem>
-                  <x-label>x-input</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-label">
-                <x-navitem>
-                  <x-label>x-label</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-menu">
-                <x-navitem>
-                  <x-label>x-menu</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-menuitem">
-                <x-navitem>
-                  <x-label>x-menuitem</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-menubar">
-                <x-navitem>
-                  <x-label>x-menubar</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-message">
-                <x-navitem>
-                  <x-label>x-message</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-nav">
-                <x-navitem>
-                  <x-label>x-nav</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-navitem">
-                <x-navitem>
-                  <x-label>x-navitem</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-notification">
-                <x-navitem>
-                  <x-label>x-notification</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-numberinput">
-                <x-navitem>
-                  <x-label>x-numberinput</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-pager">
-                <x-navitem>
-                  <x-label>x-pager</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-popover">
-                <x-navitem>
-                  <x-label>x-popover</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-progressbar">
-                <x-navitem>
-                  <x-label>x-progressbar</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-radio">
-                <x-navitem>
-                  <x-label>x-radio</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-radios">
-                <x-navitem>
-                  <x-label>x-radios</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-select">
-                <x-navitem>
-                  <x-label>x-select</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-shortcut">
-                <x-navitem>
-                  <x-label>x-shortcut</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-slider">
-                <x-navitem>
-                  <x-label>x-slider</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-stepper">
-                <x-navitem>
-                  <x-label>x-stepper</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-swatch">
-                <x-navitem>
-                  <x-label>x-swatch</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-switch">
-                <x-navitem>
-                  <x-label>x-switch</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-tab">
-                <x-navitem>
-                  <x-label>x-tab</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-tabs">
-                <x-navitem>
-                  <x-label>x-tabs</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-tag">
-                <x-navitem>
-                  <x-label>x-tag</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-tags">
-                <x-navitem>
-                  <x-label>x-tags</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-tagsinput">
-                <x-navitem>
-                  <x-label>x-tagsinput</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-texteditor">
-                <x-navitem>
-                  <x-label>x-texteditor</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-throbber">
-                <x-navitem>
-                  <x-label>x-throbber</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-titlebar">
-                <x-navitem>
-                  <x-label>x-titlebar</x-label>
-                </x-navitem>
-              </a>
-
-              <a href="/elements/x-tooltip">
-                <x-navitem>
-                  <x-label>x-tooltip</x-label>
-                </x-navitem>
-              </a>
-            </x-nav>
-          </x-navitem>
-
-          <a href="/typography">
-            <x-navitem>
-              <x-icon href="#text-underline"></x-icon>
-              <x-label><x-message href="#typography" autocapitalize></x-message></x-label>
-            </x-navitem>
-          </a>
-
-          <a href="/changelog">
-            <x-navitem>
-              <x-icon href="#calendar"></x-icon>
-              <x-label><x-message href="#changelog" autocapitalize></x-message></x-label>
-              <x-tag id="version-tag"><x-label id="version-label"></x-label></x-tag>
-            </x-navitem>
-          </a>
-
-          <a href="/license">
-            <x-navitem>
-              <x-icon href="#paste"></x-icon>
-              <x-label><x-message href="#license" autocapitalize></x-message></x-label>
-            </x-navitem>
-          </a>
-
-          <a href="https://github.com/jarek-foksa/xel/issues" target="_blank">
-            <x-navitem>
-              <x-icon href="#visibility-visible"></x-icon>
-              <x-label><x-message href="#issues" autocapitalize></x-message></x-label>
-              <x-icon href="#open"></x-icon>
-            </x-navitem>
+          <x-nav id="nav">
+            <a href="/">
+              <x-navitem>
+                <x-icon href="#help"></x-icon>
+                <x-label><x-message href="#about" autocapitalize></x-message></x-label>
+              </x-navitem>
             </a>
 
-          <a href="https://github.com/jarek-foksa/xel" target="_blank">
+            <a href="/setup">
+              <x-navitem>
+                <x-icon href="#wrench"></x-icon>
+                <x-label><x-message href="#setup" autocapitalize></x-message></x-label>
+              </x-navitem>
+            </a>
+
             <x-navitem>
-              <x-icon href="#code"></x-icon>
-              <x-label><x-message href="#source-code" autocapitalize></x-message></x-label>
-              <x-icon href="#open"></x-icon>
+              <x-icon href="#tune"></x-icon>
+              <x-label><x-message href="#elements" autocapitalize></x-message></x-label>
+
+              <x-nav>
+                <a href="/elements/x-accordion">
+                  <x-navitem>
+                    <x-label>x-accordion</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-avatar">
+                  <x-navitem>
+                    <x-label>x-avatar</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-box">
+                  <x-navitem>
+                    <x-label>x-box</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-button">
+                  <x-navitem>
+                    <x-label>x-button</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-buttons">
+                  <x-navitem>
+                    <x-label>x-buttons</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-card">
+                  <x-navitem>
+                    <x-label>x-card</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-checkbox">
+                  <x-navitem>
+                    <x-label>x-checkbox</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-colorpicker">
+                  <x-navitem>
+                    <x-label>x-colorpicker</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-colorselect">
+                  <x-navitem>
+                    <x-label>x-colorselect</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-contextmenu">
+                  <x-navitem>
+                    <x-label>x-contextmenu</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/dialog">
+                  <x-navitem>
+                    <x-label>&nbsp;&nbsp;&nbsp;dialog</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-doctab">
+                  <x-navitem>
+                    <x-label>x-doctab</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-doctabs">
+                  <x-navitem>
+                    <x-label>x-doctabs</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-drawer">
+                  <x-navitem>
+                    <x-label>x-drawer</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-icon">
+                  <x-navitem>
+                    <x-label>x-icon</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-input">
+                  <x-navitem>
+                    <x-label>x-input</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-label">
+                  <x-navitem>
+                    <x-label>x-label</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-menu">
+                  <x-navitem>
+                    <x-label>x-menu</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-menuitem">
+                  <x-navitem>
+                    <x-label>x-menuitem</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-menubar">
+                  <x-navitem>
+                    <x-label>x-menubar</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-message">
+                  <x-navitem>
+                    <x-label>x-message</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-nav">
+                  <x-navitem>
+                    <x-label>x-nav</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-navitem">
+                  <x-navitem>
+                    <x-label>x-navitem</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-notification">
+                  <x-navitem>
+                    <x-label>x-notification</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-numberinput">
+                  <x-navitem>
+                    <x-label>x-numberinput</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-pager">
+                  <x-navitem>
+                    <x-label>x-pager</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-popover">
+                  <x-navitem>
+                    <x-label>x-popover</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-progressbar">
+                  <x-navitem>
+                    <x-label>x-progressbar</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-radio">
+                  <x-navitem>
+                    <x-label>x-radio</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-radios">
+                  <x-navitem>
+                    <x-label>x-radios</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-select">
+                  <x-navitem>
+                    <x-label>x-select</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-shortcut">
+                  <x-navitem>
+                    <x-label>x-shortcut</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-slider">
+                  <x-navitem>
+                    <x-label>x-slider</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-stepper">
+                  <x-navitem>
+                    <x-label>x-stepper</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-swatch">
+                  <x-navitem>
+                    <x-label>x-swatch</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-switch">
+                  <x-navitem>
+                    <x-label>x-switch</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-tab">
+                  <x-navitem>
+                    <x-label>x-tab</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-tabs">
+                  <x-navitem>
+                    <x-label>x-tabs</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-tag">
+                  <x-navitem>
+                    <x-label>x-tag</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-tags">
+                  <x-navitem>
+                    <x-label>x-tags</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-tagsinput">
+                  <x-navitem>
+                    <x-label>x-tagsinput</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-texteditor">
+                  <x-navitem>
+                    <x-label>x-texteditor</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-throbber">
+                  <x-navitem>
+                    <x-label>x-throbber</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-titlebar">
+                  <x-navitem>
+                    <x-label>x-titlebar</x-label>
+                  </x-navitem>
+                </a>
+
+                <a href="/elements/x-tooltip">
+                  <x-navitem>
+                    <x-label>x-tooltip</x-label>
+                  </x-navitem>
+                </a>
+              </x-nav>
             </x-navitem>
-          </a>
-        </x-nav>
 
-        <hr/>
+            <a href="/typography">
+              <x-navitem>
+                <x-icon href="#text-underline"></x-icon>
+                <x-label><x-message href="#typography" autocapitalize></x-message></x-label>
+              </x-navitem>
+            </a>
 
-        <pt-settings id="settings"></pt-settings>
+            <a href="/changelog">
+              <x-navitem>
+                <x-icon href="#calendar"></x-icon>
+                <x-label><x-message href="#changelog" autocapitalize></x-message></x-label>
+                <x-tag id="version-tag"><x-label id="version-label"></x-label></x-tag>
+              </x-navitem>
+            </a>
 
-        <hr/>
+            <a href="/license">
+              <x-navitem>
+                <x-icon href="#paste"></x-icon>
+                <x-label><x-message href="#license" autocapitalize></x-message></x-label>
+              </x-navitem>
+            </a>
 
-        <div id="copyright">© 2016-2025 <a id="contact-anchor" href="mailto:jarek@xel-toolkit.org">Jarosław Foksa</a></div>
+            <a href="https://github.com/jarek-foksa/xel/issues" target="_blank">
+              <x-navitem>
+                <x-icon href="#visibility-visible"></x-icon>
+                <x-label><x-message href="#issues" autocapitalize></x-message></x-label>
+                <x-icon href="#open"></x-icon>
+              </x-navitem>
+              </a>
+
+            <a href="https://github.com/jarek-foksa/xel" target="_blank">
+              <x-navitem>
+                <x-icon href="#code"></x-icon>
+                <x-label><x-message href="#source-code" autocapitalize></x-message></x-label>
+                <x-icon href="#open"></x-icon>
+              </x-navitem>
+            </a>
+          </x-nav>
+
+          <hr/>
+
+          <pt-settings id="settings"></pt-settings>
+
+          <hr/>
+
+          <div id="copyright">© 2016-2025 <a id="contact-anchor" href="mailto:jarek@xel-toolkit.org">Jarosław Foksa</a></div>
+        </div>
       </pt-sidebar>
 
       <div id="container">
@@ -413,7 +415,8 @@ export default class PTAppElement extends HTMLElement {
     }
 
     #container {
-      display: block;
+      display: flex;
+      flex-flow: column;
       width: 100%;
       height: 100%;
       min-width: 20px;
@@ -475,6 +478,10 @@ export default class PTAppElement extends HTMLElement {
      * Main
      */
 
+    #main {
+      flex: 1;
+    }
+
     #main > * {
       margin: 26px 0 30px 0;
       padding: 0 30px;
@@ -517,6 +524,14 @@ export default class PTAppElement extends HTMLElement {
       margin: 0;
     }
 
+    #sidebar > div {
+      height: 100%;
+      display: flex;
+      flex-flow: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
     /* Branding */
 
     #branding {
@@ -545,7 +560,6 @@ export default class PTAppElement extends HTMLElement {
 
     #nav {
       padding: 12px;
-      overflow: auto;
     }
 
     #nav > x-navitem::part(button):hover {
